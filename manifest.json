@@ -11,7 +11,7 @@
   },
 
   "sidebar_action": {
-    "default_icon": "icons/pad.png",
+    "default_icon": "icons/hoverpad.png",
     "default_title" : "Notes",
     "default_panel": "sidebar/panel.html"
   },
