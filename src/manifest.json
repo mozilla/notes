@@ -1,17 +1,19 @@
 {
-
   "manifest_version": 2,
-  "name": "Hoverpad",
+  "name": "Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "1.0",
+  "version": "1.1",
   "applications": {
     "gecko": {
       "strict_min_version": "54.0a1"
     }
   },
-
+  "icons": {
+    "48": "icons/notes-48.png",
+    "96": "icons/notes-96.png"
+  },
   "sidebar_action": {
-    "default_icon": "icons/hoverpad.png",
+    "default_icon": "icons/notes-48.png",
     "default_title" : "Notes",
     "default_panel": "sidebar/panel.html"
   },

@@ -9,4 +9,5 @@ Open a notepad in the firefox toolbar to store notes about your browsing.
 ```console
 npm install
 npm run build
+npm run fx-web-ext
 ```

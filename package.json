@@ -1,0 +1,22 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "Displays a sidebar that lets you take notes on web pages.",
+  "scripts": {
+    "lint": "eslint src",
+    "fx-web-ext": "rm -fr web-ext-artifacts/ && web-ext build -s src && unzip -l web-ext-artifacts/*.zip"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Natim/notes.git"
+  },
+  "author": "Storage team",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/Natim/notes/issues"
+  },
+  "homepage": "https://github.com/Natim/notes#readme",
+  "devDependencies": {
+    "web-ext": "^1.9.1"
+  }
+}
