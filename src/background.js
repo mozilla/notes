@@ -1,5 +1,5 @@
 const REDIRECT_URL = browser.identity.getRedirectURL();
-const CLIENT_ID = '3a7d05df0d8db810';
+const CLIENT_ID = 'c6d74070a481bc10';
 const SCOPES = ['profile keys'];
 const AUTH_URL =
   `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/authorization
@@ -11,7 +11,7 @@ const TOKEN_URL = `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/token`;
 const KEYS_URL = `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/keys`;
 
 // TODO: move to server
-const CLIENT_SECRET = 'aaf992e3ccf3a8932c8c1aa4e7cce475a6059c73656cda0c9d91873d19a84f31';
+const CLIENT_SECRET = 'd914ea58d579ec907a1a40b19fb3f3a631461fe00e494521d41c0496f49d288f';
 
 function createKeyPair () {
   return window.crypto.subtle.generateKey(
