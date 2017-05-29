@@ -2,9 +2,33 @@
     <head>
         <link href="quill.snow.css" rel="stylesheet">
         <link href="styles.css" rel="stylesheet">
+        <style>
+          .ql-snow .ql-picker.ql-size {
+            width: 45px;
+          }
+        </style>
     </head>
 
     <body>
+
+        <button id="enableSync">Enable Sync</button>
+        <!-- Create toolbar container -->
+        <div id="toolbar">
+          <!-- Add font size dropdown -->
+          <select class="ql-size">
+            <option value="small">12</option>
+            <!-- Note a missing, thus falsy value, is used to reset to default -->
+            <option selected>14</option>
+            <option value="large">16</option>
+            <option value="huge">18</option>
+          </select>
+          <!-- Add a bold button -->
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-strike"></button>
+          <button class="ql-list" value="ordered"></button>
+          <button class="ql-list" value="bullet"></button>
+        </div>
         <!-- Create the editor container -->
         <div id="editor"></div>
 

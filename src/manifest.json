@@ -19,7 +19,23 @@
     "default_panel": "sidebar/panel.html"
   },
 
-  "permissions": ["storage", "tabs"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "identity",
+    "notifications",
+    "*://*/*"
+  ],
+
+  "options_ui": {
+    "page": "options/options.html"
+  },
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
 
   "commands": {
     "_execute_sidebar_action": {
