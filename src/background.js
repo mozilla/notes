@@ -1,6 +1,6 @@
 const REDIRECT_URL = browser.identity.getRedirectURL();
 const CLIENT_ID = 'c6d74070a481bc10';
-const SCOPES = ['profile keys'];
+const SCOPES = ['kinto profile keys'];
 const AUTH_URL =
   `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/authorization
 ?client_id=${CLIENT_ID}
@@ -136,6 +136,7 @@ function handleAuthentication() {
         };
       });
     }).then(function (creds) {
+      bearerToken = creds.bearer.access_token;
       const keys = creds.keys;
       console.log('keys', keys);
 
@@ -166,12 +167,7 @@ function handleAuthentication() {
       console.log('decryptedKeys', decryptedKeys)
 
       chrome.storage.local.set({bearer: bearerToken, keys: decryptedKeys}, function() {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-          chrome.runtime.sendMessage({ action: 'error', error: chrome.runtime.lastError });
-        } else {
-          chrome.runtime.sendMessage({ action: 'authenticated', bearer: bearerToken, keys: decryptedKeys });
-        }
+        chrome.runtime.sendMessage({ action: 'authenticated', bearer: bearerToken, keys: decryptedKeys });
       });
 
     })
