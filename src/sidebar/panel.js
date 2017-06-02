@@ -1,6 +1,5 @@
-const KINTO_URL = "https://kinto.dev.mozaws.net/v1/";
+let storageTimeout;
 const client = new KintoClient("https://kinto.dev.mozaws.net/v1");
-
 
 var quill = new Quill('#editor', {
   theme: 'snow',
@@ -12,6 +11,7 @@ var quill = new Quill('#editor', {
 
 function handleLocalContent(data) {
   if(!data.hasOwnProperty("notes")) {
+    console.log("No local content. Loading default content.");
     quill.setContents({
       "ops": [
         {"attributes": {"size": "large", "bold":true}, "insert": "Welcome!"},
@@ -28,12 +28,14 @@ function handleLocalContent(data) {
          "insert": "Sync them to our Android app: http://mzl.la/notes"},
         {"attributes": {"list": "ordered"}, "insert": "\n"}]});
   } else {
+    console.log("Content:", data["notes"]);
     quill.setContents(data["notes"]);
   }
 }
 
 browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
   // If we have a bearer, we try to save the content.
+  console.log("Loading remote content.");
   if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
     const bearer = data.bearer;
     const keys = data.keys;
@@ -43,11 +45,13 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
       }
     })
       .then(result => {
-        if (!result.hasOwnProperty("notes")) {
+        if (!result.hasOwnProperty("content")) {
+          console.log("No remote content. Loading local content.");
           handleLocalContent(data);
         } else {
-          browser.storage.local.set({notes: result["notes"]}).then(() => {
-            quill.setContents(result["notes"]);
+          console.log("Content:", result["content"]);
+          browser.storage.local.set({notes: result["content"]}).then(() => {
+            quill.setContents(result["content"]);
           });
         }
       });
@@ -56,21 +60,28 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
   }
 });
 
+function storeToKinto(bearer, keys, content) {
+  var later = function() {
+    storageTimeout = null;
+    console.log("calling the client. Content: ", content);
+    client.bucket('default').collection('notes').setData({content: content}, {
+      headers: {
+        Authorization: `Bearer ${bearer}`
+      }
+    });
+  };
+  // Debounce
+  clearTimeout(storageTimeout);
+  storageTimeout = setTimeout(later, 800);
+}
+
 quill.on("text-change", (delta, oldDelta, source) => {
   var content = quill.getContents();
   browser.storage.local.set({notes: content}).then(() => {
     browser.storage.local.get(["bearer", "keys"], function(data) {
-      console.log(data);
       // If we have a bearer, we try to save the content.
       if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
-        const bearer = data.bearer;
-        const keys = data.keys;
-        console.log("calling the client.");
-        return client.bucket('default').collection('notes').setData({content: content}, {
-          headers: {
-            Authorization: `Bearer ${bearer}`
-          }
-        });
+        return storeToKinto(data.bearer, data.keys, content);
       }
     });
   });
@@ -80,3 +91,32 @@ const enableSync = document.getElementById('enableSync');
 enableSync.onclick = () => {
   browser.runtime.sendMessage({ action: 'authenticate' });
 };
+
+chrome.runtime.onMessage.addListener(function (eventData) {
+      switch (eventData.action) {
+        case 'authenticated':
+          // Load new content and update quill with it.
+          browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
+            // If we have a bearer, we try to save the content.
+            if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
+              console.log("Loading remote content");
+              const bearer = data.bearer;
+              const keys = data.keys;
+              client.bucket('default').collection('notes').getData({
+                headers: {
+                  Authorization: `Bearer ${bearer}`
+                }
+              })
+                .then(result => {
+                  if (result.hasOwnProperty("content")) {
+                    console.log("Content:", result["content"]);
+                    browser.storage.local.set({notes: result["content"]}).then(() => {
+                      quill.setContents(result["content"]);
+                    });
+                  }
+                });
+            }
+          });
+          break;
+      }
+});
