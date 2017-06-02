@@ -1,16 +1,12 @@
+const KINTO_URL = 'https://kinto.dev.mozaws.net/v1/';
 const REDIRECT_URL = browser.identity.getRedirectURL();
 const CLIENT_ID = 'c6d74070a481bc10';
-const SCOPES = ['kinto profile keys'];
-const AUTH_URL =
-  `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/authorization
-?client_id=${CLIENT_ID}
+const AUTH_PARAMS =
+`client_id=${CLIENT_ID}
 &state=state
-&redirect_uri=${encodeURIComponent(REDIRECT_URL)}
-&scope=${encodeURIComponent(SCOPES.join(' '))}`;
-const TOKEN_URL = `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/token`;
-const KEYS_URL = `https://oauth-oauth-keys-prototype.dev.lcip.org/v1/keys`;
+&redirect_uri=${encodeURIComponent(REDIRECT_URL)}`;
 
-// TODO: move to server
+// TODO: get rid of it at some point because it is not a secret
 const CLIENT_SECRET = 'd914ea58d579ec907a1a40b19fb3f3a631461fe00e494521d41c0496f49d288f';
 
 function createKeyPair () {
@@ -61,11 +57,22 @@ function extractAccessToken(redirectUri) {
   return params.get('code');
 }
 
-function getBearerToken(code) {
+function getKintoFxAConfig(kinto_url) {
+  return fetch(KINTO_URL+'/fxa-oauth/params')
+    .then(function(response) {
+      if(response.status == 200) return response.json();
+      else throw new Error('Something went wrong on api server!');
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+}
+
+function getBearerToken(oauth_url, code) {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
 
-  return fetch(new Request(TOKEN_URL, {
+  return fetch(new Request(oauth_url + '/token', {
     method: 'POST',
     headers: myHeaders,
     body: JSON.stringify({
@@ -83,11 +90,11 @@ function getBearerToken(code) {
     });
 }
 
-function getDerivedKeys(bearerToken) {
+function getDerivedKeys(oauth_url, bearerToken) {
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken.access_token);
 
-  return fetch(new Request(KEYS_URL, {
+  return fetch(new Request(oauth_url + '/keys', {
     method: 'POST',
     headers: myHeaders
   }))
@@ -114,22 +121,31 @@ function handleAuthentication() {
   // });
   let privateKey;
   let bearerToken;
+  let oauth_url;
   return createKeyPair()
     .then(function (keyMaterial) {
-      const publicKey = JSON.stringify(keyMaterial.exportPublicKey);
       privateKey = keyMaterial.exportPrivateKey;
-      return browser.identity.launchWebAuthFlow({
-        interactive: true,
-        url: `${AUTH_URL}&jwk=${publicKey}`
-      });
+      return JSON.stringify(keyMaterial.exportPublicKey);
+    })
+    .then(function(publicKey) {
+      return getKintoFxAConfig(KINTO_URL)
+        .then(function(params) {
+          oauth_url = params.oauth_uri;
+          const scope = params.scope;
+          return browser.identity.launchWebAuthFlow({
+            interactive: true,
+            url: `${oauth_url}/authorization?` +
+              `${AUTH_PARAMS}&scope=${scope}+profile+keys&jwk=${publicKey}`
+          });
+        });
     }).then(function (redirectURL) {
       const code = extractAccessToken(redirectURL);
 
-      return getBearerToken(code);
+      return getBearerToken(oauth_url, code);
     }).then(function (bearer) {
       console.log('bearer', bearer);
 
-      return getDerivedKeys(bearer).then(function (keys) {
+      return getDerivedKeys(oauth_url, bearer).then(function (keys) {
         return {
           bearer: bearer,
           keys: keys

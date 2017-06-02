@@ -1,6 +1,4 @@
-const KINTO_URL = "https://kinto.dev.mozaws.net/v1/";
 const client = new KintoClient("https://kinto.dev.mozaws.net/v1");
-
 
 var quill = new Quill('#editor', {
   theme: 'snow',
