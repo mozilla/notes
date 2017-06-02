@@ -1,3 +1,4 @@
+let storageTimeout;
 const client = new KintoClient("https://kinto.dev.mozaws.net/v1");
 
 var quill = new Quill('#editor', {
@@ -59,20 +60,28 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
   }
 });
 
+function storeToKinto(bearer, keys, content) {
+  var later = function() {
+    storageTimeout = null;
+    console.log("calling the client. Content: ", content);
+    client.bucket('default').collection('notes').setData({content: content}, {
+      headers: {
+        Authorization: `Bearer ${bearer}`
+      }
+    });
+  };
+  // Debounce
+  clearTimeout(storageTimeout);
+  storageTimeout = setTimeout(later, 800);
+}
+
 quill.on("text-change", (delta, oldDelta, source) => {
   var content = quill.getContents();
   browser.storage.local.set({notes: content}).then(() => {
     browser.storage.local.get(["bearer", "keys"], function(data) {
       // If we have a bearer, we try to save the content.
       if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
-        const bearer = data.bearer;
-        const keys = data.keys;
-        console.log("calling the client. Content: ", content);
-        return client.bucket('default').collection('notes').setData({content: content}, {
-          headers: {
-            Authorization: `Bearer ${bearer}`
-          }
-        });
+        return storeToKinto(data.bearer, data.keys, content);
       }
     });
   });
