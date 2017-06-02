@@ -10,9 +10,7 @@
     </head>
 
     <body>
-
-        <button id="enableSync">Enable Sync</button>
-        <!-- Create toolbar container -->
+        <!-- Create the Quill.js toolbar container -->
         <div id="toolbar">
           <!-- Add font size dropdown -->
           <select class="ql-size">
@@ -29,8 +27,12 @@
           <button class="ql-list" value="ordered"></button>
           <button class="ql-list" value="bullet"></button>
         </div>
-        <!-- Create the editor container -->
+
+        <!-- Create the Quill.js editor container -->
         <div id="editor"></div>
+
+        <!-- Add a Firefox Sync toolbar -->
+        <button id="enableSync">Enable Sync</button>
 
         <!-- Include the Quill library -->
         <script src="quill.js"></script>

@@ -1,5 +1,23 @@
+html {
+	height: 100%;
+}
+
 body {
+	height: 100%;
 	margin: 0;
 	overflow: hidden;
 	padding: 0;
+}
+
+div#editor {
+	height: 90%;
+	height: calc(100% - 70px);
+}
+
+button#enableSync {
+	height: 30px;
+}
+
+div#toolbar {
+	height: 40px;
 }
