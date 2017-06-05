@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Natim/notes#readme",
   "devDependencies": {
+    "eslint": "^4.0.0",
     "web-ext": "^1.9.1"
   }
 }

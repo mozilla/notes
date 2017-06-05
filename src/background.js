@@ -12,19 +12,19 @@ const CLIENT_SECRET = 'd914ea58d579ec907a1a40b19fb3f3a631461fe00e494521d41c0496f
 function createKeyPair () {
   return window.crypto.subtle.generateKey(
     {
-      name: "RSA-OAEP",
+      name: 'RSA-OAEP',
       modulusLength: 4096,
       publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-      hash: {name: "SHA-256"},
+      hash: {name: 'SHA-256'},
     },
     true, // extractable key
-    ["encrypt", "decrypt"]
+    ['encrypt', 'decrypt']
   ).then(function(keys) {
     let exportPrivateKey;
-    return window.crypto.subtle.exportKey("jwk", keys.privateKey)
+    return window.crypto.subtle.exportKey('jwk', keys.privateKey)
       .then(function (pk) {
         exportPrivateKey = pk;
-        return window.crypto.subtle.exportKey("jwk", keys.publicKey);
+        return window.crypto.subtle.exportKey('jwk', keys.publicKey);
       })
       .then(function (exportPublicKey) {
         return {
@@ -41,8 +41,8 @@ function hexStringToByte(str) {
     return new Uint8Array();
   }
 
-  var a = [];
-  for (var i = 0, len = str.length; i < len; i+=2) {
+  const a = [];
+  for (let i = 0, len = str.length; i < len; i+=2) {
     a.push(parseInt(str.substr(i,2),16));
   }
 
@@ -50,17 +50,16 @@ function hexStringToByte(str) {
 }
 
 function extractAccessToken(redirectUri) {
-  let m = redirectUri.match(/[#\?](.*)/);
-  if (!m || m.length < 1)
-    return null;
-  let params = new URLSearchParams(m[1].split('#')[0]);
+  const m = redirectUri.match(/[#?](.*)/);
+  if (!m || m.length < 1) return null;
+  const params = new URLSearchParams(m[1].split('#')[0]);
   return params.get('code');
 }
 
 function getKintoFxAConfig(kinto_url) {
-  return fetch(KINTO_URL+'/fxa-oauth/params')
+  return fetch(kinto_url + '/fxa-oauth/params')
     .then(function(response) {
-      if(response.status == 200) return response.json();
+      if(response.status === 200) return response.json();
       else throw new Error('Something went wrong on api server!');
     })
     .catch(function(error) {
@@ -69,7 +68,7 @@ function getKintoFxAConfig(kinto_url) {
 }
 
 function getBearerToken(oauth_url, code) {
-  var myHeaders = new Headers();
+  const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
 
   return fetch(new Request(oauth_url + '/token', {
@@ -82,7 +81,7 @@ function getBearerToken(oauth_url, code) {
     })
   }))
     .then(function(response) {
-      if(response.status == 200) return response.json();
+      if(response.status === 200) return response.json();
       else throw new Error('Something went wrong on api server!');
     })
     .catch(function(error) {
@@ -91,7 +90,7 @@ function getBearerToken(oauth_url, code) {
 }
 
 function getDerivedKeys(oauth_url, bearerToken) {
-  var myHeaders = new Headers();
+  const myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken.access_token);
 
   return fetch(new Request(oauth_url + '/keys', {
@@ -99,20 +98,12 @@ function getDerivedKeys(oauth_url, bearerToken) {
     headers: myHeaders
   }))
     .then(function(response) {
-      if(response.status == 200) return response.json();
+      if(response.status === 200) return response.json();
       else throw new Error('Something went wrong on api server!');
     })
     .catch(function(error) {
       console.error(error);
     });
-}
-
-function handleMaybeInt(maybeString) {
-  const maybeInt = parseInt(maybeString, 10);
-  if (Number.isNaN(maybeInt)) {
-    return null;
-  }
-  return maybeInt;
 }
 
 function handleAuthentication() {
@@ -156,22 +147,22 @@ function handleAuthentication() {
       const keys = creds.keys;
       console.log('keys', keys);
 
-      return window.crypto.subtle.importKey("jwk", privateKey,
+      return window.crypto.subtle.importKey('jwk', privateKey,
         {
-          name: "RSA-OAEP",
-          hash: {name: "SHA-256"},
+          name: 'RSA-OAEP',
+          hash: {name: 'SHA-256'},
         },
         false,
-        ["decrypt"]
+        ['decrypt']
       ).then(function (importPk) {
         return window.crypto.subtle.decrypt(
           {
-            name: "RSA-OAEP",
+            name: 'RSA-OAEP',
           },
           importPk,
           hexStringToByte(keys.bundle)
         );
-      })
+      });
 
     })
     .then(function(decrypted){
@@ -179,8 +170,8 @@ function handleAuthentication() {
       const filtered = new Uint8Array(decrypted).filter(function(el, index) {
         return index % 2 === 0;
       });
-      const decryptedKeys = JSON.parse(new TextDecoder("utf-8").decode(new Uint8Array(filtered)))
-      console.log('decryptedKeys', decryptedKeys)
+      const decryptedKeys = JSON.parse(new TextDecoder('utf-8').decode(new Uint8Array(filtered)));
+      console.log('decryptedKeys', decryptedKeys);
 
       chrome.storage.local.set({bearer: bearerToken, keys: decryptedKeys}, function() {
         chrome.runtime.sendMessage({ action: 'authenticated', bearer: bearerToken, keys: decryptedKeys });
@@ -195,8 +186,8 @@ function handleAuthentication() {
 
 chrome.runtime.onMessage.addListener(function (eventData) {
   switch (eventData.action) {
-    case 'authenticate':
-      handleAuthentication();
-      break;
+  case 'authenticate':
+    handleAuthentication();
+    break;
   }
 });
