@@ -1,4 +1,3 @@
-let storageTimeout;
 const client = new KintoClient("https://kinto.dev.mozaws.net/v1");
 
 var quill = new Quill('#editor', {
@@ -8,6 +7,121 @@ var quill = new Quill('#editor', {
     toolbar: '#toolbar',
   }
 });
+
+// Encryption layer
+function base64ToArrayBuffer(base64) {
+  const binary_string = window.atob(base64);
+  const len = binary_string.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function arrayBufferToBase64(bytes) {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+const ivLen = 16;
+function joinIvAndData(iv, data) {
+  const buf = new Uint8Array(iv.length + data.length);
+  iv.forEach((byte, i) => {
+    buf[i] = byte;
+  });
+  data.forEach((byte, i) => {
+    buf[ivLen + i] = byte;
+  });
+  return buf;
+}
+
+function encrypt(key, content) {
+  // Unique random generated IV
+  const initVector = new Uint8Array(ivLen);
+  crypto.getRandomValues(initVector);
+
+  // Prepare content
+  const encoder = new TextEncoder();
+  const data = encoder.encode(JSON.stringify(content));
+  return crypto.subtle.importKey(
+    "jwk",
+    {
+      kty: key.kty,
+      k: key.k.replace(/=/, "")
+    },
+    "AES-GCM",
+    true,
+    ["encrypt"]
+  ).then(encryptionKey => {
+    return crypto.subtle.encrypt(
+      {
+        name: 'AES-GCM',
+        iv: initVector
+      },
+      encryptionKey,
+      data
+    );
+  }).then(encryptedData => {
+    const encryptedContent = joinIvAndData(initVector, new Uint8Array(encryptedData));
+    const encrypted = arrayBufferToBase64(encryptedContent);
+    return encrypted;
+  });
+}
+
+function separateIvFromData(buf) {
+  const iv = new Uint8Array(ivLen);
+  const data = new Uint8Array(buf.length - ivLen);
+
+  buf.forEach((byte, i) => {
+    if (i < ivLen) {
+      iv[i] = byte;
+    } else {
+      data[i - ivLen] = byte;
+    }
+  });
+  return { iv, data };
+}
+
+function decrypt(key, encryptedContent) {
+  const encryptedData = base64ToArrayBuffer(encryptedContent);
+  let parts;
+  try {
+    parts = separateIvFromData(encryptedData);
+  } catch (err) {
+    return Promise.resolve('Reset previously malformed saved pad');
+  }
+  return crypto.subtle.importKey(
+    "jwk",
+    {
+      kty: key.kty,
+      k: key.k.replace(/=/, "")
+    },
+    "AES-GCM",
+    true,
+    ["decrypt"]
+  ).then(decryptionKey => {
+    return crypto.subtle.decrypt(
+      {
+        name: 'AES-GCM',
+        iv: parts.iv
+      },
+      decryptionKey,
+      parts.data
+    );
+  }).then(decryptedArrayBuffer => {
+    const decoder = new TextDecoder();
+    return JSON.parse(decoder.decode(decryptedArrayBuffer));
+  })
+  .catch(err => {
+    console.error(err);
+  });
+}
+
 
 function handleLocalContent(data) {
   if(!data.hasOwnProperty("notes")) {
@@ -49,10 +163,17 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
           console.log("No remote content. Loading local content.");
           handleLocalContent(data);
         } else {
-          console.log("Content:", result["content"]);
-          browser.storage.local.set({notes: result["content"]}).then(() => {
-            quill.setContents(result["content"]);
-          });
+          console.log("Encrypted Content:", result["content"]);
+          return decrypt(keys, result["content"])
+            .then(content => {
+              console.log("Content", content);
+              browser.storage.local.set({notes: content}).then(() => {
+                quill.setContents(content);
+              });
+            })
+            .catch(err => {
+              console.error(err);
+            });
         }
       });
   } else {
@@ -60,15 +181,25 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
   }
 });
 
+let storageTimeout;
 function storeToKinto(bearer, keys, content) {
   var later = function() {
     storageTimeout = null;
     console.log("calling the client. Content: ", content);
-    client.bucket('default').collection('notes').setData({content: content}, {
-      headers: {
-        Authorization: `Bearer ${bearer}`
-      }
-    });
+
+    // Load the Key
+    encrypt(keys, content)
+      .then(encrypted => {
+        console.log("Encrypted content:", encrypted);
+        client.bucket('default').collection('notes').setData({content: encrypted}, {
+          headers: {
+            Authorization: `Bearer ${bearer}`
+          }
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
   // Debounce
   clearTimeout(storageTimeout);
@@ -109,10 +240,14 @@ chrome.runtime.onMessage.addListener(function (eventData) {
               })
                 .then(result => {
                   if (result.hasOwnProperty("content")) {
-                    console.log("Content:", result["content"]);
-                    browser.storage.local.set({notes: result["content"]}).then(() => {
-                      quill.setContents(result["content"]);
-                    });
+                    console.log("Encrypted content:", result["content"]);
+                    return decrypt(keys, result["content"])
+                      .then(content => {
+                        console.log("Content", content);
+                        browser.storage.local.set({notes: content}).then(() => {
+                          quill.setContents(content);
+                        });
+                      });
                   }
                 });
             }
