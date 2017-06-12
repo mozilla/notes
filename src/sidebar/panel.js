@@ -182,6 +182,7 @@ browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
 });
 
 let storageTimeout;
+
 function storeToKinto(bearer, keys, content) {
   var later = function() {
     storageTimeout = null;
@@ -218,7 +219,7 @@ quill.on("text-change", (delta, oldDelta, source) => {
   });
 });
 
-const enableSync = document.getElementById('enableSync');
+const enableSync = document.getElementById('enable-sync');
 enableSync.onclick = () => {
   browser.runtime.sendMessage({ action: 'authenticate' });
 };
