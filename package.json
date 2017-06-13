@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "eslint": "^4.0.0",
+    "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
     "web-ext": "^1.9.1"
   },
@@ -17,8 +18,10 @@
   "scripts": {
     "build": "web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
     "clean": "rimraf web-ext-artifacts",
+    "format": "prettier 'src/**/!(kinto-http|quill*).{css,js}' --single-quote --write",
     "lint": "eslint src",
-    "once": "npm run -s src",
+    "once": "web-ext run -s src",
+    "postformat": "npm run lint -- --fix",
     "prebuild": "npm run clean"
   }
 }
