@@ -1,6 +1,6 @@
-const client = new KintoClient("https://kinto.dev.mozaws.net/v1");
+const client = new KintoClient('https://kinto.dev.mozaws.net/v1');
 
-var quill = new Quill('#editor', {
+const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: 'Take a note...',
   modules: {
@@ -49,14 +49,14 @@ function encrypt(key, content) {
   const encoder = new TextEncoder();
   const data = encoder.encode(JSON.stringify(content));
   return crypto.subtle.importKey(
-    "jwk",
+    'jwk',
     {
       kty: key.kty,
-      k: key.k.replace(/=/, "")
+      k: key.k.replace(/=/, '')
     },
-    "AES-GCM",
+    'AES-GCM',
     true,
-    ["encrypt"]
+    ['encrypt']
   ).then(encryptionKey => {
     return crypto.subtle.encrypt(
       {
@@ -96,14 +96,14 @@ function decrypt(key, encryptedContent) {
     return Promise.resolve('Reset previously malformed saved pad');
   }
   return crypto.subtle.importKey(
-    "jwk",
+    'jwk',
     {
       kty: key.kty,
-      k: key.k.replace(/=/, "")
+      k: key.k.replace(/=/, '')
     },
-    "AES-GCM",
+    'AES-GCM',
     true,
-    ["decrypt"]
+    ['decrypt']
   ).then(decryptionKey => {
     return crypto.subtle.decrypt(
       {
@@ -117,60 +117,60 @@ function decrypt(key, encryptedContent) {
     const decoder = new TextDecoder();
     return JSON.parse(decoder.decode(decryptedArrayBuffer));
   })
-  .catch(err => {
-    console.error(err);
-  });
+    .catch(err => {
+      console.error(err);
+    });
 }
 
 
 function handleLocalContent(data) {
-  if(!data.hasOwnProperty("notes")) {
-    console.log("No local content. Loading default content.");
+  if(!data.hasOwnProperty('notes')) {
+    console.log('No local content. Loading default content.');
     quill.setContents({
-      "ops": [
-        {"attributes": {"size": "large", "bold":true}, "insert": "Welcome!"},
-        {"insert": "\n\n"},
-        {"attributes": {"size": "large"},
-         "insert": "This is a simple one-page notepad built in to Firefox that helps you get the most out of the web."},{"insert": "\n\n"},
-        {"attributes": {"size": "large"}, "insert": "You can: "},
-        {"insert": "\n\n"},
-        {"attributes": {"size": "large"}, "insert": "Format your notes"},
-        {"attributes": {"list": "ordered"}, "insert": "\n"},
-        {"attributes": {"size": "large"}, "insert": "Sync notes securely to your Firefox Account"},
-        {"attributes": {"list": "ordered"}, "insert": "\n"},
-        {"attributes": {"size": "large"},
-         "insert": "Sync them to our Android app: http://mzl.la/notes"},
-        {"attributes": {"list": "ordered"}, "insert": "\n"}]});
+      'ops': [
+        {'attributes': {'size': 'large', 'bold':true}, 'insert': 'Welcome!'},
+        {'insert': '\n\n'},
+        {'attributes': {'size': 'large'},
+          'insert': 'This is a simple one-page notepad built in to Firefox that helps you get the most out of the web.'},{'insert': '\n\n'},
+        {'attributes': {'size': 'large'}, 'insert': 'You can: '},
+        {'insert': '\n\n'},
+        {'attributes': {'size': 'large'}, 'insert': 'Format your notes'},
+        {'attributes': {'list': 'ordered'}, 'insert': '\n'},
+        {'attributes': {'size': 'large'}, 'insert': 'Sync notes securely to your Firefox Account'},
+        {'attributes': {'list': 'ordered'}, 'insert': '\n'},
+        {'attributes': {'size': 'large'},
+          'insert': 'Sync them to our Android app: http://mzl.la/notes'},
+        {'attributes': {'list': 'ordered'}, 'insert': '\n'}]});
   } else {
-    console.log("Content:", data["notes"]);
-    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data["notes"])) {
+    console.log('Content:', data['notes']);
+    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data['notes'])) {
       console.log('different', data.notes, quill.getContents());
-      quill.setContents(data["notes"]);
+      quill.setContents(data['notes']);
     }
   }
   debounceLoadContent();
-  console.log("contentWasSynced", false);
+  console.log('contentWasSynced', false);
   return browser.storage.local.set({contentWasSynced: false});
 }
 
 
 function handleConflictsMerge(contentWasSynced, local, remote) {
-  console.log("Content", local, remote);
+  console.log('Content', local, remote);
   if (local && !contentWasSynced &&
       JSON.stringify(local) !== JSON.stringify(remote)) {
     // Merge conflict
-    console.log("Merge conflict");
+    console.log('Merge conflict');
     let newContent = JSON.parse(JSON.stringify(remote));
-    newContent.ops.push({"insert": "\n==========\n\n"});
+    newContent.ops.push({'insert': '\n==========\n\n'});
     newContent = newContent.ops.concat(local.ops);
-    console.log("Merge conflict", newContent);
+    console.log('Merge conflict', newContent);
     // Set new content
     return browser.storage.local.set({notes: newContent}).then(() => {
       quill.setContents(newContent);
       debounceLoadContent();
     });
   } else {
-    console.log("Content", remote);
+    console.log('Content', remote);
     return browser.storage.local.set({notes: remote}).then(() => {
       if (JSON.stringify(quill.getContents()) !== JSON.stringify(remote)) {
         console.log('different', remote, quill.getContents());
@@ -178,20 +178,20 @@ function handleConflictsMerge(contentWasSynced, local, remote) {
       }
       debounceLoadContent();
     })
-    .then(() => {
-      console.log("contentWasSynced", true);
-      return browser.storage.local.set({contentWasSynced: true});
-    });
+      .then(() => {
+        console.log('contentWasSynced', true);
+        return browser.storage.local.set({contentWasSynced: true});
+      });
   }
 }
 
 let loadContentTimeout;
 function loadContent() {
   loadContentTimeout = null;
-  browser.storage.local.get(["bearer", "keys", "contentWasSynced", "notes"], function(data) {
+  browser.storage.local.get(['bearer', 'keys', 'contentWasSynced', 'notes'], function(data) {
     // If we have a bearer, we try to save the content.
-    console.log("Loading remote content.");
-    if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
+    console.log('Loading remote content.');
+    if(data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
       const bearer = data.bearer;
       const keys = data.keys;
       client.bucket('default').collection('notes').getData({
@@ -200,12 +200,12 @@ function loadContent() {
         }
       })
         .then(result => {
-          if (!result.hasOwnProperty("content")) {
-            console.log("No remote content. Loading local content.");
+          if (!result.hasOwnProperty('content')) {
+            console.log('No remote content. Loading local content.');
             handleLocalContent(data);
           } else {
-            console.log("Encrypted Content:", result["content"]);
-            return decrypt(keys, result["content"])
+            console.log('Encrypted Content:', result['content']);
+            return decrypt(keys, result['content'])
               .then(content => {
                 handleConflictsMerge(data.contentWasSynced, data.notes, content);
               })
@@ -218,9 +218,9 @@ function loadContent() {
           console.error(err);
           handleLocalContent(data);
           // Load local content and disconnect the user
-          browser.storage.local.remove(["data", "bearer"])
+          browser.storage.local.remove(['data', 'bearer'])
             .then(() => {
-              console.log("contentWasSynced", false);
+              console.log('contentWasSynced', false);
               return browser.storage.local.set({contentWasSynced: false});
             });
         });
@@ -239,15 +239,16 @@ function debounceLoadContent() {
 loadContent();
 
 let storageTimeout;
+
 function storeToKinto(bearer, keys, content) {
-  var later = function() {
+  const later = function() {
     storageTimeout = null;
-    console.log("calling the client. Content: ", content);
+    console.log('calling the client. Content: ', content);
 
     // Load the Key
     encrypt(keys, content)
       .then(encrypted => {
-        console.log("Encrypted content:", encrypted);
+        console.log('Encrypted content:', encrypted);
         return client.bucket('default').collection('notes').setData({content: encrypted}, {
           headers: {
             Authorization: `Bearer ${bearer}`
@@ -255,15 +256,15 @@ function storeToKinto(bearer, keys, content) {
         });
       })
       .then(() => {
-        console.log("contentWasSynced", true);
+        console.log('contentWasSynced', true);
         return browser.storage.local.set({contentWasSynced: true});
       })
       .catch(err => {
         console.error(err);
         // Remove old login credentials.
-        browser.storage.local.remove(["data", "bearer"])
+        browser.storage.local.remove(['data', 'bearer'])
           .then(() => {
-            console.log("contentWasSynced", false);
+            console.log('contentWasSynced', false);
             return browser.storage.local.set({contentWasSynced: false});
           });
       });
@@ -274,13 +275,13 @@ function storeToKinto(bearer, keys, content) {
   debounceLoadContent();
 }
 
-quill.on("text-change", (delta, oldDelta, source) => {
-  var content = quill.getContents();
+quill.on('text-change', () => {
+  const content = quill.getContents();
   browser.storage.local.set({notes: content}).then(() => {
     debounceLoadContent();
-    browser.storage.local.get(["bearer", "keys"], function(data) {
+    browser.storage.local.get(['bearer', 'keys'], function(data) {
       // If we have a bearer, we try to save the content.
-      if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
+      if(data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
         return storeToKinto(data.bearer, data.keys, content);
       }
     });
@@ -293,31 +294,31 @@ enableSync.onclick = () => {
 };
 
 chrome.runtime.onMessage.addListener(function (eventData) {
-      switch (eventData.action) {
-        case 'authenticated':
+  switch (eventData.action) {
+  case 'authenticated':
           // Load new content and update quill with it.
-          browser.storage.local.get(["bearer", "keys", "contentWasSynced", "notes"], function(data) {
+    browser.storage.local.get(['bearer', 'keys', 'contentWasSynced', 'notes'], function(data) {
             // If we have a bearer, we try to save the content.
-            if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
-              console.log("Loading remote content");
-              const bearer = data.bearer;
-              const keys = data.keys;
-              client.bucket('default').collection('notes').getData({
-                headers: {
-                  Authorization: `Bearer ${bearer}`
-                }
-              })
-              .then(result => {
-                if (result.hasOwnProperty("content")) {
-                  console.log("Encrypted content:", result["content"]);
-                  return decrypt(keys, result["content"])
-                    .then(content => {
-                      handleConflictsMerge(data.contentWasSynced, data.notes, content);
-                    });
-                }
-              });
+      if(data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
+        console.log('Loading remote content');
+        const bearer = data.bearer;
+        const keys = data.keys;
+        client.bucket('default').collection('notes').getData({
+          headers: {
+            Authorization: `Bearer ${bearer}`
+          }
+        })
+          .then(result => {
+            if (result.hasOwnProperty('content')) {
+              console.log('Encrypted content:', result['content']);
+              return decrypt(keys, result['content'])
+                .then(content => {
+                  handleConflictsMerge(data.contentWasSynced, data.notes, content);
+                });
             }
           });
-          break;
       }
+    });
+    break;
+  }
 });
