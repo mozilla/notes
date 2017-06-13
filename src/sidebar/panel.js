@@ -145,41 +145,83 @@ function handleLocalContent(data) {
     console.log("Content:", data["notes"]);
     quill.setContents(data["notes"]);
   }
+  console.log("contentWasSynced", false);
+  return browser.storage.local.set({contentWasSynced: false});
 }
 
-browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
-  // If we have a bearer, we try to save the content.
-  console.log("Loading remote content.");
-  if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
-    const bearer = data.bearer;
-    const keys = data.keys;
-    client.bucket('default').collection('notes').getData({
-      headers: {
-        Authorization: `Bearer ${bearer}`
-      }
-    })
-      .then(result => {
-        if (!result.hasOwnProperty("content")) {
-          console.log("No remote content. Loading local content.");
-          handleLocalContent(data);
-        } else {
-          console.log("Encrypted Content:", result["content"]);
-          return decrypt(keys, result["content"])
-            .then(content => {
-              console.log("Content", content);
-              browser.storage.local.set({notes: content}).then(() => {
-                quill.setContents(content);
-              });
-            })
-            .catch(err => {
-              console.error(err);
-            });
-        }
-      });
+
+function handleConflictsMerge(contentWasSynced, local, remote) {
+  console.log("Content", local, remote);
+  if (local && !contentWasSynced &&
+      JSON.stringify(local) !== JSON.stringify(remote)) {
+    // Merge conflict
+    console.log("Merge conflict");
+    let newContent = JSON.parse(JSON.stringify(remote));
+    newContent.ops.push({"insert": "\n==========\n\n"});
+    newContent = newContent.ops.concat(local.ops);
+    console.log("Merge conflict", newContent);
+    // Set new content
+    return browser.storage.local.set({notes: newContent}).then(() => {
+      quill.setContents(newContent);
+    });
   } else {
-    handleLocalContent(data);
+    console.log("Content", remote);
+    return browser.storage.local.set({notes: remote}).then(() => {
+      quill.setContents(remote);
+    })
+    .then(() => {
+      console.log("contentWasSynced", true);
+      return browser.storage.local.set({contentWasSynced: true});
+    });
   }
-});
+}
+
+let loadContentTimeout;
+function loadContent() {
+  loadContentTimeout = null;
+  browser.storage.local.get(["bearer", "keys", "contentWasSynced", "notes"], function(data) {
+    // If we have a bearer, we try to save the content.
+    console.log("Loading remote content.");
+    if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
+      const bearer = data.bearer;
+      const keys = data.keys;
+      client.bucket('default').collection('notes').getData({
+        headers: {
+          Authorization: `Bearer ${bearer}`
+        }
+      })
+        .then(result => {
+          if (!result.hasOwnProperty("content")) {
+            console.log("No remote content. Loading local content.");
+            handleLocalContent(data);
+          } else {
+            console.log("Encrypted Content:", result["content"]);
+            return decrypt(keys, result["content"])
+              .then(content => {
+                handleConflictsMerge(data.contentWasSynced, data.notes, content);
+              })
+              .catch(err => {
+                console.error(err);
+              });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          handleLocalContent(data);
+          // Load local content and disconnect the user
+          browser.storage.local.remove(["data", "bearer"])
+            .then(() => {
+              console.log("contentWasSynced", false);
+              return browser.storage.local.set({contentWasSynced: false});
+            });
+        });
+    } else {
+      handleLocalContent(data);
+    }
+  });
+}
+
+loadContent();
 
 let storageTimeout;
 function storeToKinto(bearer, keys, content) {
@@ -191,14 +233,24 @@ function storeToKinto(bearer, keys, content) {
     encrypt(keys, content)
       .then(encrypted => {
         console.log("Encrypted content:", encrypted);
-        client.bucket('default').collection('notes').setData({content: encrypted}, {
+        return client.bucket('default').collection('notes').setData({content: encrypted}, {
           headers: {
             Authorization: `Bearer ${bearer}`
           }
         });
       })
+      .then(() => {
+        console.log("contentWasSynced", true);
+        return browser.storage.local.set({contentWasSynced: true});
+      })
       .catch(err => {
         console.error(err);
+        // Remove old login credentials.
+        browser.storage.local.remove(["data", "bearer"])
+          .then(() => {
+            console.log("contentWasSynced", false);
+            return browser.storage.local.set({contentWasSynced: false});
+          });
       });
   };
   // Debounce
@@ -227,7 +279,7 @@ chrome.runtime.onMessage.addListener(function (eventData) {
       switch (eventData.action) {
         case 'authenticated':
           // Load new content and update quill with it.
-          browser.storage.local.get(["bearer", "keys", "notes"], function(data) {
+          browser.storage.local.get(["bearer", "keys", "contentWasSynced", "notes"], function(data) {
             // If we have a bearer, we try to save the content.
             if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
               console.log("Loading remote content");
@@ -238,18 +290,15 @@ chrome.runtime.onMessage.addListener(function (eventData) {
                   Authorization: `Bearer ${bearer}`
                 }
               })
-                .then(result => {
-                  if (result.hasOwnProperty("content")) {
-                    console.log("Encrypted content:", result["content"]);
-                    return decrypt(keys, result["content"])
-                      .then(content => {
-                        console.log("Content", content);
-                        browser.storage.local.set({notes: content}).then(() => {
-                          quill.setContents(content);
-                        });
-                      });
-                  }
-                });
+              .then(result => {
+                if (result.hasOwnProperty("content")) {
+                  console.log("Encrypted content:", result["content"]);
+                  return decrypt(keys, result["content"])
+                    .then(content => {
+                      handleConflictsMerge(data.contentWasSynced, data.notes, content);
+                    });
+                }
+              });
             }
           });
           break;
