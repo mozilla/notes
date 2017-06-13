@@ -143,8 +143,12 @@ function handleLocalContent(data) {
         {"attributes": {"list": "ordered"}, "insert": "\n"}]});
   } else {
     console.log("Content:", data["notes"]);
-    quill.setContents(data["notes"]);
+    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data["notes"])) {
+      console.log('different', data.notes, quill.getContents());
+      quill.setContents(data["notes"]);
+    }
   }
+  debounceLoadContent();
   console.log("contentWasSynced", false);
   return browser.storage.local.set({contentWasSynced: false});
 }
@@ -163,11 +167,16 @@ function handleConflictsMerge(contentWasSynced, local, remote) {
     // Set new content
     return browser.storage.local.set({notes: newContent}).then(() => {
       quill.setContents(newContent);
+      debounceLoadContent();
     });
   } else {
     console.log("Content", remote);
     return browser.storage.local.set({notes: remote}).then(() => {
-      quill.setContents(remote);
+      if (JSON.stringify(quill.getContents()) !== JSON.stringify(remote)) {
+        console.log('different', remote, quill.getContents());
+        quill.setContents(remote);
+      }
+      debounceLoadContent();
     })
     .then(() => {
       console.log("contentWasSynced", true);
@@ -221,6 +230,12 @@ function loadContent() {
   });
 }
 
+function debounceLoadContent() {
+  // Debounce
+  clearTimeout(loadContentTimeout);
+  loadContentTimeout = setTimeout(loadContent, 1000);
+}
+
 loadContent();
 
 let storageTimeout;
@@ -256,11 +271,13 @@ function storeToKinto(bearer, keys, content) {
   // Debounce
   clearTimeout(storageTimeout);
   storageTimeout = setTimeout(later, 800);
+  debounceLoadContent();
 }
 
 quill.on("text-change", (delta, oldDelta, source) => {
   var content = quill.getContents();
   browser.storage.local.set({notes: content}).then(() => {
+    debounceLoadContent();
     browser.storage.local.get(["bearer", "keys"], function(data) {
       // If we have a bearer, we try to save the content.
       if(data.hasOwnProperty('bearer') && typeof data.bearer == "string") {
