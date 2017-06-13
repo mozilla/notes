@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: ws: 'unsafe-inline' https://ssl.gstatic.com 'unsafe-eval'; style-src 'self'  https://* 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="vendor/quill.snow.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="vendor/material.min.css">
+        <link rel="stylesheet" type="text/css" href="vendor/material.blue.min.css">
+        <title>Firefox Notes</title>
+    </head>
+    <body>
+        <div class="app">
+            <!--Onboarding-->
+            <div id="onboarding">
+                <div class="onboarding-container">
+                    <img src="assets/notes-512.png">
+                    <div class="tagline">Get your notes from Firefox</div>
+                    <div class="signin" id="signin"><a href="#">Sign In</a></div>
+                    <div class="learnmore"><a href="#">Learn More...</a></div>
+                </div>
+            </div>
+
+            <!--Actual Editor-->
+            <div id="editor-container">
+              <!-- MDL Progress Bar with Indeterminate Progress -->
+              <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+                <header class="mdl-layout__header">
+                  <div class="mdl-layout__header-row">
+                    <!-- Title -->
+                    <span class="mdl-layout-title">Firefox Notes</span>
+                    <!-- Add spacer, to align navigation to the right -->
+                    <div class="mdl-layout-spacer"></div>
+                  </div>
+                </header>
+                <div class="mdl-layout__drawer">
+                  <span class="mdl-layout-title">Firefox Notes</span>
+                  <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" id="sync" href="">Sync</a>
+                    <span class="mdl-chip">
+                      <span class="mdl-chip__text">Synced Friday 10:30PM</span>
+                    </span>
+                    <a class="mdl-navigation__link signout" id="signout" href="">Sign Out</a>
+                  </nav>
+                </div>
+                <main class="mdl-layout__content">
+                  <div class="page-content">
+                    <div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+
+                    <!-- Create the Quill.js editor container -->
+                    <div id="editor"></div>
+                  </div>
+                </main>
+              </div>
+            </div>
+
+
+
+
+        </div>
+        <script type="text/javascript" src="vendor/FxaCrypto.relier.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="vendor/quill.js"></script>
+        <script type="text/javascript" src="vendor/material.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>

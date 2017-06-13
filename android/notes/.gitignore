@@ -1,0 +1,7 @@
+# Cordova generated
+platforms
+plugins
+res
+
+# Mac
+.DS_Store
