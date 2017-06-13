@@ -7,13 +7,17 @@ Open a notepad in the Firefox toolbar to store notes about your browsing.
 
 ## How to use it
 
-> Make sure to use node.js 6+
+> Make sure to use Node.js 6+.
 
-```console
-npm install
-npm run build
-npm run fx-web-ext
-```
+| Command | Description |
+|---------|-------------|
+| `npm install`   | Installs required Node.js dependencies.
+| `npm run build` | Builds the application as a Web Extension.
+| `npm run once`  | Launches Firefox with the Web Extension.
+
+## License
+
+[Mozilla Public License Version 2.0](LICENSE)
 
 
 ## Other
