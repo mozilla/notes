@@ -14,7 +14,6 @@ root: true
 
 rules:
   eqeqeq: error
-  indent: [error, 2]
   linebreak-style: [error, unix]
   no-console: warn
   no-var: error
