@@ -288,7 +288,7 @@ quill.on('text-change', () => {
   });
 });
 
-const enableSync = document.getElementById('enableSync');
+const enableSync = document.getElementById('enable-sync');
 enableSync.onclick = () => {
   browser.runtime.sendMessage({ action: 'authenticate' });
 };
