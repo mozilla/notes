@@ -141,16 +141,20 @@ function handleLocalContent(data) {
         {"attributes": {"size": "large"},
          "insert": "Sync them to our Android app: http://mzl.la/notes"},
         {"attributes": {"list": "ordered"}, "insert": "\n"}]});
+    debounceLoadContent();
+    // We don't want to merge the intro content.
+    console.log("contentWasSynced", true);
+    return browser.storage.local.set({contentWasSynced: true});
   } else {
     console.log("Content:", data["notes"]);
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data["notes"])) {
       console.log('different', data.notes, quill.getContents());
       quill.setContents(data["notes"]);
+      debounceLoadContent();
+      console.log("contentWasSynced", false);
+      return browser.storage.local.set({contentWasSynced: false});
     }
   }
-  debounceLoadContent();
-  console.log("contentWasSynced", false);
-  return browser.storage.local.set({contentWasSynced: false});
 }
 
 
