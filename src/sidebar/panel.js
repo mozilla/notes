@@ -1,11 +1,23 @@
 const client = new KintoClient('https://kinto.dev.mozaws.net/v1');
 
+const formats = [
+  'bold',
+  'font',
+  'italic',
+  'size',
+  'strike',
+  'header',
+  'indent',
+  'list'
+];
+
 const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: 'Take a note...',
   modules: {
     toolbar: '#toolbar'
-  }
+  },
+  formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
 // Encryption layer
