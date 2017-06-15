@@ -16,6 +16,7 @@
   "license": "MPL-2.0",
   "repository": "mozilla/notes",
   "scripts": {
+    "start": "web-ext run -s src",
     "build": "web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
     "clean": "rimraf web-ext-artifacts",
     "format": "prettier 'src/**/!(kinto-http|quill*).{css,js}' --single-quote --write",
