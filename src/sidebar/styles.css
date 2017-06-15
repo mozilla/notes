@@ -15,9 +15,17 @@ div#editor {
 }
 
 button#enableSync {
-  height: 30px;
+  min-height: 30px;
 }
 
 div#toolbar {
-  height: 40px;
+  min-height: 40px;
+}
+
+.ql-snow .ql-picker.ql-size {
+  width: 45px;
+}
+
+.ql-editor ol, .ql-editor ul {
+  padding: 0;
 }
