@@ -1,5 +1,7 @@
 # Firefox Notes
 
+[![CircleCI](https://circleci.com/gh/mozilla/notes.svg?style=svg)](https://circleci.com/gh/mozilla/notes)
+
 ## What it does
 
 Open a notepad in the Firefox toolbar to store notes about your browsing.
