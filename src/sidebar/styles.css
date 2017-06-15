@@ -14,7 +14,7 @@ div#editor {
   height: calc(100% - 70px);
 }
 
-button#enableSync {
+button#enable-sync {
   min-height: 30px;
 }
 
