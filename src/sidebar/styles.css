@@ -31,3 +31,7 @@ button#enable-sync {
 .ql-editor ol, .ql-editor ul {
   padding: 0;
 }
+
+.ql-editor ul {
+  margin-left: -5px;
+}
