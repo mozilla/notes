@@ -9,6 +9,9 @@ extends:
 globals:
   KintoClient: false
   Quill: false
+  Jose: false
+  JoseJWE: false
+  Metrics: false
 
 root: true
 
