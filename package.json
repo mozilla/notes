@@ -27,6 +27,7 @@
     "prebuild": "npm run clean"
   },
   "dependencies": {
+    "jose-jwe-jws": "^0.1.5",
     "kinto-http": "4.3.4",
     "quill": "1.2.6",
     "testpilot-metrics": "2.1.3"

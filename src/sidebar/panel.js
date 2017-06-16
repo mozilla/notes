@@ -24,143 +24,31 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
-// Encryption layer
-function base64URLencode(binary) {
-  return window
-    .btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/\=+$/m, '');
+const cryptographer = new Jose.WebCryptographer();
+cryptographer.setKeyEncryptionAlgorithm('A256KW');
+cryptographer.setContentEncryptionAlgorithm('A256GCM');
+
+// Shared Key
+function shared_key(key) {
+  return crypto.subtle.importKey(
+    'jwk',
+    { kty: key.kty, k: key.k.replace(/=/, '') },
+    'AES-KW',
+    true,
+    ['wrapKey', 'unwrapKey']
+  );
 }
 
-function base64URLdecode(base64URL) {
-  // Handle base64URL characters
-  let base64 = base64URL.replace(/\-/g, '+').replace(/_/g, '/');
-  // Handle padding
-  const expectedLength = base64.length + (4 - base64.length % 4) % 4;
-  const padLength = expectedLength - base64.length;
-  for (let i = 0; i < padLength; i++) {
-    base64 += '=';
-  }
-  return window.atob(base64);
-}
-
-function base64URLToArrayBuffer(base64) {
-  const binary_string = base64URLdecode(base64);
-  const len = binary_string.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
-  }
-  return bytes;
-}
-
-function arrayBufferToBase64URL(bytes) {
-  let binary = '';
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return base64URLencode(binary);
-}
-
-function buildJWE(iv, data) {
-  const ivBuf = new Uint8Array(iv.length);
-  iv.forEach((byte, i) => {
-    ivBuf[i] = byte;
-  });
-
-  const ciphertextBuf = new Uint8Array(data.length);
-  data.forEach((byte, i) => {
-    ciphertextBuf[i] = byte;
-  });
-
-  return JSON.stringify({
-    protected: base64URLencode(JSON.stringify({ enc: 'A256GCM' })),
-    iv: arrayBufferToBase64URL(ivBuf),
-    ciphertext: arrayBufferToBase64URL(ciphertextBuf)
-  });
-}
-
-const ivLen = 16;
 function encrypt(key, content) {
-  // Unique random generated IV
-  const initVector = new Uint8Array(ivLen);
-  crypto.getRandomValues(initVector);
-
-  // Prepare content
-  const encoder = new TextEncoder();
-  const data = encoder.encode(JSON.stringify(content));
-  return crypto.subtle
-    .importKey(
-      'jwk',
-      {
-        kty: key.kty,
-        k: key.k.replace(/=/, '')
-      },
-      'AES-GCM',
-      true,
-      ['encrypt']
-    )
-    .then(encryptionKey => {
-      return crypto.subtle.encrypt(
-        {
-          name: 'AES-GCM',
-          iv: initVector
-        },
-        encryptionKey,
-        data
-      );
-    })
-    .then(encryptedData => {
-      const jwe = buildJWE(initVector, new Uint8Array(encryptedData));
-      return jwe;
-    });
+  const encrypter = new JoseJWE.Encrypter(cryptographer, shared_key(key));
+  return encrypter.encrypt(JSON.stringify(content));
 }
 
-function parseJWE(jwe) {
-  const data = JSON.parse(jwe);
-  return {
-    iv: base64URLToArrayBuffer(data.iv),
-    ciphertext: base64URLToArrayBuffer(data.ciphertext)
-  };
-}
-
-function decrypt(key, jwe) {
-  let parts;
-  try {
-    parts = parseJWE(jwe);
-  } catch (err) {
-    return Promise.reject('Reset previously malformed saved pad');
-  }
-  return crypto.subtle
-    .importKey(
-      'jwk',
-      {
-        kty: key.kty,
-        k: key.k.replace(/=/, '')
-      },
-      'AES-GCM',
-      true,
-      ['decrypt']
-    )
-    .then(decryptionKey => {
-      return crypto.subtle.decrypt(
-        {
-          name: 'AES-GCM',
-          iv: parts.iv
-        },
-        decryptionKey,
-        parts.ciphertext
-      );
-    })
-    .then(decryptedArrayBuffer => {
-      const decoder = new TextDecoder();
-      return JSON.parse(decoder.decode(decryptedArrayBuffer));
-    })
-    .catch(err => {
-      console.error(err);
-    });
+function decrypt(key, encrypted) {
+  const decrypter = new JoseJWE.Decrypter(cryptographer, shared_key(key));
+  return decrypter.decrypt(encrypted).then(result => {
+    return JSON.parse(result);
+  });
 }
 
 function handleLocalContent(data) {
