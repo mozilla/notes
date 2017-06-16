@@ -1,3 +1,22 @@
+/**
+ * Google Analytics / TestPilot Metrics
+ */
+const TRACKING_ID = 'UA-101177676-1';
+// Note: normally the `UID` value would be generated and saved when the addon is
+// first installed.
+const UID = window.crypto.getRandomValues(new Uint32Array(1)).toString();
+const { sendEvent } = new Metrics({
+  id: 'notes@mozilla.com',
+  version: '0.0.1',
+  tid: TRACKING_ID,
+  uid: UID
+});
+
+sendEvent({ object: 'webext-loaded', method: 'click' });
+
+/**
+ * Kinto + FxA Prototype V1 Derived Key
+ */
 const KINTO_URL = 'https://kinto.dev.mozaws.net/v1/';
 const REDIRECT_URL = browser.identity.getRedirectURL();
 const CLIENT_ID = 'c6d74070a481bc10';
@@ -209,6 +228,10 @@ chrome.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       handleAuthentication();
+      sendEvent({
+        object: 'webext-button-authenticate',
+        method: 'click'
+      });
       break;
   }
 });
