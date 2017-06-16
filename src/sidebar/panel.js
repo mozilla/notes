@@ -1,5 +1,9 @@
 const client = new KintoClient('https://kinto.dev.mozaws.net/v1');
 
+const SYNC_BROWSER_SIDEBARS_CONTENT_SECONDS_FREQUENCY = 1.5;
+const LOAD_FROM_KINTO_SECONDS_FREQUENCY = 60;
+const STORE_TO_KINTO_SECONDS_FREQUENCY = 30;
+
 const formats = [
   'bold',
   'font',
@@ -245,7 +249,12 @@ function loadContent() {
     data => {
       // If we have a bearer, we try to save the content.
       console.log('Loading content.');
-      if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string' && lastRemoteLoad < Date.now() - 60000) {
+      if (
+        data.hasOwnProperty('bearer') &&
+        typeof data.bearer === 'string' &&
+        lastRemoteLoad < Date.now() - LOAD_FROM_KINTO_SECONDS_FREQUENCY * 1000
+      ) {
+        console.log('Loading from Kinto');
         const bearer = data.bearer;
         const keys = data.keys;
         client
@@ -293,7 +302,10 @@ function loadContent() {
 function debounceLoadContent() {
   // Debounce
   clearTimeout(loadContentTimeout);
-  loadContentTimeout = setTimeout(loadContent, 1500);
+  loadContentTimeout = setTimeout(
+    loadContent,
+    SYNC_BROWSER_SIDEBARS_CONTENT_SECONDS_FREQUENCY * 1000
+  );
 }
 
 loadContent();
@@ -331,7 +343,7 @@ function storeToKinto(bearer, keys, content) {
   };
   // Debounce
   clearTimeout(storageTimeout);
-  storageTimeout = setTimeout(later, 1500);
+  storageTimeout = setTimeout(later, STORE_TO_KINTO_SECONDS_FREQUENCY * 1000);
 }
 
 quill.on('text-change', () => {
