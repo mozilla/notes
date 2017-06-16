@@ -3,23 +3,25 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   margin: 0;
   overflow: hidden;
   padding: 0;
 }
 
+div#toolbar {
+  min-height: 40px;
+}
+
 div#editor {
-  height: 90%;
-  height: calc(100% - 70px);
+  flex: auto;
+  overflow: hidden;
 }
 
 button#enable-sync {
   min-height: 30px;
-}
-
-div#toolbar {
-  min-height: 40px;
 }
 
 .ql-snow .ql-picker.ql-size {
