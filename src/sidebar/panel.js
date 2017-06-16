@@ -21,8 +21,28 @@ const quill = new Quill('#editor', {
 });
 
 // Encryption layer
-function base64ToArrayBuffer(base64) {
-  const binary_string = window.atob(base64);
+function base64URLencode(binary) {
+  return window
+    .btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/\=+$/m, '');
+}
+
+function base64URLdecode(base64URL) {
+  // Handle base64URL characters
+  let base64 = base64URL.replace(/\-/g, '+').replace(/_/g, '/');
+  // Handle padding
+  const expectedLength = base64.length + (4 - base64.length % 4) % 4;
+  const padLength = expectedLength - base64.length;
+  for (let i = 0; i < padLength; i++) {
+    base64 += '=';
+  }
+  return window.atob(base64);
+}
+
+function base64URLToArrayBuffer(base64) {
+  const binary_string = base64URLdecode(base64);
   const len = binary_string.length;
   const bytes = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
@@ -31,27 +51,34 @@ function base64ToArrayBuffer(base64) {
   return bytes;
 }
 
-function arrayBufferToBase64(bytes) {
+function arrayBufferToBase64URL(bytes) {
   let binary = '';
   const len = bytes.byteLength;
   for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
-  return window.btoa(binary);
+  return base64URLencode(binary);
+}
+
+function buildJWE(iv, data) {
+  const ivBuf = new Uint8Array(iv.length);
+  iv.forEach((byte, i) => {
+    ivBuf[i] = byte;
+  });
+
+  const ciphertextBuf = new Uint8Array(data.length);
+  data.forEach((byte, i) => {
+    ciphertextBuf[i] = byte;
+  });
+
+  return JSON.stringify({
+    protected: base64URLencode(JSON.stringify({ enc: 'A256GCM' })),
+    iv: arrayBufferToBase64URL(ivBuf),
+    ciphertext: arrayBufferToBase64URL(ciphertextBuf)
+  });
 }
 
 const ivLen = 16;
-function joinIvAndData(iv, data) {
-  const buf = new Uint8Array(iv.length + data.length);
-  iv.forEach((byte, i) => {
-    buf[i] = byte;
-  });
-  data.forEach((byte, i) => {
-    buf[ivLen + i] = byte;
-  });
-  return buf;
-}
-
 function encrypt(key, content) {
   // Unique random generated IV
   const initVector = new Uint8Array(ivLen);
@@ -82,36 +109,25 @@ function encrypt(key, content) {
       );
     })
     .then(encryptedData => {
-      const encryptedContent = joinIvAndData(
-        initVector,
-        new Uint8Array(encryptedData)
-      );
-      const encrypted = arrayBufferToBase64(encryptedContent);
-      return encrypted;
+      const jwe = buildJWE(initVector, new Uint8Array(encryptedData));
+      return jwe;
     });
 }
 
-function separateIvFromData(buf) {
-  const iv = new Uint8Array(ivLen);
-  const data = new Uint8Array(buf.length - ivLen);
-
-  buf.forEach((byte, i) => {
-    if (i < ivLen) {
-      iv[i] = byte;
-    } else {
-      data[i - ivLen] = byte;
-    }
-  });
-  return { iv, data };
+function parseJWE(jwe) {
+  const data = JSON.parse(jwe);
+  return {
+    iv: base64URLToArrayBuffer(data.iv),
+    ciphertext: base64URLToArrayBuffer(data.ciphertext)
+  };
 }
 
-function decrypt(key, encryptedContent) {
-  const encryptedData = base64ToArrayBuffer(encryptedContent);
+function decrypt(key, jwe) {
   let parts;
   try {
-    parts = separateIvFromData(encryptedData);
+    parts = parseJWE(jwe);
   } catch (err) {
-    return Promise.resolve('Reset previously malformed saved pad');
+    return Promise.reject('Reset previously malformed saved pad');
   }
   return crypto.subtle
     .importKey(
@@ -131,7 +147,7 @@ function decrypt(key, encryptedContent) {
           iv: parts.iv
         },
         decryptionKey,
-        parts.data
+        parts.ciphertext
       );
     })
     .then(decryptedArrayBuffer => {
@@ -172,16 +188,18 @@ function handleLocalContent(data) {
         { attributes: { list: 'ordered' }, insert: '\n' }
       ]
     });
+    debounceLoadContent();
+    // We don't want to merge the intro content.
+    return browser.storage.local.set({ contentWasSynced: true });
   } else {
-    console.log('Content:', data['notes']);
-    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data['notes'])) {
-      console.log('different', data.notes, quill.getContents());
-      quill.setContents(data['notes']);
+    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
+      quill.setContents(data.notes);
+      debounceLoadContent();
+      return browser.storage.local.set({ contentWasSynced: false });
     }
   }
+  // Refresh content later.
   debounceLoadContent();
-  console.log('contentWasSynced', false);
-  return browser.storage.local.set({ contentWasSynced: false });
 }
 
 function handleConflictsMerge(contentWasSynced, local, remote) {
@@ -203,24 +221,22 @@ function handleConflictsMerge(contentWasSynced, local, remote) {
       debounceLoadContent();
     });
   } else {
-    console.log('Content', remote);
     return browser.storage.local
       .set({ notes: remote })
       .then(() => {
         if (JSON.stringify(quill.getContents()) !== JSON.stringify(remote)) {
-          console.log('different', remote, quill.getContents());
           quill.setContents(remote);
         }
         debounceLoadContent();
       })
       .then(() => {
-        console.log('contentWasSynced', true);
         return browser.storage.local.set({ contentWasSynced: true });
       });
   }
 }
 
 let loadContentTimeout;
+let lastRemoteLoad = -1;
 
 function loadContent() {
   loadContentTimeout = null;
@@ -228,8 +244,8 @@ function loadContent() {
     ['bearer', 'keys', 'contentWasSynced', 'notes'],
     data => {
       // If we have a bearer, we try to save the content.
-      console.log('Loading remote content.');
-      if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
+      console.log('Loading content.');
+      if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string' && lastRemoteLoad < Date.now() - 60000) {
         const bearer = data.bearer;
         const keys = data.keys;
         client
@@ -239,6 +255,7 @@ function loadContent() {
             headers: { Authorization: `Bearer ${bearer}` }
           })
           .then(result => {
+            lastRemoteLoad = Date.now();
             if (!result.hasOwnProperty('content')) {
               console.log('No remote content. Loading local content.');
               handleLocalContent(data);
@@ -253,6 +270,7 @@ function loadContent() {
                   );
                 })
                 .catch(err => {
+                  handleLocalContent(data);
                   console.error(err);
                 });
             }
@@ -262,7 +280,6 @@ function loadContent() {
             handleLocalContent(data);
             // Load local content and disconnect the user
             browser.storage.local.remove(['data', 'bearer']).then(() => {
-              console.log('contentWasSynced', false);
               return browser.storage.local.set({ contentWasSynced: false });
             });
           });
@@ -276,7 +293,7 @@ function loadContent() {
 function debounceLoadContent() {
   // Debounce
   clearTimeout(loadContentTimeout);
-  loadContentTimeout = setTimeout(loadContent, 1000);
+  loadContentTimeout = setTimeout(loadContent, 1500);
 }
 
 loadContent();
@@ -284,6 +301,7 @@ loadContent();
 let storageTimeout;
 
 function storeToKinto(bearer, keys, content) {
+  debounceLoadContent();
   const later = function() {
     storageTimeout = null;
     console.log('calling the client. Content: ', content);
@@ -301,28 +319,24 @@ function storeToKinto(bearer, keys, content) {
           );
       })
       .then(() => {
-        console.log('contentWasSynced', true);
         return browser.storage.local.set({ contentWasSynced: true });
       })
       .catch(err => {
         console.error(err);
         // Remove old login credentials.
         browser.storage.local.remove(['data', 'bearer']).then(() => {
-          console.log('contentWasSynced', false);
           return browser.storage.local.set({ contentWasSynced: false });
         });
       });
   };
   // Debounce
   clearTimeout(storageTimeout);
-  storageTimeout = setTimeout(later, 800);
-  debounceLoadContent();
+  storageTimeout = setTimeout(later, 1500);
 }
 
 quill.on('text-change', () => {
   const content = quill.getContents();
   browser.storage.local.set({ notes: content }).then(() => {
-    debounceLoadContent();
     browser.storage.local.get(['bearer', 'keys'], data => {
       // If we have a bearer, we try to save the content.
       if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
@@ -332,14 +346,17 @@ quill.on('text-change', () => {
   });
 });
 
+quill.on('editor-change', () => {
+  debounceLoadContent();
+});
+
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
 
 enableSync.onclick = () => {
   noteDiv.classList.add('visible');
   browser.runtime.sendMessage({ action: 'authenticate' });
-}
-
+};
 
 chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
