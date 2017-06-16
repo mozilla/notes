@@ -333,9 +333,13 @@ quill.on('text-change', () => {
 });
 
 const enableSync = document.getElementById('enable-sync');
+const noteDiv = document.getElementById('sync-note');
+
 enableSync.onclick = () => {
+  noteDiv.classList.add('visible');
   browser.runtime.sendMessage({ action: 'authenticate' });
-};
+}
+
 
 chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
