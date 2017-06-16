@@ -72,7 +72,7 @@ function buildJWE(iv, data) {
   });
 
   return JSON.stringify({
-    protected: window.btoa(JSON.stringify({ enc: 'A256GCM' })),
+    protected: base64URLencode(JSON.stringify({ enc: 'A256GCM' })),
     iv: arrayBufferToBase64URL(ivBuf),
     ciphertext: arrayBufferToBase64URL(ciphertextBuf)
   });
@@ -175,7 +175,7 @@ function handleLocalContent(data) {
         { attributes: { size: 'large' }, insert: 'You can: ' },
         { insert: '\n\n' },
         { attributes: { size: 'large' }, insert: 'Format your notes' },
-        { attributes: { list: 'ordered' }, insert: '\n' },
+        { attributes: { list: 'ordered',  size: 'large' }, insert: '\n' },
         {
           attributes: { size: 'large' },
           insert: 'Sync notes securely to your Firefox Account'
@@ -194,6 +194,7 @@ function handleLocalContent(data) {
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       quill.setContents(data.notes);
+      console.log(JSON.stringify(data.notes));
       debounceLoadContent();
       return browser.storage.local.set({ contentWasSynced: false });
     }
@@ -292,7 +293,7 @@ function loadContent() {
 function debounceLoadContent() {
   // Debounce
   clearTimeout(loadContentTimeout);
-  loadContentTimeout = setTimeout(loadContent, 1000);
+  loadContentTimeout = setTimeout(loadContent, 1500);
 }
 
 loadContent();
@@ -329,23 +330,23 @@ function storeToKinto(bearer, keys, content) {
   };
   // Debounce
   clearTimeout(storageTimeout);
-  storageTimeout = setTimeout(later, 800);
-  debounceLoadContent();
+  storageTimeout = setTimeout(later, 1500);
 }
 
 quill.on('text-change', () => {
   const content = quill.getContents();
-  debounceLoadContent();
   browser.storage.local.set({ notes: content }).then(() => {
-    debounceLoadContent();
     browser.storage.local.get(['bearer', 'keys'], data => {
-      debounceLoadContent();
       // If we have a bearer, we try to save the content.
       if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
         return storeToKinto(data.bearer, data.keys, content);
       }
     });
   });
+});
+
+quill.on('editor-change', () => {
+  debounceLoadContent();
 });
 
 const enableSync = document.getElementById('enable-sync');
