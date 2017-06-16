@@ -175,7 +175,7 @@ function handleLocalContent(data) {
         { attributes: { size: 'large' }, insert: 'You can: ' },
         { insert: '\n\n' },
         { attributes: { size: 'large' }, insert: 'Format your notes' },
-        { attributes: { list: 'ordered',  size: 'large' }, insert: '\n' },
+        { attributes: { list: 'ordered' }, insert: '\n' },
         {
           attributes: { size: 'large' },
           insert: 'Sync notes securely to your Firefox Account'
@@ -194,14 +194,12 @@ function handleLocalContent(data) {
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       quill.setContents(data.notes);
-      console.log(JSON.stringify(data.notes));
       debounceLoadContent();
       return browser.storage.local.set({ contentWasSynced: false });
     }
   }
+  // Refresh content later.
   debounceLoadContent();
-  console.log('contentWasSynced', false);
-  return browser.storage.local.set({ contentWasSynced: false });
 }
 
 function handleConflictsMerge(contentWasSynced, local, remote) {
@@ -238,6 +236,7 @@ function handleConflictsMerge(contentWasSynced, local, remote) {
 }
 
 let loadContentTimeout;
+let lastRemoteLoad = -1;
 
 function loadContent() {
   loadContentTimeout = null;
@@ -245,8 +244,8 @@ function loadContent() {
     ['bearer', 'keys', 'contentWasSynced', 'notes'],
     data => {
       // If we have a bearer, we try to save the content.
-      console.log('Loading remote content.');
-      if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
+      console.log('Loading content.');
+      if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string' && lastRemoteLoad < Date.now() - 60000) {
         const bearer = data.bearer;
         const keys = data.keys;
         client
@@ -256,6 +255,7 @@ function loadContent() {
             headers: { Authorization: `Bearer ${bearer}` }
           })
           .then(result => {
+            lastRemoteLoad = Date.now();
             if (!result.hasOwnProperty('content')) {
               console.log('No remote content. Loading local content.');
               handleLocalContent(data);
@@ -270,7 +270,7 @@ function loadContent() {
                   );
                 })
                 .catch(err => {
-                  quill.setContents(data.notes);
+                  handleLocalContent(data);
                   console.error(err);
                 });
             }
@@ -301,6 +301,7 @@ loadContent();
 let storageTimeout;
 
 function storeToKinto(bearer, keys, content) {
+  debounceLoadContent();
   const later = function() {
     storageTimeout = null;
     console.log('calling the client. Content: ', content);
