@@ -335,9 +335,11 @@ function storeToKinto(bearer, keys, content) {
 
 quill.on('text-change', () => {
   const content = quill.getContents();
+  debounceLoadContent();
   browser.storage.local.set({ notes: content }).then(() => {
     debounceLoadContent();
     browser.storage.local.get(['bearer', 'keys'], data => {
+      debounceLoadContent();
       // If we have a bearer, we try to save the content.
       if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
         return storeToKinto(data.bearer, data.keys, content);
