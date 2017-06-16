@@ -1,5 +1,6 @@
 html {
   height: 100%;
+  font-family: sans-serif;
 }
 
 body {
@@ -20,10 +21,6 @@ div#editor {
   overflow: hidden;
 }
 
-button#enable-sync {
-  min-height: 30px;
-}
-
 .ql-snow .ql-picker.ql-size {
   width: 45px;
 }
@@ -34,4 +31,50 @@ button#enable-sync {
 
 .ql-editor ul {
   margin-left: -5px;
+}
+
+/**
+Footer Styles
+ */
+
+footer * {
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+  display: block;
+  background: none;
+  border: none;
+}
+
+footer {
+  padding-bottom: 7px;
+  position: relative;
+}
+
+#enable-sync {
+  background: url('sync-16-inactive.svg') no-repeat;
+  background-position: 10px 10px;
+  padding: 9px 10px 5px 35px;
+}
+
+#menu {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+#sync-note {
+  display: none;
+  background: #E4E4E4;
+  border-radius: 5px;
+  width: 75%;
+  margin-left: 25%;
+  color: #424242;
+  padding: 10px;
+}
+
+#sync-note.visible {
+  display: block;
 }

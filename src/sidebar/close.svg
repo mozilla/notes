@@ -1,6 +1,9 @@
-<!-- This Source Code Form is subject to the terms of the Mozilla Public
-   - License, v. 2.0. If a copy of the MPL was not distributed with this
-   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <path fill="context-fill" d="M9.061,8l3.47-3.47A.75.75,0,0,0,11.47,3.47L8,6.939,4.53,3.47A.75.75,0,0,0,3.47,4.53L6.939,8,3.47,11.47A.75.75,0,1,0,4.53,12.53L8,9.061l3.47,3.47A.75.75,0,0,0,12.53,11.47Z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<path d="M9.1,8l3.5-3.5c0.3-0.3,0.3-0.8,0-1.1c-0.3-0.3-0.8-0.3-1,0L8,6.9L4.5,3.5c-0.3-0.3-0.8-0.3-1.1,0c-0.3,0.3-0.3,0.7,0,1
+	L6.9,8l-3.5,3.5c-0.3,0.3-0.3,0.8,0,1.1c0.3,0.3,0.8,0.3,1.1,0c0,0,0,0,0,0L8,9.1l3.5,3.5c0.3,0.3,0.8,0.3,1.1,0
+	c0.3-0.3,0.3-0.8,0-1L9.1,8z"/>
 </svg>
