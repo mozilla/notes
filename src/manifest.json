@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Notes",
+  "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
   "version": "1.2",
   "applications": {
@@ -24,7 +24,9 @@
     "tabs",
     "identity",
     "notifications",
-    "*://*/*"
+    "https://ssl.google-analytics.com/collect",
+    "https://accounts.firefox.com/*",
+    "https://kinto.dev.mozaws.net/v1/*"
   ],
 
   "options_ui": {
@@ -33,6 +35,7 @@
 
   "background": {
     "scripts": [
+      "vendor/testpilot-metrics.js",
       "background.js"
     ]
   },

@@ -22,7 +22,11 @@
     "format": "prettier 'src/**/!(kinto-http|quill*).{css,js}' --single-quote --write",
     "lint": "eslint src",
     "once": "web-ext run -s src",
+    "postinstall": "scripts/postinstall.sh",
     "postformat": "npm run lint -- --fix",
     "prebuild": "npm run clean"
+  },
+  "dependencies": {
+    "testpilot-metrics": "2.1.3"
   }
 }
