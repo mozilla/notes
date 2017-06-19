@@ -30,20 +30,6 @@ function handleLocalContent(data) {
             'This is a simple one-page notepad built in to Firefox that helps you get the most out of the web.'
         },
         { insert: '\n\n' },
-        { attributes: { size: 'large' }, insert: 'You can: ' },
-        { insert: '\n\n' },
-        { attributes: { size: 'large' }, insert: 'Format your notes' },
-        { attributes: { list: 'ordered' }, insert: '\n' },
-        {
-          attributes: { size: 'large' },
-          insert: 'Sync notes securely to your Firefox Account'
-        },
-        { attributes: { list: 'ordered' }, insert: '\n' },
-        {
-          attributes: { size: 'large' },
-          insert: 'Sync them to our Android app: http://mzl.la/notes'
-        },
-        { attributes: { list: 'ordered' }, insert: '\n' }
       ]
     });
   } else {
