@@ -15,7 +15,7 @@ Open a notepad in the Firefox toolbar to store notes about your browsing.
 |---------|-------------|
 | `npm install`   | Installs required Node.js dependencies.
 | `npm run build` | Builds the application as a Web Extension.
-| `npm run once`  | Launches Firefox with the Web Extension.
+| `npm start`     | Launches Firefox with the Web Extension.
 
 ## Licenses
 
