@@ -24,7 +24,6 @@
     "clean": "rimraf web-ext-artifacts",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "eslint src",
-    "once": "web-ext run -s src",
     "postformat": "npm run lint -- --fix",
     "postinstall": "scripts/postinstall.sh",
     "prebuild": "npm run clean",
