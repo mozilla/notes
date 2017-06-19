@@ -213,7 +213,8 @@ function handleAuthentication() {
           chrome.runtime.sendMessage({
             action: 'authenticated',
             bearer: bearerToken,
-            keys: decryptedKeys
+            keys: decryptedKeys,
+            lastModified: null
           });
         }
       );
