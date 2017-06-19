@@ -1,8 +1,7 @@
 const client = new KintoClient('https://kinto.dev.mozaws.net/v1');
 
-const SYNC_BROWSER_SIDEBARS_CONTENT_SECONDS_FREQUENCY = 1.5;
 const LOAD_FROM_KINTO_SECONDS_FREQUENCY = 60;
-const STORE_TO_KINTO_SECONDS_FREQUENCY = 30;
+const STORE_TO_KINTO_SECONDS_FREQUENCY = 10;
 
 const formats = [
   'bold',
@@ -80,21 +79,22 @@ function handleLocalContent(data) {
         { attributes: { list: 'ordered' }, insert: '\n' }
       ]
     });
-    debounceLoadContent();
     // We don't want to merge the intro content.
     return browser.storage.local.set({ contentWasSynced: true });
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       quill.setContents(data.notes);
-      debounceLoadContent();
       return browser.storage.local.set({ contentWasSynced: false });
     }
   }
-  // Refresh content later.
-  debounceLoadContent();
 }
 
-function handleConflictsMerge(contentWasSynced, local, remote) {
+function handleConflictsMerge(
+  contentWasSynced,
+  local,
+  remote,
+  remoteLastModified
+) {
   console.log('Content', local, remote);
   if (
     local &&
@@ -108,31 +108,30 @@ function handleConflictsMerge(contentWasSynced, local, remote) {
     newContent = newContent.ops.concat(local.ops);
     console.log('Merge conflict', newContent);
     // Set new content
-    return browser.storage.local.set({ notes: newContent }).then(() => {
-      quill.setContents(newContent);
-      debounceLoadContent();
-    });
+    return browser.storage.local
+      .set({ notes: newContent, lastModified: null, contentWasSynced: false })
+      .then(() => {
+        quill.setContents(newContent);
+      });
   } else {
     return browser.storage.local
-      .set({ notes: remote })
+      .set({
+        notes: remote,
+        lastModified: remoteLastModified,
+        contentWasSynced: true
+      })
       .then(() => {
         if (JSON.stringify(quill.getContents()) !== JSON.stringify(remote)) {
           quill.setContents(remote);
         }
-        debounceLoadContent();
-      })
-      .then(() => {
-        return browser.storage.local.set({ contentWasSynced: true });
       });
   }
 }
 
-let loadContentTimeout;
 let lastRemoteLoad = -1;
 
 function loadContent() {
-  loadContentTimeout = null;
-  browser.storage.local.get(
+  return browser.storage.local.get(
     ['bearer', 'keys', 'contentWasSynced', 'notes'],
     data => {
       // If we have a bearer, we try to save the content.
@@ -145,7 +144,7 @@ function loadContent() {
         console.log('Loading from Kinto');
         const bearer = data.bearer;
         const keys = data.keys;
-        client
+        return client
           .bucket('default')
           .collection('notes')
           .getData({
@@ -155,7 +154,11 @@ function loadContent() {
             lastRemoteLoad = Date.now();
             if (!result.hasOwnProperty('content')) {
               console.log('No remote content. Loading local content.');
-              handleLocalContent(data);
+              return browser.storage.local
+                .set({ lastModified: result.last_modified })
+                .then(() => {
+                  return handleLocalContent(data);
+                });
             } else {
               console.log('Encrypted Content:', result['content']);
               return decrypt(keys, result['content'])
@@ -163,36 +166,41 @@ function loadContent() {
                   handleConflictsMerge(
                     data.contentWasSynced,
                     data.notes,
-                    content
+                    content,
+                    result.last_modified
                   );
                 })
                 .catch(err => {
-                  handleLocalContent(data);
                   console.error(err);
+                  Promise.resolve(
+                    browser.storage.local
+                      .set({ lastModified: result.last_modified })
+                      .then(() => {
+                        return handleLocalContent(data);
+                      })
+                  );
                 });
             }
           })
           .catch(err => {
             console.error(err);
-            handleLocalContent(data);
-            // Load local content and disconnect the user
-            browser.storage.local.remove(['data', 'bearer']).then(() => {
-              return browser.storage.local.set({ contentWasSynced: false });
+            return handleLocalContent(data).then(() => {
+              // Load local content and disconnect the user
+              if (/HTTP 401/.test(err.message)) {
+                return browser.storage.local
+                  .remove(['data', 'bearer', 'lastModified'])
+                  .then(() => {
+                    return browser.storage.local.set({
+                      contentWasSynced: false
+                    });
+                  });
+              }
             });
           });
       } else {
-        handleLocalContent(data);
+        return handleLocalContent(data);
       }
     }
-  );
-}
-
-function debounceLoadContent() {
-  // Debounce
-  clearTimeout(loadContentTimeout);
-  loadContentTimeout = setTimeout(
-    loadContent,
-    SYNC_BROWSER_SIDEBARS_CONTENT_SECONDS_FREQUENCY * 1000
   );
 }
 
@@ -200,9 +208,10 @@ loadContent();
 
 let storageTimeout;
 
-function storeToKinto(bearer, keys, content) {
-  debounceLoadContent();
+function storeToKinto(bearer, keys, content, lastModified) {
   const later = function() {
+    // Tells other sidebar to avoid syncing
+    chrome.runtime.sendMessage('notes@mozilla.com', { action: 'syncing' });
     storageTimeout = null;
     console.log('calling the client. Content: ', content);
 
@@ -210,23 +219,31 @@ function storeToKinto(bearer, keys, content) {
     encrypt(keys, content)
       .then(encrypted => {
         console.log('Encrypted content:', encrypted);
-        return client
-          .bucket('default')
-          .collection('notes')
-          .setData(
-            { content: encrypted },
-            { headers: { Authorization: `Bearer ${bearer}` } }
-          );
+        return client.bucket('default').collection('notes').setData(
+          { content: encrypted, last_modified: lastModified },
+          {
+            headers: { Authorization: `Bearer ${bearer}` },
+            safe: lastModified !== null
+          }
+        );
       })
       .then(() => {
         return browser.storage.local.set({ contentWasSynced: true });
       })
       .catch(err => {
         console.error(err);
-        // Remove old login credentials.
-        browser.storage.local.remove(['data', 'bearer']).then(() => {
-          return browser.storage.local.set({ contentWasSynced: false });
-        });
+        if (/HTTP 412/.test(err.message)) {
+          // We need to reload the content and handle conflicts.
+          lastRemoteLoad = -1;
+          return loadContent();
+        } else if (/HTTP 401/.test(err.message)) {
+          // Remove old login credentials.
+          browser.storage.local
+            .remove(['data', 'bearer', 'lastModified'])
+            .then(() => {
+              return browser.storage.local.set({ contentWasSynced: false });
+            });
+        }
       });
   };
   // Debounce
@@ -234,20 +251,24 @@ function storeToKinto(bearer, keys, content) {
   storageTimeout = setTimeout(later, STORE_TO_KINTO_SECONDS_FREQUENCY * 1000);
 }
 
+let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
   browser.storage.local.set({ notes: content }).then(() => {
-    browser.storage.local.get(['bearer', 'keys'], data => {
+    // Notify other sidebars
+    if (!ignoreNextLoadEvent) {
+      chrome.runtime.sendMessage('notes@mozilla.com', {
+        action: 'text-change'
+      });
+    }
+    ignoreNextLoadEvent = false;
+    browser.storage.local.get(['bearer', 'keys', 'lastModified'], data => {
       // If we have a bearer, we try to save the content.
       if (data.hasOwnProperty('bearer') && typeof data.bearer === 'string') {
-        return storeToKinto(data.bearer, data.keys, content);
+        return storeToKinto(data.bearer, data.keys, content, data.lastModified);
       }
     });
   });
-});
-
-quill.on('editor-change', () => {
-  debounceLoadContent();
 });
 
 const enableSync = document.getElementById('enable-sync');
@@ -260,6 +281,14 @@ enableSync.onclick = () => {
 
 chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
+    case 'syncing':
+      // Remove calls from other sidebar, only one needs to sync.
+      clearTimeout(storageTimeout);
+      break;
+    case 'text-change':
+      ignoreNextLoadEvent = true;
+      loadContent();
+      break;
     case 'authenticated':
       // Load new content and update quill with it.
       browser.storage.local.get(
@@ -283,10 +312,11 @@ chrome.runtime.onMessage.addListener(eventData => {
                 if (result.hasOwnProperty('content')) {
                   console.log('Encrypted content:', result['content']);
                   return decrypt(keys, result['content']).then(content => {
-                    handleConflictsMerge(
+                    return handleConflictsMerge(
                       data.contentWasSynced,
                       data.notes,
-                      content
+                      content,
+                      result.last_modified
                     );
                   });
                 }
