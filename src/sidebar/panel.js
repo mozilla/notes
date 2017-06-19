@@ -81,6 +81,7 @@ const noteDiv = document.getElementById('sync-note');
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
+  browser.runtime.sendMessage({ action: 'authenticate' });
 };
 
 chrome.runtime.onMessage.addListener(eventData => {

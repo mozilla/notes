@@ -24,6 +24,13 @@
     "https://ssl.google-analytics.com/collect"
   ],
 
+  "background": {
+    "scripts": [
+      "vendor/testpilot-metrics.js",
+      "background.js"
+    ]
+  },
+
   "commands": {
     "_execute_sidebar_action": {
       "suggested_key": {
