@@ -6,6 +6,12 @@
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
   },
+  "dependencies": {
+    "jose-jwe-jws": "0.1.5",
+    "kinto-http": "4.3.4",
+    "quill": "1.2.6",
+    "testpilot-metrics": "2.1.3"
+  },
   "devDependencies": {
     "eslint": "^4.0.0",
     "prettier": "^1.4.4",
@@ -16,20 +22,14 @@
   "license": "MPL-2.0",
   "repository": "mozilla/notes",
   "scripts": {
-    "start": "web-ext run -s src",
     "build": "web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
     "clean": "rimraf web-ext-artifacts",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "eslint src",
     "once": "web-ext run -s src",
-    "postinstall": "scripts/postinstall.sh",
     "postformat": "npm run lint -- --fix",
-    "prebuild": "npm run clean"
-  },
-  "dependencies": {
-    "jose-jwe-jws": "^0.1.5",
-    "kinto-http": "4.3.4",
-    "quill": "1.2.6",
-    "testpilot-metrics": "2.1.3"
+    "postinstall": "scripts/postinstall.sh",
+    "prebuild": "npm run clean",
+    "start": "web-ext run -s src"
   }
 }
