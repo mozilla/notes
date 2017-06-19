@@ -32,6 +32,10 @@ div#editor {
   border-right: 0;
 }
 
+.ql-container.ql-snow {
+  border-bottom: 0;
+}
+
 .ql-editor ol, .ql-editor ul {
   padding: 0;
 }
@@ -63,6 +67,7 @@ footer {
 }
 
 #enable-sync {
+  border-top: 1px solid #ccc;
   text-align: left;
   background: url('sync-16-inactive.svg') no-repeat;
   background-position: 10px 10px;
