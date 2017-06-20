@@ -15,7 +15,7 @@ Quill.register(fontSizeStyle, true);
 
 const quill = new Quill('#editor', {
   theme: 'snow',
-  placeholder: 'Take a note...',
+  placeholder: browser.i18n.getMessage('emptyPlaceHolder'),
   modules: {
     toolbar: '#toolbar'
   },
@@ -26,12 +26,12 @@ function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents({
       ops: [
-        { attributes: { size: 'large', bold: true }, insert: 'Welcome!' },
+        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle') },
         { insert: '\n\n' },
         {
           attributes: { size: 'large' },
           insert:
-            'This is a simple one-page notepad built in to Firefox that helps you get the most out of the web.'
+            browser.i18n.getMessage('welcomeText')
         },
         { insert: '\n\n' }
       ]
@@ -68,6 +68,9 @@ quill.on('text-change', () => {
 
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
+enableSync.textContent = browser.i18n.getMessage('syncNotes');
+noteDiv.textContent = browser.i18n.getMessage('syncNotReady');
+
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
