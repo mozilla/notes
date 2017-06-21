@@ -29,6 +29,7 @@
     "postformat": "npm run lint -- --fix",
     "postinstall": "scripts/postinstall.sh",
     "prebuild": "npm run clean",
-    "start": "web-ext run -s src"
+    "start": "web-ext run -s src",
+    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
   }
 }

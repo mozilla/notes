@@ -26,5 +26,7 @@ You can build the add on with a different locale by using the --pref argument to
 ```WEB_EXT_PREF=general.useragent.locale=locale_to_test npm start```
 
 ## Testing with right to left
-You can test right to left locales by building with a locale that uses RTL text direction. (e.g ar)
+You can run ```npm run start-rtl``` to start the addon with the ar locale
+
+You can also test with a custom RTL locale of your choice with
 ```WEB_EXT_PREF=general.useragent.locale=ar npm start```
