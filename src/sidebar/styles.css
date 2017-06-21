@@ -2,6 +2,7 @@ html {
   height: 100%;
   font-family: sans-serif;
   line-height: 1.2em;
+  overflow: hidden;
 }
 
 body {
