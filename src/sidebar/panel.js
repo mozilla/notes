@@ -6,8 +6,15 @@ const formats = [
   'strike',
   'header',
   'indent',
-  'list'
+  'list',
+  'direction',
+  'align'
 ];
+const UI_LANG = browser.i18n.getUILanguage();
+const RTL_LANGS = ['ar', 'fa', 'he'];
+const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
+const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+
 
 const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
@@ -27,13 +34,13 @@ function handleLocalContent(data) {
     quill.setContents({
       ops: [
         { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle') },
-        { insert: '\n\n' },
+        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
         {
           attributes: { size: 'large' },
           insert:
             browser.i18n.getMessage('welcomeText')
         },
-        { insert: '\n\n' }
+        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
       ]
     });
   } else {
