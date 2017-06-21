@@ -9,6 +9,10 @@ const formats = [
   'list'
 ];
 
+const fontSizeStyle = Quill.import('attributors/style/size');
+fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
+Quill.register(fontSizeStyle, true);
+
 const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: 'Take a note...',
@@ -29,7 +33,7 @@ function handleLocalContent(data) {
           insert:
             'This is a simple one-page notepad built in to Firefox that helps you get the most out of the web.'
         },
-        { insert: '\n\n' },
+        { insert: '\n\n' }
       ]
     });
   } else {
