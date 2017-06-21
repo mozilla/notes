@@ -10,7 +10,7 @@ const formats = [
 ];
 
 const fontSizeStyle = Quill.import('attributors/style/size');
-fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px'];
+fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
 Quill.register(fontSizeStyle, true);
 
 const quill = new Quill('#editor', {
