@@ -20,6 +20,12 @@ const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
 Quill.register(fontSizeStyle, true);
 
+// add text direction icon to toolbar if RTL
+const qlDirection = document.getElementById('ql-direction');
+if (LANG_DIR === 'rtl') {
+  qlDirection.innerHTML = '<button class="ql-direction" value="rtl"></button>';
+}
+
 const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: browser.i18n.getMessage('emptyPlaceHolder'),
