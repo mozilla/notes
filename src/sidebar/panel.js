@@ -22,6 +22,39 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
+// Get pad stats
+function getPadStats() {
+  const content = quill.getContents();
+  const text = quill.getText();
+  const styles = {
+    size: false,
+    bold: false,
+    italic: false,
+    strike: false,
+    list: false
+  };
+
+  content.forEach(node => {
+    if (node.hasOwnProperty('attributes')) {
+      Object.keys(node.attributes).forEach(key => {
+        if (styles.hasOwnProperty(key)) {
+          styles.key = true;
+        }
+      });
+    }
+  });
+
+  return {
+    syncEnabled: false,
+    characters: text.length,
+    lineBreaks: (text.match(/\n/g) || []).length,
+    usesBold: styles.bold,
+    usesItalics: styles.italic,
+    usesStrikethrough: styles.strike,
+    usesList: styles.list
+  };
+}
+
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents({
