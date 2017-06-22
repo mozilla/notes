@@ -6,16 +6,29 @@ const formats = [
   'strike',
   'header',
   'indent',
-  'list'
+  'list',
+  'direction',
+  'align'
 ];
+const UI_LANG = browser.i18n.getUILanguage();
+const RTL_LANGS = ['ar', 'fa', 'he'];
+const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
+const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+
 
 const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
 Quill.register(fontSizeStyle, true);
 
+// add text direction icon to toolbar if RTL
+const qlDirection = document.getElementById('ql-direction');
+if (LANG_DIR === 'rtl') {
+  qlDirection.innerHTML = '<button class="ql-direction" value="rtl"></button>';
+}
+
 const quill = new Quill('#editor', {
   theme: 'snow',
-  placeholder: 'Take a note...',
+  placeholder: browser.i18n.getMessage('emptyPlaceHolder'),
   modules: {
     toolbar: '#toolbar'
   },
@@ -26,14 +39,14 @@ function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents({
       ops: [
-        { attributes: { size: 'large', bold: true }, insert: 'Welcome!' },
-        { insert: '\n\n' },
+        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle') },
+        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
         {
           attributes: { size: 'large' },
           insert:
-            'This is a simple one-page notepad built in to Firefox that helps you get the most out of the web.'
+            browser.i18n.getMessage('welcomeText')
         },
-        { insert: '\n\n' }
+        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
       ]
     });
   } else {
@@ -68,6 +81,9 @@ quill.on('text-change', () => {
 
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
+enableSync.textContent = browser.i18n.getMessage('syncNotes');
+noteDiv.textContent = browser.i18n.getMessage('syncNotReady');
+
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');

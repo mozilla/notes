@@ -3,7 +3,7 @@ const spawn = require('cross-spawn');
 
 const locales = '*';
 
-const result = spawn.sync('pontoon-to-webext', [], {
+const result = spawn.sync('pontoon-to-webext', ['--dest=src/_locales'], {
   stdio: 'inherit',
   env: Object.assign(
     {},

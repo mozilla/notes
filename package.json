@@ -22,13 +22,14 @@
   "license": "MPL-2.0",
   "repository": "mozilla/notes",
   "scripts": {
-    "build": "web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
+    "build": "node scripts/build-locales && web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
     "clean": "rimraf web-ext-artifacts",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "eslint src",
     "postformat": "npm run lint -- --fix",
     "postinstall": "scripts/postinstall.sh",
     "prebuild": "npm run clean",
-    "start": "web-ext run -s src"
+    "start": "web-ext run -s src",
+    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
   }
 }
