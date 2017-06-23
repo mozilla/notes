@@ -68,7 +68,7 @@ An event fired when the user actively navigates away from the Notes sidebar. Inc
 - `cd7`
 
 #### `changed`
-An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 120 seconds. Includes:
+An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 20 seconds. Includes:
 
 - `ec` - `notes`
 - `ea` - `changed`
