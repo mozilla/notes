@@ -84,6 +84,12 @@ const noteDiv = document.getElementById('sync-note');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 noteDiv.textContent = browser.i18n.getMessage('syncNotReady');
 
+const qlEditor = document.querySelectorAll('.ql-editor');
+qlEditor[0].addEventListener("drop", function() {
+  // TODO: add metrics here to see how many users try to drag and drop!
+  return false;
+});
+
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
