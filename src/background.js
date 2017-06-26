@@ -1,4 +1,12 @@
 /**
+ * Kinto configuration
+ */
+const KINTO_SERVER = "https://kinto.dev.mozaws.net/v1";
+const REDIRECT_URL = browser.identity.getRedirectURL();
+const CLIENT_ID = 'c6d74070a481bc10';
+
+
+/**
  * Google Analytics / TestPilot Metrics
  */
 const TRACKING_ID = 'UA-101177676-1';
@@ -26,11 +34,12 @@ browser.storage.local.get('UID').then((data) => {
     case 'authenticate':
       browser.storage.local.set({'asked-for-syncing': true})
       .then(() => {
-          sendEvent({
-            object: 'webext-button-authenticate',
-            method: 'click'
-          });
+        sendEvent({
+          object: 'webext-button-authenticate',
+          method: 'click'
         });
+        handleAuthentication(KINTO_SERVER, REDIRECT_URL, CLIENT_ID);
+      });
       break;
     }
   });
