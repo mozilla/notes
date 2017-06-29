@@ -1,7 +1,7 @@
 /**
  * Kinto configuration
  */
-const KINTO_SERVER = "https://kinto.dev.mozaws.net/v1";
+const KINTO_SERVER = "https://kinto-ota.dev.mozaws.net/v1";
 const REDIRECT_URL = browser.identity.getRedirectURL();
 const CLIENT_ID = 'c6d74070a481bc10';
 

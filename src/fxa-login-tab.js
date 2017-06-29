@@ -40,9 +40,24 @@ function getURLParams(updatedTabURL, redirectURL) {
  */
 
 function handleAuthentication(kinto_server, redirectURL, client_id) {
-  const authenticateURL = `${kinto_server}/fxa-oauth/login?client_id=${client_id}&redirect=${encodeURIComponent(redirectURL)}`;
-  console.log("Starting auth.");
-  chrome.tabs.create({ 'url': authenticateURL }, function () {
-    chrome.tabs.onUpdated.addListener(tabCallback(redirectURL));
+  // Get params
+  fetch(`${kinto_server}/fxa-oauth/params`).then(response => {
+    return response.json().then(body => {
+      // Build authentication URL
+      const {oauth_uri, client_id, scope} = body;
+      const state = createRandomString(16);
+      const code_verifier = createRandomString(32);
+      browser.storage.local.set({fxa: {client_id, state, code_verifier}})
+        .then(() => {
+          sha256(code_verifier).then(code_challenge => {
+            const params = {oauth_uri, client_id, scope, state, code_challenge};
+            const authenticateURL = getAuthenticationURL(params);
+            console.log("Starting auth.");
+            chrome.tabs.create({ 'url': authenticateURL }, function () {
+              chrome.tabs.onUpdated.addListener(tabCallback(redirectURL));
+            });
+          });
+        });
+    });
   });
 }
