@@ -23,7 +23,7 @@
   "repository": "mozilla/notes",
   "scripts": {
     "build": "node scripts/build-locales && web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
-    "clean": "rimraf web-ext-artifacts",
+    "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' && npm run postinstall",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "eslint src",
     "postformat": "npm run lint -- --fix",
