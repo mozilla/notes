@@ -43,12 +43,12 @@ const size = document.getElementsByClassName('ql-size')[0],
       bullet = document.getElementsByClassName('ql-list')[1];
 
 // Setting button titles in place of tooltips
-size.title = browser.i18n.getMessage('fontSizeTitle'),
-  bold.title = browser.i18n.getMessage('boldTitle'),
-  italic.title = browser.i18n.getMessage('italicTitle'),
-  strike.title = browser.i18n.getMessage('strikethroughTitle'),
-  ordered.title = browser.i18n.getMessage('numberedListTitle'),
-  bullet.title = browser.i18n.getMessage('bulletedListTitle');
+size.title = browser.i18n.getMessage('fontSizeTitle')
+bold.title = browser.i18n.getMessage('boldTitle')
+italic.title = browser.i18n.getMessage('italicTitle')
+strike.title = browser.i18n.getMessage('strikethroughTitle')
+ordered.title = browser.i18n.getMessage('numberedListTitle')
+bullet.title = browser.i18n.getMessage('bulletedListTitle')
 
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
