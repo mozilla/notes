@@ -86,6 +86,33 @@ footer {
   padding: 15px 4%;
   background: #FFECAD;
   width: 92%;
+}
+
+#sync-note #close {
+  text-align: right;
+}
+
+#close {
+/*  border: solid blue 1px;*/
+  width: 100%;
+  display: inline-block;
+  float: right;
+}
+
+#close-button {
+  padding: 0 3px;
+}
+
+#close-button:hover {
+  cursor: default;
+  background: #5f4900;
+  color: #fffefa;
+  border: solid #5f4900 1px;
+  border-radius: 10%;
+}
+
+#sync-note-dialogue {
+  width: 100%;
   color: #424242;
 }
 

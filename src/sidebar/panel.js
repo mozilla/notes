@@ -81,9 +81,15 @@ quill.on('text-change', () => {
 
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
+const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
-noteDiv.textContent = browser.i18n.getMessage('syncNotReady');
 
+//todo: add const for sync-note-p
+document.getElementById('sync-note-dialogue').textContent = browser.i18n.getMessage('syncNotReady');
+
+closeButton.addEventListener('click', () => {
+  noteDiv.classList.toggle('visible');
+});
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
