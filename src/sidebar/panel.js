@@ -84,7 +84,6 @@ const noteDiv = document.getElementById('sync-note');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 noteDiv.textContent = browser.i18n.getMessage('syncNotReady');
 
-
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
   browser.runtime.sendMessage({ action: 'authenticate' });
@@ -97,4 +96,11 @@ chrome.runtime.onMessage.addListener(eventData => {
       loadContent();
       break;
   }
+});
+
+// disable drop of links and images into notes
+const qlEditor = document.querySelectorAll('.ql-editor');
+qlEditor[0].addEventListener('drop', (e) => {
+  e.preventDefault();
+  return false;
 });
