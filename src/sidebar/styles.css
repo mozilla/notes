@@ -83,35 +83,29 @@ footer {
 
 #sync-note {
   display: none;
-  padding: 15px 4%;
+  padding: 8px 4% 15px 4%;
   background: #FFECAD;
   width: 92%;
 }
 
-#sync-note #close {
-  text-align: right;
-}
-
 #close {
-/*  border: solid blue 1px;*/
   width: 100%;
-  display: inline-block;
-  float: right;
+  position: relative;
+  margin: 0 auto;
 }
 
 #close-button {
-  padding: 0 3px;
+  width: 14px;  
+  position: absolute;
+  right: 5px;
 }
 
 #close-button:hover {
-  cursor: default;
-  background: #5f4900;
-  color: #fffefa;
-  border: solid #5f4900 1px;
-  border-radius: 10%;
+  cursor: pointer;
 }
 
 #sync-note-dialogue {
+  margin: 4px auto 0px auto;
   width: 100%;
   color: #424242;
 }
