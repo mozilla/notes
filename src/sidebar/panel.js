@@ -35,6 +35,22 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
+const size = document.getElementsByClassName('ql-size')[0],
+      bold = document.getElementsByClassName('ql-bold')[0],
+      italic = document.getElementsByClassName('ql-italic')[0],
+      strike = document.getElementsByClassName('ql-strike')[0],
+      ordered = document.getElementsByClassName('ql-list')[0],
+      bullet = document.getElementsByClassName('ql-list')[1];
+
+// Setting button titles in place of tooltips
+size.title = browser.i18n.getMessage('fontSizeTitle');
+bold.title = browser.i18n.getMessage('boldTitle');
+italic.title = browser.i18n.getMessage('italicTitle');
+strike.title = browser.i18n.getMessage('strikethroughTitle');
+ordered.title = browser.i18n.getMessage('numberedListTitle');
+bullet.title = browser.i18n.getMessage('bulletedListTitle');
+qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
+
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents({
@@ -102,4 +118,11 @@ chrome.runtime.onMessage.addListener(eventData => {
       loadContent();
       break;
   }
+});
+
+// disable drop of links and images into notes
+const qlEditor = document.querySelectorAll('.ql-editor');
+qlEditor[0].addEventListener('drop', (e) => {
+  e.preventDefault();
+  return false;
 });
