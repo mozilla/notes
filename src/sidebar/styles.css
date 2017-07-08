@@ -89,15 +89,16 @@ footer {
 }
 
 #close {
-  width: 100%;
+  float: right;
   position: relative;
   margin: 0 auto;
 }
 
 #close-button {
-  width: 14px;  
+  width: 14px;
   position: absolute;
-  right: 5px;
+  top: -8px;
+  right: 0px;
 }
 
 #close-button:hover {
@@ -105,7 +106,6 @@ footer {
 }
 
 #sync-note-dialogue {
-  margin: 4px auto 0px auto;
   width: 100%;
   color: #424242;
 }
