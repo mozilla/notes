@@ -5,6 +5,7 @@ const TRACKING_ID = 'UA-35433268-79';
 
 const timeouts = {};
 
+
 browser.storage.local.get('UID').then((data) => {
   let UID;
   // Read the previous UID value or create a new one
