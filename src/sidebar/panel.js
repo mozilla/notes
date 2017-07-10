@@ -21,8 +21,8 @@ const bindings = {
     key: 'X',
     shiftKey: true,
     shortKey: true,
-    handler: function(range, context) {
-      if (this.quill.getFormat(range).strike == true)
+    handler: function(range) {
+      if (this.quill.getFormat(range).strike === true)
         this.quill.formatText(range, 'strike', false);
       else
         this.quill.formatText(range, 'strike', true);
@@ -31,26 +31,24 @@ const bindings = {
     key: '1',
     shiftKey: true,
     shortKey: true,
-    handler: function(range, context) {
-      console.log(this.quill.getFormat(range));
-      if (this.quill.getFormat(range).list === "ordered")
+    handler: function(range) {
+      if (this.quill.getFormat(range).list === 'ordered')
         this.quill.formatLine(range, {'list': false}, true);
       else
-        this.quill.formatLine(range, {'list': "ordered"}, true);
+        this.quill.formatLine(range, {'list': 'ordered'}, true);
     }
   }, bullet: {        // ⌘/Ctrl+Shift+2
     key: '2',
     shiftKey: true,
     shortKey: true,
-    handler: function(range, context) {
-      console.log(this.quill.getFormat(range));
-      if (this.quill.getFormat(range).list === "bullet")
+    handler: function(range) {
+      if (this.quill.getFormat(range).list === 'bullet')
         this.quill.formatLine(range, {'list': false}, true);
       else
-        this.quill.formatLine(range, {'list': "bullet"}, true);
+        this.quill.formatLine(range, {'list': 'bullet'}, true);
     }
   }
-}
+};
 
 const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
@@ -74,9 +72,9 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
-var userOSKey;
+let userOSKey;
 
-if (navigator.appVersion.indexOf("Mac") != -1)
+if (navigator.appVersion.indexOf('Mac') !== -1)
   userOSKey = '⌘';
 else
   userOSKey = 'Ctrl';
@@ -90,11 +88,11 @@ const size = document.getElementsByClassName('ql-size')[0],
 
 // Setting button titles in place of tooltips
 size.title = browser.i18n.getMessage('fontSizeTitle');
-bold.title = browser.i18n.getMessage('boldTitle') + "(" + userOSKey + "+B)";
-italic.title = browser.i18n.getMessage('italicTitle') + "(" + userOSKey + "+I)";
-strike.title = browser.i18n.getMessage('strikethroughTitle') + "(" + userOSKey + "+Shift+" + bindings.strike.key + ")";
-ordered.title = browser.i18n.getMessage('numberedListTitle') + "(" + userOSKey + "+Shift+" + bindings.ordered.key + ")";
-bullet.title = browser.i18n.getMessage('bulletedListTitle') + "(" + userOSKey + "+Shift+" + bindings.bullet.key + ")";
+bold.title = browser.i18n.getMessage('boldTitle') + '(' + userOSKey + '+B)';
+italic.title = browser.i18n.getMessage('italicTitle') + '(' + userOSKey + '+I)';
+strike.title = browser.i18n.getMessage('strikethroughTitle') + '(' + userOSKey + '+Shift+' + bindings.strike.key + ')';
+ordered.title = browser.i18n.getMessage('numberedListTitle') + '(' + userOSKey + '+Shift+' + bindings.ordered.key + ')';
+bullet.title = browser.i18n.getMessage('bulletedListTitle') + '(' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
 
 function handleLocalContent(data) {
