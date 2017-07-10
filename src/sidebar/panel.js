@@ -55,12 +55,12 @@ function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents({
       ops: [
-        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle') },
+        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
         { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
         {
           attributes: { size: 'large' },
           insert:
-            browser.i18n.getMessage('welcomeText')
+            browser.i18n.getMessage('welcomeText2')
         },
         { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
       ]
@@ -100,7 +100,7 @@ const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
-syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady');
+syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
