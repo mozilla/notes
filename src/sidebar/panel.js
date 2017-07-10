@@ -1,3 +1,34 @@
+// SmartBreak configuration
+let Delta = Quill.import('delta');
+let Break = Quill.import('blots/break');
+let Embed = Quill.import('blots/embed');
+
+function lineBreakMatcher() {
+  var newDelta = new Delta();
+  newDelta.insert({'break': ''});
+  return newDelta;
+}
+
+class SmartBreak extends Break {
+  length () {
+    return 1;
+  }
+  value () {
+    return '\n';
+  }
+
+  insertInto(parent, ref) {
+    Embed.prototype.insertInto.call(this, parent, ref);
+  }
+}
+
+SmartBreak.blotName = 'break';
+SmartBreak.tagName = 'BR';
+
+Quill.register(SmartBreak);
+
+// Toolbar configuration
+
 const formats = [
   'bold',
   'font',
@@ -30,10 +61,39 @@ const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: browser.i18n.getMessage('emptyPlaceHolder'),
   modules: {
-    toolbar: '#toolbar'
+    toolbar: '#toolbar',
+    clipboard: {
+      matchers: [
+        ['BR', lineBreakMatcher]
+      ]
+    },
+    keyboard: {
+      bindings: {
+        linebreak: {
+          key: 13,
+          shiftKey: true,
+          handler: function (range) {
+            let currentLeaf = this.quill.getLeaf(range.index)[0];
+            let nextLeaf = this.quill.getLeaf(range.index + 1)[0];
+
+            this.quill.insertEmbed(range.index, 'break', true, 'user');
+
+            // Insert a second break if:
+            // At the end of the editor, OR next leaf has a different parent (<p>)
+            if (nextLeaf === null || (currentLeaf.parent !== nextLeaf.parent)) {
+              this.quill.insertEmbed(range.index, 'break', true, 'user');
+            }
+
+            // Now that we've inserted a line break, move the cursor forward
+            this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
+          }
+        }
+      }
+    }
   },
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
+
 
 const size = document.getElementsByClassName('ql-size')[0],
       bold = document.getElementsByClassName('ql-bold')[0],
@@ -50,6 +110,7 @@ strike.title = browser.i18n.getMessage('strikethroughTitle');
 ordered.title = browser.i18n.getMessage('numberedListTitle');
 bullet.title = browser.i18n.getMessage('bulletedListTitle');
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
+
 
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
