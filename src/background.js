@@ -3,6 +3,7 @@
  */
 const TRACKING_ID = 'UA-101177676-1';
 
+
 browser.storage.local.get('UID').then((data) => {
   let UID;
   // Read the previous UID value or create a new one
@@ -19,19 +20,44 @@ browser.storage.local.get('UID').then((data) => {
     uid: UID
   });
 
-  sendEvent({ object: 'webext-loaded', method: 'click' });
-  
+  function sendMetrics(event, context = {}) {
+    const gaEvent = {
+      cm1: context.characters,
+      cm2: context.lineBreaks,
+      cm3: null,
+      cd1: context.syncEnabled,
+      cd2: null, // changed size of text
+      cd3: context.usesBold,
+      cd4: context.usesItalics,
+      cd5: context.usesStrikethrough,
+      cd6: context.usesList,
+      cd7: null, // Firefox UI used to open, close notepad
+      cd8: null, // reason editing session ended
+    };
+    console.log(event, context, gaEvent);
+    sendEvent({object: event, method: 'click'});
+  }
+
   browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       browser.storage.local.set({'asked-for-syncing': true})
       .then(() => {
-          sendEvent({
-            object: 'webext-button-authenticate',
-            method: 'click'
-          });
+          sendMetrics('sync-started', eventData.context);
         });
       break;
-    }
+    case 'metrics-open':
+      sendMetrics('open', eventData.context);
+      break;
+    case 'metrics-close':
+      sendMetrics('close', eventData.context);
+      break;
+    case 'metrics-changed':
+      sendMetrics('changed', eventData.context);
+      break;
+  }
   });
+
 });
+
+

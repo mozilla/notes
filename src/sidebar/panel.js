@@ -121,13 +121,22 @@ function handleLocalContent(data) {
 }
 
 function loadContent() {
-  browser.storage.local.get(['notes'], data => {
-    // If we have a bearer, we try to save the content.
-    handleLocalContent(data);
+  return new Promise((resolve) => {
+    browser.storage.local.get(['notes'], data => {
+      // If we have a bearer, we try to save the content.
+      handleLocalContent(data);
+      resolve();
+    });
   });
 }
 
-loadContent();
+loadContent()
+  .then(() => {
+    browser.runtime.sendMessage({
+      action: 'metrics-open',
+      context: getPadStats()
+    });
+  });
 
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
@@ -137,6 +146,11 @@ quill.on('text-change', () => {
     if (!ignoreNextLoadEvent) {
       chrome.runtime.sendMessage('notes@mozilla.com', {
         action: 'text-change'
+      });
+      // Debounce this second event
+      chrome.runtime.sendMessage({
+        action: 'metrics-changed',
+        context: getPadStats()
       });
     }
     ignoreNextLoadEvent = false;
@@ -159,7 +173,10 @@ closeButton.addEventListener('click', () => {
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
-  browser.runtime.sendMessage({ action: 'authenticate' });
+  browser.runtime.sendMessage({
+    action: 'authenticate',
+    context: getPadStats()
+  });
 };
 
 chrome.runtime.onMessage.addListener(eventData => {
@@ -189,3 +206,36 @@ document.addEventListener('drop', (e) => {
   qlEditor[0].classList.remove('forbid-cursor');
   return false;
 });
+
+function getPadStats() {
+  const content = quill.getContents();
+  const text = quill.getText();
+  const styles = {
+    size: false,
+    bold: false,
+
+    italic: false,
+    strike: false,
+    list: false
+  };
+
+  content.forEach(node => {
+    if (node.hasOwnProperty('attributes')) {
+      Object.keys(node.attributes).forEach(key => {
+        if (styles.hasOwnProperty(key)) {
+          styles.key = true;
+        }
+      });
+    }
+  });
+
+  return {
+    syncEnabled: false,
+    characters: text.length,
+    lineBreaks: (text.match(/\n/g) || []).length,
+    usesBold: styles.bold,
+    usesItalics: styles.italic,
+    usesStrikethrough: styles.strike,
+    usesList: styles.list
+  };
+}
