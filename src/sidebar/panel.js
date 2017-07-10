@@ -97,7 +97,7 @@ quill.on('text-change', () => {
 
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
-const syncNoteBody = document.getElementById('sync-note-dialogue');
+const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady');
