@@ -45,6 +45,10 @@ div#editor {
   margin-left: -5px;
 }
 
+.ql-editor p {
+	margin-bottom: 10px;
+}
+
 /**
 Footer Styles
  */

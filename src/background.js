@@ -20,7 +20,7 @@ browser.storage.local.get('UID').then((data) => {
   });
 
   sendEvent({ object: 'webext-loaded', method: 'click' });
-  
+
   browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
