@@ -122,7 +122,19 @@ chrome.runtime.onMessage.addListener(eventData => {
 
 // disable drop of links and images into notes
 const qlEditor = document.querySelectorAll('.ql-editor');
-qlEditor[0].addEventListener('drop', (e) => {
+
+document.addEventListener('dragover', () => {
+  qlEditor[0].classList.add('forbid-cursor');
+  return true;
+});
+
+document.addEventListener('dragleave', () => {
+  qlEditor[0].classList.remove('forbid-cursor');
+  return true;
+});
+
+document.addEventListener('drop', (e) => {
   e.preventDefault();
+  qlEditor[0].classList.remove('forbid-cursor');
   return false;
 });
