@@ -72,7 +72,16 @@ footer {
   text-align: left;
   background: url('sync-16-inactive.svg') no-repeat;
   background-position: 10px 10px;
-  padding: 9px 10px 5px 35px;
+  padding: 9px 10px 13px 35px;
+  margin-bottom: -8px;
+}
+
+#enable-sync:hover {
+  background-color: rgba(12, 12, 13, 0.10);
+}
+
+#enable-sync:active {
+  background-color: rgba(12, 12, 13, 0.15);
 }
 
 #menu {
