@@ -88,11 +88,11 @@ const size = document.getElementsByClassName('ql-size')[0],
 
 // Setting button titles in place of tooltips
 size.title = browser.i18n.getMessage('fontSizeTitle');
-bold.title = browser.i18n.getMessage('boldTitle') + '(' + userOSKey + '+B)';
-italic.title = browser.i18n.getMessage('italicTitle') + '(' + userOSKey + '+I)';
-strike.title = browser.i18n.getMessage('strikethroughTitle') + '(' + userOSKey + '+Shift+' + bindings.strike.key + ')';
-ordered.title = browser.i18n.getMessage('numberedListTitle') + '(' + userOSKey + '+Shift+' + bindings.ordered.key + ')';
-bullet.title = browser.i18n.getMessage('bulletedListTitle') + '(' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
+bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
+italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
+strike.title = browser.i18n.getMessage('strikethroughTitle') + ' (' + userOSKey + '+Shift+' + bindings.strike.key + ')';
+ordered.title = browser.i18n.getMessage('numberedListTitle') + ' (' + userOSKey + '+Shift+' + bindings.ordered.key + ')';
+bullet.title = browser.i18n.getMessage('bulletedListTitle') + ' (' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
 
 function handleLocalContent(data) {
