@@ -63,7 +63,6 @@ button {
 }
 
 footer {
-  padding-bottom: 7px;
   position: relative;
 }
 
@@ -72,16 +71,18 @@ footer {
   text-align: left;
   background: url('sync-16-inactive.svg') no-repeat;
   background-position: 10px 10px;
-  padding: 9px 10px 13px 35px;
-  margin-bottom: -8px;
+  padding: 9px 5px 9px 35px;
+  width: 100%;
 }
 
 #enable-sync:hover {
   background-color: rgba(12, 12, 13, 0.10);
+  box-shadow: inset 0px 0px 0px 5px #fff;
 }
 
 #enable-sync:active {
   background-color: rgba(12, 12, 13, 0.15);
+  box-shadow: inset 0px 0px 0px 5px #fff;
 }
 
 #menu {
