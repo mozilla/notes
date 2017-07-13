@@ -83,9 +83,9 @@ footer {
 
 #sync-note {
   display: none;
-  padding: 8px 4% 15px 4%;
+  padding: 8px 0% 15px 0%;
   background: #FFECAD;
-  width: 92%;
+  width: 100%;
 }
 
 #close {
@@ -99,6 +99,7 @@ footer {
   position: absolute;
   top: -8px;
   right: 0px;
+  margin-right: 2%;
 }
 
 #close-button:hover {
@@ -106,7 +107,8 @@ footer {
 }
 
 #sync-note-dialog {
-  width: 100%;
+  width: 92%;
+  margin: 0 10px;
   color: #424242;
 }
 
