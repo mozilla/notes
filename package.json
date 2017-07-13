@@ -23,7 +23,7 @@
   "license": "MPL-2.0",
   "repository": "mozilla/notes",
   "scripts": {
-    "build": "node scripts/build-locales && web-ext build -s src && unzip -l web-ext-artifacts/*.zip",
+    "build": "node scripts/build-locales && web-ext build -s src",
     "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' && npm run postinstall",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "npm-run-all lint:*",
