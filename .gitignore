@@ -1,5 +1,6 @@
 node_modules/
-web-ext-artifacts/
+signed-addon.xpi
 src/vendor/*
 src/sidebar/vendor/*
 src/_locales
+web-ext-artifacts/
