@@ -22,6 +22,8 @@
   },
 
   "permissions": [
+    "identity",
+    "tabs",
     "storage",
     "https://ssl.google-analytics.com/collect"
   ],
@@ -29,6 +31,8 @@
   "background": {
     "scripts": [
       "vendor/testpilot-metrics.js",
+      "fxa-oauth-flow.js",
+      "fxa-login-tab.js",
       "background.js"
     ]
   },
