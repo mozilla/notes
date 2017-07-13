@@ -39,10 +39,35 @@ function sendMetrics(event, context = {}) {
 browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
-      browser.storage.local.set({'asked-for-syncing': true})
-      .then(() => {
-          sendMetrics('sync-started', eventData.context);
+      sendEvent({
+        object: 'webext-button-authenticate',
+        method: 'click'
+      });
+
+      const fxaKeysUtil = new FxaCrypto.relier.OAuthUtils();
+
+      fxaKeysUtil.launchFxaScopedKeyFlow({
+        client_id: 'c6d74070a481bc10',
+        oauth_uri: 'http://127.0.0.1:9010/v1',
+        pkce: true,
+        redirect_uri: browser.identity.getRedirectURL(),
+        scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
+      }).then((loginDetails) => {
+        console.log('access token + keys', loginDetails);
+        chrome.runtime.sendMessage({
+          action: 'authenticated',
+          bearer: loginDetails.access_token,
+          keys: loginDetails.keys
         });
+
+      }, (err) => {
+        console.log('login failed', err);
+        chrome.runtime.sendMessage({
+          action: 'authenticated',
+          err: err
+        });
+        throw err;
+      });
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);

@@ -22,10 +22,12 @@
   },
   "permissions": [
     "storage",
+    "identity",
     "https://ssl.google-analytics.com/collect"
   ],
   "background": {
     "scripts": [
+      "vendor/dist/FxaCrypto.relier.js",
       "vendor/testpilot-ga.js",
       "background.js"
     ]
