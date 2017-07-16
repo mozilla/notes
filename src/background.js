@@ -48,7 +48,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
 
       fxaKeysUtil.launchFxaScopedKeyFlow({
         client_id: 'c6d74070a481bc10',
-        oauth_uri: 'http://127.0.0.1:9010/v1',
+        oauth_uri: 'https://oauth-scoped-keys.dev.lcip.org/v1',
         pkce: true,
         redirect_uri: browser.identity.getRedirectURL(),
         scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
