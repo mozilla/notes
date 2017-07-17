@@ -13,6 +13,7 @@ const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
 const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/txp-firefox-notes';
 
 // Additional keyboard shortcuts for non-default toolbar buttons
 const bindings = {
@@ -139,11 +140,14 @@ quill.on('text-change', () => {
 });
 
 const enableSync = document.getElementById('enable-sync');
+const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
+giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
+giveFeedback.setAttribute('href', SURVEY_PATH);
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');

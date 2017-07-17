@@ -3,6 +3,7 @@ html {
   font-family: sans-serif;
   line-height: 1.2em;
   overflow: hidden;
+  margin: 0;
 }
 
 body {
@@ -15,7 +16,7 @@ body {
 }
 
 div#toolbar {
-  min-height: 40px;
+  flex: 40px;
   width: 500px;
 }
 
@@ -63,32 +64,54 @@ button {
 
 footer {
   position: relative;
+  flex: 40px;
 }
 
-#sync-container {
-  padding: 5px 5px;
-  border-top: 1px solid #ccc;
-  background-color: #fff;
-  max-width: 100%;
+#footer-buttons {
+  align-items: stretch;
+  border-top: 1px solid #d7d7db;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
 }
 
 #enable-sync {
+  background-image: url('sync-16-inactive.svg');
+  background-position: 10px 12px;
+  background-repeat: no-repeat;
+  display: flex;
+  flex: 1 0;
+  padding: 0 10px 0 32px;
   text-align: left;
-  background: url('sync-16-inactive.svg') no-repeat;
-  background-position: 8px 8px;
-  padding: 5px 0 6px 30px;
-  width: 100%;
-  border-radius: 3px;
-  background-color: #fff;
 }
 
-#enable-sync:hover {
-  background-color: rgba(12, 12, 13, 0.10);
+#give-feedback {
+  background-image: url('feedback.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  flex: 0 0 40px;
 }
 
-#enable-sync:active {
-  background-color: rgba(12, 12, 13, 0.15);
+#footer-buttons button,
+#footer-buttons a {
+  background-color: #f9f9fa;
+  transition: background 50ms;
 }
+
+#footer-buttons button:hover,
+#footer-buttons a:hover {
+  background-color: #ebebee;
+}
+
+#footer-buttons button:active,
+#footer-buttons a:active {
+  background-color: #d7d7db;
+}
+
 
 #menu {
   position: absolute;
