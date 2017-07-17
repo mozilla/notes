@@ -52,7 +52,6 @@ Footer Styles
 footer * {
   font-size: 14px;
   min-height: 30px;
-  width: 500px;
 }
 
 button {
@@ -63,16 +62,32 @@ button {
 }
 
 footer {
-  padding-bottom: 7px;
   position: relative;
 }
 
-#enable-sync {
+#sync-container {
+  padding: 5px 5px;
   border-top: 1px solid #ccc;
+  background-color: #fff;
+  max-width: 100%;
+}
+
+#enable-sync {
   text-align: left;
   background: url('sync-16-inactive.svg') no-repeat;
-  background-position: 10px 10px;
-  padding: 9px 10px 5px 35px;
+  background-position: 8px 8px;
+  padding: 5px 0 6px 30px;
+  width: 100%;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+#enable-sync:hover {
+  background-color: rgba(12, 12, 13, 0.10);
+}
+
+#enable-sync:active {
+  background-color: rgba(12, 12, 13, 0.15);
 }
 
 #menu {
@@ -83,23 +98,21 @@ footer {
 
 #sync-note {
   display: none;
-  padding: 8px 0 15px 0;
+  padding: 15px 0 5px 0;
   background: #FFECAD;
   width: 100%;
-}
-
-#close {
-  float: right;
   position: relative;
   margin: 0 auto;
+  border: 1px solid #ccc;
+  border-bottom: 0;
 }
 
 #close-button {
-  width: 14px;
+  width: 16px;
   position: absolute;
-  top: -8px;
-  right: 0px;
-  margin-right: 2%;
+  top: -5px;
+  right: 5px;
+  padding: 0 0;
 }
 
 #close-button:hover {
@@ -108,7 +121,7 @@ footer {
 
 #sync-note-dialog {
   width: 92%;
-  margin: 0 10px;
+  margin: 5px 10px;
   color: #424242;
 }
 
