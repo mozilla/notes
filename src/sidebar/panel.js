@@ -4,7 +4,6 @@ const formats = [
   'italic',
   'size',
   'strike',
-  'header',
   'indent',
   'list',
   'direction',
