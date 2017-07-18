@@ -15,6 +15,16 @@ body {
   padding: 0;
 }
 
+div#loading {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: white;
+	z-index: 10;
+}
+
 div#toolbar {
   flex: 40px;
   width: 500px;
