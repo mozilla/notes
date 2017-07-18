@@ -1,3 +1,16 @@
+// Prevent repeating space and break layout. #94
+let debounceSpace;
+window.onkeydown = function(e) {
+  if (e.keyCode === 32) {
+    const later = function () { debounceSpace = null; };
+    const callNow = !debounceSpace;
+    clearTimeout(debounceSpace);
+    debounceSpace = setTimeout(later, 50);
+    return callNow;
+  }
+  return true;
+};
+
 const formats = [
   'bold',
   'font',
