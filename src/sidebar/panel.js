@@ -194,6 +194,10 @@ const qlEditor = document.querySelectorAll('.ql-editor');
 
 document.addEventListener('dragover', () => {
   qlEditor[0].classList.add('forbid-cursor');
+  browser.runtime.sendMessage({
+    action: 'metrics-drag-n-drop',
+    context: getPadStats()
+  });
   return true;
 });
 

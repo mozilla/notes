@@ -84,6 +84,24 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd7`
 - `cd8`
 
+#### `drag-n-drop`
+
+An event fired when the user tries to drag or drop a content into the notepad.
+
+- `ec` - `notes`
+- `ea` - `drag-n-drop`
+- `cm1`
+- `cm2`
+- `cm3`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`
+- `cd7`
+- `cd8`
+
 #### `sync-started`
 An event fired whenever the user attempts to login to sync. Includes:
 
