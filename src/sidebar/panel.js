@@ -50,6 +50,10 @@ const bindings = {
   }
 };
 
+const Block = Quill.import('blots/block');
+Block.tagName = 'DIV';
+Quill.register(Block, true);
+
 const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
 Quill.register(fontSizeStyle, true);
