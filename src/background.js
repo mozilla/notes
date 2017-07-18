@@ -97,9 +97,9 @@ browser.storage.local.get('UID').then((data) => {
         sendMetrics('changed', eventData.context);
       }
       break;
+    case 'metrics-drag-n-drop':
+      sendMetrics('drag-n-drop', eventData.context);
+      break;
   }
   });
-
 });
-
-
