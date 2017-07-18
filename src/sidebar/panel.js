@@ -132,6 +132,7 @@ function loadContent() {
 
 loadContent()
   .then(() => {
+    document.getElementById('loading').style.display = 'none';
     browser.runtime.sendMessage({
       action: 'metrics-open',
       context: getPadStats()
