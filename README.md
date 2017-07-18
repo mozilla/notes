@@ -27,7 +27,7 @@ The localization of the add-on happens in
 
 [Mozilla Public License Version 2.0](LICENSE)
 
-[Quill Rich Text Editor License](src/quill-license)
+[Quill Rich Text Editor License](https://github.com/quilljs/quill/blob/develop/LICENSE)
 
 ## Other
 
