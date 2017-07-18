@@ -76,6 +76,8 @@ browser.storage.local.get('UID').then((data) => {
     timeouts[event] = setTimeout(later, 20000);
   }
 
+  // Skip the first changed event.
+  let first = true;
   browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
@@ -91,7 +93,11 @@ browser.storage.local.get('UID').then((data) => {
       sendMetrics('close', eventData.context);
       break;
     case 'metrics-changed':
-      sendMetrics('changed', eventData.context);
+      if (first) {
+        first = false;
+      } else {
+        sendMetrics('changed', eventData.context);
+      }
       break;
   }
   });
