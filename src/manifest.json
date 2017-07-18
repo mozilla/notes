@@ -28,7 +28,6 @@
 
   "background": {
     "scripts": [
-      "vendor/testpilot-metrics.js",
       "background.js"
     ]
   },
