@@ -1,7 +1,7 @@
 /**
  * Google Analytics / TestPilot Metrics
  */
-const TRACKING_ID = 'UA-101177676-1';
+const TRACKING_ID = 'UA-35433268-79';
 
 
 browser.storage.local.get('UID').then((data) => {
