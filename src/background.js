@@ -48,7 +48,6 @@ browser.storage.local.get('UID').then((data) => {
         cd7: undefined, // Firefox UI used to open, close notepad
         cd8: undefined, // reason editing session ended
       };
-      console.log(event, context, gaEvent);
 
       let formBody = [];
 
@@ -68,7 +67,6 @@ browser.storage.local.get('UID').then((data) => {
       if (navigator.doNotTrack === 'unspecified') {
         return fetch('https://www.google-analytics.com/collect', request);
       } else {
-        console.log('Do not track activated, not sending anything.');
         return Promise.resolve();
       }
     };
