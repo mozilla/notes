@@ -115,5 +115,5 @@ footer {
 }
 
 .forbid-cursor {
-  cursor: no-drop !important;
+  cursor: no-drop;
 }
