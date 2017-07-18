@@ -2,7 +2,6 @@
 
 set -e
 
-cp node_modules/testpilot-metrics/testpilot-metrics.js src/vendor
 cp node_modules/quill/dist/quill.min.js src/sidebar/vendor/quill.js
 cp node_modules/quill/dist/quill.snow.css src/sidebar/vendor
 

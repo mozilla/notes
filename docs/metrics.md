@@ -84,6 +84,20 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd7`
 - `cd8`
 
+#### `sync-started`
+An event fired whenever the user attempts to login to sync. Includes:
+
+- `ec` - `notes`
+- `ea` - `sync-started`
+- `cm1`
+- `cm2`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`
+
 #### `sync-enabled`
 An event fired whenever the user enables sync. Includes:
 
