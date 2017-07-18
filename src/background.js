@@ -3,6 +3,7 @@
  */
 const TRACKING_ID = 'UA-35433268-79';
 
+const timeouts = {};
 
 browser.storage.local.get('UID').then((data) => {
   let UID;
@@ -13,29 +14,66 @@ browser.storage.local.get('UID').then((data) => {
   } else {
     UID = data.UID;
   }
-  const { sendEvent } = new Metrics({
-    id: 'notes@mozilla.com',
-    version: '1.3.0',
-    tid: TRACKING_ID,
-    uid: UID
-  });
 
   function sendMetrics(event, context = {}) {
-    const gaEvent = {
-      cm1: context.characters,
-      cm2: context.lineBreaks,
-      cm3: null,
-      cd1: context.syncEnabled,
-      cd2: null, // changed size of text
-      cd3: context.usesBold,
-      cd4: context.usesItalics,
-      cd5: context.usesStrikethrough,
-      cd6: context.usesList,
-      cd7: null, // Firefox UI used to open, close notepad
-      cd8: null, // reason editing session ended
+    const later = function() {
+      timeouts[event] = null;
+      const gaEvent = {
+        // Global information
+        v: 1,
+        tid: TRACKING_ID,
+        cid: UID,
+        aip: 1,  // Anonymize IP address
+        ds: 'addon',
+        z: Date.now() / 1000 | 0,  // Unix timestamp
+        ua: navigator.userAgent,
+        ul: navigator.language,
+        an: '@notes',
+        aid: 'notes@mozilla.com',
+        av: '1.5.0',
+        aiid: 'testpilot',
+        // Event specific information
+        t: 'event',
+        ec: 'notes',
+        ea: event,
+        cm1: context.characters,
+        cm2: context.lineBreaks,
+        cm3: undefined,  // Size of the change
+        cd1: context.syncEnabled,
+        cd2: context.usesSize,
+        cd3: context.usesBold,
+        cd4: context.usesItalics,
+        cd5: context.usesStrikethrough,
+        cd6: context.usesList,
+        cd7: undefined, // Firefox UI used to open, close notepad
+        cd8: undefined, // reason editing session ended
+      };
+      console.log(event, context, gaEvent);
+
+      let formBody = [];
+
+      for (const k in gaEvent) {
+        const encodedKey = encodeURIComponent(k);
+        const encodedValue = encodeURIComponent(gaEvent[k]);
+        formBody.push(encodedKey + '=' + encodedValue);
+      }
+      formBody = formBody.join('&');
+
+      const request = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: formBody
+      };
+
+      if (navigator.doNotTrack === 'unspecified') {
+        return fetch('https://www.google-analytics.com/collect', request);
+      } else {
+        console.log('Do not track activated, not sending anything.');
+        return Promise.resolve();
+      }
     };
-    console.log(event, context, gaEvent);
-    sendEvent({object: event, method: 'click'});
+    clearTimeout(timeouts[event]);
+    timeouts[event] = setTimeout(later, 20000);
   }
 
   browser.runtime.onMessage.addListener(function(eventData) {

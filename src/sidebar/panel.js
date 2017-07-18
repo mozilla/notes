@@ -223,7 +223,7 @@ function getPadStats() {
     if (node.hasOwnProperty('attributes')) {
       Object.keys(node.attributes).forEach(key => {
         if (styles.hasOwnProperty(key)) {
-          styles.key = true;
+          styles[key] = true;
         }
       });
     }
@@ -233,6 +233,7 @@ function getPadStats() {
     syncEnabled: false,
     characters: text.length,
     lineBreaks: (text.match(/\n/g) || []).length,
+    usesSize: styles.size,
     usesBold: styles.bold,
     usesItalics: styles.italic,
     usesStrikethrough: styles.strike,
