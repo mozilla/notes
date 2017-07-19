@@ -5,8 +5,6 @@ const TRACKING_ID = 'UA-35433268-79';
 
 const timeouts = {};
 
-const TestPilotGA = index.default;
-
 const analytics = new TestPilotGA({
   tid: TRACKING_ID,
   ds: 'addon',
