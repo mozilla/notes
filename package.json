@@ -7,7 +7,7 @@
     "url": "https://github.com/mozilla/notes/issues"
   },
   "dependencies": {
-    "quill": "1.3.0"
+    "quill": "1.2.6"
   },
   "devDependencies": {
     "cross-spawn": "^5.1.0",
