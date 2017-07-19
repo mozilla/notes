@@ -5,78 +5,40 @@ const TRACKING_ID = 'UA-35433268-79';
 
 const timeouts = {};
 
-browser.storage.local.get('UID').then((data) => {
-  let UID;
-  // Read the previous UID value or create a new one
-  if (!data.hasOwnProperty('UID')) {
-    UID = window.crypto.getRandomValues(new Uint32Array(1)).toString();
-    browser.storage.local.set({UID});  // Save it for next time
-  } else {
-    UID = data.UID;
-  }
+const analytics = new TestPilotGA({
+  tid: TRACKING_ID,
+  ds: 'addon',
+  an: 'Notes Experiment',
+  aid: 'notes@mozilla.com',
+  av: '1.5.0'
+});
 
-  function sendMetrics(event, context = {}) {
-    const later = function() {
-      timeouts[event] = null;
-      const gaEvent = {
-        // Global information
-        v: 1,
-        tid: TRACKING_ID,
-        cid: UID,
-        aip: 1,  // Anonymize IP address
-        ds: 'addon',
-        z: Date.now() / 1000 | 0,  // Unix timestamp
-        ua: navigator.userAgent,
-        ul: navigator.language,
-        an: '@notes',
-        aid: 'notes@mozilla.com',
-        av: '1.5.0',
-        aiid: 'testpilot',
-        // Event specific information
-        t: 'event',
-        ec: 'notes',
-        ea: event,
-        cm1: context.characters,
-        cm2: context.lineBreaks,
-        cm3: undefined,  // Size of the change
-        cd1: context.syncEnabled,
-        cd2: context.usesSize,
-        cd3: context.usesBold,
-        cd4: context.usesItalics,
-        cd5: context.usesStrikethrough,
-        cd6: context.usesList,
-        cd7: undefined, // Firefox UI used to open, close notepad
-        cd8: undefined, // reason editing session ended
-      };
+function sendMetrics(event, context = {}) {
+  // This function debounce sending metrics.
+  const later = function() {
+    timeouts[event] = null;
 
-      let formBody = [];
+    return analytics.sendEvent('notes', event, {
+      cm1: context.characters,
+      cm2: context.lineBreaks,
+      cm3: null,  // Size of the change
+      cd1: context.syncEnabled,
+      cd2: context.usesSize,
+      cd3: context.usesBold,
+      cd4: context.usesItalics,
+      cd5: context.usesStrikethrough,
+      cd6: context.usesList,
+      cd7: null, // Firefox UI used to open, close notepad
+      cd8: null, // reason editing session ended
+    });
+  };
+  clearTimeout(timeouts[event]);
+  timeouts[event] = setTimeout(later, 20000);
+}
 
-      for (const k in gaEvent) {
-        const encodedKey = encodeURIComponent(k);
-        const encodedValue = encodeURIComponent(gaEvent[k]);
-        formBody.push(encodedKey + '=' + encodedValue);
-      }
-      formBody = formBody.join('&');
-
-      const request = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: formBody
-      };
-
-      if (navigator.doNotTrack === 'unspecified') {
-        return fetch('https://www.google-analytics.com/collect', request);
-      } else {
-        return Promise.resolve();
-      }
-    };
-    clearTimeout(timeouts[event]);
-    timeouts[event] = setTimeout(later, 20000);
-  }
-
-  // Skip the first changed event.
-  let first = true;
-  browser.runtime.onMessage.addListener(function(eventData) {
+// Skip the first changed event.
+let first = true;
+browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       browser.storage.local.set({'asked-for-syncing': true})
@@ -101,5 +63,4 @@ browser.storage.local.get('UID').then((data) => {
       sendMetrics('drag-n-drop', eventData.context);
       break;
   }
-  });
 });

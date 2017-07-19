@@ -11,7 +11,7 @@ globals:
   Quill: false
   Jose: false
   JoseJWE: false
-  Metrics: false
+  TestPilotGA: false
 
 root: true
 
