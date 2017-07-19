@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "quill": "1.2.6",
-    "testpilot-ga": "^0.1.2"
+    "testpilot-ga": "^0.2.1"
   },
   "devDependencies": {
     "cross-spawn": "^5.1.0",
