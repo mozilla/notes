@@ -131,31 +131,36 @@ footer {
 
 #sync-note {
   display: none;
-  padding: 15px 0 5px 0;
+  padding: 0px 20px 1px 10px;
   background: #FFECAD;
   width: 100%;
   position: relative;
   margin: 0 auto;
-  border: 1px solid #ccc;
-  border-bottom: 0;
+  border-top: 1px solid #ccc;
 }
 
 #close-button {
   width: 16px;
   position: absolute;
-  top: -5px;
-  right: 5px;
+  top: -4px;
+  right: 2px;
   padding: 0 0;
+  opacity: 0.4;
 }
 
 #close-button:hover {
   cursor: pointer;
+  opacity: 0.6;
+}
+
+#close-button:active {
+  cursor: pointer;
+  opacity: 0.8;
 }
 
 #sync-note-dialog {
-  width: 92%;
-  margin: 5px 10px;
   color: #424242;
+  font-size: 12px;
 }
 
 #sync-note.visible {
