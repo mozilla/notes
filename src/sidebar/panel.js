@@ -133,10 +133,6 @@ function loadContent() {
 loadContent()
   .then(() => {
     document.getElementById('loading').style.display = 'none';
-    browser.runtime.sendMessage({
-      action: 'metrics-open',
-      context: getPadStats()
-    });
   });
 
 let ignoreNextLoadEvent = false;
@@ -245,3 +241,7 @@ function getPadStats() {
     usesList: styles.list
   };
 }
+
+// Create a connection with the background script to handle open and
+// close events.
+browser.runtime.connect();

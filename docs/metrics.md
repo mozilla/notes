@@ -42,30 +42,12 @@ An event fired when the user actively navigates to the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `open`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
-- `cd7`
 
 #### `close`
 An event fired when the user actively navigates away from the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `close`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
-- `cd7`
 
 #### `changed`
 An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 20 seconds. Includes:
