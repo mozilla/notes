@@ -28,6 +28,7 @@
 
   "background": {
     "scripts": [
+      "vendor/testpilot-qa.js",
       "background.js"
     ]
   },
