@@ -13,7 +13,7 @@ const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
 const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
-const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/txp-firefox-notes';
+const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 // Additional keyboard shortcuts for non-default toolbar buttons
 const bindings = {
