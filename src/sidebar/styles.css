@@ -3,6 +3,7 @@ html {
   font-family: sans-serif;
   line-height: 1.2em;
   overflow: hidden;
+  margin: 0;
 }
 
 body {
@@ -14,8 +15,18 @@ body {
   padding: 0;
 }
 
+div#loading {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
+    z-index: 10;
+}
+
 div#toolbar {
-  min-height: 40px;
+  flex: 40px;
   width: 500px;
 }
 
@@ -52,7 +63,6 @@ Footer Styles
 footer * {
   font-size: 14px;
   min-height: 30px;
-  width: 500px;
 }
 
 button {
@@ -63,17 +73,55 @@ button {
 }
 
 footer {
-  padding-bottom: 7px;
   position: relative;
+  flex: 40px;
+}
+
+#footer-buttons {
+  align-items: stretch;
+  border-top: 1px solid #d7d7db;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
 }
 
 #enable-sync {
-  border-top: 1px solid #ccc;
+  background-image: url('sync-16-inactive.svg');
+  background-position: 10px 12px;
+  background-repeat: no-repeat;
+  display: flex;
+  flex: 1 0;
+  padding: 0 10px 0 32px;
   text-align: left;
-  background: url('sync-16-inactive.svg') no-repeat;
-  background-position: 10px 10px;
-  padding: 9px 10px 5px 35px;
 }
+
+#give-feedback {
+  background-image: url('feedback.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  flex: 0 0 40px;
+}
+
+#footer-buttons button,
+#footer-buttons a {
+  background-color: #f9f9fa;
+  transition: background 50ms;
+}
+
+#footer-buttons button:hover,
+#footer-buttons a:hover {
+  background-color: #ebebee;
+}
+
+#footer-buttons button:active,
+#footer-buttons a:active {
+  background-color: #d7d7db;
+}
+
 
 #menu {
   position: absolute;
@@ -83,35 +131,45 @@ footer {
 
 #sync-note {
   display: none;
-  padding: 8px 0 15px 0;
+  padding: 3px 0 5px 0;
   background: #FFECAD;
   width: 100%;
-}
-
-#close {
-  float: right;
   position: relative;
   margin: 0 auto;
+  border: 1px solid #ccc;
+  border-bottom: 0;
 }
 
 #close-button {
-  width: 14px;
+  width: 16px;
   position: absolute;
-  top: -8px;
-  right: 0px;
-  margin-right: 2%;
+  top: -6px;
+  right: 4px;
+  padding: 0 0;
+  opacity: 0.4;
 }
 
 #close-button:hover {
   cursor: pointer;
+  opacity: 0.6
+}
+
+#close-button:active {
+  cursor: pointer;
+  opacity: 0.8
 }
 
 #sync-note-dialog {
-  width: 92%;
-  margin: 0 10px;
+  width: 85%;
+  font-size: 12px;
+  margin: 5px 0 5px 10px;
   color: #424242;
 }
 
 #sync-note.visible {
   display: block;
+}
+
+.forbid-cursor {
+  cursor: no-drop;
 }

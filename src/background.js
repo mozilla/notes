@@ -1,37 +1,65 @@
 /**
  * Google Analytics / TestPilot Metrics
  */
-const TRACKING_ID = 'UA-101177676-1';
+const TRACKING_ID = 'UA-35433268-79';
 
-browser.storage.local.get('UID').then((data) => {
-  let UID;
-  // Read the previous UID value or create a new one
-  if (!data.hasOwnProperty('UID')) {
-    UID = window.crypto.getRandomValues(new Uint32Array(1)).toString();
-    browser.storage.local.set({UID});  // Save it for next time
-  } else {
-    UID = data.UID;
-  }
-  const { sendEvent } = new Metrics({
-    id: 'notes@mozilla.com',
-    version: '1.3.0',
-    tid: TRACKING_ID,
-    uid: UID
-  });
+const timeouts = {};
 
-  sendEvent({ object: 'webext-loaded', method: 'click' });
-  
-  browser.runtime.onMessage.addListener(function(eventData) {
+const analytics = new TestPilotGA({
+  tid: TRACKING_ID,
+  ds: 'addon',
+  an: 'Notes Experiment',
+  aid: 'notes@mozilla.com',
+  av: '1.5.0'  // XXX: Change version on release
+});
+
+function sendMetrics(event, context = {}) {
+  // This function debounce sending metrics.
+  const later = function() {
+    timeouts[event] = null;
+
+    return analytics.sendEvent('notes', event, {
+      cm1: context.characters,
+      cm2: context.lineBreaks,
+      cm3: null,  // Size of the change
+      cd1: context.syncEnabled,
+      cd2: context.usesSize,
+      cd3: context.usesBold,
+      cd4: context.usesItalics,
+      cd5: context.usesStrikethrough,
+      cd6: context.usesList,
+      cd7: null, // Firefox UI used to open, close notepad
+      cd8: null, // reason editing session ended
+    });
+  };
+  clearTimeout(timeouts[event]);
+  timeouts[event] = setTimeout(later, 20000);
+}
+
+browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       browser.storage.local.set({'asked-for-syncing': true})
       .then(() => {
-          sendEvent({
-            object: 'webext-button-authenticate',
-            method: 'click'
-          });
+          sendMetrics('sync-started', eventData.context);
         });
       break;
-    }
-  });
+    case 'metrics-changed':
+      sendMetrics('changed', eventData.context);
+      break;
+    case 'metrics-drag-n-drop':
+      sendMetrics('drag-n-drop', eventData.context);
+      break;
+  }
 });
+
+
+// Handle opening and closing the add-on.
+function connected(p) {
+  sendMetrics('open');
+
+  p.onDisconnect.addListener(() => {
+    sendMetrics('close');
+  });
+}
+browser.runtime.onConnect.addListener(connected);

@@ -42,30 +42,12 @@ An event fired when the user actively navigates to the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `open`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
-- `cd7`
 
 #### `close`
 An event fired when the user actively navigates away from the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `close`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
-- `cd7`
 
 #### `changed`
 An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 20 seconds. Includes:
@@ -83,6 +65,38 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd6`
 - `cd7`
 - `cd8`
+
+#### `drag-n-drop`
+
+An event fired when the user tries to drag or drop a content into the notepad.
+
+- `ec` - `notes`
+- `ea` - `drag-n-drop`
+- `cm1`
+- `cm2`
+- `cm3`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`
+- `cd7`
+- `cd8`
+
+#### `sync-started`
+An event fired whenever the user attempts to login to sync. Includes:
+
+- `ec` - `notes`
+- `ea` - `sync-started`
+- `cm1`
+- `cm2`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`
 
 #### `sync-enabled`
 An event fired whenever the user enables sync. Includes:

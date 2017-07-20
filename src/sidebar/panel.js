@@ -4,7 +4,6 @@ const formats = [
   'italic',
   'size',
   'strike',
-  'header',
   'indent',
   'list',
   'direction',
@@ -14,6 +13,7 @@ const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
 const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 // Additional keyboard shortcuts for non-default toolbar buttons
 const bindings = {
@@ -49,6 +49,10 @@ const bindings = {
     }
   }
 };
+
+const Block = Quill.import('blots/block');
+Block.tagName = 'DIV';
+Quill.register(Block, true);
 
 const fontSizeStyle = Quill.import('attributors/style/size');
 fontSizeStyle.whitelist = ['12px', '14px', '16px', '18px', '20px'];
@@ -117,13 +121,19 @@ function handleLocalContent(data) {
 }
 
 function loadContent() {
-  browser.storage.local.get(['notes'], data => {
-    // If we have a bearer, we try to save the content.
-    handleLocalContent(data);
+  return new Promise((resolve) => {
+    browser.storage.local.get(['notes'], data => {
+      // If we have a bearer, we try to save the content.
+      handleLocalContent(data);
+      resolve();
+    });
   });
 }
 
-loadContent();
+loadContent()
+  .then(() => {
+    document.getElementById('loading').style.display = 'none';
+  });
 
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
@@ -134,17 +144,25 @@ quill.on('text-change', () => {
       chrome.runtime.sendMessage('notes@mozilla.com', {
         action: 'text-change'
       });
+      // Debounce this second event
+      chrome.runtime.sendMessage({
+        action: 'metrics-changed',
+        context: getPadStats()
+      });
     }
     ignoreNextLoadEvent = false;
   });
 });
 
 const enableSync = document.getElementById('enable-sync');
+const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
+giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
+giveFeedback.setAttribute('href', SURVEY_PATH);
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
@@ -152,7 +170,10 @@ closeButton.addEventListener('click', () => {
 
 enableSync.onclick = () => {
   noteDiv.classList.toggle('visible');
-  browser.runtime.sendMessage({ action: 'authenticate' });
+  browser.runtime.sendMessage({
+    action: 'authenticate',
+    context: getPadStats()
+  });
 };
 
 chrome.runtime.onMessage.addListener(eventData => {
@@ -166,7 +187,61 @@ chrome.runtime.onMessage.addListener(eventData => {
 
 // disable drop of links and images into notes
 const qlEditor = document.querySelectorAll('.ql-editor');
-qlEditor[0].addEventListener('drop', (e) => {
+
+document.addEventListener('dragover', () => {
+  qlEditor[0].classList.add('forbid-cursor');
+  browser.runtime.sendMessage({
+    action: 'metrics-drag-n-drop',
+    context: getPadStats()
+  });
+  return true;
+});
+
+document.addEventListener('dragleave', () => {
+  qlEditor[0].classList.remove('forbid-cursor');
+  return true;
+});
+
+document.addEventListener('drop', (e) => {
   e.preventDefault();
+  qlEditor[0].classList.remove('forbid-cursor');
   return false;
 });
+
+function getPadStats() {
+  const content = quill.getContents();
+  const text = quill.getText();
+  const styles = {
+    size: false,
+    bold: false,
+
+    italic: false,
+    strike: false,
+    list: false
+  };
+
+  content.forEach(node => {
+    if (node.hasOwnProperty('attributes')) {
+      Object.keys(node.attributes).forEach(key => {
+        if (styles.hasOwnProperty(key)) {
+          styles[key] = true;
+        }
+      });
+    }
+  });
+
+  return {
+    syncEnabled: false,
+    characters: text.length,
+    lineBreaks: (text.match(/\n/g) || []).length,
+    usesSize: styles.size,
+    usesBold: styles.bold,
+    usesItalics: styles.italic,
+    usesStrikethrough: styles.strike,
+    usesList: styles.list
+  };
+}
+
+// Create a connection with the background script to handle open and
+// close events.
+browser.runtime.connect();
