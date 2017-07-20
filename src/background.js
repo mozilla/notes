@@ -36,8 +36,6 @@ function sendMetrics(event, context = {}) {
   timeouts[event] = setTimeout(later, 20000);
 }
 
-// Skip the first changed event.
-let first = true;
 browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
@@ -46,21 +44,22 @@ browser.runtime.onMessage.addListener(function(eventData) {
           sendMetrics('sync-started', eventData.context);
         });
       break;
-    case 'metrics-open':
-      sendMetrics('open', eventData.context);
-      break;
-    case 'metrics-close':
-      sendMetrics('close', eventData.context);
-      break;
     case 'metrics-changed':
-      if (first) {
-        first = false;
-      } else {
-        sendMetrics('changed', eventData.context);
-      }
+      sendMetrics('changed', eventData.context);
       break;
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
       break;
   }
 });
+
+
+// Handle opening and closing the add-on.
+function connected(p) {
+  sendMetrics('open');
+
+  p.onDisconnect.addListener(() => {
+    sendMetrics('close');
+  });
+}
+browser.runtime.onConnect.addListener(connected);
