@@ -1,5 +1,6 @@
 {
   "name": "notes",
+  "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
   "version": "1.5.0",
   "author": "Storage team",
