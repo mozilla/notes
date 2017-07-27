@@ -28,7 +28,7 @@
 
   "background": {
     "scripts": [
-      "vendor/testpilot-qa.js",
+      "vendor/testpilot-ga.js",
       "background.js"
     ]
   },
