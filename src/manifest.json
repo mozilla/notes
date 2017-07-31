@@ -27,7 +27,7 @@
   ],
   "background": {
     "scripts": [
-      "vendor/dist/FxaCrypto.relier.js",
+      "vendor/FxaCrypto.relier.js",
       "vendor/testpilot-ga.js",
       "background.js"
     ]

@@ -8,6 +8,7 @@
     "url": "https://github.com/mozilla/notes/issues"
   },
   "dependencies": {
+    "fxa-crypto-relier": "github:vladikoff/fxa-crypto-relier#c1929c5eaafc53679af5141ebc70dd0efc3203dd",
     "quill": "1.2.6",
     "testpilot-ga": "^0.2.1"
   },
