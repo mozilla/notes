@@ -1,6 +1,6 @@
 # Firefox Notes
 
-[![CircleCI](https://img.shields.io/circleci/project/github/mozilla/notes.svg)](https://circleci.com/gh/mozilla/notes)
+[![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
 
 ## What it does
