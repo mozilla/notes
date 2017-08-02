@@ -3,6 +3,10 @@
  */
 const TRACKING_ID = 'UA-35433268-79';
 
+// XXX: Read this from Kinto fxa-params
+const FXA_CLIENT_ID = 'c6d74070a481bc10';
+const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
+
 const timeouts = {};
 
 const analytics = new TestPilotGA({
@@ -36,36 +40,37 @@ function sendMetrics(event, context = {}) {
   timeouts[event] = setTimeout(later, 20000);
 }
 
+function authenticate() {
+  const fxaKeysUtil = new FxaCrypto.relier.OAuthUtils();
+
+  fxaKeysUtil.launchFxaScopedKeyFlow({
+    client_id: FXA_CLIENT_ID,
+    oauth_uri: FXA_OAUTH_SERVER,
+    pkce: true,
+    redirect_uri: browser.identity.getRedirectURL(),
+    scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
+  }).then((loginDetails) => {
+    console.log('access token + keys', loginDetails);
+    chrome.runtime.sendMessage({
+      action: 'authenticated',
+      bearer: loginDetails.access_token,
+      keys: loginDetails.keys
+    });
+  }, (err) => {
+    console.log('login failed', err);
+    chrome.runtime.sendMessage({
+      action: 'authenticated',
+      err: err
+    });
+    throw err;
+  });
+}
+
 browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       sendMetrics('webext-button-authenticate', eventData.context);
-
-      const fxaKeysUtil = new FxaCrypto.relier.OAuthUtils();
-
-      fxaKeysUtil.launchFxaScopedKeyFlow({
-        client_id: 'c6d74070a481bc10',
-        //oauth_uri: 'http://127.0.0.1:9010/v1',
-        oauth_uri: 'https://oauth-scoped-keys.dev.lcip.org/v1',
-        pkce: true,
-        redirect_uri: browser.identity.getRedirectURL(),
-        scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
-      }).then((loginDetails) => {
-        console.log('access token + keys', loginDetails);
-        chrome.runtime.sendMessage({
-          action: 'authenticated',
-          bearer: loginDetails.access_token,
-          keys: loginDetails.keys
-        });
-
-      }, (err) => {
-        console.log('login failed', err);
-        chrome.runtime.sendMessage({
-          action: 'authenticated',
-          err: err
-        });
-        throw err;
-      });
+      authenticate();
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);

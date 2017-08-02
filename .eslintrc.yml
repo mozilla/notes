@@ -12,6 +12,7 @@ globals:
   Jose: false
   JoseJWE: false
   TestPilotGA: false
+  FxaCrypto: false
 
 root: true
 
