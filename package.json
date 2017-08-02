@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "fxa-crypto-relier": "github:vladikoff/fxa-crypto-relier#c1929c5eaafc53679af5141ebc70dd0efc3203dd",
+    "jose-jwe-jws": "^0.1.5",
+    "kinto-http": "^4.3.4",
     "quill": "1.2.6",
     "testpilot-ga": "^0.2.1"
   },

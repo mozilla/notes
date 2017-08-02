@@ -3,11 +3,45 @@
  */
 const TRACKING_ID = 'UA-35433268-79';
 
+const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'c6d74070a481bc10';
 const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
 
 const timeouts = {};
+
+
+// Kinto sync and encryption
+
+const client = new KintoClient(KINTO_SERVER);
+
+const cryptographer = new Jose.WebCryptographer();
+cryptographer.setKeyEncryptionAlgorithm('A256KW');
+cryptographer.setContentEncryptionAlgorithm('A256GCM');
+
+function shared_key(key) {
+  return crypto.subtle.importKey(
+    'jwk',
+    { kty: key.kty, k: key.k.replace(/=/, '') },
+    'AES-KW',
+    true,
+    ['wrapKey', 'unwrapKey']
+  );
+}
+
+function encrypt(key, content) {
+  const encrypter = new JoseJWE.Encrypter(cryptographer, shared_key(key));
+  return encrypter.encrypt(JSON.stringify(content));
+}
+
+function decrypt(key, encrypted) {
+  const decrypter = new JoseJWE.Decrypter(cryptographer, shared_key(key));
+  return decrypter.decrypt(encrypted).then(result => {
+    return JSON.parse(result);
+  });
+}
+
+// Analytics
 
 const analytics = new TestPilotGA({
   tid: TRACKING_ID,
@@ -42,7 +76,9 @@ function sendMetrics(event, context = {}) {
 
 function authenticate() {
   const fxaKeysUtil = new FxaCrypto.relier.OAuthUtils();
-
+    chrome.runtime.sendMessage({
+      action: 'sync-opening'
+    });
   fxaKeysUtil.launchFxaScopedKeyFlow({
     client_id: FXA_CLIENT_ID,
     oauth_uri: FXA_OAUTH_SERVER,
@@ -52,7 +88,7 @@ function authenticate() {
   }).then((loginDetails) => {
     console.log('access token + keys', loginDetails);
     chrome.runtime.sendMessage({
-      action: 'authenticated',
+      action: 'sync-authenticated',
       bearer: loginDetails.access_token,
       keys: loginDetails.keys
     });

@@ -27,6 +27,8 @@
   ],
   "background": {
     "scripts": [
+      "vendor/jose.js",
+      "vendor/kinto-http.js",
       "vendor/FxaCrypto.relier.js",
       "vendor/testpilot-ga.js",
       "background.js"
