@@ -123,8 +123,12 @@ function handleLocalContent(data) {
 function loadContent() {
   return new Promise((resolve) => {
     browser.storage.local.get(['notes'], data => {
-      // If we have a bearer, we try to save the content.
+      // We load the local content
       handleLocalContent(data);
+      // In the meantime we try to load the kinto content
+      chrome.runtime.sendMessage({
+        action: 'kinto-load'
+      });
       resolve();
     });
   });
@@ -204,6 +208,11 @@ document.addEventListener('DOMContentLoaded', getThemeFromStorage);
 
 chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
+    case 'sync-authenticated':
+      chrome.runtime.sendMessage({
+          action: 'kinto-load'
+        });
+      break;
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();

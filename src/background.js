@@ -87,10 +87,17 @@ function authenticate() {
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
   }).then((loginDetails) => {
     console.log('access token + keys', loginDetails);
-    chrome.runtime.sendMessage({
-      action: 'sync-authenticated',
-      bearer: loginDetails.access_token,
-      keys: loginDetails.keys
+    browser.storage.local.set({
+      credentials: {
+        bearer: loginDetails.access_token,
+        kBr: loginDetails.keys.kBr
+      }
+    }).then(() => {
+      chrome.runtime.sendMessage({
+        action: 'sync-authenticated',
+        bearer: loginDetails.access_token,
+        keys: loginDetails.keys
+      });
     });
   }, (err) => {
     console.log('login failed', err);
@@ -102,11 +109,34 @@ function authenticate() {
   });
 }
 
+function loadFromKinto() {
+  // Get credentials and lastmodified
+  // Query Kinto with the Bearer Token
+  // In case of 401, log the user out.
+  // If there is something in Kinto send unencrypted content to the sidebar
+  // If there is nothing in Kinto send null to the sidebar
+  // In case we cannot decrypt the message
+}
+
+function saveToKinto(content) {
+  // Debounce the call and set the status to Editing
+  // Set the status to syncing
+  // Try to save the new content with the previous last_modified value
+  // If it succeed set the status to Synced...
+  // If it failed loadFromKinto and handle merge
+}
+
 browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
       sendMetrics('webext-button-authenticate', eventData.context);
       authenticate();
+      break;
+    case 'kinto-load':
+      loadFromKinto();
+      break;
+    case 'kinto-save':
+      saveToKinto(eventData.content);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
