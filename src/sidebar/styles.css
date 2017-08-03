@@ -94,6 +94,10 @@ footer {
   flex: 1 0;
   padding: 0 10px 0 32px;
   text-align: left;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 #give-feedback {
