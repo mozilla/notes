@@ -36,7 +36,7 @@
   "commands": {
     "_execute_sidebar_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+H"
+        "default": "Alt+Shift+N"
       }
     }
   }
