@@ -63,3 +63,10 @@ function connected(p) {
   });
 }
 browser.runtime.onConnect.addListener(connected);
+
+
+//function listener(changes) {
+//  if (changes.theme.oldValue.theme !== changes.theme.newValue.theme)
+//    // update sidebar to show new theme
+//}
+//browser.storage.onChanged.addListener(listener);  // listen for changes made to storage
