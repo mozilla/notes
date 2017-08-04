@@ -245,3 +245,17 @@ function getPadStats() {
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
+
+function getThemeFromStorage() {
+  var getting = browser.storage.local.get(['theme']);
+  getting.then(function applyTheme(data) {
+    let css = document.getElementById('main-css');
+    
+    if (data.theme.theme === 'dark')
+      css.setAttribute('href', 'styles-dark.css');
+    else if (data.theme.theme === 'default' || data.theme.theme === undefined)  // rename object to not have repeating 'theme'
+      css.setAttribute('href', 'styles.css');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', getThemeFromStorage);

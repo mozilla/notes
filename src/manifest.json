@@ -32,7 +32,11 @@
       "background.js"
     ]
   },
-
+  
+  "options_ui": {
+    "page": "settings/settings.html"
+  },
+  
   "commands": {
     "_execute_sidebar_action": {
       "suggested_key": {
