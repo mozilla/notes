@@ -176,12 +176,29 @@ enableSync.onclick = () => {
   });
 };
 
+// gets the user-selected theme from local storage and applies respective CSS
+// file to the document
+function getThemeFromStorage() {
+  let getting = browser.storage.local.get(['theme']);
+  getting.then(function applyTheme(data) {
+    let css = document.getElementById('main-css');
+    
+    if (data.theme === 'dark')
+      css.setAttribute('href', 'styles-dark.css');
+    else if (data.theme === 'default' || data.theme === undefined)
+      css.setAttribute('href', 'styles.css');
+  });
+}
+document.addEventListener('DOMContentLoaded', getThemeFromStorage);
+
 chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();
       break;
+    case 'theme-changed':
+      getThemeFromStorage();
   }
 });
 
@@ -245,17 +262,3 @@ function getPadStats() {
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
-
-function getThemeFromStorage() {
-  var getting = browser.storage.local.get(['theme']);
-  getting.then(function applyTheme(data) {
-    let css = document.getElementById('main-css');
-    
-    if (data.theme.theme === 'dark')
-      css.setAttribute('href', 'styles-dark.css');
-    else if (data.theme.theme === 'default' || data.theme.theme === undefined)  // rename object to not have repeating 'theme'
-      css.setAttribute('href', 'styles.css');
-  });
-}
-
-document.addEventListener('DOMContentLoaded', getThemeFromStorage);

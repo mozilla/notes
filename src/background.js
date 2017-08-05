@@ -50,6 +50,11 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
       break;
+    case 'theme-changed':
+      browser.runtime.sendMessage({
+        action: 'theme-changed'
+      });
+      break;
   }
 });
 
@@ -65,8 +70,14 @@ function connected(p) {
 browser.runtime.onConnect.addListener(connected);
 
 
-//function listener(changes) {
-//  if (changes.theme.oldValue.theme !== changes.theme.newValue.theme)
-//    // update sidebar to show new theme
-//}
-//browser.storage.onChanged.addListener(listener);  // listen for changes made to storage
+const defaultTheme = {
+  theme: 'default'
+}
+
+browser.storage.local.get()
+  .then((storedSettings) => {
+    // if no theme setting exists...
+    if (!storedSettings.theme)
+      // set defaultTheme as initial theme in local storage
+      browser.storage.local.set(defaultTheme);
+});
