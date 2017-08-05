@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function getTheme() {
   let theme = '';
   
-  for (var i = 0; i < themeRadioBtn.length; i++) {
+  for (let i = 0; i < themeRadioBtn.length; i++) {
     if (themeRadioBtn[i].checked)
-    	theme = themeRadioBtn[i].value;
+      theme = themeRadioBtn[i].value;
     else
-    	continue;
+      continue;
   }
   
   const selectedTheme = {

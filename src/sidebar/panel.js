@@ -180,13 +180,14 @@ enableSync.onclick = () => {
 // file to the document
 function getThemeFromStorage() {
   const getting = browser.storage.local.get(['theme']);
-  getting.then(function applyTheme(data) {
-    const css = document.getElementById('main-css');
+  getting.then(function applyTheme(data) {    
+    const darkCSS = document.getElementById('dark-css');
     
-    if (data.theme === 'dark')
-      css.setAttribute('href', 'styles-dark.css');
-    else if (data.theme === 'default' || data.theme === undefined)
-      css.setAttribute('href', 'styles.css');
+    if (data.theme === 'dark') {
+      darkCSS.disabled = false;
+    } else if (data.theme === 'default' || data.theme === undefined) {
+      darkCSS.disabled = true;
+    }
   });
 }
 document.addEventListener('DOMContentLoaded', getThemeFromStorage);
