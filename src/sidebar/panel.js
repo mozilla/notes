@@ -179,9 +179,9 @@ enableSync.onclick = () => {
 // gets the user-selected theme from local storage and applies respective CSS
 // file to the document
 function getThemeFromStorage() {
-  let getting = browser.storage.local.get(['theme']);
+  const getting = browser.storage.local.get(['theme']);
   getting.then(function applyTheme(data) {
-    let css = document.getElementById('main-css');
+    const css = document.getElementById('main-css');
     
     if (data.theme === 'dark')
       css.setAttribute('href', 'styles-dark.css');

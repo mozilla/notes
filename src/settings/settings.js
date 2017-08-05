@@ -1,7 +1,7 @@
-let themeRadioBtn = document.getElementsByName('theme');
+const themeRadioBtn = document.getElementsByName('theme');
 
 function loadSavedData(data) {
-  let theme = data.theme;
+  const theme = data.theme;
   
   if (theme === 'default')
     themeRadioBtn[0].checked = true;
@@ -10,7 +10,7 @@ function loadSavedData(data) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  let savedData = browser.storage.local.get('theme');
+  const savedData = browser.storage.local.get('theme');
   savedData.then(loadSavedData);
 });
 
@@ -18,21 +18,21 @@ function getTheme() {
   let theme = '';
   
   for (var i = 0; i < themeRadioBtn.length; i++) {
-  	if (themeRadioBtn[i].checked)
+    if (themeRadioBtn[i].checked)
     	theme = themeRadioBtn[i].value;
     else
     	continue;
   }
   
-  let selectedTheme = {
+  const selectedTheme = {
     theme: theme
-  }
+  };
   
   return selectedTheme;
 }
 
 function save() {
-  let theme = getTheme();
+  const theme = getTheme();
   
   browser.storage.local.set(theme);
   

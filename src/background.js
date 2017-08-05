@@ -72,7 +72,7 @@ browser.runtime.onConnect.addListener(connected);
 
 const defaultTheme = {
   theme: 'default'
-}
+};
 
 browser.storage.local.get()
   .then((storedSettings) => {
