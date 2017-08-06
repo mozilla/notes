@@ -1,3 +1,16 @@
+// getting elements that have text displayed and setting localized text
+const appearance = document.getElementById('appearanceTitle'),
+      themeLegend = document.getElementById('themeTitle'),
+      lightThemeLabel = document.getElementById('light_label'),
+      darkThemeLabel = document.getElementById('dark_label'),
+      saveButton = document.getElementById('save');
+
+appearance.innerHTML = browser.i18n.getMessage('appearanceSectionTitle');
+themeLegend.innerHTML = browser.i18n.getMessage('themeLegend');
+lightThemeLabel.innerHTML = browser.i18n.getMessage('lightThemeTitle');
+darkThemeLabel.innerHTML = browser.i18n.getMessage('darkThemeTitle');
+saveButton.textContent = browser.i18n.getMessage('saveButton');
+
 const themeRadioBtn = document.getElementsByName('theme');
 
 function loadSavedData(data) {
@@ -41,4 +54,4 @@ function save() {
     action: 'theme-changed'
   });
 }
-document.getElementById('save').addEventListener('click', save);
+saveButton.addEventListener('click', save);
