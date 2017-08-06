@@ -3,25 +3,32 @@
 <html>
   <head>
     <meta charset="utf-8">
-<!--    <link type="text/css" rel="stylesheet" href="settings.css">-->
+    <link type="text/css" rel="stylesheet" href="settings.css">
   </head>
   
   <body>
     
-    <h3>Theme</h3>
-    
-    <div class="section">
-      <input id="radio1" type="radio" name="theme" value="default" checked>
-      <label for="radio1">Default (Light)</label><br>
-      
-      <input id="radio2" type="radio" name="theme" value="dark">
-      <label for="radio2">Dark</label><br>
+    <div class="settings-content">
+      <div>
+        <p class="title">Appearance</p>                     <!-- 'Appearance' -->
+      </div>
+
+      <div id="section-theme">
+        <fieldset>
+          <legend>Theme</legend>                            <!-- 'Theme' -->
+
+          <input type="radio" name="theme" value="default" id="theme_default">
+          <label for="theme_default">Light</label>          <!-- 'Light' -->
+
+          <input type="radio" name="theme" value="dark" id="theme_dark">
+          <label for="theme_dark">Dark</label>              <!-- 'Dark' -->
+
+        </fieldset>
+      </div>
+
+      <button class="styled-btn" id="save">Save</button>    <!-- 'Save' -->
     </div>
     
-    <div id="buttons">
-      <button id="save">Save</button>
-    </div>
-  
   <script type="text/javascript" src="settings.js"></script>
   </body>
   
