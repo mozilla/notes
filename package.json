@@ -25,6 +25,7 @@
   "repository": "mozilla/notes",
   "scripts": {
     "build": "node scripts/build-locales && web-ext build -s src",
+    "post-install-cmd": "bash ./scripts/post-install.sh",
     "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' && npm run postinstall",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "npm-run-all lint:*",
