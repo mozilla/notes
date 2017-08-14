@@ -14,7 +14,7 @@ const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
 const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
-var STATUS =0;
+var STATUS ='unedited';
 
 // Additional keyboard shortcuts for non-default toolbar buttons
 const bindings = {
@@ -211,14 +211,14 @@ document.addEventListener('drop', (e) => {
 //clear the welcome message when user clicks on the editor first time
 document.addEventListener('click', () => {
   qlEditor[0].classList.add('forbid-cursor');
-  if(STATUS==0){
+  if(STATUS=='unedited'){
    console.log(STATUS);
    quill.setContents({
       ops: [
          { attributes: { size: 'large', bold: true }, insert: '' }
         ]
    });
-  STATUS=1; 
+  STATUS='edited'; 
   }
   return true;
 });
