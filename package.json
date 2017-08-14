@@ -14,6 +14,7 @@
   "devDependencies": {
     "cross-spawn": "^5.1.0",
     "eslint": "^4.0.0",
+    "fs-extra": "^4.0.1",
     "npm-run-all": "^4.0.2",
     "pontoon-to-webext": "^1.0.2",
     "prettier": "^1.4.4",
@@ -32,7 +33,7 @@
     "lint:webext": "web-ext lint -s src --ignore-files='sidebar/vendor/*.js' --self-hosted",
     "package": "npm run build && mv web-ext-artifacts/*.zip addon.xpi",
     "postformat": "npm run lint:js -- --fix",
-    "postinstall": "scripts/postinstall.sh",
+    "postinstall": "node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
     "start": "web-ext run -s src",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
