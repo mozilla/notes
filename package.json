@@ -25,7 +25,6 @@
   "repository": "mozilla/notes",
   "scripts": {
     "build": "node scripts/build-locales && web-ext build -s src",
-    "post-install-cmd": "bash ./scripts/post-install.sh",
     "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' && npm run postinstall",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "npm-run-all lint:*",
@@ -33,7 +32,7 @@
     "lint:webext": "web-ext lint -s src --ignore-files='sidebar/vendor/*.js' --self-hosted",
     "package": "npm run build && mv web-ext-artifacts/*.zip addon.xpi",
     "postformat": "npm run lint:js -- --fix",
-    "postinstall": "scripts/postinstall.sh",
+    "postinstall": "bash ./scripts/postinstall.sh",
     "prebuild": "npm run clean",
     "start": "web-ext run -s src",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
