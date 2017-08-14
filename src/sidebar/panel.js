@@ -215,7 +215,7 @@ document.addEventListener('click', () => {
    console.log(STATUS);
    quill.setContents({
       ops: [
-         { attributes: { size: 'large', bold: true }, insert: '' }
+         { insert: '' }
         ]
    });
   STATUS='edited'; 
