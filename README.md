@@ -25,9 +25,6 @@ Navigate to the root of the directory you cloned and run:
 
 NOTE: if you are running on Windows, and experience a build error use `$ npm build`
 
-Step 3:Load about:debugging#addons in the Firefox address bar.
-
-Step 4:Select a Firefox .xpi file or Manifest file under the src folder and click open afterwards
 
 
 
