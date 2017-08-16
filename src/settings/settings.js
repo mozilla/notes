@@ -50,5 +50,5 @@ for (let i = 0; i < themeRadioBtn.length; i++) {
     browser.runtime.sendMessage({
       action: 'theme-changed'
     });
-  }
+  };
 }
