@@ -1,15 +1,11 @@
 // getting elements that have text displayed and setting localized text
-const appearance = document.getElementById('appearanceTitle'),
-      themeLegend = document.getElementById('themeTitle'),
-      lightThemeLabel = document.getElementById('light_label'),
-      darkThemeLabel = document.getElementById('dark_label'),
-      saveButton = document.getElementById('save');
+const themeLegend = document.getElementById('themeTitle'),
+      defaultThemeLabel = document.getElementById('default_label'),
+      darkThemeLabel = document.getElementById('dark_label');
 
-appearance.innerHTML = browser.i18n.getMessage('appearanceSectionTitle');
 themeLegend.innerHTML = browser.i18n.getMessage('themeLegend');
-lightThemeLabel.innerHTML = browser.i18n.getMessage('lightThemeTitle');
+defaultThemeLabel.innerHTML = browser.i18n.getMessage('defaultThemeTitle');
 darkThemeLabel.innerHTML = browser.i18n.getMessage('darkThemeTitle');
-saveButton.textContent = browser.i18n.getMessage('saveButton');
 
 const themeRadioBtn = document.getElementsByName('theme');
 
@@ -44,14 +40,15 @@ function getTheme() {
   return selectedTheme;
 }
 
-function save() {
-  const theme = getTheme();
+for (let i = 0; i < themeRadioBtn.length; i++) {
+  themeRadioBtn[i].onclick = function() {
+    const theme = getTheme();
   
-  browser.storage.local.set(theme);
-  
-  // notify background.js that theme settings have changed
-  browser.runtime.sendMessage({
-    action: 'theme-changed'
-  });
+    browser.storage.local.set(theme);
+
+    // notify background.js that theme settings have changed
+    browser.runtime.sendMessage({
+      action: 'theme-changed'
+    });
+  }
 }
-saveButton.addEventListener('click', save);

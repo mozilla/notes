@@ -1,55 +1,16 @@
 body {
-  font-family: Helvetica, Arial, sans-serif
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #333;
 }
 
-.title {
-  font-size: 1.5em;
-  color: #66757f;
-  margin: 0 auto;
-  font-weight: bold;
-}
-
-div#section-theme {
-  margin-left: 1.5em;
-}
-
-fieldset {
-  font-size: 1em;
-  border: 0;
-  margin: 1em 0 0 0;
+label {
+  font-size: 0.87em;
+  line-height: 20px;
+  margin: 0 0;
   padding: 0 0;
 }
 
-legend {
-  float: left;
-  text-align: right;
-  margin: 0;
-  border-bottom: 0;
-  padding-right: 2.5em;
-}
-
-.styled-btn {
-  display: block;
-  margin: 2em 0 0 0;
-  
-  border-radius: 100px;
-  box-shadow: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 4px 12px;
-  text-align: center;
-  white-space: nowrap;
-  
-  background-color: #3d4352;
-  border: 1px solid #3d4352;
-  color: #fff;
-}
-
-.styled-btn:hover {
-  background-color: #323744;
-}
-
-.styled-btn:active {
-  background-color: #272B35;
+label#themeTitle {
+  display: inline-block;
+  width: 33%;
 }

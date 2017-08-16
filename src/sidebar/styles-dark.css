@@ -32,8 +32,8 @@ div#toolbar {
 }
 
 ::-moz-selection {
-  background-color: #ffb7b7;
-  color: #393F4C;
+  background-color: #5675B9;
+  color: #fff;
 }
 
 /* Overridden Quill classes */

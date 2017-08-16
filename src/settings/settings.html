@@ -9,24 +9,15 @@
   <body>
     
     <div class="settings-content">
-      <div>
-        <p id="appearanceTitle" class="title"></p>
-      </div>
-
       <div id="section-theme">
-        <fieldset>
-          <legend id="themeTitle"></legend>
+        <label id="themeTitle"></label>
 
-          <input type="radio" name="theme" value="default" id="theme_light">
-          <label for="theme_default" id="light_label"></label>
+        <input type="radio" name="theme" value="default" id="theme_default">
+        <label for="theme_default" id="default_label"></label>
 
-          <input type="radio" name="theme" value="dark" id="theme_dark">
-          <label for="theme_dark" id="dark_label"></label>
-
-        </fieldset>
+        <input type="radio" name="theme" value="dark" id="theme_dark">
+        <label for="theme_dark" id="dark_label"></label>
       </div>
-
-      <button class="styled-btn" id="save"></button>
     </div>
     
   <script type="text/javascript" src="settings.js"></script>
