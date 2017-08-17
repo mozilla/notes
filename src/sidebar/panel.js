@@ -183,7 +183,7 @@ function getThemeFromStorage() {
   getting.then(function applyTheme(data) {
     if (data.theme === 'dark') {
       if (!document.getElementById('dark-styles')) {
-        let darkSS = document.createElement('link');
+        const darkSS = document.createElement('link');
         darkSS.id = 'dark-styles';
         darkSS.type = 'text/css';
         darkSS.rel = 'stylesheet';
@@ -193,7 +193,7 @@ function getThemeFromStorage() {
         return;
     } else if (data.theme === 'default' || data.theme === undefined) {
       if (document.getElementById('dark-styles')) {
-        let darkSS = document.getElementById('dark-styles');
+        const darkSS = document.getElementById('dark-styles');
         darkSS.parentElement.removeChild(darkSS);
       } else
         return;
