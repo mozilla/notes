@@ -182,7 +182,7 @@ function getThemeFromStorage() {
   const getting = browser.storage.local.get(['theme']);
   getting.then(function applyTheme(data) {
     if (data.theme === 'dark') {
-      if (!document.getElementById('dark-styles')) {
+      if (! document.getElementById('dark-styles')) {
         const darkSS = document.createElement('link');
         darkSS.id = 'dark-styles';
         darkSS.type = 'text/css';
