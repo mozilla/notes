@@ -1,7 +1,7 @@
 // getting elements that have text displayed and setting localized text
-const themeLegend = document.getElementById('themeTitle'),
-      defaultThemeLabel = document.getElementById('default_label'),
-      darkThemeLabel = document.getElementById('dark_label');
+const themeLegend = document.getElementById('themeTitle');
+const defaultThemeLabel = document.getElementById('default_label');
+const darkThemeLabel = document.getElementById('dark_label');
 
 themeLegend.innerHTML = browser.i18n.getMessage('themeLegend');
 defaultThemeLabel.innerHTML = browser.i18n.getMessage('defaultThemeTitle');

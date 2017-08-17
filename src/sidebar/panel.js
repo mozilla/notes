@@ -180,13 +180,23 @@ enableSync.onclick = () => {
 // file to the document
 function getThemeFromStorage() {
   const getting = browser.storage.local.get(['theme']);
-  getting.then(function applyTheme(data) {    
-    const darkCSS = document.getElementById('dark-css');
-    
+  getting.then(function applyTheme(data) {
     if (data.theme === 'dark') {
-      darkCSS.disabled = false;
+      if (!document.getElementById('dark-styles')) {
+        let darkSS = document.createElement('link');
+        darkSS.id = 'dark-styles';
+        darkSS.type = 'text/css';
+        darkSS.rel = 'stylesheet';
+        darkSS.href = 'styles-dark.css';
+        document.getElementsByTagName('head')[0].appendChild(darkSS);
+      } else
+        return;
     } else if (data.theme === 'default' || data.theme === undefined) {
-      darkCSS.disabled = true;
+      if (document.getElementById('dark-styles')) {
+        let darkSS = document.getElementById('dark-styles');
+        darkSS.parentElement.removeChild(darkSS);
+      } else
+        return;
     }
   });
 }
