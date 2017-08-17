@@ -51,6 +51,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       sendMetrics('drag-n-drop', eventData.context);
       break;
     case 'theme-changed':
+      sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({
         action: 'theme-changed'
       });
