@@ -29,7 +29,7 @@
     "scripts": [
       "vendor/jose.js",
       "vendor/kinto-http.js",
-      "vendor/FxaCrypto.relier.js",
+      "vendor/fxa-crypto-relier/fxa-crypto-relier.js",
       "vendor/testpilot-ga.js",
       "background.js"
     ]
