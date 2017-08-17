@@ -20,19 +20,19 @@
     "default_title" : "Notes",
     "default_panel": "sidebar/panel.html"
   },
-
   "permissions": [
     "storage",
     "https://ssl.google-analytics.com/collect"
   ],
-
   "background": {
     "scripts": [
       "vendor/testpilot-ga.js",
       "background.js"
     ]
   },
-
+  "options_ui": {
+    "page": "settings/settings.html"
+  },
   "commands": {
     "_execute_sidebar_action": {
       "suggested_key": {
