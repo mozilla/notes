@@ -149,8 +149,9 @@ quill.on('text-change', () => {
         action: 'metrics-changed',
         context: getPadStats()
       });
+    } else {
+      ignoreNextLoadEvent = false;
     }
-    ignoreNextLoadEvent = false;
   });
 });
 
