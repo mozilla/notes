@@ -36,6 +36,7 @@
     "postinstall": "node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
     "start": "web-ext run -s src",
-    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
+    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
+    "start-nightly": "npm start -- --firefox=nightly"
   }
 }
