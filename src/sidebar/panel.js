@@ -287,7 +287,8 @@ chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
     case 'authenticated':
       if (eventData.err) {
-        enableSync.textContent = 'Login Failed...';
+        // TODO: Localize this
+        enableSync.textContent = 'Login Failed…';
       } else if (eventData.bearer) {
         enableSync.textContent = 'Synced';
         enableSync.disabled = true;
