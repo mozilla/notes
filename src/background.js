@@ -6,8 +6,7 @@ const TRACKING_ID = 'UA-35433268-79';
 const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'c6d74070a481bc10';
-//const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
-const FXA_OAUTH_SERVER = 'http://127.0.0.1:9010/v1';
+const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
 
 const timeouts = {};
 
