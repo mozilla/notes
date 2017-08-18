@@ -10,7 +10,7 @@ const analytics = new TestPilotGA({
   ds: 'addon',
   an: 'Notes Experiment',
   aid: 'notes@mozilla.com',
-  av: '1.6.0'  // XXX: Change version on release
+  av: '1.7.0'  // XXX: Change version on release
 });
 
 function sendMetrics(event, context = {}) {
@@ -50,6 +50,12 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
       break;
+    case 'theme-changed':
+      sendMetrics('theme-changed', eventData.content);
+      browser.runtime.sendMessage({
+        action: 'theme-changed'
+      });
+      break;
   }
 });
 
@@ -63,3 +69,16 @@ function connected(p) {
   });
 }
 browser.runtime.onConnect.addListener(connected);
+
+
+const defaultTheme = {
+  theme: 'default'
+};
+
+browser.storage.local.get()
+  .then((storedSettings) => {
+    // if no theme setting exists...
+    if (!storedSettings.theme)
+      // set defaultTheme as initial theme in local storage
+      browser.storage.local.set(defaultTheme);
+});

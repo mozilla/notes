@@ -125,3 +125,17 @@ An event fired whenever the user disables sync. Includes:
 - `cd4`
 - `cd5`
 - `cd6`
+
+#### `theme-changed`
+An event fired whenever the user changes the theme. Includes:
+
+- `ec` - `notes`
+- `ea` - `theme-changed`
+- `cm1`
+- `cm2`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`

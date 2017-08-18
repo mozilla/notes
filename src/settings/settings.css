@@ -1,0 +1,16 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+}
+
+label {
+  font-size: 1em;
+  line-height: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+label#themeTitle {
+  display: inline-block;
+  width: 33%;
+}
