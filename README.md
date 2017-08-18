@@ -9,23 +9,25 @@ Open a notepad in the Firefox toolbar to store notes about your browsing.
 
 
 ## How to use it
-Step 1: Make sure you fork and clone [notes](https://github.com/mozilla/notes).
+
+Step 0: If you plan on sending pull-request, you should fork the repository.
+
+Step 1: Clone the [notes](https://github.com/mozilla/notes) repository or your fork.
 ```
-$ git clone https://github.com/[yourusername]/notes.git
+git clone https://github.com/mozilla/notes.git
+# or
+git clone https://github.com/[yourusername]/notes.git
 ```
 Step 2:Navigate to the root of the directory you cloned and run:
 > Make sure to use Node.js 6+.
 
-| Command | Description |
-|---------|-------------|
-| `npm install`   | Installs required Node.js dependencies.
-| `npm run build` | Builds the application as a Web Extension.
-| `npm start`     | Launches Firefox with the Web Extension.
-
-NOTE: if you are running on Windows, and experience a build error use `$ npm build`
-
-
-
+|-----------------|-------------------------------------------|
+| Command         | Description                               |
+|-----------------|-------------------------------------------|
+| `npm install`   | Installs required Node.js dependencies.   |
+| `npm run build` | Builds the application as a Web Extension.|
+| `npm start`     | Launches Firefox with the Web Extension.  |
+|-----------------|-------------------------------------------|
 
 ## Localization
 
