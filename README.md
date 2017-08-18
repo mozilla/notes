@@ -21,13 +21,12 @@ git clone https://github.com/[yourusername]/notes.git
 Step 2:Navigate to the root of the directory you cloned and run:
 > Make sure to use Node.js 6+.
 
-|-----------------|-------------------------------------------|
 | Command         | Description                               |
 |-----------------|-------------------------------------------|
 | `npm install`   | Installs required Node.js dependencies.   |
 | `npm run build` | Builds the application as a Web Extension.|
 | `npm start`     | Launches Firefox with the Web Extension.  |
-|-----------------|-------------------------------------------|
+
 
 ## Localization
 
