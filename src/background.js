@@ -10,7 +10,7 @@ const analytics = new TestPilotGA({
   ds: 'addon',
   an: 'Notes Experiment',
   aid: 'notes@mozilla.com',
-  av: '1.7.1'  // XXX: Change version on release
+  av: '1.8.0dev'  // XXX: Change version on release
 });
 
 function sendMetrics(event, context = {}) {

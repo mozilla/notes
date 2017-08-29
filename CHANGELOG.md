@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 (unreleased)
+
+* No changes yet
+
+
 ## 1.7.1 (2017-08-29)
 
 * Update translations
