@@ -2,7 +2,7 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "author": "Storage team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
@@ -36,6 +36,7 @@
     "postinstall": "node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
     "start": "web-ext run -s src",
-    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start"
+    "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
+    "start-nightly": "npm start -- --firefox=nightly"
   }
 }
