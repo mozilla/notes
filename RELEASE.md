@@ -16,6 +16,7 @@ git push origin "prepare-${version}" -u
 ```
 
 * Create a pull-request and have it reviewed.
+* Wait here for QA reports.
 
 ## Update master
 
