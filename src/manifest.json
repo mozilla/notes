@@ -16,7 +16,7 @@
     "96": "icons/notes-96.png"
   },
   "sidebar_action": {
-    "default_icon": "icons/notes-48.png",
+    "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
     "default_panel": "sidebar/panel.html"
   },
