@@ -153,6 +153,11 @@ quill.on('text-change', () => {
         action: 'metrics-changed',
         context: getPadStats()
       });
+      // Debounce this second event
+      chrome.runtime.sendMessage({
+        action: 'kinto-save',
+        content
+      });
     } else {
       ignoreNextLoadEvent = false;
     }
@@ -212,6 +217,11 @@ chrome.runtime.onMessage.addListener(eventData => {
       chrome.runtime.sendMessage({
           action: 'kinto-load'
         });
+      break;
+    case 'kinto-loaded':
+      if (eventData.data !== null) {
+         // handleLocalContent({notes: eventData.data});
+      }
       break;
     case 'text-change':
       ignoreNextLoadEvent = true;

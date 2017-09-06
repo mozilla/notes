@@ -87,16 +87,15 @@ function authenticate() {
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
   }).then((loginDetails) => {
     console.log('access token + keys', loginDetails);
-    browser.storage.local.set({
-      credentials: {
-        bearer: loginDetails.access_token,
-        kBr: loginDetails.keys.kBr
-      }
-    }).then(() => {
+    const credentials = {
+      access_token: loginDetails.access_token,
+      refresh_token: loginDetails.refresh_token,
+      key: loginDetails.keys['https://identity.mozilla.org/apps/notes']
+    };
+    browser.storage.local.set({credentials}).then(() => {
       chrome.runtime.sendMessage({
         action: 'sync-authenticated',
-        bearer: loginDetails.access_token,
-        keys: loginDetails.keys
+        credentials
       });
     });
   }, (err) => {
@@ -109,21 +108,101 @@ function authenticate() {
   });
 }
 
+let lastRemoteLoad = -1;
+
 function loadFromKinto() {
   // Get credentials and lastmodified
-  // Query Kinto with the Bearer Token
-  // In case of 401, log the user out.
-  // If there is something in Kinto send unencrypted content to the sidebar
-  // If there is nothing in Kinto send null to the sidebar
-  // In case we cannot decrypt the message
+  browser.storage.local.get('credentials').then((data) => {
+    // XXX: Ask for an refresh token
+    // Query Kinto with the Bearer Token
+    client
+      .bucket('default')
+      .collection('notes')
+      .getRecord("singleNote", {
+        headers: { Authorization: `Bearer ${data.credentials.access_token}` }
+      })
+      .then(result => {
+        lastRemoteLoad = Date.now();
+        console.log(data, result);
+        // If there is something in Kinto send unencrypted content to the sidebar
+        return decrypt(data.credentials.key, result["data"]['content'])
+          .then(content => {
+            browser.runtime.sendMessage({
+              action: 'kinto-loaded',
+              data: content
+            });
+          })
+          .catch(err => {
+            // In case we cannot decrypt the message
+            if (data.credentials.key.kid < result.data.kid) {
+              // If the key date is greater than current one, log the user out.
+              return browser.storage.local.remove("credentials");
+            } else {
+              // If the key date is older than the current one, we can't help
+              // because there is no way we get the previous key.
+              // Flush the server ALA sync
+              return client
+                .bucket('default')
+                .collection('notes')
+                .deleteRecord("singleNote", {
+                  headers: { Authorization: `Bearer ${data.credentials.access_token}` }
+                });
+            }
+          });
+      })
+      .catch(error => {
+        if (/HTTP 404/.test(error.message)) {
+          // If there is nothing in Kinto send null to the sidebar
+          console.log("First time syncing");
+          browser.runtime.sendMessage({
+            action: 'kinto-loaded',
+            data: null
+          });
+        } else if (/HTTP 401/.test(error.message)) {
+          // In case of 401 log the user out.
+          return browser.storage.local.remove("credentials");
+        } else {
+          console.error(error);
+        }
+      });
+  });
 }
 
 function saveToKinto(content) {
-  // Debounce the call and set the status to Editing
-  // Set the status to syncing
-  // Try to save the new content with the previous last_modified value
-  // If it succeed set the status to Synced...
-  // If it failed loadFromKinto and handle merge
+  browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
+    .then(data => {
+      if (!data.contentWasSynced) {
+        encrypt(data.credentials.key, data.notes)
+        .then(encrypted => {
+          console.log('Encrypted content:', encrypted);
+          return client
+            .bucket('default')
+            .collection('notes')
+            .updateRecord(
+              { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
+              { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
+            );
+        })
+        .then(() => {
+          return browser.storage.local.set({ contentWasSynced: true });
+        })
+        .catch(error => {
+          if (/HTTP 401/.test(error.message)) {
+            // In case of 401 log the user out.
+            return   browser.storage.local.remove(['credentials']).then(() => {
+              return browser.storage.local.set({ contentWasSynced: false });
+            });
+          } else {
+            console.error(error);
+          }
+        });
+      }
+    });
+  // XXX: Debounce the call and set the status to Editing
+  // XXX: Set the status to syncing
+  // XXX: Try to save the new content with the previous last_modified value
+  // XXX: If it succeed set the status to Synced...
+  // XXX: If it failed loadFromKinto and handle merge
 }
 
 browser.runtime.onMessage.addListener(function(eventData) {
