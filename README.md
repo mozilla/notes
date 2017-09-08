@@ -3,15 +3,14 @@
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
 
-## What it does
+## What does it aim for
 
-Open a notepad in the Firefox toolbar to store notes about your browsing.
+This project does basically aim at opening a notepad in the Firefox toolbar to store notes about your browsing.
 
 
-## How to use it
+## How can you use it
 
 Step 0: If you plan on sending pull-request, you should fork the repository.
-
 Step 1: Clone the [notes](https://github.com/mozilla/notes) repository or your fork.
 ```
 git clone https://github.com/mozilla/notes.git
