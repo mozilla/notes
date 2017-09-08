@@ -111,12 +111,14 @@ const INITIAL_CONTENT = {
     { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
   ]
 };
+let ignoreNextTextChange = false;
 
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents(INITIAL_CONTENT);
     console.log("initial content");
-    browser.storage.local.set({initialContent: true });
+    browser.storage.local.set({contentWasSynced: true });
+    ignoreNextTextChange = true;
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       console.log('Write in Quill');
@@ -149,7 +151,7 @@ quill.on('text-change', () => {
   const content = quill.getContents();
   browser.storage.local.get("notes")
     .then((data) => {
-      if (data.notes != content) {
+      if (data.notes != content && !ignoreNextTextChange) {
         console.log('text-change, contentWasSynced: false');
         browser.storage.local.set({ notes: content, contentWasSynced: false })
           .then(() => {
@@ -172,6 +174,8 @@ quill.on('text-change', () => {
               ignoreNextLoadEvent = false;
             }
           });
+      } else {
+        ignoreNextTextChange = false;
       }
     });
 });
@@ -243,8 +247,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       if (eventData.data !== null) {
         const local = quill.getContents();
         const remote = eventData.data;
-        console.log("initialContent", eventData.initialContent);
-        if (!eventData.initialContent) {
+        if (!eventData.contentWasSynced) {
           let newContent = JSON.parse(JSON.stringify(remote));
           newContent.ops.push({ insert: '\n==========\n\n' });
           content = newContent.ops.concat(local.ops);

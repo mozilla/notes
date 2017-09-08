@@ -110,7 +110,7 @@ function authenticate() {
 
 function loadFromKinto() {
   // Get credentials and lastmodified
-  browser.storage.local.get(['credentials', 'contentWasSynced', 'initialContent', 'last_modified'])
+  browser.storage.local.get(['credentials', 'contentWasSynced', 'last_modified'])
     .then((data) => {
       // XXX: Ask for an refresh token
       // Query Kinto with the Bearer Token
@@ -132,7 +132,6 @@ function loadFromKinto() {
                   action: 'kinto-loaded',
                   data: content,
                   contentWasSynced: !!data.contentWasSynced,
-                  initialContent: !!data.initialContent,
                   last_modified: data.last_modified
                 });
               })
