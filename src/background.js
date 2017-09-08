@@ -172,39 +172,58 @@ function loadFromKinto() {
 }
 
 function saveToKinto(content) {
-  console.log("Save to kinto");
-  browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
-    .then(data => {
-      if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
-        console.log("New content");
-        return encrypt(data.credentials.key, data.notes)
-          .then(encrypted => {
-            console.log('Encrypted content:', encrypted);
-            return client
-              .bucket('default')
-              .collection('notes')
-              .updateRecord(
-                { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
-                { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
-              );
-          })
-          .then(() => {
-            console.log("Content was synced: true");
-            return browser.storage.local.set({ contentWasSynced: true });
-          })
-          .catch(error => {
-            if (/HTTP 401/.test(error.message)) {
-              // In case of 401 log the user out.
-              return   browser.storage.local.remove(['credentials']).then(() => {
-                return browser.storage.local.set({ contentWasSynced: false });
-              });
-            } else {
-              console.error(error);
-            }
-          });
-      }
-    });
   // XXX: Debounce the call and set the status to Editing
+  browser.runtime.sendMessage('notes@mozilla.com', {
+    action: 'text-editing'
+  });
+
+  const later = function() {
+    timeouts['saveToKinto'] = null;
+
+    browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
+      .then(data => {
+        if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
+          console.log("New content");
+          return encrypt(data.credentials.key, data.notes)
+            .then(encrypted => {
+              console.log('Encrypted content:', encrypted);
+              return client
+                .bucket('default')
+                .collection('notes')
+                .updateRecord(
+                  { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
+                  { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
+                );
+            })
+            .then(() => {
+              console.log("Content was synced: true");
+              return browser.storage.local.set({ contentWasSynced: true })
+                .then(() => {
+                  browser.runtime.sendMessage('notes@mozilla.com', {
+                    action: 'text-synced'
+                  });
+                });
+            })
+            .catch(error => {
+              if (/HTTP 401/.test(error.message)) {
+                // In case of 401 log the user out.
+                return   browser.storage.local.remove(['credentials']).then(() => {
+                  return browser.storage.local.set({ contentWasSynced: false });
+                });
+              } else {
+                console.error(error);
+              }
+            });
+        } else {
+          browser.runtime.sendMessage('notes@mozilla.com', {
+            action: 'text-saved'
+          });
+        }
+      });
+  };
+
+  clearTimeout(timeouts["saveToKinto"]);
+  timeouts["saveToKinto"] = setTimeout(later, 1000);
   // XXX: Set the status to syncing
   // XXX: Try to save the new content with the previous last_modified value
   // XXX: If it succeed set the status to Synced...
