@@ -236,6 +236,10 @@ browser.runtime.onMessage.addListener(function(eventData) {
       sendMetrics('webext-button-authenticate', eventData.context);
       authenticate();
       break;
+    case 'disconnected':
+      sendMetrics('webext-button-disconnect', eventData.context);
+      browser.storage.local.remove(['credentials']);
+      break;
     case 'kinto-load':
       loadFromKinto();
       break;

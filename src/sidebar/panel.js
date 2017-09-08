@@ -186,6 +186,14 @@ closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
 
+giveFeedback.addEventListener('click', (event) => {
+  event.preventDefault();
+  enableSync.textContent = 'Disconnected';
+  browser.runtime.sendMessage({
+    action: 'disconnected'
+  });
+});
+
 enableSync.onclick = () => {
   browser.runtime.sendMessage({
     action: 'authenticate',
