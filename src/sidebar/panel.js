@@ -115,6 +115,7 @@ function handleLocalContent(data) {
     });
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
+      console.log('Write in Quill');
       quill.setContents(data.notes);
     }
   }
@@ -142,26 +143,33 @@ loadContent()
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.set({ notes: content }).then(() => {
-    // Notify other sidebars
-    if (!ignoreNextLoadEvent) {
-      chrome.runtime.sendMessage('notes@mozilla.com', {
-        action: 'text-change'
-      });
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'metrics-changed',
-        context: getPadStats()
-      });
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'kinto-save',
-        content
-      });
-    } else {
-      ignoreNextLoadEvent = false;
-    }
-  });
+  browser.storage.local.get("notes")
+    .then((data) => {
+      if (data.notes != content) {
+        console.log('text-change, contentWasSynced: false');
+        browser.storage.local.set({ notes: content, contentWasSynced: false })
+          .then(() => {
+            // Notify other sidebars
+            if (!ignoreNextLoadEvent) {
+              chrome.runtime.sendMessage('notes@mozilla.com', {
+                action: 'text-change'
+              });
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats()
+              });
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'kinto-save',
+                content
+              });
+            } else {
+              ignoreNextLoadEvent = false;
+            }
+          });
+      }
+    });
 });
 
 const enableSync = document.getElementById('enable-sync');
@@ -220,7 +228,22 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'kinto-loaded':
       if (eventData.data !== null) {
-         // handleLocalContent({notes: eventData.data});
+        let remote = eventData.data
+        const local = quill.getContents();
+        console.log("Content in Kinto", remote);
+        if (eventData.contentWasSynced || JSON.stringify(remote) == JSON.stringify(local)) {
+          content = remote;
+          console.log("ContentWasSynced, no changes");
+        } else {
+          console.log("Merge content");
+          let newContent = JSON.parse(JSON.stringify(remote));
+          newContent.ops.push({ insert: '\n==========\n\n' });
+          content = newContent.ops.concat(local.ops);
+        }
+        setTimeout(() => {
+          console.log("Content is", content);
+          quill.setContents(content);
+        }, 10);
       }
       break;
     case 'text-change':

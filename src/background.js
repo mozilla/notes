@@ -112,9 +112,11 @@ let lastRemoteLoad = -1;
 
 function loadFromKinto() {
   // Get credentials and lastmodified
-  browser.storage.local.get('credentials').then((data) => {
+  browser.storage.local.get(['credentials', 'contentWasSynced']).then((data) => {
     // XXX: Ask for an refresh token
     // Query Kinto with the Bearer Token
+    if (! data.hasOwnProperty('credentials')) return;
+
     client
       .bucket('default')
       .collection('notes')
@@ -129,7 +131,8 @@ function loadFromKinto() {
           .then(content => {
             browser.runtime.sendMessage({
               action: 'kinto-loaded',
-              data: content
+              data: content,
+              contentWasSynced: data.contentWasSynced,
             });
           })
           .catch(err => {
@@ -169,33 +172,36 @@ function loadFromKinto() {
 }
 
 function saveToKinto(content) {
+  console.log("Save to kinto");
   browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
     .then(data => {
-      if (!data.contentWasSynced) {
-        encrypt(data.credentials.key, data.notes)
-        .then(encrypted => {
-          console.log('Encrypted content:', encrypted);
-          return client
-            .bucket('default')
-            .collection('notes')
-            .updateRecord(
-              { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
-              { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
-            );
-        })
-        .then(() => {
-          return browser.storage.local.set({ contentWasSynced: true });
-        })
-        .catch(error => {
-          if (/HTTP 401/.test(error.message)) {
-            // In case of 401 log the user out.
-            return   browser.storage.local.remove(['credentials']).then(() => {
-              return browser.storage.local.set({ contentWasSynced: false });
-            });
-          } else {
-            console.error(error);
-          }
-        });
+      if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
+        console.log("New content");
+        return encrypt(data.credentials.key, data.notes)
+          .then(encrypted => {
+            console.log('Encrypted content:', encrypted);
+            return client
+              .bucket('default')
+              .collection('notes')
+              .updateRecord(
+                { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
+                { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
+              );
+          })
+          .then(() => {
+            console.log("Content was synced: true");
+            return browser.storage.local.set({ contentWasSynced: true });
+          })
+          .catch(error => {
+            if (/HTTP 401/.test(error.message)) {
+              // In case of 401 log the user out.
+              return   browser.storage.local.remove(['credentials']).then(() => {
+                return browser.storage.local.set({ contentWasSynced: false });
+              });
+            } else {
+              console.error(error);
+            }
+          });
       }
     });
   // XXX: Debounce the call and set the status to Editing
