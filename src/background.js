@@ -108,67 +108,68 @@ function authenticate() {
   });
 }
 
-let lastRemoteLoad = -1;
-
 function loadFromKinto() {
   // Get credentials and lastmodified
-  browser.storage.local.get(['credentials', 'contentWasSynced']).then((data) => {
-    // XXX: Ask for an refresh token
-    // Query Kinto with the Bearer Token
-    if (! data.hasOwnProperty('credentials')) return;
+  browser.storage.local.get(['credentials', 'contentWasSynced', 'last_modified'])
+    .then((data) => {
+      // XXX: Ask for an refresh token
+      // Query Kinto with the Bearer Token
+      if (! data.hasOwnProperty('credentials')) return;
 
-    client
-      .bucket('default')
-      .collection('notes')
-      .getRecord("singleNote", {
-        headers: { Authorization: `Bearer ${data.credentials.access_token}` }
-      })
-      .then(result => {
-        lastRemoteLoad = Date.now();
-        console.log(data, result);
-        // If there is something in Kinto send unencrypted content to the sidebar
-        return decrypt(data.credentials.key, result["data"]['content'])
-          .then(content => {
+      client
+        .bucket('default')
+        .collection('notes')
+        .getRecord("singleNote", {
+          headers: { Authorization: `Bearer ${data.credentials.access_token}` }
+        })
+        .then(result => {
+          if (data.hasOwnProperty('last_modified') &&
+              result.data.last_modified > data.last_modified) {
+            // If there is something in Kinto send unencrypted content to the sidebar
+            return decrypt(data.credentials.key, result["data"]['content'])
+              .then(content => {
+                browser.runtime.sendMessage({
+                  action: 'kinto-loaded',
+                  data: content,
+                  contentWasSynced: data.contentWasSynced,
+                  last_modified: data.last_modified
+                });
+              })
+              .catch(err => {
+                // In case we cannot decrypt the message
+                if (data.credentials.key.kid < result.data.kid) {
+                  // If the key date is greater than current one, log the user out.
+                  return browser.storage.local.remove("credentials");
+                } else {
+                  // If the key date is older than the current one, we can't help
+                  // because there is no way we get the previous key.
+                  // Flush the server ALA sync
+                  return client
+                    .bucket('default')
+                    .collection('notes')
+                    .deleteRecord("singleNote", {
+                      headers: { Authorization: `Bearer ${data.credentials.access_token}` }
+                    });
+                }
+              });
+          }
+        })
+        .catch(error => {
+          if (/HTTP 404/.test(error.message)) {
+            // If there is nothing in Kinto send null to the sidebar
+            console.log("First time syncing");
             browser.runtime.sendMessage({
               action: 'kinto-loaded',
-              data: content,
-              contentWasSynced: data.contentWasSynced,
+              data: null
             });
-          })
-          .catch(err => {
-            // In case we cannot decrypt the message
-            if (data.credentials.key.kid < result.data.kid) {
-              // If the key date is greater than current one, log the user out.
-              return browser.storage.local.remove("credentials");
-            } else {
-              // If the key date is older than the current one, we can't help
-              // because there is no way we get the previous key.
-              // Flush the server ALA sync
-              return client
-                .bucket('default')
-                .collection('notes')
-                .deleteRecord("singleNote", {
-                  headers: { Authorization: `Bearer ${data.credentials.access_token}` }
-                });
-            }
-          });
-      })
-      .catch(error => {
-        if (/HTTP 404/.test(error.message)) {
-          // If there is nothing in Kinto send null to the sidebar
-          console.log("First time syncing");
-          browser.runtime.sendMessage({
-            action: 'kinto-loaded',
-            data: null
-          });
-        } else if (/HTTP 401/.test(error.message)) {
-          // In case of 401 log the user out.
-          return browser.storage.local.remove("credentials");
-        } else {
-          console.error(error);
-        }
-      });
-  });
+          } else if (/HTTP 401/.test(error.message)) {
+            // In case of 401 log the user out.
+            return browser.storage.local.remove("credentials");
+          } else {
+            console.error(error);
+          }
+        });
+    });
 }
 
 function saveToKinto(content) {
@@ -195,12 +196,14 @@ function saveToKinto(content) {
                   { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
                 );
             })
-            .then(() => {
-              console.log("Content was synced: true");
-              return browser.storage.local.set({ contentWasSynced: true })
+            .then((body) => {
+              console.log("Content was synced at " + body.data.last_modified);
+              return browser.storage.local.set({ contentWasSynced: true,
+                                                 last_modified: body.data.last_modified })
                 .then(() => {
                   browser.runtime.sendMessage('notes@mozilla.com', {
-                    action: 'text-synced'
+                    action: 'text-synced',
+                    last_modified: body.data.last_modified,
                   });
                 });
             })

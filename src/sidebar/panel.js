@@ -239,16 +239,11 @@ chrome.runtime.onMessage.addListener(eventData => {
       if (eventData.data !== null) {
         let remote = eventData.data
         const local = quill.getContents();
-        console.log("Content in Kinto", remote);
-        if (eventData.contentWasSynced || JSON.stringify(remote) == JSON.stringify(local)) {
-          content = remote;
-          console.log("ContentWasSynced, no changes");
-        } else {
-          console.log("Merge content");
-          let newContent = JSON.parse(JSON.stringify(remote));
-          newContent.ops.push({ insert: '\n==========\n\n' });
-          content = newContent.ops.concat(local.ops);
-        }
+        console.log("Merge content");
+        let newContent = JSON.parse(JSON.stringify(remote));
+        newContent.ops.push({ insert: '\n==========\n\n' });
+        content = newContent.ops.concat(local.ops);
+
         setTimeout(() => {
           console.log("Content is", content);
           quill.setContents(content);
