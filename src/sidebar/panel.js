@@ -99,21 +99,24 @@ ordered.title = browser.i18n.getMessage('numberedListTitle') + ' (' + userOSKey 
 bullet.title = browser.i18n.getMessage('bulletedListTitle') + ' (' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
 
+const INITIAL_CONTENT = {
+  ops: [
+    { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
+    {
+      attributes: { size: 'large' },
+      insert:
+      browser.i18n.getMessage('welcomeText2')
+    },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
+  ]
+};
+
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
-    quill.setContents({
-      ops: [
-        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
-        {
-          attributes: { size: 'large' },
-          insert:
-            browser.i18n.getMessage('welcomeText2')
-        },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
-      ]
-    });
-    browser.storage.local.set({ contentWasSynced: true });
+    quill.setContents(INITIAL_CONTENT);
+    console.log("initial content");
+    browser.storage.local.set({initialContent: true });
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       console.log('Write in Quill');
@@ -238,22 +241,27 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'kinto-loaded':
       if (eventData.data !== null) {
-        if (!eventData.contentWasSynced) {
-          let remote = eventData.data
-          const local = quill.getContents();
-          console.log("Merge content");
+        const local = quill.getContents();
+        const remote = eventData.data;
+        console.log("initialContent", eventData.initialContent);
+        if (!eventData.initialContent) {
           let newContent = JSON.parse(JSON.stringify(remote));
           newContent.ops.push({ insert: '\n==========\n\n' });
           content = newContent.ops.concat(local.ops);
         } else {
           content = eventData.data;
         }
-
-        setTimeout(() => {
-          console.log("Content is", content);
-          quill.setContents(content);
-        }, 10);
+      } else {
+        browser.storage.local.remove("initialContent");
+        console.log("remove initial content");
+        console.log("Set content");
+        content = eventData.data;
       }
+
+      setTimeout(() => {
+        console.log("Content is", content);
+        quill.setContents(content);
+      }, 10);
       break;
     case 'text-change':
       ignoreNextLoadEvent = true;
