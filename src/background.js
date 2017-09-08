@@ -114,7 +114,7 @@ function loadFromKinto() {
     .then((data) => {
       // XXX: Ask for an refresh token
       // Query Kinto with the Bearer Token
-      if (! data.hasOwnProperty('credentials')) return;
+      if (!data.hasOwnProperty('credentials')) return;
 
       client
         .bucket('default')
@@ -123,7 +123,7 @@ function loadFromKinto() {
           headers: { Authorization: `Bearer ${data.credentials.access_token}` }
         })
         .then(result => {
-          if (data.hasOwnProperty('last_modified') &&
+          if (!data.hasOwnProperty('last_modified') ||
               result.data.last_modified > data.last_modified) {
             // If there is something in Kinto send unencrypted content to the sidebar
             return decrypt(data.credentials.key, result["data"]['content'])
