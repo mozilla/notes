@@ -228,6 +228,7 @@ function getThemeFromStorage() {
 document.addEventListener('DOMContentLoaded', getThemeFromStorage);
 
 chrome.runtime.onMessage.addListener(eventData => {
+  var time = new Date().toLocaleTimeString();
   switch (eventData.action) {
     case 'sync-authenticated':
       chrome.runtime.sendMessage({
@@ -257,6 +258,15 @@ chrome.runtime.onMessage.addListener(eventData => {
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();
+      break;
+    case 'text-editing':
+      enableSync.textContent = 'Editing';
+      break;
+    case 'text-synced':
+      enableSync.textContent = 'Synced at ' + time;
+      break;
+    case 'text-saved':
+      enableSync.textContent = 'Saved at ' + time;
       break;
     case 'theme-changed':
       getThemeFromStorage();
