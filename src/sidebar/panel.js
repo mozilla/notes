@@ -113,6 +113,7 @@ function handleLocalContent(data) {
         { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
       ]
     });
+    browser.storage.local.set({ contentWasSynced: true });
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       console.log('Write in Quill');
@@ -237,12 +238,16 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'kinto-loaded':
       if (eventData.data !== null) {
-        let remote = eventData.data
-        const local = quill.getContents();
-        console.log("Merge content");
-        let newContent = JSON.parse(JSON.stringify(remote));
-        newContent.ops.push({ insert: '\n==========\n\n' });
-        content = newContent.ops.concat(local.ops);
+        if (!eventData.contentWasSynced) {
+          let remote = eventData.data
+          const local = quill.getContents();
+          console.log("Merge content");
+          let newContent = JSON.parse(JSON.stringify(remote));
+          newContent.ops.push({ insert: '\n==========\n\n' });
+          content = newContent.ops.concat(local.ops);
+        } else {
+          content = eventData.data;
+        }
 
         setTimeout(() => {
           console.log("Content is", content);
