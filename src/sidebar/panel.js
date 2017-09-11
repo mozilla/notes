@@ -116,12 +116,10 @@ let ignoreNextTextChange = false;
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents(INITIAL_CONTENT);
-    console.log("initial content");
     browser.storage.local.set({contentWasSynced: true });
     ignoreNextTextChange = true;
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
-      console.log('Write in Quill');
       quill.setContents(data.notes);
     }
   }
@@ -149,10 +147,9 @@ loadContent()
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.get("notes")
+  browser.storage.local.get('notes')
     .then((data) => {
-      if (data.notes != content && !ignoreNextTextChange) {
-        console.log('text-change, contentWasSynced: false');
+      if (data.notes !== content && !ignoreNextTextChange) {
         browser.storage.local.set({ notes: content, contentWasSynced: false })
           .then(() => {
             // Notify other sidebars
@@ -237,6 +234,7 @@ document.addEventListener('DOMContentLoaded', getThemeFromStorage);
 
 chrome.runtime.onMessage.addListener(eventData => {
   let time;
+  let content;
   switch (eventData.action) {
     case 'sync-authenticated':
       chrome.runtime.sendMessage({
@@ -248,21 +246,19 @@ chrome.runtime.onMessage.addListener(eventData => {
         const local = quill.getContents();
         const remote = eventData.data;
         if (!eventData.contentWasSynced) {
-          let newContent = JSON.parse(JSON.stringify(remote));
+          const newContent = JSON.parse(JSON.stringify(remote));
           newContent.ops.push({ insert: '\n==========\n\n' });
           content = newContent.ops.concat(local.ops);
         } else {
-          content = eventData.data;
+          content = remote;
         }
       } else {
-        browser.storage.local.remove("initialContent");
-        console.log("remove initial content");
-        console.log("Set content");
+        browser.storage.local.remove('initialContent');
         content = eventData.data;
       }
 
       setTimeout(() => {
-        console.log("Content is", content);
+        console.log('Content is', content);
         quill.setContents(content);
       }, 10);
       break;

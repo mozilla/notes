@@ -86,12 +86,12 @@ function authenticate() {
     redirect_uri: browser.identity.getRedirectURL(),
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
   }).then((loginDetails) => {
-    console.log('access token + keys', loginDetails);
     const credentials = {
       access_token: loginDetails.access_token,
       refresh_token: loginDetails.refresh_token,
       key: loginDetails.keys['https://identity.mozilla.org/apps/notes']
     };
+    console.log('Login succeeded', credentials);
     browser.storage.local.set({credentials}).then(() => {
       chrome.runtime.sendMessage({
         action: 'sync-authenticated',
@@ -99,7 +99,7 @@ function authenticate() {
       });
     });
   }, (err) => {
-    console.log('login failed', err);
+    console.error('login failed', err);
     chrome.runtime.sendMessage({
       action: 'authenticated',
       err: err
@@ -119,14 +119,14 @@ function loadFromKinto() {
       client
         .bucket('default')
         .collection('notes')
-        .getRecord("singleNote", {
+        .getRecord('singleNote', {
           headers: { Authorization: `Bearer ${data.credentials.access_token}` }
         })
         .then(result => {
           if (!data.hasOwnProperty('last_modified') ||
               result.data.last_modified > data.last_modified) {
             // If there is something in Kinto send unencrypted content to the sidebar
-            return decrypt(data.credentials.key, result["data"]['content'])
+            return decrypt(data.credentials.key, result['data']['content'])
               .then(content => {
                 browser.runtime.sendMessage({
                   action: 'kinto-loaded',
@@ -135,11 +135,11 @@ function loadFromKinto() {
                   last_modified: data.last_modified
                 });
               })
-              .catch(err => {
+              .catch(() => {
                 // In case we cannot decrypt the message
                 if (data.credentials.key.kid < result.data.kid) {
                   // If the key date is greater than current one, log the user out.
-                  return browser.storage.local.remove("credentials");
+                  return browser.storage.local.remove('credentials');
                 } else {
                   // If the key date is older than the current one, we can't help
                   // because there is no way we get the previous key.
@@ -147,7 +147,7 @@ function loadFromKinto() {
                   return client
                     .bucket('default')
                     .collection('notes')
-                    .deleteRecord("singleNote", {
+                    .deleteRecord('singleNote', {
                       headers: { Authorization: `Bearer ${data.credentials.access_token}` }
                     });
                 }
@@ -157,14 +157,14 @@ function loadFromKinto() {
         .catch(error => {
           if (/HTTP 404/.test(error.message)) {
             // If there is nothing in Kinto send null to the sidebar
-            console.log("First time syncing");
+            console.log('Kinto is emtpy');
             browser.runtime.sendMessage({
               action: 'kinto-loaded',
               data: null
             });
           } else if (/HTTP 401/.test(error.message)) {
             // In case of 401 log the user out.
-            return browser.storage.local.remove("credentials");
+            return browser.storage.local.remove('credentials');
           } else {
             console.error(error);
           }
@@ -172,7 +172,7 @@ function loadFromKinto() {
     });
 }
 
-function saveToKinto(content) {
+function saveToKinto() {
   // XXX: Debounce the call and set the status to Editing
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'text-editing'
@@ -184,20 +184,18 @@ function saveToKinto(content) {
     browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
       .then(data => {
         if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
-          console.log("New content");
           return encrypt(data.credentials.key, data.notes)
             .then(encrypted => {
-              console.log('Encrypted content:', encrypted);
               return client
                 .bucket('default')
                 .collection('notes')
                 .updateRecord(
-                  { id: "singleNote", content: encrypted, kid: data.credentials.key.kid },
+                  { id: 'singleNote', content: encrypted, kid: data.credentials.key.kid },
                   { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
                 );
             })
             .then((body) => {
-              console.log("Content was synced at " + body.data.last_modified);
+              console.log('Content was synced at ' + body.data.last_modified);
               return browser.storage.local.set({ contentWasSynced: true,
                                                  last_modified: body.data.last_modified })
                 .then(() => {
@@ -225,8 +223,8 @@ function saveToKinto(content) {
       });
   };
 
-  clearTimeout(timeouts["saveToKinto"]);
-  timeouts["saveToKinto"] = setTimeout(later, 1000);
+  clearTimeout(timeouts['saveToKinto']);
+  timeouts['saveToKinto'] = setTimeout(later, 1000);
   // XXX: Set the status to syncing
   // XXX: Try to save the new content with the previous last_modified value
   // XXX: If it succeed set the status to Synced...
@@ -247,7 +245,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       loadFromKinto();
       break;
     case 'kinto-save':
-      saveToKinto(eventData.content);
+      saveToKinto();
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
