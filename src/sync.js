@@ -1,3 +1,9 @@
+/* exported loadFromKinto */
+/* exported saveToKinto */
+
+let syncDebounce = null;
+
+
 const cryptographer = new Jose.WebCryptographer();
 cryptographer.setKeyEncryptionAlgorithm('A256KW');
 cryptographer.setContentEncryptionAlgorithm('A256GCM');
@@ -96,7 +102,7 @@ function saveToKinto(client) {
   });
 
   const later = function() {
-    timeouts['saveToKinto'] = null;
+    syncDebounce = null;
 
     browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
       .then(data => {
@@ -116,6 +122,7 @@ function saveToKinto(client) {
               return browser.storage.local.set({ contentWasSynced: true,
                                                  last_modified: body.data.last_modified })
                 .then(() => {
+                  // Set the status to syncing
                   browser.runtime.sendMessage('notes@mozilla.com', {
                     action: 'text-synced',
                     last_modified: body.data.last_modified,
@@ -140,10 +147,8 @@ function saveToKinto(client) {
       });
   };
 
-  clearTimeout(timeouts['saveToKinto']);
-  timeouts['saveToKinto'] = setTimeout(later, 1000);
-  // XXX: Set the status to syncing
-  // XXX: Try to save the new content with the previous last_modified value
-  // XXX: If it succeed set the status to Synced...
-  // XXX: If it failed loadFromKinto and handle merge
+  clearTimeout(syncDebounce);
+  syncDebounce = setTimeout(later, 1000);
+  // Try to save the new content with the previous last_modified value
+  // If it failed loadFromKinto and handle merge
 }

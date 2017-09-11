@@ -13,6 +13,8 @@ globals:
   JoseJWE: false
   TestPilotGA: false
   fxaCryptoRelier: false
+  loadFromKinto: false
+  saveToKinto: false
 
 root: true
 
