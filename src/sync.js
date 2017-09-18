@@ -109,9 +109,8 @@ function saveToKinto(client) {
         if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
           return encrypt(data.credentials.key, data.notes)
             .then(encrypted => {
-              console.log(data.last_modified, "'" + data.last_modified);
               const headers = { Authorization: `Bearer ${data.credentials.access_token}`};
-              if (data.hasOwnProperty('last_modified') && data.last_modified) {
+              if (data.hasOwnProperty('last_modified') && typeof data.last_modified !== "object") {
                 headers['If-Match'] = '"' + data.last_modified + '"';
               }
               console.log(headers);
