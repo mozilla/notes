@@ -10,7 +10,6 @@ const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
 
 const timeouts = {};
 
-
 // Kinto sync and encryption
 
 const client = new KintoClient(KINTO_SERVER);

@@ -55,7 +55,7 @@ function loadFromKinto(client) {
                   action: 'kinto-loaded',
                   data: content,
                   contentWasSynced: data.contentWasSynced,
-                  last_modified: data.last_modified
+                  last_modified: result.data.last_modified
                 });
               })
               .catch(() => {
@@ -104,17 +104,22 @@ function saveToKinto(client) {
   const later = function() {
     syncDebounce = null;
 
-    browser.storage.local.get(['credentials', 'notes', 'contentWasSynced'])
+    browser.storage.local.get(['credentials', 'notes', 'contentWasSynced', 'last_modified'])
       .then(data => {
         if (!data.contentWasSynced && data.hasOwnProperty('credentials')) {
           return encrypt(data.credentials.key, data.notes)
             .then(encrypted => {
+              const headers = { Authorization: `Bearer ${data.credentials.access_token}`};
+              if (data.hasOwnProperty('last_modified') && data.last_modified) {
+                headers['If-Match'] = '"' + data.last_modified + '"';
+              }
+              console.log(headers);
               return client
                 .bucket('default')
                 .collection('notes')
                 .updateRecord(
                   { id: 'singleNote', content: encrypted, kid: data.credentials.key.kid },
-                  { headers: { Authorization: `Bearer ${data.credentials.access_token}` } }
+                  { headers }
                 );
             })
             .then((body) => {
@@ -134,6 +139,12 @@ function saveToKinto(client) {
                 // In case of 401 log the user out.
                 return   browser.storage.local.remove(['credentials']).then(() => {
                   return browser.storage.local.set({ contentWasSynced: false });
+                });
+              } else if (/HTTP 412/.test(error.message)) {
+                // In case of 412 handle merge conflict
+                console.log(error);
+                browser.storage.local.set({ contentWasSynced: false }).then(() => {
+                  loadFromKinto(client);
                 });
               } else {
                 console.error(error);

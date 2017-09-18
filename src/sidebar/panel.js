@@ -132,10 +132,6 @@ function loadContent() {
     browser.storage.local.get(['notes'], data => {
       // We load the local content
       handleLocalContent(data);
-      // In the meantime we try to load the kinto content
-      chrome.runtime.sendMessage({
-        action: 'kinto-load'
-      });
       resolve();
     });
   });
@@ -144,6 +140,10 @@ function loadContent() {
 loadContent()
   .then(() => {
     document.getElementById('loading').style.display = 'none';
+    // In the meantime we try to load the kinto content
+    chrome.runtime.sendMessage({
+      action: 'kinto-load'
+    });
   });
 
 // Sidebar and background already know about that change.
@@ -257,6 +257,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         });
       break;
     case 'kinto-loaded':
+      console.log("kinto-loaded content", eventData);
       if (eventData.data !== null) {
         const local = quill.getContents();
         const remote = eventData.data;
@@ -268,11 +269,11 @@ chrome.runtime.onMessage.addListener(eventData => {
           content = remote;
         }
         ignoreNextTextChange = true;
-        browser.storage.local.set({ notes: content});
       } else {
         browser.storage.local.remove('initialContent');
         content = eventData.data;
       }
+    browser.storage.local.set({ notes: content, last_modified: eventData.last_modified });
 
       setTimeout(() => {
         console.log('Content is', content);
