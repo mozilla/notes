@@ -3,7 +3,18 @@
  */
 const TRACKING_ID = 'UA-35433268-79';
 
+const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
+// XXX: Read this from Kinto fxa-params
+const FXA_CLIENT_ID = 'c6d74070a481bc10';
+const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
+
 const timeouts = {};
+
+// Kinto sync and encryption
+
+const client = new KintoClient(KINTO_SERVER);
+
+// Analytics
 
 const analytics = new TestPilotGA({
   tid: TRACKING_ID,
@@ -36,13 +47,54 @@ function sendMetrics(event, context = {}) {
   timeouts[event] = setTimeout(later, 20000);
 }
 
+function authenticate() {
+  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
+    chrome.runtime.sendMessage({
+      action: 'sync-opening'
+    });
+  fxaKeysUtil.launchFxaScopedKeyFlow({
+    client_id: FXA_CLIENT_ID,
+    oauth_uri: FXA_OAUTH_SERVER,
+    pkce: true,
+    redirect_uri: browser.identity.getRedirectURL(),
+    scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
+  }).then((loginDetails) => {
+    const credentials = {
+      access_token: loginDetails.access_token,
+      refresh_token: loginDetails.refresh_token,
+      key: loginDetails.keys['https://identity.mozilla.org/apps/notes']
+    };
+    console.log('Login succeeded', credentials);
+    browser.storage.local.set({credentials}).then(() => {
+      chrome.runtime.sendMessage({
+        action: 'sync-authenticated',
+        credentials
+      });
+    });
+  }, (err) => {
+    console.error('login failed', err);
+    chrome.runtime.sendMessage({
+      action: 'authenticated',
+      err: err
+    });
+    throw err;
+  });
+}
 browser.runtime.onMessage.addListener(function(eventData) {
   switch (eventData.action) {
     case 'authenticate':
-      browser.storage.local.set({'asked-for-syncing': true})
-      .then(() => {
-          sendMetrics('sync-started', eventData.context);
-        });
+      sendMetrics('webext-button-authenticate', eventData.context);
+      authenticate();
+      break;
+    case 'disconnected':
+      sendMetrics('webext-button-disconnect', eventData.context);
+      browser.storage.local.remove(['credentials']);
+      break;
+    case 'kinto-load':
+      loadFromKinto(client);
+      break;
+    case 'kinto-save':
+      saveToKinto(client);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);

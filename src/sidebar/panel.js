@@ -99,20 +99,27 @@ ordered.title = browser.i18n.getMessage('numberedListTitle') + ' (' + userOSKey 
 bullet.title = browser.i18n.getMessage('bulletedListTitle') + ' (' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
 
+const INITIAL_CONTENT = {
+  ops: [
+    { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
+    {
+      attributes: { size: 'large' },
+      insert:
+      browser.i18n.getMessage('welcomeText2')
+    },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
+  ]
+};
+
+// What I have is already in localStorage.
+let ignoreNextTextChange = true;
+
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
-    quill.setContents({
-      ops: [
-        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
-        {
-          attributes: { size: 'large' },
-          insert:
-            browser.i18n.getMessage('welcomeText2')
-        },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
-      ]
-    });
+    quill.setContents(INITIAL_CONTENT);
+    browser.storage.local.set({contentWasSynced: true });
+    ignoreNextTextChange = true;
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       quill.setContents(data.notes);
@@ -123,7 +130,7 @@ function handleLocalContent(data) {
 function loadContent() {
   return new Promise((resolve) => {
     browser.storage.local.get(['notes'], data => {
-      // If we have a bearer, we try to save the content.
+      // We load the local content
       handleLocalContent(data);
       resolve();
     });
@@ -133,26 +140,44 @@ function loadContent() {
 loadContent()
   .then(() => {
     document.getElementById('loading').style.display = 'none';
+    // In the meantime we try to load the kinto content
+    chrome.runtime.sendMessage({
+      action: 'kinto-load'
+    });
   });
 
+// Sidebar and background already know about that change.
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.set({ notes: content }).then(() => {
-    // Notify other sidebars
-    if (!ignoreNextLoadEvent) {
-      chrome.runtime.sendMessage('notes@mozilla.com', {
-        action: 'text-change'
-      });
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'metrics-changed',
-        context: getPadStats()
-      });
-    } else {
-      ignoreNextLoadEvent = false;
-    }
-  });
+  browser.storage.local.get('notes')
+    .then((data) => {
+      if (data.notes !== content && !ignoreNextTextChange) {
+        browser.storage.local.set({ notes: content, contentWasSynced: false })
+          .then(() => {
+            // Notify other sidebars
+            if (!ignoreNextLoadEvent) {
+              chrome.runtime.sendMessage('notes@mozilla.com', {
+                action: 'text-change'
+              });
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats()
+              });
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'kinto-save',
+                content
+              });
+            } else {
+              ignoreNextLoadEvent = false;
+            }
+          });
+      } else {
+        ignoreNextTextChange = false;
+      }
+    });
 });
 
 const enableSync = document.getElementById('enable-sync');
@@ -169,8 +194,15 @@ closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
 
+giveFeedback.addEventListener('click', (event) => {
+  event.preventDefault();
+  enableSync.textContent = 'Disconnected';
+  browser.runtime.sendMessage({
+    action: 'disconnected'
+  });
+});
+
 enableSync.onclick = () => {
-  noteDiv.classList.toggle('visible');
   browser.runtime.sendMessage({
     action: 'authenticate',
     context: getPadStats()
@@ -201,13 +233,67 @@ function getThemeFromStorage() {
     }
   });
 }
+
+function getLastSyncedTime() {
+  const getting = browser.storage.local.get(['last_modified', 'credentials']);
+  getting.then(data => {
+    if (data.hasOwnProperty('credentials')) {
+      const time = new Date(data.last_modified).toLocaleTimeString();
+      enableSync.textContent = 'Synced at ' + time;
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', getThemeFromStorage);
+document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 
 chrome.runtime.onMessage.addListener(eventData => {
+  let time;
+  let content;
   switch (eventData.action) {
+    case 'sync-authenticated':
+      chrome.runtime.sendMessage({
+          action: 'kinto-load'
+        });
+      break;
+    case 'kinto-loaded':
+      console.log("kinto-loaded content", eventData);
+      if (eventData.data !== null) {
+        const local = quill.getContents();
+        const remote = eventData.data;
+        if (!eventData.contentWasSynced) {
+          const newContent = JSON.parse(JSON.stringify(remote));
+          newContent.ops.push({ insert: '\n====== Previously was ======\n\n' });
+          content = newContent.ops.concat(local.ops);
+        } else {
+          content = remote;
+        }
+        ignoreNextTextChange = true;
+      } else {
+        browser.storage.local.remove('initialContent');
+        content = eventData.data;
+      }
+    browser.storage.local.set({ notes: content, last_modified: eventData.last_modified });
+
+      setTimeout(() => {
+        console.log('Content is', content);
+        quill.setContents(content);
+      }, 10);
+      break;
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();
+      break;
+    case 'text-editing':
+      enableSync.textContent = 'Editing';
+      break;
+    case 'text-synced':
+      time = new Date(eventData.last_modified).toLocaleTimeString();
+      enableSync.textContent = 'Synced at ' + time;
+      break;
+    case 'text-saved':
+      time = new Date().toLocaleTimeString();
+      enableSync.textContent = 'Saved at ' + time;
       break;
     case 'theme-changed':
       getThemeFromStorage();
@@ -274,3 +360,18 @@ function getPadStats() {
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
+
+chrome.runtime.onMessage.addListener(eventData => {
+  switch (eventData.action) {
+    case 'authenticated':
+      if (eventData.err) {
+        // TODO: Localize this
+        enableSync.textContent = 'Login Failed…';
+      } else if (eventData.bearer) {
+        enableSync.textContent = 'Synced';
+        enableSync.disabled = true;
+      }
+
+      break;
+  }
+});
