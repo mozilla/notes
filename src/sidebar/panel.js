@@ -111,7 +111,9 @@ const INITIAL_CONTENT = {
     { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
   ]
 };
-let ignoreNextTextChange = false;
+
+// What I have is already in localStorage.
+let ignoreNextTextChange = true;
 
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
@@ -144,6 +146,7 @@ loadContent()
     document.getElementById('loading').style.display = 'none';
   });
 
+// Sidebar and background already know about that change.
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
@@ -230,7 +233,19 @@ function getThemeFromStorage() {
     }
   });
 }
+
+function getLastSyncedTime() {
+  const getting = browser.storage.local.get(['last_modified', 'credentials']);
+  getting.then(data => {
+    if (data.hasOwnProperty('credentials')) {
+      const time = new Date(data.last_modified).toLocaleTimeString();
+      enableSync.textContent = 'Synced at ' + time;
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', getThemeFromStorage);
+document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 
 chrome.runtime.onMessage.addListener(eventData => {
   let time;
@@ -247,11 +262,13 @@ chrome.runtime.onMessage.addListener(eventData => {
         const remote = eventData.data;
         if (!eventData.contentWasSynced) {
           const newContent = JSON.parse(JSON.stringify(remote));
-          newContent.ops.push({ insert: '\n==========\n\n' });
+          newContent.ops.push({ insert: '\n====== Previously was ======\n\n' });
           content = newContent.ops.concat(local.ops);
         } else {
           content = remote;
         }
+        ignoreNextTextChange = true;
+        browser.storage.local.set({ notes: content});
       } else {
         browser.storage.local.remove('initialContent');
         content = eventData.data;

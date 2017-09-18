@@ -54,7 +54,7 @@ function loadFromKinto(client) {
                 browser.runtime.sendMessage({
                   action: 'kinto-loaded',
                   data: content,
-                  contentWasSynced: !!data.contentWasSynced,
+                  contentWasSynced: data.contentWasSynced,
                   last_modified: data.last_modified
                 });
               })
