@@ -8,7 +8,7 @@
     "url": "https://github.com/mozilla/notes/issues"
   },
   "dependencies": {
-    "fxa-crypto-relier": "1.0.0",
+    "fxa-crypto-relier": "1.0.1",
     "jose-jwe-jws": "^0.1.5",
     "kinto-http": "^4.3.4",
     "quill": "1.2.6",
