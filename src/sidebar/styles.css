@@ -177,3 +177,11 @@ footer {
 .forbid-cursor {
   cursor: no-drop;
 }
+
+.mdl-js-button {
+	height: 100%;
+}
+
+.mdl-menu {
+	padding: 0;
+}

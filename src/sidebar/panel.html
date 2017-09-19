@@ -5,6 +5,9 @@
   <title>Firefox Notes</title>
   <link href="vendor/quill.snow.css" rel="stylesheet">
   <link href="styles.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="vendor/material.css">
 </head>
 
 <body>
@@ -42,7 +45,18 @@
 
     <div id="footer-buttons">
       <button id="enable-sync"></button>
-      <a target="_blank" id="give-feedback"></a>
+<!--      <a target="_blank" id="give-feedback"></a>-->
+			<div class="wrapper">
+				<button id="demo-menu-top-right"
+        class="mdl-js-button">
+					<i class="material-icons">more_vert</i>
+				</button>
+				<ul class="mdl-menu mdl-menu--top-right mdl-js-menu"
+    data-mdl-for="demo-menu-top-right">
+					<li class="mdl-menu__item">Feedback</li>
+					<li class="mdl-menu__item">Disable Sync</li>
+				</ul>
+			</div>
     </div>
   </footer>
 
@@ -50,5 +64,6 @@
   <script src="vendor/quill.js"></script>
   <!-- Initialize Quill editor -->
   <script src="panel.js"></script>
+  <script defer src="vendor/material.js"></script>
 </body>
 </html>
