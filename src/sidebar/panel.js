@@ -163,10 +163,16 @@ enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 
 const giveFeedback = document.getElementById('give-feedback');
-giveFeedback.innerHTML = browser.i18n.getMessage('feedback');
+giveFeedback.textContent = browser.i18n.getMessage('feedback');
+giveFeedback.addEventListener('click', () => {
+  browser.tabs.create({
+    active: true,
+    url: SURVEY_PATH
+  });
+});
 
 const disableSync = document.getElementById('disable-sync');
-disableSync.innerHTML = browser.i18n.getMessage('disableSync');
+disableSync.textContent = browser.i18n.getMessage('disableSync');
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');

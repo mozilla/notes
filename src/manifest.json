@@ -22,6 +22,7 @@
   },
   "permissions": [
     "storage",
+    "tabs",
     "https://ssl.google-analytics.com/collect"
   ],
   "background": {
