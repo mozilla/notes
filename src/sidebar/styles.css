@@ -180,6 +180,24 @@ footer {
   cursor: no-drop;
 }
 
-.mdl-js-button {
+#context-menu-button {
+  background-size: 3px;
+  background-image: url('three-dots.svg');
+  background-position:  50%;
+  background-repeat: no-repeat;
   height: 100%;
+  width: 26px;
+  text-align: left;
+}
+
+.context-menu {
+  font-family: inherit;
+  padding: 0;
+}
+
+.context-menu-item {
+  font-size: 12px;
+  padding: 0 0 0 15px;
+  height: 18px;
+  line-height: 30px;
 }

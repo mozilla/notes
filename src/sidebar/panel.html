@@ -4,10 +4,8 @@
   <meta charset="utf-8" />
   <title>Firefox Notes</title>
   <link href="vendor/quill.snow.css" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/material.css">
   <link href="styles.css" rel="stylesheet">
-
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="vendor/material.css">
 </head>
 
 <body>
@@ -45,17 +43,13 @@
 
     <div id="footer-buttons">
       <button id="enable-sync"></button>
-			<div class="wrapper">
-				<button id="demo-menu-top-right"
-        class="mdl-js-button">
-					<i class="material-icons">more_vert</i>
-				</button>
-				<ul class="mdl-menu mdl-menu--top-right mdl-js-menu"
-    data-mdl-for="demo-menu-top-right">
-					<li id="give-feedback" class="mdl-menu__item"></li>
-					<li id="disable-sync" class="mdl-menu__item"></li>
-				</ul>
-			</div>
+      <div class="wrapper">
+        <button id="context-menu-button" class="mdl-js-button"></button>
+        <ul class="mdl-menu mdl-menu--top-right mdl-js-menu context-menu" data-mdl-for="context-menu-button">
+          <li id="give-feedback" class="mdl-menu__item context-menu-item"></li>
+          <li id="disable-sync" class="mdl-menu__item context-menu-item"></li>
+        </ul>
+      </div>
     </div>
   </footer>
 
