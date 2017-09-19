@@ -9,6 +9,8 @@ const files = [
   copySync('node_modules/quill/LICENSE', 'src/sidebar/vendor/quill.LICENSE'),
   copySync('node_modules/kinto-http/dist/kinto-http.min.js', 'src/vendor/kinto-http.js'),
   copySync('node_modules/kinto-http/LICENSE', 'src/vendor/kinto-http.LICENSE'),
+  copySync('node_modules/kinto/dist/kinto.noshim.js', 'src/vendor/kinto.js'),
+  copySync('node_modules/kinto/LICENSE', 'src/vendor/kinto.LICENSE'),
   copySync('node_modules/jose-jwe-jws/dist/jose.min.js', 'src/vendor/jose.js'),
   copySync('node_modules/jose-jwe-jws/LICENSE', 'src/vendor/jose.LICENCE'),
   copySync('node_modules/fxa-crypto-relier/dist/fxa-crypto-relier/fxa-crypto-relier.js', 'src/vendor/fxa-crypto-relier/fxa-crypto-relier.js')
