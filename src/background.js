@@ -12,7 +12,7 @@ const timeouts = {};
 
 // Kinto sync and encryption
 
-const client = new KintoClient(KINTO_SERVER);
+const client = new Kinto({remote: KINTO_SERVER, bucket: "default"});
 
 // Analytics
 
@@ -94,7 +94,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       loadFromKinto(client);
       break;
     case 'kinto-save':
-      saveToKinto(client);
+      saveToKinto(client, eventData.content);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
