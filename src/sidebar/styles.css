@@ -100,6 +100,7 @@ footer {
   text-overflow: ellipsis;
 }
 
+/*
 #give-feedback {
   background-image: url('feedback.svg');
   background-position: center center;
@@ -109,6 +110,7 @@ footer {
   display: flex;
   flex: 0 0 40px;
 }
+*/
 
 #footer-buttons button,
 #footer-buttons a {
@@ -179,9 +181,5 @@ footer {
 }
 
 .mdl-js-button {
-	height: 100%;
-}
-
-.mdl-menu {
-	padding: 0;
+  height: 100%;
 }

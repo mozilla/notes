@@ -156,14 +156,17 @@ quill.on('text-change', () => {
 });
 
 const enableSync = document.getElementById('enable-sync');
-// const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
-// giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
-// giveFeedback.setAttribute('href', SURVEY_PATH);
+
+const giveFeedback = document.getElementById('give-feedback');
+giveFeedback.innerHTML = browser.i18n.getMessage('feedback');
+
+const disableSync = document.getElementById('disable-sync');
+disableSync.innerHTML = browser.i18n.getMessage('disableSync');
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
