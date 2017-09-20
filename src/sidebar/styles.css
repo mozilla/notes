@@ -100,18 +100,6 @@ footer {
   text-overflow: ellipsis;
 }
 
-/*
-#give-feedback {
-  background-image: url('feedback.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
-  border-left: 1px solid #d7d7db;
-  display: flex;
-  flex: 0 0 40px;
-}
-*/
-
 #footer-buttons button,
 #footer-buttons a {
   background-color: #f9f9fa;

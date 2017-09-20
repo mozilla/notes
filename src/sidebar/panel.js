@@ -171,9 +171,6 @@ giveFeedback.addEventListener('click', () => {
   });
 });
 
-const disableSync = document.getElementById('disable-sync');
-disableSync.textContent = browser.i18n.getMessage('disableSync');
-
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
