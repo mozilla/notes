@@ -10,10 +10,6 @@ div#toolbar {
   background-image: url('dark-svg/sync-16-dark.svg');
 }
 
-#give-feedback {
-  background-image: url('dark-svg/feedback-dark.svg');
-}
-
 #footer-buttons button,
 #footer-buttons a {
   background-color: #272B35;
@@ -34,6 +30,29 @@ div#toolbar {
 ::-moz-selection {
   background-color: #5675B9;
   color: #fff;
+}
+
+/* material-design-lite menu */
+.mdl-menu__outline {
+  background: #272B35;
+  transition: none;
+}
+
+#context-menu-button {
+  background-image: url('dark-svg/three-dots-dark.svg');
+}
+
+.context-menu-item {
+  color: #e6e6e6;
+  background-color: #272B35;
+}
+
+.context-menu-item:hover {
+  background-color: #323744;
+}
+
+.context-menu-item:active {
+  background-color: #3d4352;
 }
 
 /* Overridden Quill classes */
