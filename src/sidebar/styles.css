@@ -189,3 +189,7 @@ footer {
   height: 18px;
   line-height: 30px;
 }
+
+.ql-tooltip {
+  display: none;
+}

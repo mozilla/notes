@@ -1,4 +1,5 @@
 const formats = [
+  'link',
   'bold',
   'font',
   'italic',
@@ -74,6 +75,42 @@ const quill = new Quill('#editor', {
     toolbar: '#toolbar'
   },
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
+});
+
+function isWhitespace(ch) {
+  let whiteSpace = false;
+  if ((ch === ' ') || (ch === '\t') || (ch === '\n')) {
+    whiteSpace = true;
+  }
+  return whiteSpace;
+}
+
+// function used for recognizing typed urls and creating links
+quill.on('text-change', function(delta) {
+  const regex = /https?:\/\/[^\s]+$/;
+  if (delta.ops.length === 2 && delta.ops[0].retain && isWhitespace(delta.ops[1].insert)) {
+    const endRetain = delta.ops[0].retain;
+    const text = quill.getText().substr(0, endRetain);
+    const match = text.match(regex);
+
+    if (match !== null) {
+      const url = match[0];
+
+      let ops = [];
+      if (endRetain > url.length) {
+        ops.push({ retain: endRetain - url.length });
+      }
+
+      ops = ops.concat([
+        { delete: url.length },
+        { insert: url, attributes: { link: url } }
+      ]);
+
+      quill.updateContents({
+        ops: ops
+      });
+    }
+  }
 });
 
 let userOSKey;
