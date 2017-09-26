@@ -144,6 +144,8 @@ quill.on('text-change', () => {
       chrome.runtime.sendMessage('notes@mozilla.com', {
         action: 'text-change'
       });
+
+      updateSavingIndicator();
       // Debounce this second event
       chrome.runtime.sendMessage({
         action: 'metrics-changed',
@@ -172,6 +174,19 @@ giveFeedback.addEventListener('click', () => {
     url: SURVEY_PATH
   });
 });
+
+
+let savingIndicatorTimeout;
+function updateSavingIndicator() {
+  savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+  const later = function() {
+    savingIndicatorTimeout = null;
+    savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+  }
+  clearTimeout(savingIndicatorTimeout);
+  savingIndicatorTimeout = setTimeout(later, 300);
+}
+
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
