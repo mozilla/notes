@@ -160,7 +160,7 @@ const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
-enableSync.textContent = browser.i18n.getMessage('syncNotes');
+enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
 giveFeedback.setAttribute('href', SURVEY_PATH);

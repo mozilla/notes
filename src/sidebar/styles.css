@@ -86,18 +86,24 @@ footer {
   height: 40px;
 }
 
-#enable-sync {
-  background-image: url('sync-16-inactive.svg');
-  background-position: 10px 12px;
-  background-repeat: no-repeat;
+#saving-indicator {
   display: flex;
   flex: 1 0;
-  padding: 0 10px 0 32px;
   text-align: left;
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+#enable-sync {
+  background-image: url('sync-16-inactive.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  flex: 0 0 40px;
 }
 
 #give-feedback {
