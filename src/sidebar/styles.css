@@ -35,6 +35,10 @@ div#editor {
   overflow: hidden;
 }
 
+div#editor a {
+  cursor: pointer;
+}
+
 .ql-snow .ql-picker.ql-size {
   width: 45px;
 }
@@ -193,3 +197,5 @@ footer {
 .ql-tooltip {
   display: none;
 }
+
+

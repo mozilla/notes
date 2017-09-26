@@ -113,6 +113,29 @@ quill.on('text-change', function(delta) {
   }
 });
 
+document.querySelector('#editor').addEventListener('click', function(e) {
+  const anchor = e.target;
+  if (anchor !== null && anchor.tagName === 'A') {
+    browser.runtime.sendMessage({
+      action: 'link-clicked',
+      context: getPadStats()
+    });
+    browser.tabs.create({
+      active: true,
+      url: anchor.href
+    });
+  }
+});
+
+quill.on('text-change', function(delta) {
+  if ('insert' in delta.ops[1] && isWhitespace(delta.ops[1].insert)) {
+    const format = quill.getFormat(delta.ops[0].retain, 1);
+
+    if ('link' in format)
+      quill.formatText(delta.ops[0].retain, 1, 'link', false);
+  }
+});
+
 let userOSKey;
 
 if (navigator.appVersion.indexOf('Mac') !== -1)
