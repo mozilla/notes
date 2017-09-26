@@ -204,6 +204,8 @@ quill.on('text-change', () => {
       chrome.runtime.sendMessage('notes@mozilla.com', {
         action: 'text-change'
       });
+
+      updateSavingIndicator();
       // Debounce this second event
       chrome.runtime.sendMessage({
         action: 'metrics-changed',
@@ -215,21 +217,30 @@ quill.on('text-change', () => {
   });
 });
 
+const savingIndicator = document.getElementById('saving-indicator');
 const enableSync = document.getElementById('enable-sync');
+const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
-enableSync.textContent = browser.i18n.getMessage('syncNotes');
+savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
+giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
+giveFeedback.setAttribute('href', SURVEY_PATH);
 
-const giveFeedback = document.getElementById('give-feedback');
-giveFeedback.textContent = browser.i18n.getMessage('feedback');
-giveFeedback.addEventListener('click', () => {
-  browser.tabs.create({
-    active: true,
-    url: SURVEY_PATH
-  });
-});
+
+let savingIndicatorTimeout;
+function updateSavingIndicator() {
+  savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+  const later = function() {
+    savingIndicatorTimeout = null;
+    savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+  };
+  clearTimeout(savingIndicatorTimeout);
+  savingIndicatorTimeout = setTimeout(later, 300);
+}
+
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
