@@ -11,6 +11,10 @@
       "update_url": "https://testpilot.firefox.com/files/notes@mozilla.com/updates.json"
     }
   },
+  "icons": {
+    "48": "icons/notes.svg",
+    "96": "icons/notes.svg"
+  },
   "sidebar_action": {
     "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
