@@ -12,8 +12,8 @@
     }
   },
   "icons": {
-    "48": "icons/notes.svg",
-    "96": "icons/notes.svg"
+    "48": "icons/notes-48.png",
+    "96": "icons/notes-96.png"
   },
   "sidebar_action": {
     "default_icon": "icons/notes.svg",
