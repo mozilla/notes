@@ -85,31 +85,47 @@ function isWhitespace(ch) {
   return whiteSpace;
 }
 
+let ignoreNextTextChange = false;
+let debounceLinksTimeout;
 // function used for recognizing typed urls and creating links
 quill.on('text-change', function(delta) {
-  const regex = /https?:\/\/[^\s]+$/;
-  if (delta.ops.length === 2 && delta.ops[0].retain && isWhitespace(delta.ops[1].insert)) {
-    const endRetain = delta.ops[0].retain;
-    const text = quill.getText().substr(0, endRetain);
-    const match = text.match(regex);
-
-    if (match !== null) {
-      const url = match[0];
-
-      let ops = [];
-      if (endRetain > url.length) {
-        ops.push({ retain: endRetain - url.length });
+  const later = function() {
+    debounceLinksTimeout = null;
+    const regex = /https?:\/\/[^\s]+$/;
+    if (delta.ops.length === 2 && delta.ops[0].retain ) {
+      let endRetain = delta.ops[0].retain;
+      if (delta.ops[1].hasOwnProperty('insert')) {
+        endRetain += 1;
       }
+      const text = quill.getText().substr(0, endRetain);
+      const match = text.match(regex);
 
-      ops = ops.concat([
-        { delete: url.length },
-        { insert: url, attributes: { link: url } }
-      ]);
+      if (match !== null) {
+        const url = match[0];
 
-      quill.updateContents({
-        ops: ops
-      });
+        let ops = [];
+        if (endRetain > url.length) {
+          ops.push({ retain: endRetain - url.length });
+        }
+
+        ops = ops.concat([
+          { delete: url.length },
+          { insert: url, attributes: { link: url } }
+        ]);
+
+        ignoreNextTextChange = true;
+        quill.updateContents({
+          ops: ops
+        });
+      }
     }
+  };
+
+  if(!ignoreNextTextChange) {
+    clearTimeout(debounceLinksTimeout);
+    debounceLinksTimeout = setTimeout(later, 500);
+  } else {
+    ignoreNextTextChange = false;
   }
 });
 
