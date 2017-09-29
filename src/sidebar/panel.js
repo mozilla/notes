@@ -85,7 +85,7 @@ function isWhitespace(ch) {
   return whiteSpace;
 }
 
-// function used for recognizing typed urls and creating links
+// recognizes typed urls and create links from those urls
 quill.on('text-change', function(delta) {
   const regex = /https?:\/\/[^\s]+$/;
   if (delta.ops.length === 2 && delta.ops[0].retain && isWhitespace(delta.ops[1].insert)) {
@@ -113,6 +113,34 @@ quill.on('text-change', function(delta) {
   }
 });
 
+// recognizes pasted urls and create links from those urls
+quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+  const regex = /https?:\/\/[^\s]+/;
+  if (typeof(node.data) !== 'string')
+    return;
+  const matches = node.data.match(regex);
+
+  if (matches && matches.length > 0) {
+    const ops = [];
+    let str = node.data;
+
+    matches.forEach(function(match) {
+      const split = str.split(match);
+      const beforeLink = split.shift();
+      ops.push({ insert: beforeLink });
+      ops.push({ insert: match, attributes: { link: match } });
+      str = split.join(match);
+    });
+
+    ops.push({ insert: str });
+    delta.ops = ops;
+  }
+
+  return delta;
+});
+
+// adds an eventListener to every <a> element which opens their respective
+// href link in a new tab when clicked
 document.querySelector('#editor').addEventListener('click', function(e) {
   const anchor = e.target;
   if (anchor !== null && anchor.tagName === 'A') {
@@ -127,13 +155,15 @@ document.querySelector('#editor').addEventListener('click', function(e) {
   }
 });
 
+// makes getting out of link-editing format easier by escaping whitespace characters
 quill.on('text-change', function(delta) {
-  if ('insert' in delta.ops[1] && isWhitespace(delta.ops[1].insert)) {
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+      isWhitespace(delta.ops[1].insert)) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
-
     if ('link' in format)
       quill.formatText(delta.ops[0].retain, 1, 'link', false);
-  }
+  } else
+    return;
 });
 
 let userOSKey;
