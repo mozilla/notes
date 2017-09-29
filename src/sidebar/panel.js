@@ -3,6 +3,7 @@ const formats = [
   'font',
   'italic',
   'size',
+  'link',
   'strike',
   'indent',
   'list',
