@@ -5,7 +5,7 @@
 
 ## What does it aim for
 
-This project does basically aim at opening a notepad in the Firefox toolbar to store notes about your browsing.
+This project let you open a notepad in the Firefox toolbar to store notes about your browsing.
 
 
 ## How can you use it
