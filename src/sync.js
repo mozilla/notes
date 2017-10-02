@@ -1,5 +1,6 @@
 /* exported loadFromKinto */
 /* exported saveToKinto */
+/* exported BrowserStorageCredentials */
 
 let syncDebounce = null;
 
@@ -123,20 +124,53 @@ class JWETransformer {
   }
 }
 
-function syncKinto(client) {
+/**
+ * Interface describing a mechanism to fetch credentials.
+ */
+class Credentials {
+  async get() {
+    return Promise.reject("Implement me");
+  }
+
+  /**
+   * Call this if, for example, credentials were invalid.
+   */
+  async clear() {
+    return Promise.reject("Implement me");
+  }
+}
+
+class BrowserStorageCredentials {
+  constructor(storage) {
+    this.storage = storage;
+  }
+
+  async get() {
+    const data = await this.storage.get(['credentials']);
+    return data.credentials;
+  }
+
+  async clear() {
+    return this.storage.remove('credentials');
+  }
+}
+
+function syncKinto(client, credentials) {
   // Get credentials and lastmodified
-  return browser.storage.local.get(['credentials'])
-    .then((data) => {
+  let credential;
+  return credentials.get()
+    .then(received => {
+      credential = received;
       // XXX: Ask for an refresh token
       // Query Kinto with the Bearer Token
-      if (!data.hasOwnProperty('credentials')) return;
+      if (!received) return;
       return client
         .collection('notes', {
           idSchema: notesIdSchema,
-          remoteTransformers: [new JWETransformer(data.credentials.key)],
+          remoteTransformers: [new JWETransformer(credential.key)],
         })
         .sync({
-          headers: { Authorization: `Bearer ${data.credentials.access_token}` },
+          headers: { Authorization: `Bearer ${credential.access_token}` },
           // FIXME: Handle conflicts
           strategy: "server_wins",
         });
@@ -150,10 +184,10 @@ function syncKinto(client) {
       if (error.response && error.response.status == 401) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
-        return browser.storage.local.remove('credentials');
+        return credentials.clear();
       } else if (error instanceof ServerKeyNewerError) {
         // If the key date is greater than current one, log the user out.
-        return browser.storage.local.remove('credentials');
+        return credentials.clear();
       } else if (error instanceof ServerKeyOlderError) {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
@@ -161,7 +195,7 @@ function syncKinto(client) {
         // FIXME: need to reset sync status.
         const kintoHttp = client.api.remote;
         return kintoHttp.bucket('default').deleteCollection('notes', {
-          headers: { Authorization: `Bearer ${data.credentials.access_token}` }
+          headers: { Authorization: `Bearer ${credential.access_token}` }
         });
       } else {
         console.error(error);
@@ -169,8 +203,8 @@ function syncKinto(client) {
     });
 }
 
-function loadFromKinto(client) {
-  return syncKinto(client)
+function loadFromKinto(client, credentials) {
+  return syncKinto(client, credentials)
     .then(syncResult => {
       // FIXME: Should we only do this if we got new data as part of a sync?
       return client.collection('notes', {
@@ -188,7 +222,7 @@ function loadFromKinto(client) {
     });
 }
 
-function saveToKinto(client, content) {
+function saveToKinto(client, credentials, content) {
   // XXX: Debounce the call and set the status to Editing
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'text-editing'
@@ -199,18 +233,12 @@ function saveToKinto(client, content) {
     const notes = client.collection('notes', {
       idSchema: notesIdSchema,
     });
-    let credentials;
-
-    browser.storage.local.get(['credentials'])
-      .then(data => {
-        credentials = data.credentials;
-        return notes.upsert({ id: 'singleNote', content });
-      })
+    return notes.upsert({ id: 'singleNote', content })
       .then(_ => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
-        return syncKinto(client);
+        return syncKinto(client, credentials);
       })
       .then(syncResult => {
         // FIXME: Do anything with sync result?

@@ -81,6 +81,7 @@ function authenticate() {
   });
 }
 browser.runtime.onMessage.addListener(function(eventData) {
+  const credentials = new BrowserStorageCredentials(browser.storage.local);
   switch (eventData.action) {
     case 'authenticate':
       sendMetrics('webext-button-authenticate', eventData.context);
@@ -91,10 +92,10 @@ browser.runtime.onMessage.addListener(function(eventData) {
       browser.storage.local.remove(['credentials']);
       break;
     case 'kinto-load':
-      loadFromKinto(client);
+      loadFromKinto(client, credentials);
       break;
     case 'kinto-save':
-      saveToKinto(client, eventData.content);
+      saveToKinto(client, credentials, eventData.content);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
