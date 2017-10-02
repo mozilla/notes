@@ -125,7 +125,7 @@ class JWETransformer {
 
 function syncKinto(client) {
   // Get credentials and lastmodified
-  return browser.storage.local.get(['credentials', 'contentWasSynced', 'last_modified'])
+  return browser.storage.local.get(['credentials'])
     .then((data) => {
       // XXX: Ask for an refresh token
       // Query Kinto with the Bearer Token
