@@ -12,7 +12,7 @@ const timeouts = {};
 
 // Kinto sync and encryption
 
-const client = new Kinto({remote: KINTO_SERVER, bucket: "default"});
+const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 
 // Analytics
 

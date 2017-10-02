@@ -11,11 +11,13 @@ extends:
 
 globals:
   KintoClient: false
+  Kinto: false
   Quill: false
   Jose: false
   JoseJWE: false
   TestPilotGA: false
   fxaCryptoRelier: false
+  BrowserStorageCredentials: false
   loadFromKinto: false
   saveToKinto: false
 

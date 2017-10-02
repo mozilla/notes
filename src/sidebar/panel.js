@@ -257,7 +257,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         });
       break;
     case 'kinto-loaded':
-      console.log("kinto-loaded content", eventData);
+      console.log('kinto-loaded content', eventData);
       if (eventData.data !== null) {
         const local = quill.getContents();
         const remote = eventData.data;

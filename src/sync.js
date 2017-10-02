@@ -35,10 +35,10 @@ function decrypt(key, encrypted) {
 const notesIdSchema = {
   // FIXME: Maybe this should generate IDs?
   generate() {
-    throw new Error("cannot generate IDs");
+    throw new Error('cannot generate IDs');
   },
 
-  validate(id) {
+  validate() {
     // FIXME: verify that at least this matches Kinto server ID format
     return true;
   },
@@ -46,13 +46,13 @@ const notesIdSchema = {
 
 class ServerKeyNewerError extends Error {
   constructor() {
-    super("key used to encrypt the record appears to be newer than our key");
+    super('key used to encrypt the record appears to be newer than our key');
   }
 }
 
 class ServerKeyOlderError extends Error {
   constructor() {
-    super("key used to encrypt the record appears to be older than our key");
+    super('key used to encrypt the record appears to be older than our key');
   }
 }
 
@@ -68,14 +68,14 @@ class JWETransformer {
     // headers (If-Match, If-None-Match) correctly.
     // DON'T copy over "deleted" status, because then we'd leak
     // plaintext deletes.
-    const status = record._status && (record._status == "deleted" ? "updated" : record._status);
+    const status = record._status && (record._status === 'deleted' ? 'updated' : record._status);
     const encryptedResult = {
       content: ciphertext,
       id: record.id,
       _status: status,
       kid: this.key.kid,
     };
-    if (record.hasOwnProperty("last_modified")) {
+    if (record.hasOwnProperty('last_modified')) {
       encryptedResult.last_modified = record.last_modified;
     }
 
@@ -88,7 +88,7 @@ class JWETransformer {
       if (record.deleted) {
         return record;
       }
-      throw new Error("No ciphertext: nothing to decrypt?");
+      throw new Error('No ciphertext: nothing to decrypt?');
     }
 
     if (record.kid !== this.key.kid) {
@@ -107,16 +107,16 @@ class JWETransformer {
       decoded = {
         content: decoded,
         id: 'singleNote',
-      }
+      };
     }
-    if (record.hasOwnProperty("last_modified")) {
+    if (record.hasOwnProperty('last_modified')) {
       decoded.last_modified = record.last_modified;
     }
 
     // _status: deleted records were deleted on a client, but
     // uploaded as an encrypted blob so we don't leak deletions.
     // If we get such a record, flag it as deleted.
-    if (decoded._status == "deleted") {
+    if (decoded._status === 'deleted') {
       decoded.deleted = true;
     }
 
@@ -129,19 +129,20 @@ class JWETransformer {
  */
 class Credentials {
   async get() {
-    return Promise.reject("Implement me");
+    return Promise.reject('Implement me');
   }
 
   /**
    * Call this if, for example, credentials were invalid.
    */
   async clear() {
-    return Promise.reject("Implement me");
+    return Promise.reject('Implement me');
   }
 }
 
-class BrowserStorageCredentials {
+class BrowserStorageCredentials extends Credentials {
   constructor(storage) {
+    super();
     this.storage = storage;
   }
 
@@ -172,7 +173,7 @@ function syncKinto(client, credentials) {
         .sync({
           headers: { Authorization: `Bearer ${credential.access_token}` },
           // FIXME: Handle conflicts
-          strategy: "server_wins",
+          strategy: 'server_wins',
         });
     })
     .then(syncResult => {
@@ -181,7 +182,7 @@ function syncKinto(client, credentials) {
       return syncResult;
     })
     .catch(error => {
-      if (error.response && error.response.status == 401) {
+      if (error.response && error.response.status === 401) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
         return credentials.clear();
@@ -205,14 +206,14 @@ function syncKinto(client, credentials) {
 
 function loadFromKinto(client, credentials) {
   return syncKinto(client, credentials)
-    .then(syncResult => {
+    .then(() => {
       // FIXME: Should we only do this if we got new data as part of a sync?
       return client.collection('notes', {
         idSchema: notesIdSchema,
       }).getAny('singleNote');
     })
     .then(result => {
-      console.log("Collection had record", result);
+      console.log('Collection had record', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         data: result.data.content,
@@ -234,13 +235,13 @@ function saveToKinto(client, credentials, content) {
       idSchema: notesIdSchema,
     });
     return notes.upsert({ id: 'singleNote', content })
-      .then(_ => {
+      .then(() => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
         return syncKinto(client, credentials);
       })
-      .then(syncResult => {
+      .then(() => {
         // FIXME: Do anything with sync result?
         return notes.getAny('singleNote');
       })
