@@ -16,9 +16,11 @@
     "testpilot-ga": "^0.2.1"
   },
   "devDependencies": {
+    "chai": "^4.1.0",
     "cross-spawn": "^5.1.0",
     "eslint": "^4.0.0",
     "fs-extra": "^4.0.1",
+    "mocha": "^3.2.0",
     "npm-run-all": "^4.0.2",
     "pontoon-to-webext": "^1.0.2",
     "prettier": "^1.4.4",

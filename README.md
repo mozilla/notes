@@ -27,6 +27,7 @@ Step 2:Navigate to the root of the directory you cloned and run:
 | `npm run build` | Builds the application as a Web Extension.|
 | `npm start`     | Launches Firefox with the Web Extension.  |
 
+You can also open the `test/index.html` file in your browser to run the automated tests.
 
 ## Localization
 
