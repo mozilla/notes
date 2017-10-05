@@ -17,14 +17,17 @@
   },
   "devDependencies": {
     "chai": "^4.1.0",
+    "chai-as-promised": "^7.1.1",
     "cross-spawn": "^5.1.0",
     "eslint": "^4.0.0",
+    "fetch-mock": "^5.12.2",
     "fs-extra": "^4.0.1",
     "mocha": "^3.2.0",
     "npm-run-all": "^4.0.2",
     "pontoon-to-webext": "^1.0.2",
     "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
+    "sinon": "^4.0.1",
     "web-ext": "^1.9.1"
   },
   "homepage": "https://github.com/mozilla/notes#readme",

@@ -200,6 +200,7 @@ function syncKinto(client, credentials) {
         });
       } else {
         console.error(error);
+        return Promise.reject(error);
       }
     });
 }
