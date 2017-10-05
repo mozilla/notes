@@ -1,3 +1,6 @@
+'use strict';
+// Many of these are "functional" tests that are run using Karma, and
+// so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
   it('should define syncKinto', function() {
     chai.expect(syncKinto).not.eql(undefined);
