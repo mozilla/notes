@@ -33,6 +33,7 @@ div#toolbar {
 div#editor {
   flex: auto;
   overflow: hidden;
+  font-size: 14px;
 }
 
 div#editor a {
