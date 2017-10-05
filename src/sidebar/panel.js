@@ -85,37 +85,6 @@ function isWhitespace(ch) {
   return whiteSpace;
 }
 
-// recognizes typed urls and create links from those urls
-quill.on('text-change', function(delta) {
-  const regex = /https?:\/\/[^\s]+$/;
-  if (delta.ops.length === 2 && delta.ops[0].retain ) {
-    let endRetain = delta.ops[0].retain;
-    if (delta.ops[1].hasOwnProperty('insert')) {
-      endRetain += 1;
-    }
-    const text = quill.getText().substr(0, endRetain);
-    const match = text.match(regex);
-
-    if (match !== null) {
-      const url = match[0];
-
-      let ops = [];
-      if (endRetain > url.length) {
-        ops.push({ retain: endRetain - url.length });
-      }
-
-      ops = ops.concat([
-        { delete: url.length },
-        { insert: url, attributes: { link: url } }
-      ]);
-
-      quill.updateContents({
-        ops: ops
-      });
-    }
-  }
-});
-
 // recognizes pasted urls and create links from those urls
 quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
   const regex = /https?:\/\/[^\s]+/;
@@ -160,7 +129,7 @@ document.querySelector('#editor').addEventListener('click', function(e) {
 
 // makes getting out of link-editing format easier by escaping whitespace characters
 quill.on('text-change', function(delta) {
-  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] &&
       isWhitespace(delta.ops[1].insert)) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)

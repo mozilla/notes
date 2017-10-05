@@ -189,6 +189,34 @@ footer {
   cursor: no-drop;
 }
 
-.ql-tooltip {
-  display: none;
+.ql-snow .ql-tooltip {
+
+}
+
+.ql-snow .ql-tooltip::before {
+  content: '';
+}
+
+.ql-snow .ql-tooltip.ql-editing a.ql-action::after {
+  content: '✔'
+}
+
+.ql-snow .ql-tooltip a.ql-action::after {
+ content: '✏️';
+}
+
+.ql-snow .ql-tooltip a.ql-remove::before {
+  content: '𝗫'
+}
+
+.ql-snow .ql-tooltip[data-mode="link"]::before {
+  content: ''
+}
+
+.ql-snow .ql-tooltip {
+  left: 0!important;
+  right: 0px!important;
+}
+
+.ql-snow .ql-tooltip a.ql-preview {
 }
