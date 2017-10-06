@@ -1,4 +1,11 @@
 'use strict';
+var chai = require('chai');
+var sinon = require('sinon');
+var chaiAsPromised = require('chai-as-promised');
+var fetchMock = require('fetch-mock');
+
+chai.use(chaiAsPromised);
+
 // Many of these are "functional" tests that are run using Karma, and
 // so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
@@ -40,10 +47,7 @@ describe('Authorization', function() {
     });
 
     it('should not reject the promise', function() {
-      return syncKinto(client, credentials).then(
-        () => {},
-        msg => chai.assert(false, msg.toString())
-      );
+      return chai.expect(syncKinto(client, credentials)).fulfilled;
     });
   });
 });

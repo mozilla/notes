@@ -27,14 +27,9 @@ module.exports = function(config) {
       ]
     },
     files: [
-      "node_modules/chai/chai.js",
-      "node_modules/sinon/pkg/sinon.js",
-      "node_modules/sinon-chrome/bundle/sinon-chrome-webextensions.min.js",
-      "node_modules/fetch-mock/es5/client-browserified.js",
-      "test/unit/setup_globals.js",
       "src/vendor/*.js",
+      "test/dist/unit-bundle.js",
       "src/*.js",
-      "test/unit/*.test.js"
     ],
     // coverage preprocessor doesn't cope with ES2017
     //preprocessors: {"src/*.js": ["coverage"]},

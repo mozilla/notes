@@ -35,7 +35,8 @@
     "rimraf": "^2.6.1",
     "sinon": "^4.0.1",
     "sinon-chrome": "^2.2.1",
-    "web-ext": "^1.9.1"
+    "web-ext": "^1.9.1",
+    "webpack": "^3.6.0"
   },
   "homepage": "https://github.com/mozilla/notes#readme",
   "license": "MPL-2.0",
@@ -55,6 +56,6 @@
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
     "test": "npm-run-all test:*",
-    "test:karma": "NODE_ENV=test karma start"
+    "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start"
   }
 }
