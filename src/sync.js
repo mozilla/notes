@@ -206,10 +206,24 @@ function syncKinto(client, credentials) {
     });
 }
 
+/**
+ * Try to sync against the Kinto server, and retrieve the current note
+ * contents.
+ *
+ * On completion, a 'kinto-loaded' event will be fired with the
+ * following structure:
+ *
+ * {
+ *   action: 'kinto-loaded',
+ *   data: the "content" that was previously saved to Kinto, or null
+ *     if nothing was previously saved to Kinto (for example, a new
+ *     FxA account, or if syncing failed on a fresh profile)
+ *   last_modified: the timestamp of the sync, or null
+ * }
+ */
 function loadFromKinto(client, credentials) {
   return syncKinto(client, credentials)
     .then(() => {
-      // FIXME: Should we only do this if we got new data as part of a sync?
       return client.collection('notes', {
         idSchema: notesIdSchema,
       }).getAny('singleNote');
@@ -218,9 +232,8 @@ function loadFromKinto(client, credentials) {
       console.log('Collection had record', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
-        data: result.data.content,
-        contentWasSynced: true,
-        last_modified: result.data && result.data.last_modified
+        data: result ? result.data.content : null,
+        last_modified: result ? result.data.last_modified : null,
       });
     });
 }

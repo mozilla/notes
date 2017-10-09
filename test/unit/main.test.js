@@ -100,11 +100,10 @@ describe('Authorization', function() {
       return loadFromKinto(client, undefined)
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledOnce);
-          chai.expect(browser.runtime.sendMessage.getCall(0).args(0)).eql({
+          chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
             action: 'kinto-loaded',
             data: null,
-            contentWasSynced: false,
-            last_modified: undefined,
+            last_modified: null,
           });
         });
     });
