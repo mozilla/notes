@@ -12,6 +12,7 @@
     "jose-jwe-jws": "^0.1.5",
     "kinto-http": "^4.3.4",
     "kinto": "^9.0.2",
+    "material-design-lite": "1.3.0",
     "quill": "1.2.6",
     "testpilot-ga": "^0.2.1"
   },

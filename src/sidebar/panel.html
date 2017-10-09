@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Firefox Notes</title>
+  <link href="vendor/material.css" rel="stylesheet">
   <link href="vendor/quill.snow.css" rel="stylesheet">
   <link href="styles.css" rel="stylesheet">
 </head>
@@ -42,7 +43,13 @@
 
     <div id="footer-buttons">
       <button id="enable-sync"></button>
-      <a target="_blank" id="give-feedback"></a>
+      <div class="wrapper">
+        <button id="context-menu-button" class="mdl-js-button"></button>
+        <ul class="mdl-menu mdl-menu--top-right mdl-js-menu context-menu" data-mdl-for="context-menu-button">
+          <li id="disconnect-from-sync" class="mdl-menu__item context-menu-item"></li>
+          <li id="give-feedback" class="mdl-menu__item context-menu-item"></li>
+        </ul>
+      </div>
     </div>
   </footer>
 
@@ -50,5 +57,6 @@
   <script src="vendor/quill.js"></script>
   <!-- Initialize Quill editor -->
   <script src="panel.js"></script>
+  <script defer src="vendor/material.js"></script>
 </body>
 </html>

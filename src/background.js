@@ -99,7 +99,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'disconnected':
       sendMetrics('webext-button-disconnect', eventData.context);
-      browser.storage.local.remove(['credentials']);
+      credentials.clear();
       break;
     case 'kinto-load':
       loadFromKinto(client, credentials);

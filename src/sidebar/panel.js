@@ -181,25 +181,36 @@ quill.on('text-change', () => {
 });
 
 const enableSync = document.getElementById('enable-sync');
-const giveFeedback = document.getElementById('give-feedback');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.textContent = browser.i18n.getMessage('syncNotes');
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
-giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
-giveFeedback.setAttribute('href', SURVEY_PATH);
 
-closeButton.addEventListener('click', () => {
-  noteDiv.classList.toggle('visible');
+const giveFeedback = document.getElementById('give-feedback');
+giveFeedback.textContent = browser.i18n.getMessage('feedback');
+giveFeedback.addEventListener('click', () => {
+  browser.tabs.create({
+    active: true,
+    url: SURVEY_PATH
+  });
 });
-
-giveFeedback.addEventListener('click', (event) => {
-  event.preventDefault();
+const disconnectSync = document.getElementById('disconnect-from-sync');
+disconnectSync.style.display = "none";
+disconnectSync.textContent = browser.i18n.getMessage('disableSync');
+disconnectSync.addEventListener('click', () => {
+  disconnectSync.style.display = "none";
   enableSync.textContent = 'Disconnected';
+  setTimeout(() => {
+    enableSync.textContent = browser.i18n.getMessage('syncNotes');
+  }, 2000);
   browser.runtime.sendMessage({
     action: 'disconnected'
   });
+});
+
+closeButton.addEventListener('click', () => {
+  noteDiv.classList.toggle('visible');
 });
 
 enableSync.onclick = () => {
@@ -263,6 +274,7 @@ chrome.runtime.onMessage.addListener(eventData => {
                                   last_modified: eventData.last_modified});
       time = new Date(eventData.last_modified).toLocaleTimeString();
       enableSync.textContent = 'Synced at ' + time;
+      disconnectSync.style.display = "block";
       setTimeout(() => {
         console.log('Content is', content);
         quill.setContents(content);
