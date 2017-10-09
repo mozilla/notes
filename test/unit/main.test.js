@@ -16,6 +16,7 @@ describe('Authorization', function() {
 
   afterEach(function() {
     sandbox.verifyAndRestore();
+    browser.flush();
   });
 
   it('should define syncKinto', function() {
@@ -89,14 +90,19 @@ describe('Authorization', function() {
   });
 
   describe('loadKinto', function() {
-    it('should fire a kinto-loaded message even if nothing in kinto', () => {
-      const syncKinto = sandbox.stub(global, 'syncKinto').resolves(undefined);
-      const collection = {
-        getAny: sandbox.stub().resolves(undefined)
+    let collection, client;
+    beforeEach(() => {
+      collection = {
+        getAny: sandbox.stub(),
       };
-      const client = {
+      client = {
         collection: sandbox.stub().returns(collection)
       };
+    });
+
+    it('should fire a kinto-loaded message even if nothing in kinto', () => {
+      const syncKinto = sandbox.stub(global, 'syncKinto').resolves(undefined);
+      collection.getAny.resolves(undefined);
       return loadFromKinto(client, undefined)
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledOnce);
@@ -104,6 +110,20 @@ describe('Authorization', function() {
             action: 'kinto-loaded',
             data: null,
             last_modified: null,
+          });
+        });
+    });
+
+    it('should not fail if syncKinto rejects', () => {
+      const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
+      collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
+      return loadFromKinto(client, undefined)
+        .then(() => {
+          chai.assert(browser.runtime.sendMessage.calledOnce);
+          chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
+            action: 'kinto-loaded',
+            data: 'def',
+            last_modified: 'abc',
           });
         });
     });

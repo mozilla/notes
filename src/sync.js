@@ -155,6 +155,14 @@ class BrowserStorageCredentials extends Credentials {
   }
 }
 
+/**
+ * Try to sync our data against the Kinto server.
+ *
+ * Returns a promise. The promise can reject in case of sync failure
+ * or any other reason. This is so that programming errors can be
+ * caught more easily in testing. Since this application is
+ * offline-first, sync failure should not be a failure for callers.
+ */
 function syncKinto(client, credentials) {
   // Get credentials and lastmodified
   let credential;
@@ -222,12 +230,15 @@ function syncKinto(client, credentials) {
  * }
  */
 function loadFromKinto(client, credentials) {
+  function retrieveNote() {
+    return client.collection('notes', {
+      idSchema: notesIdSchema,
+    }).getAny('singleNote');
+  }
+
   return syncKinto(client, credentials)
-    .then(() => {
-      return client.collection('notes', {
-        idSchema: notesIdSchema,
-      }).getAny('singleNote');
-    })
+  // Ignore failure of syncKinto by retrieving note even when promise rejected
+    .then(retrieveNote, retrieveNote)
     .then(result => {
       console.log('Collection had record', result);
       browser.runtime.sendMessage({
