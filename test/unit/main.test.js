@@ -87,4 +87,26 @@ describe('Authorization', function() {
       });
     });
   });
+
+  describe('loadKinto', function() {
+    it('should fire a kinto-loaded message even if nothing in kinto', () => {
+      const syncKinto = sandbox.stub(global, 'syncKinto').resolves(undefined);
+      const collection = {
+        getAny: sandbox.stub().resolves(undefined)
+      };
+      const client = {
+        collection: sandbox.stub().returns(collection)
+      };
+      return loadFromKinto(client, undefined)
+        .then(() => {
+          chai.assert(browser.runtime.sendMessage.calledOnce);
+          chai.expect(browser.runtime.sendMessage.getCall(0).args(0)).eql({
+            action: 'kinto-loaded',
+            data: null,
+            contentWasSynced: false,
+            last_modified: undefined,
+          });
+        });
+    });
+  });
 });
