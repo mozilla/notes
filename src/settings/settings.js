@@ -11,7 +11,7 @@ const themeRadioBtn = document.getElementsByName('theme');
 
 function loadSavedData(data) {
   const theme = data.theme;
-  
+
   if (theme === 'default')
     themeRadioBtn[0].checked = true;
   else if (theme === 'dark')
@@ -25,25 +25,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function getTheme() {
   let theme = '';
-  
+
   for (let i = 0; i < themeRadioBtn.length; i++) {
     if (themeRadioBtn[i].checked)
       theme = themeRadioBtn[i].value;
     else
       continue;
   }
-  
+
   const selectedTheme = {
     theme: theme
   };
-  
+
   return selectedTheme;
 }
 
 for (let i = 0; i < themeRadioBtn.length; i++) {
   themeRadioBtn[i].onclick = function() {
     const theme = getTheme();
-  
+
     browser.storage.local.set(theme);
 
     // notify background.js that theme settings have changed

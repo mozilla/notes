@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "default_locale": "en_US",
   "applications": {
     "gecko": {
@@ -16,7 +16,7 @@
     "96": "icons/notes-96.png"
   },
   "sidebar_action": {
-    "default_icon": "icons/notes-48.png",
+    "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
     "default_panel": "sidebar/panel.html"
   },

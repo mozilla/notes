@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.0 (2017-10-09)
+
+* Add a saving status indicator
+* Update Notes icon to a SVG one
+* Fix 14px default size
+
+
 ## 1.7.1 (2017-08-29)
 
 * Update translations
