@@ -1,5 +1,4 @@
 const formats = [
-  'link',
   'bold',
   'font',
   'italic',
@@ -75,98 +74,6 @@ const quill = new Quill('#editor', {
     toolbar: '#toolbar'
   },
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
-});
-
-function isWhitespace(ch) {
-  let whiteSpace = false;
-  if ((ch === ' ') || (ch === '\t') || (ch === '\n')) {
-    whiteSpace = true;
-  }
-  return whiteSpace;
-}
-
-// recognizes typed urls and create links from those urls
-quill.on('text-change', function(delta) {
-  const regex = /https?:\/\/[^\s]+$/;
-  if (delta.ops.length === 2 && delta.ops[0].retain ) {
-    let endRetain = delta.ops[0].retain;
-    if (delta.ops[1].hasOwnProperty('insert')) {
-      endRetain += 1;
-    }
-    const text = quill.getText().substr(0, endRetain);
-    const match = text.match(regex);
-
-    if (match !== null) {
-      const url = match[0];
-
-      let ops = [];
-      if (endRetain > url.length) {
-        ops.push({ retain: endRetain - url.length });
-      }
-
-      ops = ops.concat([
-        { delete: url.length },
-        { insert: url, attributes: { link: url } }
-      ]);
-
-      quill.updateContents({
-        ops: ops
-      });
-    }
-  }
-});
-
-// recognizes pasted urls and create links from those urls
-quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-  const regex = /https?:\/\/[^\s]+/;
-  if (typeof(node.data) !== 'string')
-    return;
-  const matches = node.data.match(regex);
-
-  if (matches && matches.length > 0) {
-    const ops = [];
-    let str = node.data;
-
-    matches.forEach(function(match) {
-      const split = str.split(match);
-      const beforeLink = split.shift();
-      ops.push({ insert: beforeLink });
-      ops.push({ insert: match, attributes: { link: match } });
-      str = split.join(match);
-    });
-
-    ops.push({ insert: str });
-    delta.ops = ops;
-  }
-
-  return delta;
-});
-
-// adds an eventListener to every <a> element which opens their respective
-// href link in a new tab when clicked
-document.querySelector('#editor').addEventListener('click', function(e) {
-  const anchor = e.target;
-  if (anchor !== null && anchor.tagName === 'A') {
-    browser.runtime.sendMessage({
-      action: 'link-clicked',
-      context: getPadStats()
-    });
-    browser.tabs.create({
-      active: true,
-      url: anchor.href
-    });
-  }
-});
-
-// makes getting out of link-editing format easier by escaping whitespace characters
-quill.on('text-change', function(delta) {
-  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
-      isWhitespace(delta.ops[1].insert)) {
-    const format = quill.getFormat(delta.ops[0].retain, 1);
-    if ('link' in format)
-      quill.formatText(delta.ops[0].retain, 1, 'link', false);
-  } else
-    return;
 });
 
 let userOSKey;
