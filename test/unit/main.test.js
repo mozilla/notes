@@ -128,4 +128,39 @@ describe('Authorization', function() {
         });
     });
   });
+
+  describe('saveToKinto', function() {
+    let collection, client;
+    beforeEach(() => {
+      collection = {
+        upsert: sandbox.stub().resolves(undefined),
+        getAny: sandbox.stub(),
+      };
+      client = {
+        collection: sandbox.stub().returns(collection)
+      };
+    });
+
+    it('should not fail if syncKinto rejects', () => {
+      const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
+      collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
+      return saveToKinto(client, undefined, 'imaginary content')
+        .then(() => {
+          chai.assert(browser.runtime.sendMessage.calledThrice);
+          chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql('notes@mozilla.com');
+          chai.expect(browser.runtime.sendMessage.getCall(0).args[1]).eql({
+            action: 'text-editing',
+          });
+          chai.expect(browser.runtime.sendMessage.getCall(1).args[0]).eql('notes@mozilla.com');
+          chai.expect(browser.runtime.sendMessage.getCall(1).args[1]).eql({
+            action: 'text-saved',
+          });
+          chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
+          chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
+            action: 'text-synced',
+            last_modified: 'abc',
+          });
+        });
+    });
+  });
 });

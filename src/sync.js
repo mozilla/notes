@@ -214,6 +214,12 @@ function syncKinto(client, credentials) {
     });
 }
 
+function retrieveNote(client) {
+  return client.collection('notes', {
+    idSchema: notesIdSchema,
+  }).getAny('singleNote');
+}
+
 /**
  * Try to sync against the Kinto server, and retrieve the current note
  * contents.
@@ -230,15 +236,9 @@ function syncKinto(client, credentials) {
  * }
  */
 function loadFromKinto(client, credentials) {
-  function retrieveNote() {
-    return client.collection('notes', {
-      idSchema: notesIdSchema,
-    }).getAny('singleNote');
-  }
-
   return syncKinto(client, credentials)
   // Ignore failure of syncKinto by retrieving note even when promise rejected
-    .then(retrieveNote, retrieveNote)
+    .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
       console.log('Collection had record', result);
       browser.runtime.sendMessage({
@@ -250,6 +250,12 @@ function loadFromKinto(client, credentials) {
 }
 
 function saveToKinto(client, credentials, content) {
+  let resolve, reject;
+  const promise = new Promise((thisResolve, thisReject) => {
+    resolve = thisResolve;
+    reject = thisReject;
+  });
+
   // XXX: Debounce the call and set the status to Editing
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'text-editing'
@@ -267,19 +273,20 @@ function saveToKinto(client, credentials, content) {
         });
         return syncKinto(client, credentials);
       })
-      .then(() => {
-        // FIXME: Do anything with sync result?
-        return notes.getAny('singleNote');
-      })
+      .then(() => retrieveNote(client), () => retrieveNote(client))
       .then(result => {
         // Set the status to synced
-        browser.runtime.sendMessage('notes@mozilla.com', {
+        return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
           last_modified: result.data.last_modified,
         });
+      })
+      .then(() => {
+        resolve();
       });
   };
 
   clearTimeout(syncDebounce);
   syncDebounce = setTimeout(later, 1000);
+  return promise;
 }
