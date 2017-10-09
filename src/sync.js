@@ -250,10 +250,9 @@ function loadFromKinto(client, credentials) {
 }
 
 function saveToKinto(client, credentials, content) {
-  let resolve, reject;
-  const promise = new Promise((thisResolve, thisReject) => {
+  let resolve;
+  const promise = new Promise(thisResolve => {
     resolve = thisResolve;
-    reject = thisReject;
   });
 
   // XXX: Debounce the call and set the status to Editing
