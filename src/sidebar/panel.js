@@ -94,7 +94,6 @@ quill.on('text-change', function(delta) {
       endRetain += 1;
     }
     const text = quill.getText().substr(0, endRetain);
-    const format = quill.getFormat(text);
     const match = text.match(regex);
 
     if (match !== null) {
@@ -105,16 +104,9 @@ quill.on('text-change', function(delta) {
         ops.push({ retain: endRetain - url.length });
       }
 
-      const attributes = {};
-      // apply any previous formatting options to the attributes object
-      Object.keys(format).forEach(function(key) {
-        attributes[key] = format[key];
-      });
-      attributes['link'] = url;
-
       ops = ops.concat([
         { delete: url.length },
-        { insert: url, attributes }
+        { insert: url, attributes: { link: url } }
       ]);
 
       quill.updateContents({
@@ -173,8 +165,6 @@ quill.on('text-change', function(delta) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)
       quill.formatText(delta.ops[0].retain, 1, 'link', false);
-  } else if (delta.ops.length === 1 && delta.ops[0].hasOwnProperty('insert')) {
-    quill.formatText(0, 1, 'link', false);
   } else
     return;
 });
