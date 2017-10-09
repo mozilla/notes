@@ -15,7 +15,7 @@ describe('Authorization', function() {
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sandbox.verifyAndRestore();
   });
 
   it('should define syncKinto', function() {
