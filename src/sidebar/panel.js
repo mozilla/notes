@@ -272,6 +272,9 @@ chrome.runtime.onMessage.addListener(eventData => {
       ignoreNextLoadEvent = true;
       loadContent();
       break;
+    case 'text-syncing':
+      enableSync.textContent = 'Syncing';
+      break;
     case 'text-editing':
       enableSync.textContent = 'Editing';
       break;

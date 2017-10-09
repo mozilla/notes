@@ -84,8 +84,18 @@ browser.runtime.onMessage.addListener(function(eventData) {
   const credentials = new BrowserStorageCredentials(browser.storage.local);
   switch (eventData.action) {
     case 'authenticate':
-      sendMetrics('webext-button-authenticate', eventData.context);
-      authenticate();
+      credentials.get()
+        .then(result => {
+          if (!result) {
+            sendMetrics('webext-button-authenticate', eventData.context);
+            authenticate();
+          } else {
+            chrome.runtime.sendMessage({
+              action: 'text-syncing'
+            });
+            loadFromKinto(client, credentials);
+          }
+        });
       break;
     case 'disconnected':
       sendMetrics('webext-button-disconnect', eventData.context);
