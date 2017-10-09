@@ -1,10 +1,9 @@
 # Changelog
 
-## 1.8.0 (2017-10-06)
+## 1.8.0 (2017-10-09)
 
 * Add a saving status indicator
 * Update Notes icon to a SVG one
-* Add support for links
 * Fix 14px default size
 
 
