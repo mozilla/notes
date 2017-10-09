@@ -196,10 +196,10 @@ giveFeedback.addEventListener('click', () => {
   });
 });
 const disconnectSync = document.getElementById('disconnect-from-sync');
-disconnectSync.style.display = "none";
+disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 disconnectSync.addEventListener('click', () => {
-  disconnectSync.style.display = "none";
+  disconnectSync.style.display = 'none';
   enableSync.textContent = 'Disconnected';
   setTimeout(() => {
     enableSync.textContent = browser.i18n.getMessage('syncNotes');
@@ -274,7 +274,7 @@ chrome.runtime.onMessage.addListener(eventData => {
                                   last_modified: eventData.last_modified});
       time = new Date(eventData.last_modified).toLocaleTimeString();
       enableSync.textContent = 'Synced at ' + time;
-      disconnectSync.style.display = "block";
+      disconnectSync.style.display = 'block';
       setTimeout(() => {
         console.log('Content is', content);
         quill.setContents(content);
