@@ -258,23 +258,11 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'kinto-loaded':
       console.log('kinto-loaded content', eventData);
-      if (eventData.data !== null) {
-        const local = quill.getContents();
-        const remote = eventData.data;
-        if (!eventData.contentWasSynced) {
-          const newContent = JSON.parse(JSON.stringify(remote));
-          newContent.ops.push({ insert: '\n====== Previously was ======\n\n' });
-          content = newContent.ops.concat(local.ops);
-        } else {
-          content = remote;
-        }
-        ignoreNextTextChange = true;
-      } else {
-        browser.storage.local.remove('initialContent');
-        content = eventData.data;
-      }
-    browser.storage.local.set({ notes: content, last_modified: eventData.last_modified });
-
+      content = eventData.data;
+      browser.storage.local.set({ notes: content,
+                                  last_modified: eventData.last_modified});
+      time = new Date(eventData.last_modified).toLocaleTimeString();
+      enableSync.textContent = 'Synced at ' + time;
       setTimeout(() => {
         console.log('Content is', content);
         quill.setContents(content);

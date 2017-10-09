@@ -91,7 +91,7 @@ class JWETransformer {
       throw new Error('No ciphertext: nothing to decrypt?');
     }
 
-    if (record.kid !== this.key.kid) {
+    if (record.kid.substr(15) !== this.key.kid.substr(15)) {
       if (this.key.kid < record.kid) {
         throw new ServerKeyNewerError();
       } else {
@@ -119,7 +119,6 @@ class JWETransformer {
     if (decoded._status === 'deleted') {
       decoded.deleted = true;
     }
-
     return decoded;
   }
 }
@@ -188,12 +187,14 @@ function syncKinto(client, credentials) {
         return credentials.clear();
       } else if (error instanceof ServerKeyNewerError) {
         // If the key date is greater than current one, log the user out.
+        console.error(error);
         return credentials.clear();
       } else if (error instanceof ServerKeyOlderError) {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
         // FIXME: need to reset sync status.
+        console.error(error);
         const kintoHttp = client.api.remote;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
