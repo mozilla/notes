@@ -142,6 +142,7 @@ describe('Authorization', function() {
     });
 
     it('should not fail if syncKinto rejects', () => {
+      this.timeout(5000);
       const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
       return saveToKinto(client, undefined, 'imaginary content')
