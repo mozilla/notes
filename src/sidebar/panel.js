@@ -3,6 +3,7 @@ const formats = [
   'bold',
   'font',
   'italic',
+  'underline',
   'size',
   'strike',
   'indent',
