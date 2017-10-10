@@ -200,7 +200,7 @@ disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 disconnectSync.addEventListener('click', () => {
   disconnectSync.style.display = 'none';
-  enableSync.textContent = 'Disconnected';
+  enableSync.textContent = browser.i18n.getMessage('disconnected');
   setTimeout(() => {
     enableSync.textContent = browser.i18n.getMessage('syncNotes');
   }, 2000);
@@ -213,7 +213,14 @@ closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
 
+let loginTimeout;
 enableSync.onclick = () => {
+  enableSync.textContent = browser.i18n.getMessage('openingLogin');
+
+  loginTimeout = setTimeout(() => {
+    enableSync.textContent = browser.i18n.getMessage('syncNotes');
+  }, 60000);
+
   browser.runtime.sendMessage({
     action: 'authenticate',
     context: getPadStats()
@@ -250,7 +257,10 @@ function getLastSyncedTime() {
   getting.then(data => {
     if (data.hasOwnProperty('credentials')) {
       const time = new Date(data.last_modified).toLocaleTimeString();
-      enableSync.textContent = 'Synced at ' + time;
+      enableSync.textContent = browser.i18n.getMessage('syncComplete', time);
+    } else {
+      const time = new Date().toLocaleTimeString();
+      enableSync.textContent = browser.i18n.getMessage('savedComplete', time);
     }
   });
 }
@@ -267,36 +277,40 @@ chrome.runtime.onMessage.addListener(eventData => {
           action: 'kinto-load'
         });
       break;
-    case 'kinto-loaded':
+  case 'kinto-loaded':
+      clearTimeout(loginTimeout);
       console.log('kinto-loaded content', eventData);
       content = eventData.data;
       browser.storage.local.set({ notes: content,
-                                  last_modified: eventData.last_modified});
-      time = new Date(eventData.last_modified).toLocaleTimeString();
-      enableSync.textContent = 'Synced at ' + time;
-      disconnectSync.style.display = 'block';
-      setTimeout(() => {
-        console.log('Content is', content);
-        quill.setContents(content);
-      }, 10);
+                                  last_modified: eventData.last_modified})
+        .then(() => {
+          getLastSyncedTime();
+          disconnectSync.style.display = 'block';
+          setTimeout(() => {
+            console.log('Content is', content);
+            quill.setContents(content);
+          }, 10);
+        });
       break;
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();
       break;
     case 'text-syncing':
-      enableSync.textContent = 'Syncing';
+      enableSync.textContent = browser.i18n.getMessage('syncProgress');
       break;
     case 'text-editing':
-      enableSync.textContent = 'Editing';
+      enableSync.textContent = browser.i18n.getMessage('editing');
       break;
     case 'text-synced':
-      time = new Date(eventData.last_modified).toLocaleTimeString();
-      enableSync.textContent = 'Synced at ' + time;
+      browser.storage.local.set({ last_modified: eventData.last_modified})
+        .then(() => {
+          getLastSyncedTime();
+        });
       break;
     case 'text-saved':
       time = new Date().toLocaleTimeString();
-      enableSync.textContent = 'Saved at ' + time;
+      enableSync.textContent = browser.i18n.getMessage('savedComplete', time);
       break;
     case 'theme-changed':
       getThemeFromStorage();
@@ -363,18 +377,3 @@ function getPadStats() {
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
-
-chrome.runtime.onMessage.addListener(eventData => {
-  switch (eventData.action) {
-    case 'authenticated':
-      if (eventData.err) {
-        // TODO: Localize this
-        enableSync.textContent = 'Login Failed…';
-      } else if (eventData.bearer) {
-        enableSync.textContent = 'Synced';
-        enableSync.disabled = true;
-      }
-
-      break;
-  }
-});
