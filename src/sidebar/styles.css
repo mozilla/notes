@@ -35,6 +35,10 @@ div#editor {
   overflow: hidden;
 }
 
+div#editor a {
+  cursor: pointer;
+}
+
 .ql-snow .ql-picker.ql-size {
   width: 45px;
 }
@@ -86,18 +90,26 @@ footer {
   height: 40px;
 }
 
-#enable-sync {
-  background-image: url('sync-16-inactive.svg');
-  background-position: 10px 12px;
-  background-repeat: no-repeat;
+#saving-indicator {
   display: flex;
   flex: 1 0;
-  padding: 0 10px 0 32px;
+  padding: 10px;
+  color: #969696;
   text-align: left;
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+#enable-sync {
+  background-image: url('sync-16-inactive.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  flex: 0 0 40px;
 }
 
 #footer-buttons button,
@@ -115,7 +127,6 @@ footer {
 #footer-buttons a:active {
   background-color: #d7d7db;
 }
-
 
 #menu {
   position: absolute;
@@ -166,6 +177,10 @@ footer {
 
 .forbid-cursor {
   cursor: no-drop;
+}
+
+.ql-tooltip {
+  display: none;
 }
 
 #context-menu-button {

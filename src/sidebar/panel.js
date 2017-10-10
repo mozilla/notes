@@ -1,4 +1,5 @@
 const formats = [
+  'link',
   'bold',
   'font',
   'italic',
@@ -76,6 +77,108 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
+function isWhitespace(ch) {
+  let whiteSpace = false;
+  if ((ch === ' ') || (ch === '\t') || (ch === '\n')) {
+    whiteSpace = true;
+  }
+  return whiteSpace;
+}
+
+// recognizes typed urls and create links from those urls
+quill.on('text-change', function(delta) {
+  const regex = /https?:\/\/[^\s]+$/;
+  if (delta.ops.length === 2 && delta.ops[0].retain ) {
+    let endRetain = delta.ops[0].retain;
+    if (delta.ops[1].hasOwnProperty('insert')) {
+      endRetain += 1;
+    }
+    const text = quill.getText().substr(0, endRetain);
+    const format = quill.getFormat(text);
+    const match = text.match(regex);
+
+    if (match !== null) {
+      const url = match[0];
+
+      let ops = [];
+      if (endRetain > url.length) {
+        ops.push({ retain: endRetain - url.length });
+      }
+
+      const attributes = {};
+      // apply any previous formatting options to the attributes object
+      Object.keys(format).forEach(function(key) {
+        attributes[key] = format[key];
+      });
+      attributes['link'] = url;
+
+      ops = ops.concat([
+        { delete: url.length },
+        { insert: url, attributes }
+      ]);
+
+      quill.updateContents({
+        ops: ops
+      });
+    }
+  }
+});
+
+// recognizes pasted urls and create links from those urls
+quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+  const regex = /https?:\/\/[^\s]+/;
+  if (typeof(node.data) !== 'string')
+    return;
+  const matches = node.data.match(regex);
+
+  if (matches && matches.length > 0) {
+    const ops = [];
+    let str = node.data;
+
+    matches.forEach(function(match) {
+      const split = str.split(match);
+      const beforeLink = split.shift();
+      ops.push({ insert: beforeLink });
+      ops.push({ insert: match, attributes: { link: match } });
+      str = split.join(match);
+    });
+
+    ops.push({ insert: str });
+    delta.ops = ops;
+  }
+
+  return delta;
+});
+
+// adds an eventListener to every <a> element which opens their respective
+// href link in a new tab when clicked
+document.querySelector('#editor').addEventListener('click', function(e) {
+  const anchor = e.target;
+  if (anchor !== null && anchor.tagName === 'A') {
+    browser.runtime.sendMessage({
+      action: 'link-clicked',
+      context: getPadStats()
+    });
+    browser.tabs.create({
+      active: true,
+      url: anchor.href
+    });
+  }
+});
+
+// makes getting out of link-editing format easier by escaping whitespace characters
+quill.on('text-change', function(delta) {
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+      isWhitespace(delta.ops[1].insert)) {
+    const format = quill.getFormat(delta.ops[0].retain, 1);
+    if ('link' in format)
+      quill.formatText(delta.ops[0].retain, 1, 'link', false);
+  } else if (delta.ops.length === 1 && delta.ops[0].hasOwnProperty('insert')) {
+    quill.formatText(0, 1, 'link', false);
+  } else
+    return;
+});
+
 let userOSKey;
 
 if (navigator.appVersion.indexOf('Mac') !== -1)
@@ -150,42 +253,39 @@ loadContent()
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.get('notes')
-    .then((data) => {
-      if (data.notes !== content && !ignoreNextTextChange) {
-        browser.storage.local.set({ notes: content, contentWasSynced: false })
-          .then(() => {
-            // Notify other sidebars
-            if (!ignoreNextLoadEvent) {
-              chrome.runtime.sendMessage('notes@mozilla.com', {
-                action: 'text-change'
-              });
-              // Debounce this second event
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats()
-              });
-              // Debounce this second event
-              chrome.runtime.sendMessage({
-                action: 'kinto-save',
-                content
-              });
-            } else {
-              ignoreNextLoadEvent = false;
-            }
-          });
-      } else {
-        ignoreNextTextChange = false;
-      }
-    });
+  browser.storage.local.set({ notes: content }).then(() => {
+    // Notify other sidebars
+    if (!ignoreNextLoadEvent) {
+      chrome.runtime.sendMessage('notes@mozilla.com', {
+        action: 'text-change'
+      });
+
+      // Debounce this second event
+      chrome.runtime.sendMessage({
+        action: 'kinto-save',
+        content
+      });
+
+      // Debounce this second event
+      chrome.runtime.sendMessage({
+        action: 'metrics-changed',
+        context: getPadStats()
+      });
+    } else {
+      ignoreNextLoadEvent = false;
+    }
+  });
 });
 
 const enableSync = document.getElementById('enable-sync');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
-enableSync.textContent = browser.i18n.getMessage('syncNotes');
+enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
+
+const savingIndicator = document.getElementById('saving-indicator');
+savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
 const giveFeedback = document.getElementById('give-feedback');
 giveFeedback.textContent = browser.i18n.getMessage('feedback');
@@ -195,14 +295,15 @@ giveFeedback.addEventListener('click', () => {
     url: SURVEY_PATH
   });
 });
+
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 disconnectSync.addEventListener('click', () => {
   disconnectSync.style.display = 'none';
-  enableSync.textContent = browser.i18n.getMessage('disconnected');
+  savingIndicator.textContent = browser.i18n.getMessage('disconnected');
   setTimeout(() => {
-    enableSync.textContent = browser.i18n.getMessage('syncNotes');
+    getLastSyncedTime();
   }, 2000);
   browser.runtime.sendMessage({
     action: 'disconnected'
@@ -215,10 +316,10 @@ closeButton.addEventListener('click', () => {
 
 let loginTimeout;
 enableSync.onclick = () => {
-  enableSync.textContent = browser.i18n.getMessage('openingLogin');
+  savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
 
   loginTimeout = setTimeout(() => {
-    enableSync.textContent = browser.i18n.getMessage('syncNotes');
+    getLastSyncedTime();
   }, 60000);
 
   browser.runtime.sendMessage({
@@ -257,10 +358,10 @@ function getLastSyncedTime() {
   getting.then(data => {
     if (data.hasOwnProperty('credentials')) {
       const time = new Date(data.last_modified).toLocaleTimeString();
-      enableSync.textContent = browser.i18n.getMessage('syncComplete', time);
+      savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
     } else {
       const time = new Date().toLocaleTimeString();
-      enableSync.textContent = browser.i18n.getMessage('savedComplete', time);
+      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
     }
   });
 }
@@ -273,6 +374,7 @@ chrome.runtime.onMessage.addListener(eventData => {
   let content;
   switch (eventData.action) {
     case 'sync-authenticated':
+      disconnectSync.style.display = 'block';
       chrome.runtime.sendMessage({
           action: 'kinto-load'
         });
@@ -285,7 +387,6 @@ chrome.runtime.onMessage.addListener(eventData => {
                                   last_modified: eventData.last_modified})
         .then(() => {
           getLastSyncedTime();
-          disconnectSync.style.display = 'block';
           setTimeout(() => {
             console.log('Content is', content);
             quill.setContents(content);
@@ -297,10 +398,10 @@ chrome.runtime.onMessage.addListener(eventData => {
       loadContent();
       break;
     case 'text-syncing':
-      enableSync.textContent = browser.i18n.getMessage('syncProgress');
+      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       break;
     case 'text-editing':
-      enableSync.textContent = browser.i18n.getMessage('editing');
+      savingIndicator.textContent = browser.i18n.getMessage('editing');
       break;
     case 'text-synced':
       browser.storage.local.set({ last_modified: eventData.last_modified})
@@ -310,7 +411,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'text-saved':
       time = new Date().toLocaleTimeString();
-      enableSync.textContent = browser.i18n.getMessage('savedComplete', time);
+      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
       break;
     case 'theme-changed':
       getThemeFromStorage();
