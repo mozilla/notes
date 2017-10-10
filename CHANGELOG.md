@@ -3,6 +3,7 @@
 ## 1.9.0 (unreleased)
 
 * Add links support
+* Fix toolbar border
 
 
 ## 1.8.0 (2017-10-09)
