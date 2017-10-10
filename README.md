@@ -38,7 +38,7 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 
 [Quill Rich Text Editor License](https://github.com/quilljs/quill/blob/develop/LICENSE)
 
-## Other
+## Design
 
 Design for reference https://mozilla.invisionapp.com/share/6VBUYHMRB#/235284916_Desktop_Sidebar
 
