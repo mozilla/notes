@@ -105,7 +105,7 @@ quill.on('text-change', function(delta) {
         ops.push({ retain: endRetain - url.length });
       }
 
-      let formats = {};
+      const formats = {};
       // apply any previous formatting options to the attributes object
       Object.keys(format).forEach(function(key) {
         formats[key] = format[key];
