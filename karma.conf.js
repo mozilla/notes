@@ -1,4 +1,4 @@
-const reporters = ["mocha", "coverage"];
+const reporters = ["spec", "coverage"];
 if (process.env.COVERALLS_REPO_TOKEN) {
   reporters.push("coveralls");
 }
@@ -9,6 +9,9 @@ module.exports = function(config) {
     browsers: ["Firefox"],
     frameworks: ["mocha"],
     reporters,
+    specReporter: {
+      showSpecTiming: true
+    },
     coverageReporter: {
       dir: "build/coverage",
       reporters: [
@@ -38,7 +41,7 @@ module.exports = function(config) {
       "karma-coverage",
       "karma-firefox-launcher",
       "karma-mocha",
-      "karma-mocha-reporter"
+      "karma-spec-reporter"
     ]
   });
 };
