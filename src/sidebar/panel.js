@@ -215,14 +215,10 @@ const INITIAL_CONTENT = {
   ]
 };
 
-// What I have is already in localStorage.
-let ignoreNextTextChange = true;
-
 function handleLocalContent(data) {
   if (!data.hasOwnProperty('notes')) {
     quill.setContents(INITIAL_CONTENT);
     browser.storage.local.set({contentWasSynced: true });
-    ignoreNextTextChange = true;
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
       quill.setContents(data.notes);
