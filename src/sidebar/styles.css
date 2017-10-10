@@ -91,7 +91,6 @@ footer {
 }
 
 #saving-indicator {
-  display: flex;
   flex: 1 0;
   padding: 10px;
   color: #969696;
