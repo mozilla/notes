@@ -182,13 +182,13 @@ function syncKinto(client, credentials) {
         })
         .sync({
           headers: { Authorization: `Bearer ${credential.access_token}` },
-          // FIXME: Handle conflicts
-          strategy: 'server_wins',
+          strategy: 'manual',
         });
     })
     .then(syncResult => {
       // FIXME: conflicts would happen here.
       // Do we need to do anything with errors, published, updated, etc.?
+      console.log('sync result', syncResult);
       return syncResult;
     })
     .catch(error => {
