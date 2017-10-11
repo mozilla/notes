@@ -168,28 +168,39 @@ class BrowserStorageCredentials extends Credentials {
  */
 function syncKinto(client, credentials) {
   // Get credentials and lastmodified
-  let credential;
+  let collection, credential;
   return credentials.get()
     .then(received => {
       credential = received;
       // XXX: Ask for an refresh token
       // Query Kinto with the Bearer Token
       if (!received) return;
-      return client
+      collection = client
         .collection('notes', {
           idSchema: notesIdSchema,
           remoteTransformers: [new JWETransformer(credential.key)],
-        })
+        });
+      return collection
         .sync({
           headers: { Authorization: `Bearer ${credential.access_token}` },
           strategy: 'manual',
         });
     })
     .then(syncResult => {
-      // FIXME: conflicts would happen here.
-      // Do we need to do anything with errors, published, updated, etc.?
-      console.log('sync result', syncResult);
-      return syncResult;
+      // FIXME: Do we need to do anything with errors, published,
+      // updated, etc.?
+      return Promise.all(syncResult.conflicts.map(conflict => {
+        console.log(conflict);
+        let totalOps = conflict.remote.content.ops.slice();
+        totalOps.push({ insert: '\n====== On this computer: ======\n\n' });
+        totalOps = totalOps.concat(conflict.local.content.ops);
+        const resolution = {
+          id: conflict.remote.id,
+          content: {ops: totalOps},
+        };
+        return collection.resolve(conflict, resolution);
+      }));
+      // FIXME: Maybe sync again to "push" the resolution?
     })
     .catch(error => {
       if (error.response && error.response.status === 401) {
