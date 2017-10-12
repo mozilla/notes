@@ -9,13 +9,13 @@ chai.use(chaiAsPromised);
 // Many of these are "functional" tests that are run using Karma, and
 // so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
-  const promiseCredential = Promise.resolve({
+  const staticCredential = {
     key: {
       kid: "20171005",
       kty: "kty",
     },
     access_token: "access_token"
-  });
+  };
 
   let sandbox;
   beforeEach(function() {
@@ -42,7 +42,7 @@ describe('Authorization', function() {
         headers: {"Content-Type": "application/json"},
       });
       credentials = {
-        get: sinon.mock().returns(promiseCredential),
+        get: sinon.mock().resolves(staticCredential),
         clear: sinon.mock()
       };
     });
@@ -91,12 +91,6 @@ describe('Authorization', function() {
   describe('syncKinto', function() {
     let client, collection, credentials;
     beforeEach(() => {
-      // We don't try to cover every single scenario where a conflict
-      // is possible, since kinto.js already has a set of tests for
-      // that. Instead, we just cover the easiest possible scenario
-      // that generates a conflict (pulling the same record ID from
-      // the server) and assume that kinto.js will treat other
-      // conflicts comparably.
       fetchMock.mock('end:/v1/', {
         settings: {
           batch_max_requests: 25,
@@ -108,7 +102,7 @@ describe('Authorization', function() {
         data: [{
           id: "singleNote",
           content: "encrypted content",
-          kid: "20171005",
+          kid: staticCredential.key.kid,
           last_modified: 1234,
         }]
       });
@@ -123,7 +117,7 @@ describe('Authorization', function() {
       sandbox.stub(global, 'encrypt').resolves("encrypted local");
 
       credentials = {
-        get: sinon.mock().returns(promiseCredential),
+        get: sinon.mock().resolves(staticCredential),
         clear: sinon.mock()
       };
 
@@ -131,13 +125,20 @@ describe('Authorization', function() {
       collection = client.collection('notes', {
         idSchema: notesIdSchema
       });
-      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}});
     });
 
     afterEach(fetchMock.restore);
 
     it('should handle a conflict', () => {
-      return syncKinto(client, credentials)
+      // We don't try to cover every single scenario where a conflict
+      // is possible, since kinto.js already has a set of tests for
+      // that. Instead, we just cover the easiest possible scenario
+      // that generates a conflict (pulling the same record ID from
+      // the server) and assume that kinto.js will treat other
+      // conflicts comparably.
+
+      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}})
+        .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data.content).eql(
