@@ -90,7 +90,7 @@ quill.on('text-change', function(delta) {
   const regex = /https?:\/\/[^\s]+$/;
   if (delta.ops.length === 2 && delta.ops[0].retain ) {
     let endRetain = delta.ops[0].retain;
-    if (delta.ops[1].hasOwnProperty('insert')) {
+    if ('insert' in delta.ops[1]) {
       endRetain += 1;
     }
     const text = quill.getText().substr(0, endRetain);
@@ -105,16 +105,16 @@ quill.on('text-change', function(delta) {
         ops.push({ retain: endRetain - url.length });
       }
 
-      const attributes = {};
+      const formats = {};
       // apply any previous formatting options to the attributes object
       Object.keys(format).forEach(function(key) {
-        attributes[key] = format[key];
+        formats[key] = format[key];
       });
-      attributes['link'] = url;
+      formats.link = url;
 
       ops = ops.concat([
         { delete: url.length },
-        { insert: url, attributes }
+        { insert: url, attributes: formats }
       ]);
 
       quill.updateContents({
@@ -150,18 +150,32 @@ quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
   return delta;
 });
 
+function containsAnchor(el) {
+  if (el.tagName === 'A')
+    return el;
+
+  while (el.parentElement) {
+    el = el.parentElement;
+
+    if (el.tagName === 'A')
+      return el;
+  }
+}
+
 // adds an eventListener to every <a> element which opens their respective
 // href link in a new tab when clicked
 document.querySelector('#editor').addEventListener('click', function(e) {
-  const anchor = e.target;
-  if (anchor !== null && anchor.tagName === 'A') {
+  let el = e.target;
+  el = containsAnchor(el);
+
+  if (el !== null && el.tagName === 'A') {
     browser.runtime.sendMessage({
       action: 'link-clicked',
       context: getPadStats()
     });
     browser.tabs.create({
       active: true,
-      url: anchor.href
+      url: el.href
     });
   }
 });
@@ -173,8 +187,16 @@ quill.on('text-change', function(delta) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)
       quill.formatText(delta.ops[0].retain, 1, 'link', false);
-  } else if (delta.ops.length === 1 && delta.ops[0].hasOwnProperty('insert')) {
-    quill.formatText(0, 1, 'link', false);
+  }
+  // delta match when [Space] is used before link at beginning of document, fixes #273
+  else if (delta.ops.length === 1 && 'insert' in delta.ops[0]) {
+    if (isWhitespace(delta.ops[0].insert)) {
+      quill.formatText(0, 1, 'link', false);
+    }
+  }
+  // delta match when [Tab] is used before link at beginning of document, fixes #273
+  else if (delta.ops.length === 2 && 'insert' in delta.ops[0]) {
+    quill.formatText(0, delta.ops[1].retain + 1, 'link', false);
   } else
     return;
 });

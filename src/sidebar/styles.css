@@ -27,12 +27,13 @@ div#loading {
 
 div#toolbar {
   flex: 40px;
-  width: 500px;
+  width: 100%;
 }
 
 div#editor {
   flex: auto;
   overflow: hidden;
+  font-size: 14px;
 }
 
 div#editor a {
@@ -44,6 +45,7 @@ div#editor a {
 }
 
 .ql-container.ql-snow, .ql-toolbar.ql-snow {
+  border-top: 0;
   border-left: 0;
   border-right: 0;
 }
@@ -91,7 +93,6 @@ footer {
 }
 
 #saving-indicator {
-  display: flex;
   flex: 1 0;
   padding: 10px;
   color: #969696;
