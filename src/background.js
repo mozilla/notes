@@ -6,13 +6,13 @@ const TRACKING_ID = 'UA-35433268-79';
 const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'c6d74070a481bc10';
-const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys.dev.lcip.org/v1';
+const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys-oct10.dev.lcip.org/v1';
 
 const timeouts = {};
 
 // Kinto sync and encryption
 
-const client = new KintoClient(KINTO_SERVER);
+const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 
 // Analytics
 
@@ -21,7 +21,7 @@ const analytics = new TestPilotGA({
   ds: 'addon',
   an: 'Notes Experiment',
   aid: 'notes@mozilla.com',
-  av: '1.8.0dev'  // XXX: Change version on release
+  av: '2.0.0dev'  // XXX: Change version on release
 });
 
 function sendMetrics(event, context = {}) {
@@ -48,13 +48,14 @@ function sendMetrics(event, context = {}) {
 }
 
 function authenticate() {
-  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
+  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils({
+    oauthServer: FXA_OAUTH_SERVER
+  });
     chrome.runtime.sendMessage({
       action: 'sync-opening'
     });
   fxaKeysUtil.launchFxaScopedKeyFlow({
     client_id: FXA_CLIENT_ID,
-    oauth_uri: FXA_OAUTH_SERVER,
     pkce: true,
     redirect_uri: browser.identity.getRedirectURL(),
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
@@ -81,20 +82,31 @@ function authenticate() {
   });
 }
 browser.runtime.onMessage.addListener(function(eventData) {
+  const credentials = new BrowserStorageCredentials(browser.storage.local);
   switch (eventData.action) {
     case 'authenticate':
-      sendMetrics('webext-button-authenticate', eventData.context);
-      authenticate();
+      credentials.get()
+        .then(result => {
+          if (!result) {
+            sendMetrics('webext-button-authenticate', eventData.context);
+            authenticate();
+          } else {
+            chrome.runtime.sendMessage({
+              action: 'text-syncing'
+            });
+            loadFromKinto(client, credentials);
+          }
+        });
       break;
     case 'disconnected':
       sendMetrics('webext-button-disconnect', eventData.context);
-      browser.storage.local.remove(['credentials']);
+      credentials.clear();
       break;
     case 'kinto-load':
-      loadFromKinto(client);
+      loadFromKinto(client, credentials);
       break;
     case 'kinto-save':
-      saveToKinto(client);
+      saveToKinto(client, credentials, eventData.content);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
@@ -107,6 +119,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
       browser.runtime.sendMessage({
         action: 'theme-changed'
       });
+      break;
+    case 'link-clicked':
+      sendMetrics('link-clicked', eventData.content);
       break;
   }
 });

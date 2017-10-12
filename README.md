@@ -3,15 +3,14 @@
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
 
-## What it does
+## What does it aim for
 
-Open a notepad in the Firefox toolbar to store notes about your browsing.
+This project let you open a notepad in the Firefox toolbar to store notes about your browsing.
 
 
-## How to use it
+## How can you use it
 
 Step 0: If you plan on sending pull-request, you should fork the repository.
-
 Step 1: Clone the [notes](https://github.com/mozilla/notes) repository or your fork.
 ```
 git clone https://github.com/mozilla/notes.git
@@ -27,6 +26,7 @@ Step 2:Navigate to the root of the directory you cloned and run:
 | `npm run build` | Builds the application as a Web Extension.|
 | `npm start`     | Launches Firefox with the Web Extension.  |
 
+You can also open the `test/index.html` file in your browser to run the automated tests.
 
 ## Localization
 
@@ -38,7 +38,7 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 
 [Quill Rich Text Editor License](https://github.com/quilljs/quill/blob/develop/LICENSE)
 
-## Other
+## Design
 
 Design for reference https://mozilla.invisionapp.com/share/6VBUYHMRB#/235284916_Desktop_Sidebar
 
