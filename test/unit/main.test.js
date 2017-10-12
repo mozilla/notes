@@ -61,7 +61,7 @@ describe('Authorization', function() {
   });
 
   describe("remote transformer", function() {
-    const kid = 20171005;
+    const kid = "20171005";
     const key = {kid: kid, kty: "kty"};
     it("should return whatever decrypt returns", function() {
       const decryptedResult = { content: [{ insert: "Test message" }] };
@@ -73,7 +73,7 @@ describe('Authorization', function() {
     });
 
     it("should throw if kid is different", function() {
-      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: 20171001})).rejectedWith(ServerKeyOlderError);
+      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: "20171001"})).rejectedWith(ServerKeyOlderError);
     });
 
     it("should be backwards compatible with the old style of Kinto record", function() {
