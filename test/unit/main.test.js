@@ -9,6 +9,7 @@ chai.use(chaiAsPromised);
 // Many of these are "functional" tests that are run using Karma, and
 // so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
+  this.timeout(5000);
   const staticCredential = {
     key: {
       kid: "20171005",
@@ -19,7 +20,6 @@ describe('Authorization', function() {
 
   let sandbox;
   beforeEach(function() {
-    this.timeout(5000);
     sandbox = sinon.sandbox.create();
   });
 
@@ -260,7 +260,6 @@ describe('Authorization', function() {
     });
 
     it('should not fail if syncKinto rejects', () => {
-      this.timeout(5000);
       const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
       return saveToKinto(client, undefined, 'imaginary content')
