@@ -91,10 +91,7 @@ class JWETransformer {
       throw new Error('No ciphertext: nothing to decrypt?');
     }
 
-    // FIXME: this is hack to work around a bug with FxA keys, which
-    // seem to have timestamps embedded in them that are affected by
-    // TZ offsets. Take out the substr calls once vladikoff says we can.
-    if (record.kid.substr(15) !== this.key.kid.substr(15)) {
+    if (record.kid !== this.key.kid) {
       if (this.key.kid < record.kid) {
         throw new ServerKeyNewerError();
       } else {
