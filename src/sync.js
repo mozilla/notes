@@ -213,7 +213,7 @@ function syncKinto(client, credentials) {
         // Flush the server because whatever was there is wrong.
         // FIXME: need to reset sync status.
         console.error(error);
-        const kintoHttp = client.api.remote;
+        const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         });

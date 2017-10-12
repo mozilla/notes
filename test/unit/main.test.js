@@ -42,8 +42,8 @@ describe('Authorization', function() {
         headers: {"Content-Type": "application/json"},
       });
       credentials = {
-        get: sinon.mock().resolves(staticCredential),
-        clear: sinon.mock()
+        get: sinon.stub().resolves(staticCredential),
+        clear: sinon.stub()
       };
     });
 
@@ -99,12 +99,15 @@ describe('Authorization', function() {
       });
 
       fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified$'), {
-        data: [{
-          id: "singleNote",
-          content: "encrypted content",
-          kid: staticCredential.key.kid,
-          last_modified: 1234,
-        }]
+        body: {
+          data: [{
+            id: "singleNote",
+            content: "encrypted content",
+            kid: staticCredential.key.kid,
+            last_modified: 1234,
+          }]
+        },
+        headers: {Etag: '"1234"'},
       });
 
       sandbox.stub(global, 'decrypt').resolves({
@@ -117,8 +120,8 @@ describe('Authorization', function() {
       sandbox.stub(global, 'encrypt').resolves("encrypted local");
 
       credentials = {
-        get: sinon.mock().resolves(staticCredential),
-        clear: sinon.mock()
+        get: sinon.stub().resolves(staticCredential),
+        clear: sinon.stub()
       };
 
       client = new Kinto({remote: 'https://example.com/v1', bucket: 'default'});
@@ -127,7 +130,10 @@ describe('Authorization', function() {
       });
     });
 
-    afterEach(fetchMock.restore);
+    afterEach(() => {
+      fetchMock.restore();
+      return collection.clear();
+    });
 
     it('should handle a conflict', () => {
       // We don't try to cover every single scenario where a conflict
@@ -148,6 +154,54 @@ describe('Authorization', function() {
               {insert: "Local"},
             ]}
           );
+        });
+    });
+
+
+    it('should handle old keys correctly', () => {
+      // Setup record with older kid that will be fetched after the
+      // first successful sync.
+      fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified&_since=1234$'), {
+        data: [{
+          id: "singleNote",
+          content: "encrypted content",
+          kid: "20171001",
+          last_modified: 1236,
+        }],
+      });
+
+      let deleted = false;
+      fetchMock.delete(new RegExp('/v1/buckets/default/collections/notes$'), () => {
+        deleted = true;
+        return {};
+      });
+
+      const defaultBucket = {
+        deleteCollection: sandbox.spy()
+      };
+
+      // Get the "Hi there" note from the server
+      return syncKinto(client, credentials)
+        .then(() => collection.getAny('singleNote'))
+        .then(result => {
+          chai.expect(result.data._status).eql("synced");
+          chai.expect(result.data.content).eql({
+            ops: [
+              {insert: "Hi there"}
+            ]});
+
+          // This sync will try to retrieve the record after 1234,
+          // which has an older kid.
+          return syncKinto(client, credentials);
+        })
+        .then(() => {
+          // Verify that the notes collection was deleted.
+          console.log(JSON.stringify(fetchMock.calls()));
+          chai.assert(deleted);
+          return collection.getAny('singleNote');
+        }).then(result => {
+          // Record now needs to be synced again.
+          chai.expect(result.data._status).eql("created");
         });
     });
   });
