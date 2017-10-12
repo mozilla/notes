@@ -99,7 +99,6 @@ class JWETransformer {
       }
     }
 
-    // FIXME: Make sure this is backwards compatible??
     let decoded = await decrypt(this.key, record.content);
     if (!decoded.hasOwnProperty('id')) {
       // Old-style encrypted notes aren't true Kinto records --
