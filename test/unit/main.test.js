@@ -19,6 +19,7 @@ describe('Authorization', function() {
 
   let sandbox;
   beforeEach(function() {
+    this.timeout(5000);
     sandbox = sinon.sandbox.create();
   });
 
