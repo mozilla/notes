@@ -211,12 +211,11 @@ function syncKinto(client, credentials) {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
-        // FIXME: need to reset sync status.
         console.error(error);
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
-        });
+        }).then(() => collection.resetSyncStatus());
       } else {
         console.error(error);
         return Promise.reject(error);
