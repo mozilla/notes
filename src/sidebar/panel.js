@@ -341,8 +341,11 @@ enableSync.onclick = () => {
   savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
 
   loginTimeout = setTimeout(() => {
-    getLastSyncedTime();
-  }, 60000);
+    savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+    loginTimeout = setTimeout(() => {
+      getLastSyncedTime();
+    }, 5000);
+  }, 5000);
 
   browser.runtime.sendMessage({
     action: 'authenticate',
