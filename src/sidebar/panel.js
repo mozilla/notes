@@ -333,7 +333,11 @@ closeButton.addEventListener('click', () => {
 });
 
 let loginTimeout;
+let editingInProcess = false;
 enableSync.onclick = () => {
+  if (editingInProcess) {
+    return;
+  }
   savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
 
   loginTimeout = setTimeout(() => {
@@ -420,6 +424,8 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'text-editing':
       savingIndicator.textContent = browser.i18n.getMessage('editing');
+      // Disable sync-action
+      editingInProcess = true;
       break;
     case 'text-synced':
       browser.storage.local.set({ last_modified: eventData.last_modified})
@@ -430,6 +436,8 @@ chrome.runtime.onMessage.addListener(eventData => {
     case 'text-saved':
       time = new Date().toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+      // Enable sync-action
+      editingInProcess = false;
       break;
     case 'theme-changed':
       getThemeFromStorage();
