@@ -338,7 +338,7 @@ enableSync.onclick = () => {
 
   loginTimeout = setTimeout(() => {
     getLastSyncedTime();
-  }, 60000);
+  }, 5000);
 
   browser.runtime.sendMessage({
     action: 'authenticate',
