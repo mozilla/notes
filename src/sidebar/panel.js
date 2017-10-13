@@ -77,12 +77,6 @@ const quill = new Quill('#editor', {
   formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
 });
 
-// Disable spellchecker since we can't right click anymore.
-// Refs https://github.com/mozilla/notes/issues/308
-quill.root.spellcheck = false;
-quill.root.focus();
-quill.root.blur();
-
 function isWhitespace(ch) {
   let whiteSpace = false;
   if ((ch === ' ') || (ch === '\t') || (ch === '\n')) {
@@ -426,4 +420,10 @@ browser.runtime.connect();
 
 // Disable right clicks
 // Refs: https://stackoverflow.com/a/737043/186202
-document.addEventListener('contextmenu', event => event.preventDefault());
+document.getElementById('toolbar').addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
+
+document.getElementById('footer-buttons').addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
