@@ -9,13 +9,14 @@ chai.use(chaiAsPromised);
 // Many of these are "functional" tests that are run using Karma, and
 // so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
-  const promiseCredential = Promise.resolve({
+  this.timeout(5000);
+  const staticCredential = {
     key: {
       kid: "20171005",
       kty: "kty",
     },
     access_token: "access_token"
-  });
+  };
 
   let sandbox;
   beforeEach(function() {
@@ -42,8 +43,8 @@ describe('Authorization', function() {
         headers: {"Content-Type": "application/json"},
       });
       credentials = {
-        get: sinon.mock().returns(promiseCredential),
-        clear: sinon.mock()
+        get: sinon.stub().resolves(staticCredential),
+        clear: sinon.stub()
       };
     });
 
@@ -61,7 +62,7 @@ describe('Authorization', function() {
   });
 
   describe("remote transformer", function() {
-    const kid = 20171005;
+    const kid = "20171005";
     const key = {kid: kid, kty: "kty"};
     it("should return whatever decrypt returns", function() {
       const decryptedResult = { content: [{ insert: "Test message" }] };
@@ -73,7 +74,7 @@ describe('Authorization', function() {
     });
 
     it("should throw if kid is different", function() {
-      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: 20171001})).rejectedWith(ServerKeyOlderError);
+      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: "20171001"})).rejectedWith(ServerKeyOlderError);
     });
 
     it("should be backwards compatible with the old style of Kinto record", function() {
@@ -91,12 +92,6 @@ describe('Authorization', function() {
   describe('syncKinto', function() {
     let client, collection, credentials;
     beforeEach(() => {
-      // We don't try to cover every single scenario where a conflict
-      // is possible, since kinto.js already has a set of tests for
-      // that. Instead, we just cover the easiest possible scenario
-      // that generates a conflict (pulling the same record ID from
-      // the server) and assume that kinto.js will treat other
-      // conflicts comparably.
       fetchMock.mock('end:/v1/', {
         settings: {
           batch_max_requests: 25,
@@ -105,12 +100,15 @@ describe('Authorization', function() {
       });
 
       fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified$'), {
-        data: [{
-          id: "singleNote",
-          content: "encrypted content",
-          kid: "20171005",
-          last_modified: 1234,
-        }]
+        body: {
+          data: [{
+            id: "singleNote",
+            content: "encrypted content",
+            kid: staticCredential.key.kid,
+            last_modified: 1234,
+          }]
+        },
+        headers: {Etag: '"1234"'},
       });
 
       sandbox.stub(global, 'decrypt').resolves({
@@ -123,21 +121,31 @@ describe('Authorization', function() {
       sandbox.stub(global, 'encrypt').resolves("encrypted local");
 
       credentials = {
-        get: sinon.mock().returns(promiseCredential),
-        clear: sinon.mock()
+        get: sinon.stub().resolves(staticCredential),
+        clear: sinon.stub()
       };
 
       client = new Kinto({remote: 'https://example.com/v1', bucket: 'default'});
       collection = client.collection('notes', {
         idSchema: notesIdSchema
       });
-      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}});
     });
 
-    afterEach(fetchMock.restore);
+    afterEach(() => {
+      fetchMock.restore();
+      return collection.clear();
+    });
 
     it('should handle a conflict', () => {
-      return syncKinto(client, credentials)
+      // We don't try to cover every single scenario where a conflict
+      // is possible, since kinto.js already has a set of tests for
+      // that. Instead, we just cover the easiest possible scenario
+      // that generates a conflict (pulling the same record ID from
+      // the server) and assume that kinto.js will treat other
+      // conflicts comparably.
+
+      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}})
+        .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data.content).eql(
@@ -147,6 +155,54 @@ describe('Authorization', function() {
               {insert: "Local"},
             ]}
           );
+        });
+    });
+
+
+    it('should handle old keys correctly', () => {
+      // Setup record with older kid that will be fetched after the
+      // first successful sync.
+      fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified&_since=1234$'), {
+        data: [{
+          id: "singleNote",
+          content: "encrypted content",
+          kid: "20171001",
+          last_modified: 1236,
+        }],
+      });
+
+      let deleted = false;
+      fetchMock.delete(new RegExp('/v1/buckets/default/collections/notes$'), () => {
+        deleted = true;
+        return {};
+      });
+
+      const defaultBucket = {
+        deleteCollection: sandbox.spy()
+      };
+
+      // Get the "Hi there" note from the server
+      return syncKinto(client, credentials)
+        .then(() => collection.getAny('singleNote'))
+        .then(result => {
+          chai.expect(result.data._status).eql("synced");
+          chai.expect(result.data.content).eql({
+            ops: [
+              {insert: "Hi there"}
+            ]});
+
+          // This sync will try to retrieve the record after 1234,
+          // which has an older kid.
+          return syncKinto(client, credentials);
+        })
+        .then(() => {
+          // Verify that the notes collection was deleted.
+          console.log(JSON.stringify(fetchMock.calls()));
+          chai.assert(deleted);
+          return collection.getAny('singleNote');
+        }).then(result => {
+          // Record now needs to be synced again.
+          chai.expect(result.data._status).eql("created");
         });
     });
   });
@@ -204,7 +260,6 @@ describe('Authorization', function() {
     });
 
     it('should not fail if syncKinto rejects', () => {
-      this.timeout(5000);
       const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
       return saveToKinto(client, undefined, 'imaginary content')
