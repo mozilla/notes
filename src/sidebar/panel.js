@@ -384,6 +384,7 @@ function getLastSyncedTime() {
     if (data.hasOwnProperty('credentials')) {
       const time = new Date(data.last_modified).toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
+      disconnectSync.style.display = 'block';
     } else {
       const time = new Date().toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
@@ -399,7 +400,6 @@ chrome.runtime.onMessage.addListener(eventData => {
   let content;
   switch (eventData.action) {
     case 'sync-authenticated':
-      disconnectSync.style.display = 'block';
       chrome.runtime.sendMessage({
           action: 'kinto-load'
         });
