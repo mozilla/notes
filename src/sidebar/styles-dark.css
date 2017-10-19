@@ -14,6 +14,10 @@ div#toolbar {
   background-image: url('dark-svg/feedback-dark.svg');
 }
 
+#context-menu-button {
+  background-image: url('dark-svg/three-dots-dark.svg');
+}
+
 #footer-buttons button,
 #footer-buttons a {
   background-color: #272B35;
