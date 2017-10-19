@@ -33,7 +33,6 @@ div#toolbar {
 div#editor {
   flex: auto;
   overflow: hidden;
-  font-size: 14px;
 }
 
 div#editor a {
@@ -52,6 +51,10 @@ div#editor a {
 
 .ql-container.ql-snow {
   border-bottom: 0;
+}
+
+.ql-editor {
+  font-size: 14px;
 }
 
 .ql-editor ol, .ql-editor ul {
