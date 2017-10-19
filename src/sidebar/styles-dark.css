@@ -10,13 +10,29 @@ div#toolbar {
   background-image: url('dark-svg/sync-16-dark.svg');
 }
 
-#give-feedback {
-  background-image: url('dark-svg/feedback-dark.svg');
-}
-
+/* material-design-lite (MDL) menu */
 #context-menu-button {
   background-image: url('dark-svg/three-dots-dark.svg');
 }
+
+.mdl-menu__outline {
+  background: #272B35;
+  transition: none;
+}
+
+.context-menu-item {
+  color: #e6e6e6;
+  background-color: #272B35;
+}
+
+.context-menu-item:hover {
+  background-color: #323744;
+}
+
+.context-menu-item:active {
+  background-color: #3d4352;
+}
+/* end MDL menu */
 
 #footer-buttons button,
 #footer-buttons a {
