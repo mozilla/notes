@@ -126,10 +126,27 @@ quill.on('text-change', function(delta) {
 
 // recognizes pasted urls and create links from those urls
 quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+  let formatsAtIndex = {};
+
+  const range = quill.getSelection(true);
+  if (range) {
+    if (range.length === 0) {
+      formatsAtIndex = quill.getFormat(range.index);
+    }
+  }
+
   const regex = /https?:\/\/[^\s]+/;
   if (typeof(node.data) !== 'string')
     return;
   const matches = node.data.match(regex);
+
+  if (matches === null) {
+    const ops = [];
+    const str = node.data;
+
+    ops.push({ insert: str, attributes: formatsAtIndex });
+    delta.ops = ops;
+  }
 
   if (matches && matches.length > 0) {
     const ops = [];
@@ -139,7 +156,10 @@ quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
       const split = str.split(match);
       const beforeLink = split.shift();
       ops.push({ insert: beforeLink });
-      ops.push({ insert: match, attributes: { link: match } });
+      
+      formatsAtIndex.link = match;
+      
+      ops.push({ insert: match, attributes: formatsAtIndex });
       str = split.join(match);
     });
 
@@ -168,7 +188,9 @@ document.querySelector('#editor').addEventListener('click', function(e) {
   let el = e.target;
   el = containsAnchor(el);
 
-  if (el !== null && el.tagName === 'A') {
+  if (el === undefined)
+    return;
+  else if (el !== null && el.tagName === 'A') {
     browser.runtime.sendMessage({
       action: 'link-clicked',
       context: getPadStats()
