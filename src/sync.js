@@ -216,6 +216,11 @@ function syncKinto(client, credentials) {
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         }).then(() => collection.resetSyncStatus());
+      } else if (error.message.contains('flushed')) {
+        return collection.resetSyncStatus()
+          .then(() => {
+            return syncKinto(client, credentials);
+          });
       } else {
         console.error(error);
         return Promise.reject(error);
