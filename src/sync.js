@@ -216,9 +216,9 @@ function syncKinto(client, credentials) {
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         }).then(() => collection.resetSyncStatus());
-      } else if (err.message.contains("flushed")) {
+      } else if (error.message.contains('flushed')) {
         return collection.resetSyncStatus()
-          .then(_ => {
+          .then(() => {
             return syncKinto(client, credentials);
           });
       } else {
