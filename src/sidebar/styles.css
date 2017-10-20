@@ -90,27 +90,131 @@ footer {
   justify-content: space-between;
   width: 100%;
   height: 40px;
+  background-color: transparent;
+  transition: background 0.4s ease-in;
 }
 
-#saving-indicator {
+/* warning style */
+#footer-buttons.warning {
+  background-color: rgb(255, 236, 173);
+  transition: background 0.4s ease-in;
+}
+
+#footer-buttons.warning div:first-child {
+  color: black;
+}
+
+#footer-buttons div:first-child {
+  position: relative;
   flex: 1 0;
-  padding: 10px;
+  padding: 10px 40px 10px 10px;
   color: #969696;
   text-align: left;
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition: padding 0s linear 0.2s;
 }
 
+#footer-buttons.syncingLayout div:first-child {
+  padding: 10px 10px 10px 40px;
+  transition: padding 0s linear 0.2s;
+}
+
+/* Hide saving-indication then move enable-sync then show saving-indicator */
+@keyframes blink {
+  0% { opacity: 1; }
+  25% { opacity: 0; }
+  75% { opacity: 0; }
+  100% { opacity: 1; }
+}
+#saving-indicator.blink {
+  animation-name: blink;
+  animation-duration: 0.8s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+/* Sync icon */
 #enable-sync {
-  background-image: url('sync-16-inactive.svg');
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 40px;
+  cursor: pointer;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.savingLayout #enable-sync {
+  margin-right: 0px;
+  transition: margin 0.4s ease-in 0.1s, background 0s, border 0s ease-in 0.6s;
+}
+
+.syncingLayout #enable-sync  {
+  margin-right: calc(100% - 40px);
+  background: none;
+  border-left: none;
+  transition: margin 0.4s ease-out 0.1s;
+}
+
+.savingLayout #enable-sync:hover {
+  background-color: #ebebee;
+  transition: background 0s;
+}
+
+.syncingLayout #enable-sync:hover {
+  background: none;
+  cursor: default;
+}
+
+/* Animate sync icon */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+#enable-sync svg {
+  animation-name: rotate;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+.animateSyncIcon #enable-sync svg {
+  animation-play-state: running;
+}
+
+/* Feedback button on right side */
+#give-feedback-button {
+  cursor: pointer;
+  background-image: url('feedback.svg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 20px 20px;
   border-left: 1px solid #d7d7db;
   display: flex;
   flex: 0 0 40px;
+}
+
+/* Display feedback button with opacity */
+.savingLayout #give-feedback-button {
+  opacity: 1;
+  z-index: 1;
+  transition: opacity 0.4s linear;
+}
+
+/* Hide Feedback button with opacity */
+.syncingLayout #give-feedback-button {
+  opacity: 0;
+  z-index: 0;
+  cursor: default;
+  visiblity: hidden;
+  transition: opacity 0.4s linear, visibity 0s 0.4s;
 }
 
 #footer-buttons button,
@@ -184,14 +288,35 @@ footer {
   display: none;
 }
 
+/* Select menu from sync */
 #context-menu-button {
   background-size: 3px;
   background-image: url('three-dots.svg');
   background-position:  50%;
   background-repeat: no-repeat;
-  height: 100%;
-  width: 26px;
+  background-color: rgba(128, 128, 128, 0.2) !important;
+  width: 22px;
   text-align: left;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  bottom: 6px;
+}
+
+/* Hide select menu on saving mode */
+.savingLayout #context-menu-button{
+  opacity: 0;
+  visibility: none;
+  z-index: 0;
+  transition: visibility 0s 0.4s, opacity 0.4s linear;
+}
+
+/* Show select menu on syncing mode */
+.syncingLayout #context-menu-button{
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+  transition: visibility 0s 0.4s, opacity 0.4s linear 0.4s;
 }
 
 .context-menu {

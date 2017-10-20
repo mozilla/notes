@@ -188,7 +188,7 @@ document.querySelector('#editor').addEventListener('click', function(e) {
 
 // makes getting out of link-editing format easier by escaping whitespace characters
 quill.on('text-change', function(delta) {
-  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] &&
       isWhitespace(delta.ops[1].insert)) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)
@@ -301,12 +301,22 @@ quill.on('text-change', () => {
   });
 });
 
+const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
+const giveFeedbackButton = document.getElementById('give-feedback-button');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
+
+giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
+giveFeedbackButton.addEventListener('click', () => {
+  browser.tabs.create({
+    active: true,
+    url: SURVEY_PATH
+  });
+});
 
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
@@ -325,7 +335,10 @@ disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 disconnectSync.addEventListener('click', () => {
   disconnectSync.style.display = 'none';
-  savingIndicator.textContent = browser.i18n.getMessage('disconnected');
+  setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+  setTimeout(() => {
+    savingIndicator.textContent = browser.i18n.getMessage('disconnected');
+  }, 200);
   setTimeout(() => {
     getLastSyncedTime();
   }, 2000);
@@ -338,19 +351,58 @@ closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
 
+/**
+ * Set animation on footerButtons toolbar
+ * @param {Boolean} animateSyncIcon Start looping animation on sync icon
+ * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
+ *                                  if false, animate to savingLayout (sync icon on left)
+ * @param {Boolean} warning         Apply yellow warning styling on toolbar
+ */
+function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
+  if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
+    footerButtons.classList.add('animateSyncIcon');
+  } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
+    footerButtons.classList.remove('animateSyncIcon');
+  }
+
+  if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
+    footerButtons.classList.replace('savingLayout', 'syncingLayout');
+    // Start blink animation on saving-indicator
+    savingIndicator.classList.add('blink');
+    // Reset CSS animation by removeing class
+    setTimeout(() => savingIndicator.classList.remove('blink'), 800);
+  } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
+    // Animate savingIndicator text
+    savingIndicator.classList.add('blink');
+    setTimeout(() => savingIndicator.classList.remove('blink'), 800);
+    //
+    footerButtons.classList.replace('syncingLayout', 'savingLayout');
+  }
+
+  if (warning === true && !footerButtons.classList.contains('warning')) {
+    footerButtons.classList.add('warning');
+  } else if (warning === false && footerButtons.classList.contains('warning')) {
+    footerButtons.classList.remove('warning');
+  }
+}
+
 let loginTimeout;
 let editingInProcess = false;
 enableSync.onclick = () => {
   if (editingInProcess) {
     return;
   }
-  savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+
+  setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+
+  setTimeout(() => {
+    savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+  }, 200); // Delay text for smooth animation
 
   loginTimeout = setTimeout(() => {
+    setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
     savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
-    loginTimeout = setTimeout(() => {
-      getLastSyncedTime();
-    }, 5000);
+    disconnectSync.style.display = 'block';
   }, 5000);
 
   browser.runtime.sendMessage({
@@ -391,6 +443,8 @@ function getLastSyncedTime() {
       const time = new Date(data.last_modified).toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
       disconnectSync.style.display = 'block';
+      // Timeout stop animation 2s later to temporary fix a bug on editing.
+      setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
     } else {
       const time = new Date().toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
@@ -406,20 +460,20 @@ chrome.runtime.onMessage.addListener(eventData => {
   let content;
   switch (eventData.action) {
     case 'sync-authenticated':
+      setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       chrome.runtime.sendMessage({
           action: 'kinto-load'
         });
       break;
   case 'kinto-loaded':
       clearTimeout(loginTimeout);
-      console.log('kinto-loaded content', eventData);
       content = eventData.data;
       browser.storage.local.set({ notes: content,
                                   last_modified: eventData.last_modified})
         .then(() => {
           getLastSyncedTime();
           setTimeout(() => {
-            console.log('Content is', content);
             quill.setContents(content);
           }, 10);
         });
@@ -429,6 +483,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       loadContent();
       break;
     case 'text-syncing':
+      setAnimation(true); // animateSyncIcon, syncingLayout, warning
       savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       break;
     case 'text-editing':
