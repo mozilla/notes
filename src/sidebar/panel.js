@@ -174,7 +174,7 @@ document.querySelector('#editor').addEventListener('click', function(e) {
   let el = e.target;
   el = containsAnchor(el);
 
-  if (el !== null && el.tagName === 'A') {
+  if (el && el.tagName === 'A') {
     browser.runtime.sendMessage({
       action: 'link-clicked',
       context: getPadStats()
