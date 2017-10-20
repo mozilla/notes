@@ -189,16 +189,26 @@ footer {
   animation-play-state: running;
 }
 
+.#enable-sync svg path {
+  fill: #333333;
+}
+.animateSyncIcon #enable-sync svg path {
+  fill: #4E92DD;
+}
+
 /* Feedback button on right side */
 #give-feedback-button {
   cursor: pointer;
-  background-image: url('feedback.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
   border-left: 1px solid #d7d7db;
   display: flex;
   flex: 0 0 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.#give-feedback-buttonc svg path {
+  fill: #333333;
 }
 
 /* Display feedback button with opacity */

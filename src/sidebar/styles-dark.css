@@ -6,12 +6,16 @@ div#toolbar {
   background-color: #272B35;
 }
 
-#enable-sync {
-  background-image: url('dark-svg/sync-16-dark.svg');
+#enable-sync svg path {
+  fill: #e6e6e6 !important;
 }
 
-#give-feedback {
-  background-image: url('dark-svg/feedback-dark.svg');
+.savingLayout #enable-sync:hover {
+  background-color: #323744;
+}
+
+#give-feedback-button svg path {
+  fill: #e6e6e6 !important;
 }
 
 #footer-buttons button,

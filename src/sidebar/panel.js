@@ -392,7 +392,6 @@ enableSync.onclick = () => {
   if (editingInProcess) {
     return;
   }
-
   setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
 
   setTimeout(() => {
