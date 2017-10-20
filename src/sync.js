@@ -195,8 +195,8 @@ function syncKinto(client, credentials) {
           content: {ops: totalOps},
         };
         return collection.resolve(conflict, resolution);
-      }));
-      // FIXME: Maybe sync again to "push" the resolution?
+      }))
+        .then(() => syncKinto(client, credentials));
     })
     .catch(error => {
       if (error.response && error.response.status === 401) {
@@ -215,7 +215,8 @@ function syncKinto(client, credentials) {
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
-        }).then(() => collection.resetSyncStatus());
+        }).then(() => collection.resetSyncStatus())
+          .then(() => syncKinto(client, credentials));
       } else if (error.message.contains('flushed')) {
         return collection.resetSyncStatus()
           .then(() => {
