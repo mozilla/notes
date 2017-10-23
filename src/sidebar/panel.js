@@ -409,10 +409,10 @@ enableSync.onclick = () => {
     disconnectSync.style.display = 'block';
   }, 5000);
 
-  // browser.runtime.sendMessage({
-  //   action: 'authenticate',
-  //   context: getPadStats()
-  // });
+  browser.runtime.sendMessage({
+    action: 'authenticate',
+    context: getPadStats()
+  });
 };
 
 // gets the user-selected theme from local storage and applies respective CSS
