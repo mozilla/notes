@@ -359,6 +359,7 @@ closeButton.addEventListener('click', () => {
  * @param {Boolean} warning         Apply yellow warning styling on toolbar
  */
 function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
+
   if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
     footerButtons.classList.add('animateSyncIcon');
   } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
@@ -367,14 +368,18 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
 
   if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
     footerButtons.classList.replace('savingLayout', 'syncingLayout');
+    enableSync.style.backgroundColor = 'transparent';
     // Start blink animation on saving-indicator
     savingIndicator.classList.add('blink');
     // Reset CSS animation by removeing class
-    setTimeout(() => savingIndicator.classList.remove('blink'), 800);
+    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
   } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
     // Animate savingIndicator text
     savingIndicator.classList.add('blink');
-    setTimeout(() => savingIndicator.classList.remove('blink'), 800);
+    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
+    setTimeout(() => {
+      enableSync.style.backgroundColor = null;
+    }, 400);
     //
     footerButtons.classList.replace('syncingLayout', 'savingLayout');
   }
@@ -404,10 +409,10 @@ enableSync.onclick = () => {
     disconnectSync.style.display = 'block';
   }, 5000);
 
-  browser.runtime.sendMessage({
-    action: 'authenticate',
-    context: getPadStats()
-  });
+  // browser.runtime.sendMessage({
+  //   action: 'authenticate',
+  //   context: getPadStats()
+  // });
 };
 
 // gets the user-selected theme from local storage and applies respective CSS
