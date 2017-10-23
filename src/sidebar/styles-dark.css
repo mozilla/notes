@@ -10,6 +10,10 @@ div#toolbar {
   fill: #e6e6e6 !important;
 }
 
+#footer-buttons.warning #enable-sync svg path {
+  fill: #333333 !important;
+}
+
 .savingLayout #enable-sync:hover {
   background-color: #323744;
 }
@@ -21,6 +25,10 @@ div#toolbar {
 /* material-design-lite (MDL) menu */
 #context-menu-button {
   background-image: url('dark-svg/three-dots-dark.svg');
+}
+
+#footer-buttons.warning #context-menu-button {
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .mdl-menu__outline {
