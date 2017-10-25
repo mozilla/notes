@@ -91,7 +91,7 @@ describe('Authorization', function() {
   });
 
   describe('syncKinto', function() {
-    let client, collection, credentials;
+    let client, collection, credentials, decryptMock, encryptMock;
 
     // Install an "encrypted record" to be found when the client
     // requests new records.
@@ -122,14 +122,16 @@ describe('Authorization', function() {
 
       installEncryptedRecord();
 
-      sandbox.stub(global, 'decrypt').resolves({
+      decryptMock = sandbox.stub(global, 'decrypt');
+      decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
         id: "singleNote",
         content: {ops: [{insert: "Hi there"}]},
       });
 
       // sync() tries to gather local changes, even when a conflict
       // has already been detected.
-      sandbox.stub(global, 'encrypt').resolves("encrypted local");
+      encryptMock = sandbox.stub(global, 'encrypt');
+      encryptMock.resolves("encrypted local");
 
       credentials = {
         get: sinon.stub().resolves(staticCredential),
@@ -155,17 +157,55 @@ describe('Authorization', function() {
       // the server) and assume that kinto.js will treat other
       // conflicts comparably.
 
+      // After resolving the conflict, it will try to retrieve new
+      // changes
+      installEncryptedRecord();
+      // Then it will try to push changes
+      fetchMock.post(new RegExp('/v1/batch$'), {
+        responses: [{
+          status: 201,
+          body: {
+            data: {
+              id: "singleNote",
+              content: "encrypted resolution",
+              kid: staticCredential.key.kid,
+              last_modified: 1238
+            }
+          }
+        }]
+      });
+      // Then it will try to pull changes that happened while it was
+      // pushing -- see e.g. https://github.com/Kinto/kinto.js/issues/555
+      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified&_since=1234$'), {
+        data: []
+      });
+      decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
+        id: "singleNote",
+        content: {ops: [{insert: "Resolution"}]},
+      });
+
       return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}})
         .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data.content).eql(
             {ops: [
+              {insert: "Resolution"}
+            ]});
+          const expectedContent = {
+            ops: [
               {insert: "Hi there"},
               {insert: "\n====== On this computer: ======\n\n"},
               {insert: "Local"},
-            ]}
-          );
+            ]};
+          const expectedResolution = {
+            id: "singleNote",
+            content: expectedContent,
+            last_modified: 1234,
+            _status: "updated"
+          };
+          chai.assert(encryptMock.calledWith(staticCredential.key, expectedResolution),
+                      "Never encrypted expected resolution");
         });
     });
 
