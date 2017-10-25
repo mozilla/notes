@@ -213,13 +213,40 @@ describe('Authorization', function() {
     it('should handle old keys correctly', () => {
       // Setup record with older kid that will be fetched after the
       // first successful sync.
-      fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified&_since=1234$'), {
+      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=1234$'), {
         data: [{
           id: "singleNote",
           content: "encrypted content",
           kid: "20171001",
           last_modified: 1236,
         }],
+      });
+
+      // Once we've wiped the server, we'll try to refetch from zero.
+      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified$'), {
+        body: {
+          data: []
+        },
+      });
+      // We'll also push what we have.
+      fetchMock.post(new RegExp('/v1/batch$'), {
+        responses: [{
+          status: 201,
+          body: {
+            data: {
+              id: 'singleNote',
+              content: "encrypted content",
+              kid: staticCredential.key.kid,
+              last_modified: 1239,
+            }
+          }
+        }]
+      });
+      // And again, try to fetch stuff apart from what we just pushed.
+      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified$'), {
+        body: {
+          data: []
+        },
       });
 
       let deleted = false;
