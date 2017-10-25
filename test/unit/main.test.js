@@ -280,7 +280,7 @@ describe('Authorization', function() {
           return collection.getAny('singleNote');
         }).then(result => {
           // Record now needs to be synced again.
-          chai.expect(result.data._status).eql("created");
+          chai.expect(result.data._status).eql("synced");
         });
     });
   });
