@@ -187,7 +187,7 @@ function syncKinto(client, credentials) {
       // updated, etc.?
       if (syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
-          console.log("Handling conflict", conflict);
+          console.log('Handling conflict', conflict);
           let totalOps = conflict.remote.content.ops.slice();
           totalOps.push({ insert: '\n====== On this computer: ======\n\n' });
           totalOps = totalOps.concat(conflict.local.content.ops);
