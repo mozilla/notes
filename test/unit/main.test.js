@@ -4,6 +4,7 @@ var sinon = require('sinon');
 var chaiAsPromised = require('chai-as-promised');
 var fetchMock = require('fetch-mock');
 
+const recordsPath = '/v1/buckets/default/collections/notes/records';
 chai.use(chaiAsPromised);
 
 // Many of these are "functional" tests that are run using Karma, and
@@ -98,7 +99,7 @@ describe('Authorization', function() {
     // This record will only be served once; if you need it more than
     // once, call it twice.
     function installEncryptedRecord() {
-      fetchMock.once(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified$'), {
+      fetchMock.once(new RegExp(recordsPath + '\\?_sort=-last_modified$'), {
         body: {
           data: [{
             id: "singleNote",
