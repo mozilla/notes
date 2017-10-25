@@ -217,7 +217,7 @@ function syncKinto(client, credentials) {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         }).then(() => collection.resetSyncStatus())
           .then(() => syncKinto(client, credentials));
-      } else if (error.message.contains('flushed')) {
+      } else if (error.message.includes('flushed')) {
         return collection.resetSyncStatus()
           .then(() => {
             return syncKinto(client, credentials);
