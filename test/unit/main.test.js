@@ -91,15 +91,14 @@ describe('Authorization', function() {
 
   describe('syncKinto', function() {
     let client, collection, credentials;
-    beforeEach(() => {
-      fetchMock.mock('end:/v1/', {
-        settings: {
-          batch_max_requests: 25,
-          readonly: false
-        }
-      });
 
-      fetchMock.mock(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified$'), {
+    // Install an "encrypted record" to be found when the client
+    // requests new records.
+    //
+    // This record will only be served once; if you need it more than
+    // once, call it twice.
+    function installEncryptedRecord() {
+      fetchMock.once(new RegExp('/v1/buckets/default/collections/notes/records\\?_sort=-last_modified$'), {
         body: {
           data: [{
             id: "singleNote",
@@ -110,6 +109,17 @@ describe('Authorization', function() {
         },
         headers: {Etag: '"1234"'},
       });
+    }
+
+    beforeEach(() => {
+      fetchMock.mock('end:/v1/', {
+        settings: {
+          batch_max_requests: 25,
+          readonly: false
+        }
+      });
+
+      installEncryptedRecord();
 
       sandbox.stub(global, 'decrypt').resolves({
         id: "singleNote",
