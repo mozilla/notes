@@ -36,7 +36,6 @@ div#toolbar {
 div#editor {
   flex: auto;
   overflow: hidden;
-  font-size: 14px;
 }
 
 div#editor a {
@@ -57,12 +56,31 @@ div#editor a {
   border-bottom: 0;
 }
 
+.ql-editor {
+  font-size: 14px;
+}
+
 .ql-editor ol, .ql-editor ul {
   padding: 0;
 }
 
 .ql-editor ul {
   margin-left: -5px;
+}
+
+.ql-editor li {
+  position: relative;
+  margin-left: 8px;
+}
+
+.ql-editor li::before {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  word-break: keep-all;
+  padding: inherit;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /**

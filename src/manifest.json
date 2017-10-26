@@ -4,6 +4,7 @@
   "description": "Displays a sidebar that lets you take notes on web pages.",
   "version": "2.0.0dev",
   "default_locale": "en_US",
+  "author": "Mozilla Test Pilot team",
   "applications": {
     "gecko": {
       "id": "notes@mozilla.com",
