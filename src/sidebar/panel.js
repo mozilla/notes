@@ -360,7 +360,7 @@ disconnectSync.addEventListener('click', () => {
   setTimeout(() => {
     getLastSyncedTime();
   }, 2000);
-  browser.runtime.sendMessage({
+  browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'disconnected'
   });
 });
@@ -488,7 +488,7 @@ chrome.runtime.onMessage.addListener(eventData => {
           action: 'kinto-load'
         });
       break;
-  case 'kinto-loaded':
+    case 'kinto-loaded':
       clearTimeout(loginTimeout);
       content = eventData.data;
       browser.storage.local.set({ notes: content,
@@ -527,6 +527,12 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'theme-changed':
       getThemeFromStorage();
+      break;
+    case 'disconnected':
+      disconnectSync.style.display = 'none';
+      setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+      getLastSyncedTime();
+      break;
   }
 });
 
