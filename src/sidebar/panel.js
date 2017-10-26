@@ -259,62 +259,44 @@ const INITIAL_CONTENT = {
   ]
 };
 
-function handleLocalContent(data) {
-  if (!data.hasOwnProperty('notes')) {
+function handleLocalContent(content) {
+  if (!content) {
     quill.setContents(INITIAL_CONTENT);
     browser.storage.local.set({contentWasSynced: true });
   } else {
-    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
-      quill.setContents(data.notes);
+    if (JSON.stringify(quill.getContents()) !== JSON.stringify(content)) {
+      quill.setContents(content);
     }
   }
 }
 
 function loadContent() {
-  return new Promise((resolve) => {
-    browser.storage.local.get(['notes'], data => {
-      // We load the local content
-      handleLocalContent(data);
-      resolve();
-    });
+  chrome.runtime.sendMessage({
+    action: 'kinto-load'
   });
 }
 
-loadContent()
-  .then(() => {
-    document.getElementById('loading').style.display = 'none';
-    // In the meantime we try to load the kinto content
-    chrome.runtime.sendMessage({
-      action: 'kinto-load'
-    });
-  });
+loadContent();
 
 // Sidebar and background already know about that change.
 let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.set({ notes: content }).then(() => {
-    // Notify other sidebars
-    if (!ignoreNextLoadEvent) {
-      chrome.runtime.sendMessage('notes@mozilla.com', {
-        action: 'text-change'
-      });
+  if (!ignoreNextLoadEvent) {
+    // Debounce this second event
+    chrome.runtime.sendMessage({
+      action: 'kinto-save',
+      content
+    });
 
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'kinto-save',
-        content
-      });
-
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'metrics-changed',
-        context: getPadStats()
-      });
-    } else {
-      ignoreNextLoadEvent = false;
-    }
-  });
+    // Debounce this second event
+    chrome.runtime.sendMessage({
+      action: 'metrics-changed',
+      context: getPadStats()
+    });
+  } else {
+    ignoreNextLoadEvent = false;
+  }
 });
 
 const footerButtons = document.getElementById('footer-buttons');
@@ -489,16 +471,14 @@ chrome.runtime.onMessage.addListener(eventData => {
         });
       break;
     case 'kinto-loaded':
-      clearTimeout(loginTimeout);
+    clearTimeout(loginTimeout);
+    console.log('kinto-loaded', eventData);
       content = eventData.data;
-      browser.storage.local.set({ notes: content,
-                                  last_modified: eventData.last_modified})
-        .then(() => {
-          getLastSyncedTime();
-          setTimeout(() => {
-            quill.setContents(content);
-          }, 10);
-        });
+      getLastSyncedTime();
+      setTimeout(() => {
+        handleLocalContent(content);
+        document.getElementById('loading').style.display = 'none';
+      }, 10);
       break;
     case 'text-change':
       ignoreNextLoadEvent = true;
@@ -517,6 +497,9 @@ chrome.runtime.onMessage.addListener(eventData => {
       browser.storage.local.set({ last_modified: eventData.last_modified})
         .then(() => {
           getLastSyncedTime();
+          chrome.runtime.sendMessage('notes@mozilla.com', {
+            action: 'text-change'
+          });
         });
       break;
     case 'text-saved':
