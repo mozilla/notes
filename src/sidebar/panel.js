@@ -312,10 +312,12 @@ syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackButton.addEventListener('click', () => {
-  browser.tabs.create({
-    active: true,
-    url: SURVEY_PATH
-  });
+  if (footerButtons.classList.contains('savingLayout')) {
+    browser.tabs.create({
+      active: true,
+      url: SURVEY_PATH
+    });
+  }
 });
 
 const savingIndicator = document.getElementById('saving-indicator');
@@ -394,7 +396,7 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
 let loginTimeout;
 let editingInProcess = false;
 enableSync.onclick = () => {
-  if (editingInProcess) {
+  if (editingInProcess || footerButtons.classList.contains('syncingLayout')) {
     return;
   }
   setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
