@@ -509,7 +509,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       break;
     case 'text-editing':
-      savingIndicator.textContent = browser.i18n.getMessage('editing');
+      savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
       // Disable sync-action
       editingInProcess = true;
       break;
