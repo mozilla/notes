@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 // Many of these are "functional" tests that are run using Karma, and
 // so "unit" tests from the browser perspective (not including browser interaction).
 describe('Authorization', function() {
-  this.timeout(5000);
+  this.timeout(8000);
   const staticCredential = {
     key: {
       kid: "20171005",
