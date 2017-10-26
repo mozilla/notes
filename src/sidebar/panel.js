@@ -265,6 +265,7 @@ function handleLocalContent(data) {
       quill.setContents(data.notes);
     }
   }
+  quill.focus();
 }
 
 function loadContent() {
