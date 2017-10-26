@@ -185,18 +185,20 @@ function syncKinto(client, credentials) {
     .then(syncResult => {
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
-      return Promise.all(syncResult.conflicts.map(conflict => {
-        console.log(conflict);
-        let totalOps = conflict.remote.content.ops.slice();
-        totalOps.push({ insert: '\n====== On this computer: ======\n\n' });
-        totalOps = totalOps.concat(conflict.local.content.ops);
-        const resolution = {
-          id: conflict.remote.id,
-          content: {ops: totalOps},
-        };
-        return collection.resolve(conflict, resolution);
-      }));
-      // FIXME: Maybe sync again to "push" the resolution?
+      if (syncResult.conflicts.length > 0) {
+        return Promise.all(syncResult.conflicts.map(conflict => {
+          console.log('Handling conflict', conflict);
+          let totalOps = conflict.remote.content.ops.slice();
+          totalOps.push({ insert: '\n====== On this computer: ======\n\n' });
+          totalOps = totalOps.concat(conflict.local.content.ops);
+          const resolution = {
+            id: conflict.remote.id,
+            content: {ops: totalOps},
+          };
+          return collection.resolve(conflict, resolution);
+        }))
+          .then(() => syncKinto(client, credentials));
+      }
     })
     .catch(error => {
       if (error.response && error.response.status === 401) {
@@ -215,8 +217,9 @@ function syncKinto(client, credentials) {
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
-        }).then(() => collection.resetSyncStatus());
-      } else if (error.message.contains('flushed')) {
+        }).then(() => collection.resetSyncStatus())
+          .then(() => syncKinto(client, credentials));
+      } else if (error.message.includes('flushed')) {
         return collection.resetSyncStatus()
           .then(() => {
             return syncKinto(client, credentials);
