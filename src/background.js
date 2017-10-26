@@ -60,10 +60,15 @@ function authenticate() {
     redirect_uri: browser.identity.getRedirectURL(),
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
   }).then((loginDetails) => {
+    // FIXME: https://github.com/vladikoff/fxa-crypto-relier/issues/8
+    let key = loginDetails.keys['https://identity.mozilla.org/apps/notes'];
+    if (key.hasOwnProperty('https://identity.mozilla.org/apps/notes')) {
+      key = key['https://identity.mozilla.org/apps/notes'];
+    }
     const credentials = {
       access_token: loginDetails.access_token,
       refresh_token: loginDetails.refresh_token,
-      key: loginDetails.keys['https://identity.mozilla.org/apps/notes']
+      key
     };
     console.log('Login succeeded', credentials);
     browser.storage.local.set({credentials}).then(() => {
