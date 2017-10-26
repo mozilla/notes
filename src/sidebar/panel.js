@@ -156,9 +156,9 @@ quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
       const split = str.split(match);
       const beforeLink = split.shift();
       ops.push({ insert: beforeLink });
-      
+
       formatsAtIndex.link = match;
-      
+
       ops.push({ insert: match, attributes: formatsAtIndex });
       str = split.join(match);
     });
@@ -204,7 +204,7 @@ document.querySelector('#editor').addEventListener('click', function(e) {
 
 // makes getting out of link-editing format easier by escaping whitespace characters
 quill.on('text-change', function(delta) {
-  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] &&
       isWhitespace(delta.ops[1].insert)) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)
@@ -347,6 +347,12 @@ enableSync.onclick = () => {
 function getThemeFromStorage() {
   const getting = browser.storage.local.get(['theme']);
   getting.then(function applyTheme(data) {
+    if (data.theme === undefined && browser.devtools.panels.themeName === 'dark' ) {
+      data.theme = 'dark';
+    } else {
+      data.theme = 'default';
+    }
+
     if (data.theme === 'dark') {
       if (! document.getElementById('dark-styles')) {
         const darkSS = document.createElement('link');
@@ -357,7 +363,7 @@ function getThemeFromStorage() {
         document.getElementsByTagName('head')[0].appendChild(darkSS);
       } else
         return;
-    } else if (data.theme === 'default' || data.theme === undefined) {
+    } else if (data.theme === 'default') {
       if (document.getElementById('dark-styles')) {
         const darkSS = document.getElementById('dark-styles');
         darkSS.parentElement.removeChild(darkSS);
