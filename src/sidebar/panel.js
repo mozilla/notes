@@ -259,10 +259,24 @@ const INITIAL_CONTENT = {
   ]
 };
 
+let ignoreNextLoadEvent = false;
 function handleLocalContent(content) {
   if (!content) {
-    quill.setContents(INITIAL_CONTENT);
-    browser.storage.local.set({contentWasSynced: true });
+    browser.storage.local.get('notes').then((data) => {
+      if (!data.hasOwnProperty('notes')) {
+        quill.setContents(INITIAL_CONTENT);
+        ignoreNextLoadEvent = true;
+      } else {
+        quill.setContents(data.notes);
+        chrome.runtime.sendMessage({
+          action: 'kinto-save',
+          content: data.notes
+        }).then(() => {
+          // Clean-up
+          browser.storage.local.remove('notes');
+        });
+      }
+    });
   } else {
     if (JSON.stringify(quill.getContents()) !== JSON.stringify(content)) {
       quill.setContents(content);
@@ -279,7 +293,6 @@ function loadContent() {
 loadContent();
 
 // Sidebar and background already know about that change.
-let ignoreNextLoadEvent = false;
 quill.on('text-change', () => {
   const content = quill.getContents();
   if (!ignoreNextLoadEvent) {
