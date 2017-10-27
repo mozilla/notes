@@ -477,7 +477,7 @@ function getLastSyncedTime() {
       if (ignoreNextLoadEvent) {
         setAnimation(false, true);
       } else {
-        // Timeout stop animation 2s later to temporary fix a bug on editing.
+        // Timeout stop animation 2s later for better feedback
         setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
       }
     } else {
