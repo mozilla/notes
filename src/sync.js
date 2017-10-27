@@ -224,6 +224,8 @@ function syncKinto(client, credentials) {
           .then(() => {
             return syncKinto(client, credentials);
           });
+      } else if (error.message.includes('syncResult is undefined')) {
+        return Promise.resolve(null);
       } else {
         console.error(error);
         return Promise.reject(error);
@@ -260,8 +262,8 @@ function loadFromKinto(client, credentials) {
       console.log('Collection had record', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
-        data: result ? result.data.content : null,
-        last_modified: result ? result.data.last_modified : null,
+        data: result && typeof result.data !== 'undefined' ? result.data.content : null,
+        last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
       });
     });
 }
