@@ -189,7 +189,6 @@ footer {
 
 .syncingLayout #enable-sync:hover {
   background: transparent;
-  cursor: default;
 }
 
 /* Animate sync icon */

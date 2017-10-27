@@ -156,9 +156,9 @@ quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
       const split = str.split(match);
       const beforeLink = split.shift();
       ops.push({ insert: beforeLink });
-      
+
       formatsAtIndex.link = match;
-      
+
       ops.push({ insert: match, attributes: formatsAtIndex });
       str = split.join(match);
     });
@@ -324,6 +324,7 @@ const giveFeedbackButton = document.getElementById('give-feedback-button');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
+let isAuthenticated = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 
@@ -413,25 +414,34 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
 let loginTimeout;
 let editingInProcess = false;
 enableSync.onclick = () => {
-  if (editingInProcess || footerButtons.classList.contains('syncingLayout')) {
+  if (editingInProcess) {
     return;
   }
-  setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+  if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
+    // Trigger manual sync
+    setAnimation(true);
+    chrome.runtime.sendMessage({
+        action: 'kinto-load'
+      });
+  } else if (!isAuthenticated && footerButtons.classList.contains('savingLayout')) {
+    // Login
+    setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
 
-  setTimeout(() => {
-    savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
-  }, 200); // Delay text for smooth animation
+    setTimeout(() => {
+      savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+    }, 200); // Delay text for smooth animation
 
-  loginTimeout = setTimeout(() => {
-    setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
-    savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
-    disconnectSync.style.display = 'block';
-  }, 5000);
+    loginTimeout = setTimeout(() => {
+      setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+      savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+      disconnectSync.style.display = 'block';
+    }, 5000);
 
-  browser.runtime.sendMessage({
-    action: 'authenticate',
-    context: getPadStats()
-  });
+    browser.runtime.sendMessage({
+      action: 'authenticate',
+      context: getPadStats()
+    });
+  }
 };
 
 // gets the user-selected theme from local storage and applies respective CSS
@@ -466,6 +476,7 @@ function getLastSyncedTime() {
       const time = new Date(data.last_modified).toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
       disconnectSync.style.display = 'block';
+      isAuthenticated = true;
       // Timeout stop animation 2s later to temporary fix a bug on editing.
       setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
     } else {
@@ -484,6 +495,7 @@ chrome.runtime.onMessage.addListener(eventData => {
   switch (eventData.action) {
     case 'sync-authenticated':
       setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+      isAuthenticated = true;
       savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       chrome.runtime.sendMessage({
           action: 'kinto-load'
@@ -531,6 +543,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'disconnected':
       disconnectSync.style.display = 'none';
+      isAuthenticated = false;
       setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
       getLastSyncedTime();
       break;
