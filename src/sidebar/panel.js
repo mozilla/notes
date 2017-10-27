@@ -351,6 +351,7 @@ disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 disconnectSync.addEventListener('click', () => {
   disconnectSync.style.display = 'none';
+  isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
   setTimeout(() => {
     savingIndicator.textContent = browser.i18n.getMessage('disconnected');
