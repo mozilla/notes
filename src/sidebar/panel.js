@@ -474,8 +474,12 @@ function getLastSyncedTime() {
       savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
       disconnectSync.style.display = 'block';
       isAuthenticated = true;
-      // Timeout stop animation 2s later to temporary fix a bug on editing.
-      setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
+      if (ignoreNextLoadEvent) {
+        setAnimation(false, true);
+      } else {
+        // Timeout stop animation 2s later to temporary fix a bug on editing.
+        setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
+      }
     } else {
       const time = new Date().toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
