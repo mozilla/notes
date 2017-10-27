@@ -286,6 +286,7 @@ function handleLocalContent(content) {
 }
 
 function loadContent() {
+  ignoreNextLoadEvent = true;
   chrome.runtime.sendMessage({
     action: 'kinto-load'
   });
