@@ -474,12 +474,7 @@ function getLastSyncedTime() {
       savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
       disconnectSync.style.display = 'block';
       isAuthenticated = true;
-      if (ignoreNextLoadEvent) {
-        setAnimation(false, true);
-      } else {
-        // Timeout stop animation 2s later for better feedback
-        setTimeout(() =>  setAnimation(false, true), 2000); // animateSyncIcon, syncingLayout, warning
-      }
+      setAnimation(false, true);
     } else {
       const time = new Date().toLocaleTimeString();
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
@@ -525,6 +520,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'text-editing':
       savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+      setAnimation(true);
       // Disable sync-action
       editingInProcess = true;
       break;
