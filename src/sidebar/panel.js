@@ -501,11 +501,14 @@ chrome.runtime.onMessage.addListener(eventData => {
     clearTimeout(loginTimeout);
     console.log('kinto-loaded', eventData);
       content = eventData.data;
-      getLastSyncedTime();
-      setTimeout(() => {
-        handleLocalContent(content);
-        document.getElementById('loading').style.display = 'none';
-      }, 10);
+      browser.storage.local.set({ last_modified: eventData.last_modified})
+        .then(() => {
+          getLastSyncedTime();
+          setTimeout(() => {
+            handleLocalContent(content);
+            document.getElementById('loading').style.display = 'none';
+          }, 10);
+        });
       break;
     case 'text-change':
       ignoreNextLoadEvent = true;
