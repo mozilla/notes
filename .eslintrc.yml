@@ -3,15 +3,23 @@ env:
   es6: true
   webextensions: true
 
+parserOptions:
+  ecmaVersion: 2017
+
 extends:
   - eslint:recommended
 
 globals:
   KintoClient: false
+  Kinto: false
   Quill: false
   Jose: false
   JoseJWE: false
   TestPilotGA: false
+  fxaCryptoRelier: false
+  BrowserStorageCredentials: false
+  loadFromKinto: false
+  saveToKinto: false
 
 root: true
 

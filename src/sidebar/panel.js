@@ -156,9 +156,9 @@ quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
       const split = str.split(match);
       const beforeLink = split.shift();
       ops.push({ insert: beforeLink });
-      
+
       formatsAtIndex.link = match;
-      
+
       ops.push({ insert: match, attributes: formatsAtIndex });
       str = split.join(match);
     });
@@ -204,7 +204,7 @@ document.querySelector('#editor').addEventListener('click', function(e) {
 
 // makes getting out of link-editing format easier by escaping whitespace characters
 quill.on('text-change', function(delta) {
-  if (delta.ops.length === 2 && 'insert' in delta.ops[1] && 
+  if (delta.ops.length === 2 && 'insert' in delta.ops[1] &&
       isWhitespace(delta.ops[1].insert)) {
     const format = quill.getFormat(delta.ops[0].retain, 1);
     if ('link' in format)
@@ -246,100 +246,199 @@ ordered.title = browser.i18n.getMessage('numberedListTitle') + ' (' + userOSKey 
 bullet.title = browser.i18n.getMessage('bulletedListTitle') + ' (' + userOSKey + '+Shift+' + bindings.bullet.key + ')';
 qlDirection.title = browser.i18n.getMessage('textDirectionTitle');
 
-function handleLocalContent(data) {
-  if (!data.hasOwnProperty('notes')) {
-    quill.setContents({
-      ops: [
-        { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
-        {
-          attributes: { size: 'large' },
-          insert:
-            browser.i18n.getMessage('welcomeText2')
-        },
-        { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
-      ]
+const INITIAL_CONTENT = {
+  ops: [
+    { attributes: { size: 'large', bold: true }, insert: browser.i18n.getMessage('welcomeTitle2') },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }},
+    {
+      attributes: { size: 'large' },
+      insert:
+      browser.i18n.getMessage('welcomeText2')
+    },
+    { insert: '\n\n', attributes: { direction: LANG_DIR, align: TEXT_ALIGN_DIR }}
+  ]
+};
+
+let ignoreNextLoadEvent = false;
+function handleLocalContent(content) {
+  if (!content) {
+    browser.storage.local.get('notes').then((data) => {
+      if (!data.hasOwnProperty('notes')) {
+        quill.setContents(INITIAL_CONTENT);
+        ignoreNextLoadEvent = true;
+      } else {
+        quill.setContents(data.notes);
+        chrome.runtime.sendMessage({
+          action: 'kinto-save',
+          content: data.notes
+        }).then(() => {
+          // Clean-up
+          browser.storage.local.remove('notes');
+        });
+      }
     });
   } else {
-    if (JSON.stringify(quill.getContents()) !== JSON.stringify(data.notes)) {
-      quill.setContents(data.notes);
+    if (JSON.stringify(quill.getContents()) !== JSON.stringify(content)) {
+      quill.setContents(content);
     }
   }
   quill.focus();
 }
 
 function loadContent() {
-  return new Promise((resolve) => {
-    browser.storage.local.get(['notes'], data => {
-      // If we have a bearer, we try to save the content.
-      handleLocalContent(data);
-      resolve();
-    });
+  ignoreNextLoadEvent = true;
+  chrome.runtime.sendMessage({
+    action: 'kinto-load'
   });
 }
 
-loadContent()
-  .then(() => {
-    document.getElementById('loading').style.display = 'none';
-  });
+loadContent();
 
-let ignoreNextLoadEvent = false;
+// Sidebar and background already know about that change.
 quill.on('text-change', () => {
   const content = quill.getContents();
-  browser.storage.local.set({ notes: content }).then(() => {
-    // Notify other sidebars
-    if (!ignoreNextLoadEvent) {
-      chrome.runtime.sendMessage('notes@mozilla.com', {
-        action: 'text-change'
-      });
+  if (!ignoreNextLoadEvent) {
+    // Debounce this second event
+    chrome.runtime.sendMessage({
+      action: 'kinto-save',
+      content
+    });
 
-      updateSavingIndicator();
-      // Debounce this second event
-      chrome.runtime.sendMessage({
-        action: 'metrics-changed',
-        context: getPadStats()
-      });
-    } else {
-      ignoreNextLoadEvent = false;
-    }
-  });
+    // Debounce this second event
+    chrome.runtime.sendMessage({
+      action: 'metrics-changed',
+      context: getPadStats()
+    });
+  } else {
+    ignoreNextLoadEvent = false;
+  }
 });
 
-const savingIndicator = document.getElementById('saving-indicator');
+const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
-const giveFeedback = document.getElementById('give-feedback');
+const giveFeedbackButton = document.getElementById('give-feedback-button');
 const noteDiv = document.getElementById('sync-note');
 const syncNoteBody = document.getElementById('sync-note-dialog');
 const closeButton = document.getElementById('close-button');
-savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+let isAuthenticated = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
-giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
-giveFeedback.setAttribute('href', SURVEY_PATH);
 
+giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
+giveFeedbackButton.addEventListener('click', () => {
+  if (footerButtons.classList.contains('savingLayout')) {
+    browser.tabs.create({
+      active: true,
+      url: SURVEY_PATH
+    });
+  }
+});
 
-let savingIndicatorTimeout;
-function updateSavingIndicator() {
-  savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
-  const later = function() {
-    savingIndicatorTimeout = null;
-    savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
-  };
-  clearTimeout(savingIndicatorTimeout);
-  savingIndicatorTimeout = setTimeout(later, 300);
-}
+const savingIndicator = document.getElementById('saving-indicator');
+savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
+const giveFeedback = document.getElementById('give-feedback');
+giveFeedback.textContent = browser.i18n.getMessage('feedback');
+giveFeedback.addEventListener('click', () => {
+  browser.tabs.create({
+    active: true,
+    url: SURVEY_PATH
+  });
+});
+
+const disconnectSync = document.getElementById('disconnect-from-sync');
+disconnectSync.style.display = 'none';
+disconnectSync.textContent = browser.i18n.getMessage('disableSync');
+disconnectSync.addEventListener('click', () => {
+  disconnectSync.style.display = 'none';
+  isAuthenticated = false;
+  setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+  setTimeout(() => {
+    savingIndicator.textContent = browser.i18n.getMessage('disconnected');
+  }, 200);
+  setTimeout(() => {
+    getLastSyncedTime();
+  }, 2000);
+  browser.runtime.sendMessage('notes@mozilla.com', {
+    action: 'disconnected'
+  });
+});
 
 closeButton.addEventListener('click', () => {
   noteDiv.classList.toggle('visible');
 });
 
+/**
+ * Set animation on footerButtons toolbar
+ * @param {Boolean} animateSyncIcon Start looping animation on sync icon
+ * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
+ *                                  if false, animate to savingLayout (sync icon on left)
+ * @param {Boolean} warning         Apply yellow warning styling on toolbar
+ */
+function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
+
+  if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
+    footerButtons.classList.add('animateSyncIcon');
+  } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
+    footerButtons.classList.remove('animateSyncIcon');
+  }
+
+  if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
+    footerButtons.classList.replace('savingLayout', 'syncingLayout');
+    enableSync.style.backgroundColor = 'transparent';
+    // Start blink animation on saving-indicator
+    savingIndicator.classList.add('blink');
+    // Reset CSS animation by removeing class
+    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
+  } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
+    // Animate savingIndicator text
+    savingIndicator.classList.add('blink');
+    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
+    setTimeout(() => {
+      enableSync.style.backgroundColor = null;
+    }, 400);
+    //
+    footerButtons.classList.replace('syncingLayout', 'savingLayout');
+  }
+
+  if (warning === true && !footerButtons.classList.contains('warning')) {
+    footerButtons.classList.add('warning');
+  } else if (warning === false && footerButtons.classList.contains('warning')) {
+    footerButtons.classList.remove('warning');
+  }
+}
+
+let loginTimeout;
+let editingInProcess = false;
 enableSync.onclick = () => {
-  noteDiv.classList.toggle('visible');
-  browser.runtime.sendMessage({
-    action: 'authenticate',
-    context: getPadStats()
-  });
+  if (editingInProcess) {
+    return;
+  }
+  if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
+    // Trigger manual sync
+    setAnimation(true);
+    chrome.runtime.sendMessage({
+        action: 'kinto-load'
+      });
+  } else if (!isAuthenticated && footerButtons.classList.contains('savingLayout')) {
+    // Login
+    setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+
+    setTimeout(() => {
+      savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+    }, 200); // Delay text for smooth animation
+
+    loginTimeout = setTimeout(() => {
+      setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+      savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+      disconnectSync.style.display = 'block';
+    }, 5000);
+
+    browser.runtime.sendMessage({
+      action: 'authenticate',
+      context: getPadStats()
+    });
+  }
 };
 
 // gets the user-selected theme from local storage and applies respective CSS
@@ -366,16 +465,89 @@ function getThemeFromStorage() {
     }
   });
 }
+
+function getLastSyncedTime() {
+  const getting = browser.storage.local.get(['last_modified', 'credentials']);
+  getting.then(data => {
+    if (data.hasOwnProperty('credentials')) {
+      const time = new Date(data.last_modified).toLocaleTimeString();
+      savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
+      disconnectSync.style.display = 'block';
+      isAuthenticated = true;
+      setAnimation(false, true);
+    } else {
+      const time = new Date().toLocaleTimeString();
+      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', getThemeFromStorage);
+document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 
 chrome.runtime.onMessage.addListener(eventData => {
+  let time;
+  let content;
   switch (eventData.action) {
+    case 'sync-authenticated':
+      setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+      isAuthenticated = true;
+      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+      chrome.runtime.sendMessage({
+          action: 'kinto-load'
+        });
+      break;
+    case 'kinto-loaded':
+    clearTimeout(loginTimeout);
+    console.log('kinto-loaded', eventData);
+      content = eventData.data;
+      browser.storage.local.set({ last_modified: eventData.last_modified})
+        .then(() => {
+          getLastSyncedTime();
+          setTimeout(() => {
+            handleLocalContent(content);
+            document.getElementById('loading').style.display = 'none';
+          }, 10);
+        });
+      break;
     case 'text-change':
       ignoreNextLoadEvent = true;
       loadContent();
       break;
+    case 'text-syncing':
+      setAnimation(true); // animateSyncIcon, syncingLayout, warning
+      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+      break;
+    case 'text-editing':
+      savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+      setAnimation(true);
+      // Disable sync-action
+      editingInProcess = true;
+      break;
+    case 'text-synced':
+      browser.storage.local.set({ last_modified: eventData.last_modified})
+        .then(() => {
+          getLastSyncedTime();
+          chrome.runtime.sendMessage('notes@mozilla.com', {
+            action: 'text-change'
+          });
+        });
+      break;
+    case 'text-saved':
+      time = new Date().toLocaleTimeString();
+      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+      // Enable sync-action
+      editingInProcess = false;
+      break;
     case 'theme-changed':
       getThemeFromStorage();
+      break;
+    case 'disconnected':
+      disconnectSync.style.display = 'none';
+      isAuthenticated = false;
+      setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+      getLastSyncedTime();
+      break;
   }
 });
 
