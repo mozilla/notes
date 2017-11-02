@@ -54,10 +54,8 @@ function authenticate() {
     chrome.runtime.sendMessage({
       action: 'sync-opening'
     });
-  fxaKeysUtil.launchFxaScopedKeyFlow({
-    client_id: FXA_CLIENT_ID,
-    pkce: true,
-    redirect_uri: browser.identity.getRedirectURL(),
+  fxaKeysUtil.launchWebExtensionKeyFlow(FXA_CLIENT_ID, {
+    redirectUri: browser.identity.getRedirectURL(),
     scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
   }).then((loginDetails) => {
     const key = loginDetails.keys['https://identity.mozilla.org/apps/notes'];
