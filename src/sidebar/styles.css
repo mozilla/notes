@@ -15,70 +15,25 @@ body {
   padding: 0;
 }
 
-div#loading {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: white;
-    z-index: 10;
+.ck-editor__editable {
+  /* not the best way to give the editor full height */
+  height: calc(95vh - 50px);
 }
 
-div#toolbar {
-  flex: 40px;
+/* div#loading {
+  height: 100%;
   width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: 10;
 }
 
 div#editor {
   flex: auto;
   overflow: hidden;
-}
-
-div#editor a {
-  cursor: pointer;
-}
-
-.ql-snow .ql-picker.ql-size {
-  width: 45px;
-}
-
-.ql-container.ql-snow, .ql-toolbar.ql-snow {
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
-}
-
-.ql-container.ql-snow {
-  border-bottom: 0;
-}
-
-.ql-editor {
-  font-size: 14px;
-}
-
-.ql-editor ol, .ql-editor ul {
-  padding: 0;
-}
-
-.ql-editor ul {
-  margin-left: -5px;
-}
-
-.ql-editor li {
-  position: relative;
-  margin-left: 8px;
-}
-
-.ql-editor li::before {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  word-break: keep-all;
-  padding: inherit;
-  display: flex;
-  justify-content: flex-end;
-}
+} */
 
 /**
 Footer Styles
@@ -157,7 +112,7 @@ footer {
   background-color: #d7d7db;
 }
 
-#menu {
+/* #menu {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -202,12 +157,4 @@ footer {
 
 #sync-note.visible {
   display: block;
-}
-
-.forbid-cursor {
-  cursor: no-drop;
-}
-
-.ql-tooltip {
-  display: none;
-}
+} */

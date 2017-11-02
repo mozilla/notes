@@ -3,43 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <title>Firefox Notes</title>
-  <link href="vendor/quill.snow.css" rel="stylesheet">
   <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
 
   <div id="loading"></div>
-  <!-- Create the Quill.js toolbar container -->
-  <div id="toolbar">
-    <!-- Add font size dropdown -->
-    <select class="ql-size">
-      <option value="12px">12</option>
-      <!-- Note a missing, thus falsy value, is used to reset to default -->
-      <option value="14px" selected>14</option>
-      <option value="16px">16</option>
-      <option value="18px">18</option>
-      <option value="20px">20</option>
-    </select>
-    <!-- Add a bold button -->
-    <button class="ql-bold"></button>
-    <button class="ql-italic"></button>
-    <button class="ql-strike"></button>
-    <button class="ql-list" value="ordered"></button>
-    <button class="ql-list" value="bullet"></button>
-    <span id="ql-direction"></span>
+  
+  <!-- Create the ckeditor container -->
+  <div id="editor">
+    <p>Hello!</p>
+    <p>Welcome to this one-page notepad built in to Firefox. Browse the web. Jot down notes. It’s that simple.</p>
   </div>
-
-  <!-- Create the Quill.js editor container -->
-  <div id="editor"></div>
 
   <!-- Add a Firefox Sync toolbar -->
   <footer>
-    <div id="sync-note">
-      <img src="close.svg" id="close-button"/>
-      <p id="sync-note-dialog"></p>
-    </div>
-
     <div id="footer-buttons">
       <span id="saving-indicator"></span>
       <a id="enable-sync"></a>
@@ -47,9 +25,9 @@
     </div>
   </footer>
 
-  <!-- Include the Quill library -->
-  <script src="vendor/quill.js"></script>
-  <!-- Initialize Quill editor -->
+  <!-- Include the ckeditor library -->
+  <script src="vendor/ckeditor.js"></script>
+  <!-- Initialize ckeditor -->
   <script src="panel.js"></script>
 </body>
 </html>
