@@ -112,7 +112,7 @@ footer {
   background-color: #d7d7db;
 }
 
-/* #menu {
+#menu {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -157,4 +157,4 @@ footer {
 
 #sync-note.visible {
   display: block;
-} */
+}
