@@ -18,6 +18,7 @@ body {
 .ck-editor__editable {
   /* not the best way to give the editor full height */
   height: calc(95vh - 50px);
+  cursor: text;
 }
 
 /* div#loading {
