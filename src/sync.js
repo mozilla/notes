@@ -149,6 +149,10 @@ class BrowserStorageCredentials extends Credentials {
     return data.credentials;
   }
 
+  async set(credentials) {
+    return this.storage.set({credentials});
+  }
+
   async clear() {
     return this.storage.remove('credentials');
   }
@@ -168,24 +172,32 @@ function syncKinto(client, credentials) {
   return credentials.get()
     .then(received => {
       credential = received;
-      // XXX: Ask for an refresh token
-      // Query Kinto with the Bearer Token
+
       if (!received) return;
-      collection = client
-        .collection('notes', {
-          idSchema: notesIdSchema,
-          remoteTransformers: [new JWETransformer(credential.key)],
-        });
-      return collection
-        .sync({
-          headers: { Authorization: `Bearer ${credential.access_token}` },
-          strategy: 'manual',
-        });
+
+      return fxaRenewCredential(credential)
+        .then((renewedCred) => {
+          credential = renewedCred;
+          return credentials.set(renewedCred);
+        })
+        .then(() => {
+          // Query Kinto with the Bearer Token
+          collection = client
+            .collection('notes', {
+              idSchema: notesIdSchema,
+              remoteTransformers: [new JWETransformer(credential.key)],
+            });
+          return collection
+            .sync({
+              headers: {Authorization: `Bearer ${credential.access_token}`},
+              strategy: 'manual',
+            });
+      });
     })
     .then(syncResult => {
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
-      if (syncResult.conflicts.length > 0) {
+      if (syncResult && syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
           console.log('Handling conflict', conflict);
           let totalOps = conflict.remote.content.ops.slice();
@@ -226,6 +238,9 @@ function syncKinto(client, credentials) {
           });
       } else if (error.message.includes('syncResult is undefined')) {
         return Promise.resolve(null);
+      } else if (error.message === 'Failed to renew token') {
+        // cannot refresh the access token, log the user out.
+        return credentials.clear();
       } else {
         console.error(error);
         return Promise.reject(error);

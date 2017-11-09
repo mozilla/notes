@@ -8,7 +8,7 @@ const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
 const FXA_CLIENT_ID = 'c6d74070a481bc10';
 const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys-oct10.dev.lcip.org/v1';
 const FXA_PROFILE_SERVER = 'https://scoped-keys-oct10.dev.lcip.org/profile/v1';
-
+const FXA_SCOPES = ['profile', 'https://identity.mozilla.org/apps/notes'];
 const timeouts = {};
 
 // Kinto sync and encryption
@@ -57,13 +57,18 @@ function authenticate() {
     });
   fxaKeysUtil.launchWebExtensionKeyFlow(FXA_CLIENT_ID, {
     redirectUri: browser.identity.getRedirectURL(),
-    scopes: ['profile', 'https://identity.mozilla.org/apps/notes'],
+    scopes: FXA_SCOPES,
   }).then((loginDetails) => {
     const key = loginDetails.keys['https://identity.mozilla.org/apps/notes'];
     const credentials = {
       access_token: loginDetails.access_token,
       refresh_token: loginDetails.refresh_token,
-      key
+      key,
+      metadata: {
+        server: FXA_OAUTH_SERVER,
+        client_id: FXA_CLIENT_ID,
+        scope: FXA_SCOPES
+      }
     };
     console.log('Login succeeded', credentials);
 
