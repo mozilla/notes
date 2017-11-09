@@ -10,16 +10,17 @@ extends:
   - eslint:recommended
 
 globals:
-  KintoClient: false
-  Kinto: false
-  Quill: false
+  BrowserStorageCredentials: false
+  fxaCryptoRelier: false
+  fxaFetchProfile: false
   Jose: false
   JoseJWE: false
-  TestPilotGA: false
-  fxaCryptoRelier: false
-  BrowserStorageCredentials: false
+  Kinto: false
+  KintoClient: false
   loadFromKinto: false
+  Quill: false
   saveToKinto: false
+  TestPilotGA: false
 
 root: true
 

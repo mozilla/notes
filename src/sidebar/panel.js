@@ -492,6 +492,8 @@ chrome.runtime.onMessage.addListener(eventData => {
     case 'sync-authenticated':
       setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
       isAuthenticated = true;
+      // set title attr of footer to the currently logged in account
+      footerButtons.title = eventData.profile && eventData.profile.email;
       savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
       chrome.runtime.sendMessage({
           action: 'kinto-load'
@@ -544,6 +546,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'disconnected':
       disconnectSync.style.display = 'none';
+      footerButtons.title = null; // remove profile email from title attribute
       isAuthenticated = false;
       setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
       getLastSyncedTime();

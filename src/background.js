@@ -7,6 +7,7 @@ const KINTO_SERVER = 'https://kinto.dev.mozaws.net/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'c6d74070a481bc10';
 const FXA_OAUTH_SERVER = 'https://oauth-scoped-keys-oct10.dev.lcip.org/v1';
+const FXA_PROFILE_SERVER = 'https://scoped-keys-oct10.dev.lcip.org/profile/v1';
 
 const timeouts = {};
 
@@ -65,10 +66,14 @@ function authenticate() {
       key
     };
     console.log('Login succeeded', credentials);
-    browser.storage.local.set({credentials}).then(() => {
-      chrome.runtime.sendMessage({
-        action: 'sync-authenticated',
-        credentials
+
+    fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
+      browser.storage.local.set({credentials}).then(() => {
+        chrome.runtime.sendMessage({
+          action: 'sync-authenticated',
+          credentials,
+          profile
+        });
       });
     });
   }, (err) => {
