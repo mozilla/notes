@@ -157,3 +157,4 @@ browser.runtime.connect();
 document.querySelectorAll('.ck-editor__top, #footer-buttons').addEventListener('contextmenu', e => {
   e.preventDefault();
 });
+
