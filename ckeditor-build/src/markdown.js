@@ -2,5 +2,5 @@ import GFMDataProcessor from '@ckeditor/ckeditor5-markdown-gfm/src/gfmdataproces
 
 // Simple plugin which loads the data processor.
 export default function Markdown( editor ) {
-	editor.data.processor = new GFMDataProcessor();
+  editor.data.processor = new GFMDataProcessor();
 }

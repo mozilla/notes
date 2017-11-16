@@ -159,3 +159,14 @@ footer {
 #sync-note.visible {
   display: block;
 }
+
+/**
+CKEditor overrides
+ */
+
+/**
+Heading plugin changes
+ */
+.ck-heading-dropdown button {
+  width: 50px;
+}

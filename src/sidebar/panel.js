@@ -5,7 +5,15 @@ const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 ClassicEditor.create(document.querySelector('#editor'), {
-  toolbar: ['headings', 'bold', 'italic', 'blockQuote', '|',  'link', '|', 'bulletedList', 'numberedList'],
+  heading: {
+    options: [
+      { modelElement: 'paragraph', title: '14', class: 'ck-heading_paragraph' },
+      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' },
+      { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
+      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
+    ]
+  },
+  toolbar: ['headings', 'bold', 'italic', 'blockQuote', 'link', 'bulletedList', 'numberedList'],
 }).then( editor => {
   console.log( 'Editor was initialized', editor );
 }).catch( error => {
