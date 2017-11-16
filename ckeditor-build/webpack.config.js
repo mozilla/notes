@@ -7,19 +7,19 @@
 
 /* eslint-env node */
 
-const path = require( 'path' );
-const webpack = require( 'webpack' );
-const { bundler } = require( '@ckeditor/ckeditor5-dev-utils' );
-const CKEditorWebpackPlugin = require( '@ckeditor/ckeditor5-dev-webpack-plugin' );
-const BabiliPlugin = require( 'babel-minify-webpack-plugin' );
+const path = require('path');
+const webpack = require('webpack');
+const {bundler} = require('@ckeditor/ckeditor5-dev-utils');
+const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
+const BabiliPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
 
-  entry: path.resolve( __dirname, 'src', 'ckeditor.js' ),
+  entry: path.resolve(__dirname, 'src', 'ckeditor.js'),
 
   output: {
-    path: path.resolve( __dirname, 'build' ),
+    path: path.resolve(__dirname, 'build'),
     filename: 'ckeditor.js',
     libraryTarget: 'umd',
     libraryExport: 'default',
@@ -27,23 +27,23 @@ module.exports = {
   },
 
   plugins: [
-    new CKEditorWebpackPlugin( {
-      languages: [ 'en' ]
-    } ),
-    new BabiliPlugin( null, {
+    new CKEditorWebpackPlugin({
+      languages: ['en']
+    }),
+    new BabiliPlugin(null, {
       comments: false
-    } ),
-    new webpack.BannerPlugin( {
+    }),
+    new webpack.BannerPlugin({
       banner: bundler.getLicenseBanner(),
       raw: true
-    } )
+    })
   ],
 
   module: {
     rules: [
       {
         test: /\.svg$/,
-        use: [ 'raw-loader' ]
+        use: ['raw-loader']
       },
       {
         test: /\.scss$/,

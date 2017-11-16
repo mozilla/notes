@@ -42,20 +42,20 @@ ClassicEditor.create(document.querySelector('#editor'), {
 //   quill.focus();
 // }
 
-// function loadContent() {
-//   return new Promise((resolve) => {
-//     browser.storage.local.get(['notes'], data => {
-//       // If we have a bearer, we try to save the content.
-//       handleLocalContent(data);
-//       resolve();
-//     });
-//   });
-// }
+function loadContent() {
+  return new Promise((resolve) => {
+    browser.storage.local.get(['notes'], data => {
+      // If we have a bearer, we try to save the content.
+      //handleLocalContent(data);
+      resolve();
+    });
+  });
+}
 
-// loadContent()
-//   .then(() => {
-//     document.getElementById('loading').style.display = 'none';
-//   });
+loadContent()
+  .then(() => {
+    document.getElementById('loading').style.display = 'none';
+  });
 
 // let ignoreNextLoadEvent = false;
 // quill.on('text-change', () => {

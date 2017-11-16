@@ -6,7 +6,7 @@ html {
   margin: 0;
 }
 
-body {
+body, body .ck-editor {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -15,13 +15,38 @@ body {
   padding: 0;
 }
 
-.ck-editor__editable {
-  /* not the best way to give the editor full height */
-  height: calc(95vh - 50px);
-  cursor: text;
+body .ck-toolbar {
+  border: 0;
+  border-radius: 0;
 }
 
-/* div#loading {
+body .ck-editor__top {
+  flex: 40px;
+  flex-direction: column;
+  height: 40px;
+  border-bottom: 1px solid #ccc;
+}
+
+body .ck-editor__main {
+  flex: auto;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+body .ck-editor .ck-editor__editable {
+  flex: auto;
+  flex-direction: column;
+  height: 100%;
+  border: 0;
+  box-shadow: none;
+}
+
+.ck-editor__editable ol, .ck-editor__editable ul {
+  padding-left: 10px;
+}
+
+div#loading {
   height: 100%;
   width: 100%;
   position: absolute;
@@ -30,11 +55,6 @@ body {
   background: white;
   z-index: 10;
 }
-
-div#editor {
-  flex: auto;
-  overflow: hidden;
-} */
 
 /**
 Footer Styles
@@ -164,9 +184,10 @@ footer {
 CKEditor overrides
  */
 
-/**
-Heading plugin changes
- */
 .ck-heading-dropdown button {
   width: 50px;
+}
+
+.ck-heading-dropdown .ck-dropdown__panel {
+  width: 70px;
 }
