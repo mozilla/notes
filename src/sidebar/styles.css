@@ -29,10 +29,12 @@ body .ck-editor__top {
 
 body .ck-editor__main {
   flex: auto;
+  font-size: 14px;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 }
+
 
 body .ck-editor .ck-editor__editable {
   flex: auto;
@@ -191,3 +193,11 @@ CKEditor overrides
 .ck-heading-dropdown .ck-dropdown__panel {
   width: 70px;
 }
+
+.ck-balloon-panel {
+  left: 0!important;
+  width:100%!important;
+  padding: 0.1em;
+  box-shadow: none;
+}
+
