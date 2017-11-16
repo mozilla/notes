@@ -25,72 +25,78 @@ ClassicEditor.create(document.querySelector('#editor'), {
       { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
     ]
   },
-  toolbar: ['headings', 'bold', 'italic', 'blockQuote', 'link', 'bulletedList', 'numberedList'],
+  toolbar: ['headings', 'bold', 'italic', 'bulletedList', 'numberedList'],
 }).then(editor => {
-  let ignoreNextLoadEvent = false;
+  return migrationCheck(editor)
+    .then(() => {
+      let ignoreNextLoadEvent = false;
 
-  editor.document.on('change', () => {
-    const content = editor.getData();
-    browser.storage.local.set({ notes: content }).then(() => {
-      // Notify other sidebars
-      if (!ignoreNextLoadEvent) {
-        chrome.runtime.sendMessage('notes@mozilla.com', {
-          action: 'text-change'
+      editor.document.on('change', () => {
+        const content = editor.getData();
+        browser.storage.local.set({ notes2: content }).then(() => {
+          // Notify other sidebars
+          if (!ignoreNextLoadEvent) {
+            chrome.runtime.sendMessage('notes@mozilla.com', {
+              action: 'text-change'
+            });
+
+            updateSavingIndicator();
+            // Debounce this second event
+            chrome.runtime.sendMessage({
+              action: 'metrics-changed',
+              context: getPadStats(editor)
+            });
+          } else {
+            ignoreNextLoadEvent = false;
+          }
         });
 
-        updateSavingIndicator();
-        // Debounce this second event
-        chrome.runtime.sendMessage({
-          action: 'metrics-changed',
+      });
+
+      enableSync.onclick = () => {
+        noteDiv.classList.toggle('visible');
+        browser.runtime.sendMessage({
+          action: 'authenticate',
           context: getPadStats(editor)
         });
-      } else {
-        ignoreNextLoadEvent = false;
-      }
+      };
+
+      loadContent(editor)
+        .then(() => {
+          document.getElementById('loading').style.display = 'none';
+        });
+
+      chrome.runtime.onMessage.addListener(eventData => {
+        switch (eventData.action) {
+          case 'text-change':
+            ignoreNextLoadEvent = true;
+            loadContent(editor);
+            break;
+        }
+      });
+      document.querySelectorAll('.ck-editor__editable')[0].focus();
     });
 
-  });
-
-  enableSync.onclick = () => {
-    noteDiv.classList.toggle('visible');
-    browser.runtime.sendMessage({
-      action: 'authenticate',
-      context: getPadStats(editor)
-    });
-  };
-
-  loadContent(editor)
-    .then(() => {
-      document.getElementById('loading').style.display = 'none';
-    });
-
-  chrome.runtime.onMessage.addListener(eventData => {
-    switch (eventData.action) {
-      case 'text-change':
-        ignoreNextLoadEvent = true;
-        loadContent(editor);
-        break;
-    }
-  });
 }).catch(error => {
-  console.error(error.stack);
+  console.error(error);
 });
 
 
 
 function handleLocalContent(editor, data) {
-  if (!data.hasOwnProperty('notes')) {
-    editor.setData(browser.i18n.getMessage('welcomeTitle2') + ' ' + browser.i18n.getMessage('welcomeText2'));
+  console.log('op', data)
+  if (!data.hasOwnProperty('notes2')) {
+    editor.setData('**' + browser.i18n.getMessage('welcomeTitle2') + '**   ' + browser.i18n.getMessage('welcomeText2'));
   } else {
-    if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes)) {
-      editor.setData(data.notes);
+    if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
+      editor.setData(data.notes2);
     }
   }
 }
 
 function loadContent(editor) {
   return new Promise((resolve) => {
-    browser.storage.local.get(['notes'], data => {
+    browser.storage.local.get(['notes2'], data => {
       // If we have a bearer, we try to save the content.
       handleLocalContent(editor, data);
       resolve();

@@ -11,7 +11,6 @@ import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import CodePlugin from '@ckeditor/ckeditor5-basic-styles/src/code';
 import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
-import LinkPlugin from '@ckeditor/ckeditor5-link/src/link';
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 
@@ -26,7 +25,6 @@ ClassicEditor.build = {
     ItalicPlugin,
     CodePlugin,
     HeadingPlugin,
-    LinkPlugin,
     ListPlugin,
     ParagraphPlugin
   ],
@@ -38,8 +36,7 @@ ClassicEditor.build = {
         'numberedList',
         'bold',
         'italic',
-        'code',
-        'link',
+        'code'
       ]
     }
   }

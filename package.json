@@ -14,7 +14,6 @@
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^2.0.22",
     "@ckeditor/ckeditor5-essentials": "^1.0.0-alpha.1",
     "@ckeditor/ckeditor5-heading": "^1.0.0-alpha.1",
-    "@ckeditor/ckeditor5-link": "^1.0.0-alpha.1",
     "@ckeditor/ckeditor5-list": "^1.0.0-alpha.1",
     "@ckeditor/ckeditor5-markdown-gfm": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.1",
@@ -26,7 +25,8 @@
     "style-loader": "^0.18.2",
     "testpilot-ga": "^0.2.1",
     "webpack": "^3.8.1",
-    "webpack-sources": "1.0.1"
+    "webpack-sources": "1.0.1",
+    "quill": "1.2.6"
   },
   "devDependencies": {
     "cross-spawn": "^5.1.0",

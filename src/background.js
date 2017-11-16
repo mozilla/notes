@@ -50,6 +50,12 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
       break;
+    case 'metrics-migrated':
+      sendMetrics('metrics-migrated', eventData.context);
+      break;
+    case 'metrics-migrated-before':
+      sendMetrics('metrics-migrated-before', eventData.context);
+      break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({

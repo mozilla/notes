@@ -141,7 +141,8 @@ footer {
   right: 10px;
 }
 
-#sync-note {
+#sync-note,
+#migration-note {
   display: none;
   padding: 3px 0 5px 0;
   background: #FFECAD;
@@ -152,7 +153,12 @@ footer {
   border-bottom: 0;
 }
 
-#close-button {
+#migration-note {
+  background: #00FFFE;
+}
+
+#close-button,
+#migration-close-button {
   width: 16px;
   position: absolute;
   top: -6px;
@@ -161,24 +167,28 @@ footer {
   opacity: 0.4;
 }
 
-#close-button:hover {
+#close-button:hover,
+#migration-close-button:hover {
   cursor: pointer;
   opacity: 0.6
 }
 
-#close-button:active {
+#close-button:active,
+#migration-close-button:active {
   cursor: pointer;
   opacity: 0.8
 }
 
-#sync-note-dialog {
+#sync-note-dialog,
+#migration-note-dialog {
   width: 85%;
   font-size: 12px;
   margin: 5px 0 5px 10px;
   color: #424242;
 }
 
-#sync-note.visible {
+#sync-note.visible,
+#migration-note.visible {
   display: block;
 }
 
