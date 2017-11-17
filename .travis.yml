@@ -6,5 +6,8 @@ node_js:
 matrix:
   include:
     - script: npm run build-ck
+      env: BUILD_CK
     - script: npm run build
+      env: BUILD_NOTES
     - script: npm run lint
+      env: LINT
