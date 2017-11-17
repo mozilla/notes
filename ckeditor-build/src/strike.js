@@ -20,49 +20,45 @@ import strikeIcon from './icons/strike.svg';
  * @extends module:core/plugin~Plugin
  */
 export default class Strike extends Plugin {
-	/**
-	 * @inheritDoc
-	 */
-	static get requires() {
-		return [ StrikeEngine ];
-	}
+  /**
+   * @inheritDoc
+   */
+  static get requires() {
+    return [ StrikeEngine ];
+  }
 
-	/**
-	 * @inheritDoc
-	 */
-	static get pluginName() {
-		return 'Strike';
-	}
+  /**
+   * @inheritDoc
+   */
+  static get pluginName() {
+    return 'Strike';
+  }
 
-	/**
-	 * @inheritDoc
-	 */
-	init() {
-		const editor = this.editor;
-		const t = editor.t;
-		const command = editor.commands.get( 'strike' );
-		const keystroke = 'CTRL+ALT+S';
+  /**
+   * @inheritDoc
+   */
+  init() {
+    const editor = this.editor;
+    const t = editor.t;
+    const command = editor.commands.get( 'strike' );
 
-		// Add strike button to feature components.
-		editor.ui.componentFactory.add( 'strike', locale => {
-			const view = new ButtonView( locale );
+    // Add strike button to feature components.
+    editor.ui.componentFactory.add( 'strike', locale => {
+      const view = new ButtonView( locale );
 
-			view.set( {
-				label: t( 'Strike' ),
-				icon: strikeIcon,
-				keystroke,
-				tooltip: true
-			} );
+      view.set( {
+        label: t( 'Strike' ),
+        icon: strikeIcon,
+        tooltip: true
+      } );
 
-			view.bind( 'isOn', 'isEnabled' ).to( command, 'value', 'isEnabled' );
+      view.bind( 'isOn', 'isEnabled' ).to( command, 'value', 'isEnabled' );
 
-			// Execute command.
-			this.listenTo( view, 'execute', () => editor.execute( 'strike' ) );
+      // Execute command.
+      this.listenTo( view, 'execute', () => editor.execute( 'strike' ) );
 
-			return view;
-		} );
+      return view;
+    } );
 
-		// Set the Ctrl+ALT+S keystroke.
-		editor.keystrokes.set( keystroke, 'strike' );
-	}
+  }
 }
