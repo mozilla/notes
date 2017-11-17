@@ -39,6 +39,7 @@ ClassicEditor.build = {
         'numberedList',
         'bold',
         'italic',
+        'strike',
         'code'
       ]
     }

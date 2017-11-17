@@ -13,7 +13,7 @@ import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import strikeIcon from './icons/strike.svg';
 
 /**
- * The strike feature. It introduces the Strike button and the <kbd>Ctrl+B</kbd> keystroke.
+ * The strike feature. It introduces the Strike button and the <kbd>Ctrl+Alt+S</kbd> keystroke.
  *
  * It uses the {@link module:basic-styles/strikeengine~StrikeEngine strike engine feature}.
  *
