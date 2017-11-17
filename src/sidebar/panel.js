@@ -1,3 +1,4 @@
+/* exported TEXT_ALIGN_DIR */
 const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
@@ -84,7 +85,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
 
 function handleLocalContent(editor, data) {
-  console.log('op', data)
+  console.log('op', data);
   if (!data.hasOwnProperty('notes2')) {
     editor.setData('**' + browser.i18n.getMessage('welcomeTitle2') + '**   ' + browser.i18n.getMessage('welcomeText2'));
   } else {
@@ -136,29 +137,29 @@ function getPadStats(editor) {
   const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
 
   for ( const value of range ) {
-    if (value.type === "text") {
+    if (value.type === 'text') {
       // Bold
-      if (value.item.textNode._attrs.get("bold")) {
+      if (value.item.textNode._attrs.get('bold')) {
         styles.bold = true;
       }
       // Italic
-      if (value.item.textNode._attrs.get("italic")) {
+      if (value.item.textNode._attrs.get('italic')) {
         styles.italic = true;
       }
     }
 
-    if (value.type === "elementStart") {
+    if (value.type === 'elementStart') {
       // Size
-      if (value.item.name.indexOf("heading") === 0) {
+      if (value.item.name.indexOf('heading') === 0) {
         styles.size = true;
       }
 
       // List
-      if (value.item.name === "listItem") {
+      if (value.item.name === 'listItem') {
         styles.list = true;
-        if (value.item._attrs.get("type") === "bulleted") {
+        if (value.item._attrs.get('type') === 'bulleted') {
           styles.list_bulleted = true;
-        } else if (value.item._attrs.get("type") === "numbered") {
+        } else if (value.item._attrs.get('type') === 'numbered') {
           styles.list_numbered = true;
         }
       }

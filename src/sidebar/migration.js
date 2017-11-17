@@ -1,3 +1,4 @@
+/* exported migrationCheck */
 /**
  * Migration Script to move users from Quill to CKEditor.
  *
@@ -13,7 +14,7 @@ migrationCloseButton.addEventListener('click', () => {
   migrationNote.classList.toggle('visible');
 });
 
-function migrationCheck (editor) {
+function migrationCheck(editor) {
   console.log('Editor migration started...');
   const quill = new Quill('#migrationPlaceholder', {});
 
