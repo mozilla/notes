@@ -128,18 +128,42 @@ function getPadStats(editor) {
     bold: false,
     italic: false,
     strike: false,
-    list: false
+    list: false,
+    list_bulleted: false,
+    list_numbered: false
   };
 
-  // content.forEach(node => {
-  //   if (node.hasOwnProperty('attributes')) {
-  //     Object.keys(node.attributes).forEach(key => {
-  //       if (styles.hasOwnProperty(key)) {
-  //         styles[key] = true;
-  //       }
-  //     });
-  //   }
-  // });
+  const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
+
+  for ( const value of range ) {
+    if (value.type === "text") {
+      // Bold
+      if (value.item.textNode._attrs.get("bold")) {
+        styles.bold = true;
+      }
+      // Italic
+      if (value.item.textNode._attrs.get("italic")) {
+        styles.italic = true;
+      }
+    }
+
+    if (value.type === "elementStart") {
+      // Size
+      if (value.item.name.indexOf("heading") === 0) {
+        styles.size = true;
+      }
+
+      // List
+      if (value.item.name === "listItem") {
+        styles.list = true;
+        if (value.item._attrs.get("type") === "bulleted") {
+          styles.list_bulleted = true;
+        } else if (value.item._attrs.get("type") === "numbered") {
+          styles.list_numbered = true;
+        }
+      }
+    }
+  }
 
   return {
     syncEnabled: false,

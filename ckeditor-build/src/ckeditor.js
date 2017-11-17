@@ -13,6 +13,7 @@ import CodePlugin from '@ckeditor/ckeditor5-basic-styles/src/code';
 import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph';
+import Range from '@ckeditor/ckeditor5-engine/src/model/range';
 
 export default class ClassicEditor extends ClassicEditorBase {}
 
@@ -41,3 +42,5 @@ ClassicEditor.build = {
     }
   }
 };
+
+ClassicEditor.imports = { range: Range };
