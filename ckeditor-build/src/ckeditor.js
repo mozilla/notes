@@ -9,6 +9,7 @@ import MarkdownPlugin from './markdown';
 import AutoformatPlugin from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
+import StrikePlugin from './strike';
 import CodePlugin from '@ckeditor/ckeditor5-basic-styles/src/code';
 import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
@@ -24,6 +25,7 @@ ClassicEditor.build = {
     AutoformatPlugin,
     BoldPlugin,
     ItalicPlugin,
+    StrikePlugin,
     CodePlugin,
     HeadingPlugin,
     ListPlugin,
@@ -37,6 +39,7 @@ ClassicEditor.build = {
         'numberedList',
         'bold',
         'italic',
+        'strike',
         'code'
       ]
     }
