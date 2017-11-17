@@ -26,7 +26,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
       { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
     ]
   },
-  toolbar: ['headings', 'bold', 'italic', 'bulletedList', 'numberedList'],
+  toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
 }).then(editor => {
   return migrationCheck(editor)
     .then(() => {
