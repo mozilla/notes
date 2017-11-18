@@ -204,6 +204,10 @@ CKEditor overrides
   width: 70px;
 }
 
+#notes .ck-button__label {
+  max-width: 30px;
+}
+
 .ck-balloon-panel {
   left: 0!important;
   width:100%!important;
