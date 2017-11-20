@@ -42,6 +42,7 @@ body .ck-editor .ck-editor__editable {
   height: 100%;
   border: 0;
   box-shadow: none;
+  cursor: text;
 }
 
 .ck-editor__editable ol, .ck-editor__editable ul {
