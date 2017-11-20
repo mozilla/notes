@@ -84,7 +84,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         });
       });
 
-      // Conver tooltips to titles. Fixes: https://github.com/mozilla/notes/issues/410
+      // Convert tooltips to titles. Fixes: https://github.com/mozilla/notes/issues/410
       document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
         sel.parentNode.parentNode.title = sel.innerHTML;
         sel.remove();
