@@ -1,0 +1,257 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+html {
+  height: 100%;
+  font-family: sans-serif;
+  line-height: 1.2em;
+  overflow: hidden;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+div#loading {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
+    z-index: 10;
+}
+
+div#toolbar {
+  flex: 40px;
+  width: 500px;
+}
+
+div#editor {
+  flex: auto;
+  overflow: hidden;
+}
+
+.ql-snow .ql-picker.ql-size {
+  width: 45px;
+}
+
+.ql-container.ql-snow, .ql-toolbar.ql-snow {
+  border-left: 0;
+  border-right: 0;
+}
+
+.ql-container.ql-snow {
+  border-bottom: 0;
+}
+
+.ql-editor ol, .ql-editor ul {
+  padding: 0;
+}
+
+.ql-editor ul {
+  margin-left: -5px;
+}
+
+/**
+Footer Styles
+ */
+
+footer * {
+  font-size: 14px;
+  min-height: 30px;
+}
+
+footer {
+  position: relative;
+  flex: 40px;
+}
+
+#footer-buttons {
+  align-items: stretch;
+  border-top: 1px solid #d7d7db;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+}
+
+#enable-sync {
+  background-position: 10px 12px;
+  background-repeat: no-repeat;
+  display: flex;
+  flex: 1 0;
+  padding: 0 10px 0 32px;
+  text-align: left;
+}
+
+#give-feedback {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-left: 1px solid #d7d7db;
+  display: flex;
+  flex: 0 0 40px;
+}
+
+#footer-buttons button,
+#footer-buttons a {
+  background-color: #f9f9fa;
+  transition: background 50ms;
+}
+
+#footer-buttons button:hover,
+#footer-buttons a:hover {
+  background-color: #ebebee;
+}
+
+#footer-buttons button:active,
+#footer-buttons a:active {
+  background-color: #d7d7db;
+}
+
+
+#menu {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+#sync-note {
+  display: none;
+  padding: 15px 0 5px 0;
+  background: #FFECAD;
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-bottom: 0;
+}
+
+#close-button {
+  width: 16px;
+  position: absolute;
+  top: -5px;
+  right: 5px;
+  padding: 0 0;
+}
+
+#close-button:hover {
+  cursor: pointer;
+}
+
+#sync-note-dialog {
+  width: 92%;
+  margin: 5px 10px;
+  color: #424242;
+}
+
+#sync-note.visible {
+  display: block;
+}
+
+.forbid-cursor {
+  cursor: no-drop;
+}
+
+#editor-container {
+  display: none
+}
+
+/* #onboarding {
+  display: none;
+} */
+
+.onboarding-container {
+  text-align: center;
+  margin-top: 35%;
+  height: auto;
+  width: auto;
+}
+
+.onboarding-container img {
+  margin: 0 auto;
+  display: block;
+  max-width: 180px;
+  max-height: 180px;
+  height: auto;
+  width: auto;
+}
+
+.onboarding-container .tagline {
+  margin-top: 30px;
+}
+
+.onboarding-container .signin a {
+  text-transform: uppercase;
+}
+
+.onboarding-container .signin {
+  margin-top: 40px;
+}
+.onboarding-container .learnmore {
+  margin-top: 160px;
+}
+
+.signout{
+  display: none;
+}
+
+.page-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#editor {
+  display: none;
+}
+/* material stuff */
+/* fallback */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v28/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-font-feature-settings: 'liga';
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -4,3 +4,8 @@ src/vendor/*
 src/sidebar/vendor/*
 src/_locales
 web-ext-artifacts/
+
+android/.idea
+
+#Mac
+.DS_Store
