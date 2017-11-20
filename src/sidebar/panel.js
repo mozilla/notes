@@ -76,6 +76,19 @@ ClassicEditor.create(document.querySelector('#editor'), {
         }
       });
       document.querySelectorAll('.ck-editor__editable')[0].focus();
+      // Disable right clicks
+      // Refs: https://stackoverflow.com/a/737043/186202
+      document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
+        sel.addEventListener('contextmenu', e => {
+          e.preventDefault();
+        });
+      });
+
+      document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
+        sel.parentNode.parentNode.title = sel.innerHTML;
+        sel.remove();
+      });
+
     });
 
 }).catch(error => {
@@ -181,11 +194,4 @@ function getPadStats(editor) {
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
-
-
-// Disable right clicks
-// Refs: https://stackoverflow.com/a/737043/186202
-document.querySelectorAll('.ck-editor__top, #footer-buttons').addEventListener('contextmenu', e => {
-  e.preventDefault();
-});
 
