@@ -10,7 +10,7 @@ const analytics = new TestPilotGA({
   ds: 'addon',
   an: 'Notes Experiment',
   aid: 'notes@mozilla.com',
-  av: '1.9.0dev'  // XXX: Change version on release
+  av: browser.runtime.getManifest().version
 });
 
 function sendMetrics(event, context = {}) {
@@ -49,6 +49,12 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
+      break;
+    case 'metrics-migrated':
+      sendMetrics('metrics-migrated', eventData.context);
+      break;
+    case 'metrics-migrated-before':
+      sendMetrics('metrics-migrated-before', eventData.context);
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);

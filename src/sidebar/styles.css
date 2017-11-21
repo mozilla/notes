@@ -6,7 +6,7 @@ html {
   margin: 0;
 }
 
-body {
+body, body .ck-editor {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -15,69 +15,67 @@ body {
   padding: 0;
 }
 
-div#loading {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: white;
-    z-index: 10;
+body .ck-toolbar {
+  border: 0;
+  border-radius: 0;
 }
 
-div#toolbar {
+body .ck-editor__top {
   flex: 40px;
-  width: 100%;
+  flex-direction: column;
+  height: 40px;
+  border-bottom: 1px solid #ccc;
 }
 
-div#editor {
+body .ck-editor__main {
   flex: auto;
+  font-size: 14px;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
 }
 
-div#editor a {
-  cursor: pointer;
+
+body .ck-editor .ck-editor__editable {
+  flex: auto;
+  flex-direction: column;
+  height: 100%;
+  border: 0;
+  box-shadow: none;
+  cursor: text;
 }
 
-.ql-snow .ql-picker.ql-size {
-  width: 45px;
+.ck-editor__editable ol, .ck-editor__editable ul {
+  padding-left: 10px;
 }
 
-.ql-container.ql-snow, .ql-toolbar.ql-snow {
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
+/**
+Custom list types for indents
+https://github.com/mozilla/notes/issues/413
+ */
+ol ol, ol ol ol ol ol {
+  list-style-type: lower-alpha;
 }
 
-.ql-container.ql-snow {
-  border-bottom: 0;
+ol ol ol, ol ol ol ol ol ol {
+  list-style-type: lower-roman;
 }
 
-.ql-editor {
-  font-size: 14px;
+ol ol ol ol {
+  list-style-type: decimal;
 }
+/**
+List indents end
+ */
 
-.ql-editor ol, .ql-editor ul {
-  padding: 0;
-}
-
-.ql-editor ul {
-  margin-left: -5px;
-}
-
-.ql-editor li {
-  position: relative;
-  margin-left: 8px;
-}
-
-.ql-editor li::before {
+div#loading {
+  height: 100%;
+  width: 100%;
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  word-break: keep-all;
-  padding: inherit;
-  display: flex;
-  justify-content: flex-end;
+  background: white;
+  z-index: 10;
 }
 
 /**
@@ -163,7 +161,8 @@ footer {
   right: 10px;
 }
 
-#sync-note {
+#sync-note,
+#migration-note {
   display: none;
   padding: 3px 0 5px 0;
   background: #FFECAD;
@@ -174,7 +173,12 @@ footer {
   border-bottom: 0;
 }
 
-#close-button {
+#migration-note {
+  background: #00FFFE;
+}
+
+#close-button,
+#migration-close-button {
   width: 16px;
   position: absolute;
   top: -6px;
@@ -183,31 +187,78 @@ footer {
   opacity: 0.4;
 }
 
-#close-button:hover {
+#close-button:hover,
+#migration-close-button:hover {
   cursor: pointer;
   opacity: 0.6
 }
 
-#close-button:active {
+#close-button:active,
+#migration-close-button:active {
   cursor: pointer;
   opacity: 0.8
 }
 
-#sync-note-dialog {
+#sync-note-dialog,
+#migration-note-dialog {
   width: 85%;
   font-size: 12px;
   margin: 5px 0 5px 10px;
   color: #424242;
 }
 
-#sync-note.visible {
+#sync-note.visible,
+#migration-note.visible {
   display: block;
 }
 
-.forbid-cursor {
-  cursor: no-drop;
+/**
+CKEditor overrides
+ */
+
+#notes .ck-editor__editable p {
+  margin: 5px 0;
 }
 
-.ql-tooltip {
-  display: none;
+#notes .ck-editor__editable h1 {
+  margin: 10px 0;
 }
+
+#notes .ck-editor__editable h2 {
+  margin: 7px 0;
+}
+
+#notes .ck-editor__editable h3 {
+  margin: 5px 0;
+}
+
+.ck-heading-dropdown button {
+  width: 45px;
+  height: 25px;
+  padding: 2px 2px 2px 5px!important;
+}
+
+.ck-heading-dropdown .ck-dropdown__panel {
+  width: 70px;
+}
+
+#notes .ck-toolbar > * {
+  margin-right: 0.2em;
+}
+
+#notes .ck-button {
+  padding: 0.2em;
+  margin: 0.2em;
+}
+
+#notes .ck-button__label {
+  max-width: 30px;
+}
+
+.ck-balloon-panel {
+  left: 0!important;
+  width:100%!important;
+  padding: 0.1em;
+  box-shadow: none;
+}
+

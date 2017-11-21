@@ -4,3 +4,4 @@ src/vendor/*
 src/sidebar/vendor/*
 src/_locales
 web-ext-artifacts/
+ckeditor-build/build/*
