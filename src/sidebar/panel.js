@@ -83,18 +83,12 @@ ClassicEditor.create(document.querySelector('#editor'), {
         });
       });
 
-      // Convert tooltips to titles. Fixes: https://github.com/mozilla/notes/issues/410
-      document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
-        sel.parentNode.parentNode.title = sel.innerHTML;
-        sel.remove();
-      });
-
+      localizeEditorButtons();
     });
 
 }).catch(error => {
   console.error(error);
 });
-
 
 
 function handleLocalContent(editor, data) {
@@ -188,6 +182,36 @@ function getPadStats(editor) {
     usesStrikethrough: styles.strike,
     usesList: styles.list
   };
+}
+
+function localizeEditorButtons () {
+  // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
+  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
+    sel.remove();
+  });
+
+  let userOSKey;
+
+  if (navigator.appVersion.indexOf('Mac') !== -1)
+    userOSKey = '⌘';
+  else
+    userOSKey = 'Ctrl';
+
+  const size = document.querySelector('button.ck-button:nth-child(1)'),
+    // Need to target buttons by index. Ref: https://github.com/ckeditor/ckeditor5-basic-styles/issues/59
+    bold = document.querySelector('button.ck-button:nth-child(2)'),
+    italic = document.querySelector('button.ck-button:nth-child(3)'),
+    strike = document.querySelector('button.ck-button:nth-child(4)'),
+    ordered = document.querySelector('button.ck-button:nth-child(5)'),
+    bullet = document.querySelector('button.ck-button:nth-child(6)');
+
+// Setting button titles in place of tooltips
+  size.title = browser.i18n.getMessage('fontSizeTitle');
+  bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
+  italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
+  strike.title = browser.i18n.getMessage('strikethroughTitle');
+  ordered.title = browser.i18n.getMessage('numberedListTitle');
+  bullet.title = browser.i18n.getMessage('bulletedListTitle');
 }
 
 // Create a connection with the background script to handle open and

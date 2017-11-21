@@ -19,7 +19,8 @@ module.exports = {
   entry: path.resolve(__dirname, 'src', 'ckeditor.js'),
 
   output: {
-    path: path.resolve(__dirname, 'build'),
+    // build to the extension src vendor directory
+    path: path.resolve(__dirname, '..', 'src', 'sidebar', 'vendor'),
     filename: 'ckeditor.js',
     libraryTarget: 'umd',
     libraryExport: 'default',
