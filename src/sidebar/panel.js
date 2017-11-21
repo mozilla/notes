@@ -34,6 +34,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
       editor.document.on('change', () => {
         const content = editor.getData();
+        console.log(content)
         browser.storage.local.set({ notes2: content }).then(() => {
           // Notify other sidebars
           if (!ignoreNextLoadEvent) {
@@ -99,9 +100,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
 
 function handleLocalContent(editor, data) {
-  console.log('op', data);
   if (!data.hasOwnProperty('notes2')) {
-    editor.setData('**' + browser.i18n.getMessage('welcomeTitle2') + '**   ' + browser.i18n.getMessage('welcomeText2'));
+    editor.setData(`## ${browser.i18n.getMessage('welcomeTitle2')}\n\n${browser.i18n.getMessage('welcomeText2')}`);
   } else {
     if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
       editor.setData(data.notes2);

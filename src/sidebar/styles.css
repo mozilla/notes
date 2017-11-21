@@ -49,6 +49,25 @@ body .ck-editor .ck-editor__editable {
   padding-left: 10px;
 }
 
+/**
+Custom list types for indents
+https://github.com/mozilla/notes/issues/413
+ */
+ol ol, ol ol ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol, ol ol ol ol ol ol {
+  list-style-type: lower-roman;
+}
+
+ol ol ol ol {
+  list-style-type: decimal;
+}
+/**
+List indents end
+ */
+
 div#loading {
   height: 100%;
   width: 100%;
@@ -198,7 +217,9 @@ CKEditor overrides
  */
 
 .ck-heading-dropdown button {
-  width: 50px;
+  width: 45px;
+  height: 25px;
+  padding: 2px 2px 2px 5px!important;
 }
 
 .ck-heading-dropdown .ck-dropdown__panel {
