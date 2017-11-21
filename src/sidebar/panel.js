@@ -33,7 +33,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
       let ignoreNextLoadEvent = false;
 
       editor.document.on('change', () => {
-        let isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
+        const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor to set the data into storage.
         if (isFocused) {
           const content = editor.getData();
