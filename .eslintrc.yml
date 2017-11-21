@@ -21,6 +21,8 @@ globals:
   Quill: false
   saveToKinto: false
   TestPilotGA: false
+  ClassicEditor: false
+  migrationCheck: false
 
 root: true
 

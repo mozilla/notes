@@ -8,9 +8,19 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - sleep 3
 script:
-  - npm run build
-  - npm run lint
   - npm run test
 env:
   global:
     - FIREFOX_BINARY: firefox
+
+matrix:
+  include:
+    - script: npm run build-ck
+      env: BUILD_CK
+      before_install:
+    - script: npm run build
+      env: BUILD_NOTES
+      before_install:
+    - script: npm run lint
+      env: LINT
+      before_install:
