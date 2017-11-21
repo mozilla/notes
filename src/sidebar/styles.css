@@ -226,8 +226,13 @@ CKEditor overrides
   width: 70px;
 }
 
+#notes .ck-toolbar > * {
+  margin-right: 0.2em;
+}
+
 #notes .ck-button {
   padding: 0.2em;
+  margin: 0.2em;
 }
 
 #notes .ck-button__label {
