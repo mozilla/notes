@@ -33,25 +33,28 @@ ClassicEditor.create(document.querySelector('#editor'), {
       let ignoreNextLoadEvent = false;
 
       editor.document.on('change', () => {
-        const content = editor.getData();
-        browser.storage.local.set({ notes2: content }).then(() => {
-          // Notify other sidebars
-          if (!ignoreNextLoadEvent) {
-            chrome.runtime.sendMessage('notes@mozilla.com', {
-              action: 'text-change'
-            });
+        let isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
+        // Only use the focused editor to set the data into storage.
+        if (isFocused) {
+          const content = editor.getData();
+          browser.storage.local.set({ notes2: content }).then(() => {
+            // Notify other sidebars
+            if (!ignoreNextLoadEvent) {
+              chrome.runtime.sendMessage('notes@mozilla.com', {
+                action: 'text-change'
+              });
 
-            updateSavingIndicator();
-            // Debounce this second event
-            chrome.runtime.sendMessage({
-              action: 'metrics-changed',
-              context: getPadStats(editor)
-            });
-          } else {
-            ignoreNextLoadEvent = false;
-          }
-        });
-
+              updateSavingIndicator();
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats(editor)
+              });
+            } else {
+              ignoreNextLoadEvent = false;
+            }
+          });
+        }
       });
 
       enableSync.onclick = () => {
