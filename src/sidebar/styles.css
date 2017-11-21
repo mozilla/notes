@@ -226,6 +226,10 @@ CKEditor overrides
   width: 70px;
 }
 
+#notes .ck-button {
+  padding: 0.2em;
+}
+
 #notes .ck-button__label {
   max-width: 30px;
 }
