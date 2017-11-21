@@ -32,10 +32,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
     .then(() => {
       let ignoreNextLoadEvent = false;
 
-      editor.document.on('change', () => {
+      editor.document.on('change', (eventInfo, name) => {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
-        // Only use the focused editor to set the data into storage.
-        if (isFocused) {
+        // Only use the focused editor or handle 'rename' events to set the data into storage.
+        if (isFocused || name === 'rename') {
           const content = editor.getData();
           browser.storage.local.set({ notes2: content }).then(() => {
             // Notify other sidebars
@@ -83,6 +83,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
       document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
         sel.addEventListener('contextmenu', e => {
           e.preventDefault();
+        });
+      });
+
+      // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
+      // Ref: https://github.com/mozilla/notes/issues/424
+      document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          editor.fire('changesDone');
         });
       });
 
