@@ -76,7 +76,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
         }
       });
-      document.querySelectorAll('.ck-editor__editable')[0].focus();
       // Disable right clicks
       // Refs: https://stackoverflow.com/a/737043/186202
       document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
