@@ -34,7 +34,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
       editor.document.on('change', () => {
         const content = editor.getData();
-        console.log(content)
         browser.storage.local.set({ notes2: content }).then(() => {
           // Notify other sidebars
           if (!ignoreNextLoadEvent) {
