@@ -216,6 +216,22 @@ footer {
 CKEditor overrides
  */
 
+#notes .ck-editor__editable p {
+  margin: 5px 0;
+}
+
+#notes .ck-editor__editable h1 {
+  margin: 10px 0;
+}
+
+#notes .ck-editor__editable h2 {
+  margin: 7px 0;
+}
+
+#notes .ck-editor__editable h3 {
+  margin: 5px 0;
+}
+
 .ck-heading-dropdown button {
   width: 45px;
   height: 25px;
