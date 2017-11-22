@@ -8,7 +8,7 @@
     "url": "https://github.com/mozilla/notes/issues"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-autoformat": "^1.0.0-alpha.2",
+    "@ckeditor/ckeditor5-autoformat": "vladikoff/ckeditor5-autoformat#fix-numbered-list",
     "@ckeditor/ckeditor5-basic-styles": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-build-classic": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-dev-utils": "^5.0.0",
