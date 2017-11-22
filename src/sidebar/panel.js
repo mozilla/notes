@@ -213,8 +213,8 @@ function localizeEditorButtons () {
     bold = document.querySelector('button.ck-button:nth-child(2)'),
     italic = document.querySelector('button.ck-button:nth-child(3)'),
     strike = document.querySelector('button.ck-button:nth-child(4)'),
-    ordered = document.querySelector('button.ck-button:nth-child(5)'),
-    bullet = document.querySelector('button.ck-button:nth-child(6)');
+    bullet = document.querySelector('button.ck-button:nth-child(5)'),
+    ordered = document.querySelector('button.ck-button:nth-child(6)');
 
 // Setting button titles in place of tooltips
   size.title = browser.i18n.getMessage('fontSizeTitle');
