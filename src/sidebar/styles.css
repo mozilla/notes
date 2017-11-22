@@ -45,8 +45,12 @@ body .ck-editor .ck-editor__editable {
   cursor: text;
 }
 
-.ck-editor__editable ol, .ck-editor__editable ul {
-  padding-left: 10px;
+.ck-editor__editable ul {
+  padding-left: 15px;
+}
+
+.ck-editor__editable ol {
+  padding-left: 20px;
 }
 
 /**
@@ -266,4 +270,3 @@ CKEditor overrides
   padding: 0.1em;
   box-shadow: none;
 }
-
