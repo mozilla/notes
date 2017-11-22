@@ -10,6 +10,7 @@ import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import StrikePlugin from './strike';
 import CodePlugin from '@ckeditor/ckeditor5-basic-styles/src/code';
+import UnderlinePlugin from '@ckeditor/ckeditor5-basic-styles/src/underline';
 import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph';
@@ -25,6 +26,7 @@ ClassicEditor.build = {
     ItalicPlugin,
     StrikePlugin,
     CodePlugin,
+    UnderlinePlugin,
     HeadingPlugin,
     ListPlugin,
     ParagraphPlugin
