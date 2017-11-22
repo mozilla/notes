@@ -32,26 +32,29 @@ ClassicEditor.create(document.querySelector('#editor'), {
     .then(() => {
       let ignoreNextLoadEvent = false;
 
-      editor.document.on('change', () => {
-        const content = editor.getData();
-        browser.storage.local.set({ notes2: content }).then(() => {
-          // Notify other sidebars
-          if (!ignoreNextLoadEvent) {
-            chrome.runtime.sendMessage('notes@mozilla.com', {
-              action: 'text-change'
-            });
+      editor.document.on('change', (eventInfo, name) => {
+        const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
+        // Only use the focused editor or handle 'rename' events to set the data into storage.
+        if (isFocused || name === 'rename') {
+          const content = editor.getData();
+          browser.storage.local.set({ notes2: content }).then(() => {
+            // Notify other sidebars
+            if (!ignoreNextLoadEvent) {
+              chrome.runtime.sendMessage('notes@mozilla.com', {
+                action: 'text-change'
+              });
 
-            updateSavingIndicator();
-            // Debounce this second event
-            chrome.runtime.sendMessage({
-              action: 'metrics-changed',
-              context: getPadStats(editor)
-            });
-          } else {
-            ignoreNextLoadEvent = false;
-          }
-        });
-
+              updateSavingIndicator();
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats(editor)
+              });
+            } else {
+              ignoreNextLoadEvent = false;
+            }
+          });
+        }
       });
 
       enableSync.onclick = () => {
@@ -80,6 +83,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
       document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
         sel.addEventListener('contextmenu', e => {
           e.preventDefault();
+        });
+      });
+
+      // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
+      // Ref: https://github.com/mozilla/notes/issues/424
+      document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          editor.fire('changesDone');
         });
       });
 
@@ -202,8 +213,8 @@ function localizeEditorButtons () {
     bold = document.querySelector('button.ck-button:nth-child(2)'),
     italic = document.querySelector('button.ck-button:nth-child(3)'),
     strike = document.querySelector('button.ck-button:nth-child(4)'),
-    ordered = document.querySelector('button.ck-button:nth-child(5)'),
-    bullet = document.querySelector('button.ck-button:nth-child(6)');
+    bullet = document.querySelector('button.ck-button:nth-child(5)'),
+    ordered = document.querySelector('button.ck-button:nth-child(6)');
 
 // Setting button titles in place of tooltips
   size.title = browser.i18n.getMessage('fontSizeTitle');
