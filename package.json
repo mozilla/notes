@@ -22,7 +22,7 @@
     "babel-minify-webpack-plugin": "^0.2.0",
     "css-loader": "^0.28.7",
     "node-sass": "^4.6.1",
-    "fxa-crypto-relier": "2.0.1",
+    "fxa-crypto-relier": "2.1.0",
     "jose-jwe-jws": "^0.1.5",
     "kinto": "^10.0.0",
     "kinto-http": "4.3.4",
