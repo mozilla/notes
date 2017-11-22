@@ -5,7 +5,6 @@
 
 import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
-import MarkdownPlugin from './markdown';
 import AutoformatPlugin from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
@@ -21,7 +20,6 @@ export default class ClassicEditor extends ClassicEditorBase {}
 ClassicEditor.build = {
   plugins: [
     EssentialsPlugin,
-    MarkdownPlugin,
     AutoformatPlugin,
     BoldPlugin,
     ItalicPlugin,
