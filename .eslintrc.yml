@@ -23,6 +23,7 @@ globals:
   TestPilotGA: false
   ClassicEditor: false
   migrationCheck: false
+  fxaRenewCredential: false
 
 root: true
 
