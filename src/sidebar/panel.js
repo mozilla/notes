@@ -33,23 +33,29 @@ ClassicEditor.create(document.querySelector('#editor'), {
     .then(() => {
       let ignoreNextLoadEvent = false;
 
-      editor.document.on('change', () => {
-        const content = editor.getData();
+      editor.document.on('change', (eventInfo, name) => {
+        const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
+        // Only use the focused editor or handle 'rename' events to set the data into storage.
+        if (isFocused || name === 'rename') {
+          const content = editor.getData();
+          browser.storage.local.set({ notes2: content }).then(() => {
+            // Notify other sidebars
+            if (!ignoreNextLoadEvent) {
+              chrome.runtime.sendMessage('notes@mozilla.com', {
+                action: 'kinto-save',
+                content
+              });
 
-        if (!ignoreNextLoadEvent) {
-          // Debounce this second event
-          chrome.runtime.sendMessage({
-            action: 'kinto-save',
-            content
+              updateSavingIndicator();
+              // Debounce this second event
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats(editor)
+              });
+            } else {
+              ignoreNextLoadEvent = false;
+            }
           });
-
-          // Debounce this second event
-          chrome.runtime.sendMessage({
-            action: 'metrics-changed',
-            context: getPadStats(editor)
-          });
-        } else {
-          ignoreNextLoadEvent = false;
         }
       });
 
@@ -78,6 +84,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
         });
       });
 
+      // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
+      // Ref: https://github.com/mozilla/notes/issues/424
+      document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          editor.fire('changesDone');
+        });
+      });
+
       localizeEditorButtons();
     });
 
@@ -89,7 +103,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 let ignoreNextLoadEvent = false;
 function handleLocalContent(editor, data) {
   if (!data.hasOwnProperty('notes2')) {
-    editor.setData(`## ${browser.i18n.getMessage('welcomeTitle2')}\n\n${browser.i18n.getMessage('welcomeText2')}`);
+    editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
   } else {
     if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
       editor.setData(data.notes2);
@@ -403,8 +417,8 @@ function localizeEditorButtons () {
     bold = document.querySelector('button.ck-button:nth-child(2)'),
     italic = document.querySelector('button.ck-button:nth-child(3)'),
     strike = document.querySelector('button.ck-button:nth-child(4)'),
-    ordered = document.querySelector('button.ck-button:nth-child(5)'),
-    bullet = document.querySelector('button.ck-button:nth-child(6)');
+    bullet = document.querySelector('button.ck-button:nth-child(5)'),
+    ordered = document.querySelector('button.ck-button:nth-child(6)');
 
 // Setting button titles in place of tooltips
   size.title = browser.i18n.getMessage('fontSizeTitle');

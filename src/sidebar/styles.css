@@ -47,7 +47,7 @@ body .ck-editor .ck-editor__editable {
 }
 
 .ck-editor__editable ol, .ck-editor__editable ul {
-  padding-left: 10px;
+  padding-left: 20px;
 }
 
 /**
@@ -366,18 +366,23 @@ CKEditor overrides
 
 #notes .ck-editor__editable p {
   margin: 5px 0;
+  font-size: 14px;
 }
 
 #notes .ck-editor__editable h1 {
-  margin: 10px 0;
+  margin: 2px 0;
+  font-size: 24px;
+  padding: 0;
 }
 
 #notes .ck-editor__editable h2 {
   margin: 7px 0;
+  font-size: 20px;
 }
 
 #notes .ck-editor__editable h3 {
   margin: 5px 0;
+  font-size: 16px;
 }
 
 .ck-heading-dropdown button {

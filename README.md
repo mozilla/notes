@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
+[![Waffle.io - Bug Triage](https://badge.waffle.io/mozilla/notes.svg?columns=all)](https://waffle.io/mozilla/notes)
 
 ## What does it aim for
 
@@ -43,4 +44,4 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 
 Design for reference https://mozilla.invisionapp.com/share/6VBUYHMRB#/235284916_Desktop_Sidebar
 
-![Notes Screenshot](https://i.imgur.com/kHwBN2f.png)
+![Notes Screenshot](https://i.imgur.com/lQM0tpr.png)
