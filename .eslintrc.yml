@@ -24,6 +24,10 @@ globals:
   ClassicEditor: false
   migrationCheck: false
   fxaRenewCredential: false
+  customizeEditor: false
+  getPadStats: false
+  localizeEditorButtons: false
+  setAnimation: false
 
 root: true
 

@@ -9,8 +9,17 @@ const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
 const giveFeedbackButton = document.getElementById('give-feedback-button');
 const giveFeedbackMenuItem = document.getElementById('give-feedback');
+const savingIndicator = document.getElementById('saving-indicator');
+savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+
+const disconnectSync = document.getElementById('disconnect-from-sync');
+disconnectSync.style.display = 'none';
+disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
 let isAuthenticated = false;
+let loginTimeout;
+let editingInProcess = false;
+
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
@@ -66,31 +75,72 @@ ClassicEditor.create(document.querySelector('#editor'), {
           document.getElementById('loading').style.display = 'none';
         });
 
+      customizeEditor(editor);
+
       chrome.runtime.onMessage.addListener(eventData => {
+        let time;
+        let content;
         switch (eventData.action) {
+          case 'sync-authenticated':
+            setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+            isAuthenticated = true;
+            // set title attr of footer to the currently logged in account
+            footerButtons.title = eventData.profile && eventData.profile.email;
+            savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            browser.runtime.sendMessage({
+              action: 'kinto-load'
+            });
+            break;
+          case 'kinto-loaded':
+            clearTimeout(loginTimeout);
+            console.log('kinto-loaded', eventData);
+            content = eventData.data;
+            browser.storage.local.set({ last_modified: eventData.last_modified})
+              .then(() => {
+                getLastSyncedTime();
+                setTimeout(() => {
+                  handleLocalContent(editor, content);
+                  document.getElementById('loading').style.display = 'none';
+                }, 10);
+              });
+            break;
           case 'text-change':
             ignoreNextLoadEvent = true;
             loadContent(editor);
             break;
+          case 'text-syncing':
+            setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            break;
+          case 'text-editing':
+            savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            // Disable sync-action
+            editingInProcess = true;
+            break;
+          case 'text-synced':
+            browser.storage.local.set({ last_modified: eventData.last_modified})
+              .then(() => {
+                getLastSyncedTime();
+                browser.runtime.sendMessage('notes@mozilla.com', {
+                  action: 'text-change'
+                });
+              });
+            break;
+          case 'text-saved':
+            time = new Date().toLocaleTimeString();
+            savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+            // Enable sync-action
+            editingInProcess = false;
+            break;
+          case 'disconnected':
+            disconnectSync.style.display = 'none';
+            footerButtons.title = null; // remove profile email from title attribute
+            isAuthenticated = false;
+            setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+            getLastSyncedTime();
+            break;
         }
       });
-      // Disable right clicks
-      // Refs: https://stackoverflow.com/a/737043/186202
-      document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
-        sel.addEventListener('contextmenu', e => {
-          e.preventDefault();
-        });
-      });
-
-      // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
-      // Ref: https://github.com/mozilla/notes/issues/424
-      document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          editor.fire('changesDone');
-        });
-      });
-
-      localizeEditorButtons();
     });
 
 }).catch(error => {
@@ -125,13 +175,7 @@ function loadContent(editor) {
   });
 }
 
-const savingIndicator = document.getElementById('saving-indicator');
-savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
-
-const disconnectSync = document.getElementById('disconnect-from-sync');
-disconnectSync.style.display = 'none';
-disconnectSync.textContent = browser.i18n.getMessage('disableSync');
-disconnectSync.addEventListener('click', () => {
+function disconnectFromSync () {
   disconnectSync.style.display = 'none';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
@@ -144,50 +188,9 @@ disconnectSync.addEventListener('click', () => {
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'disconnected'
   });
-});
-
-/**
- * Set animation on footerButtons toolbar
- * @param {Boolean} animateSyncIcon Start looping animation on sync icon
- * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
- *                                  if false, animate to savingLayout (sync icon on left)
- * @param {Boolean} warning         Apply yellow warning styling on toolbar
- */
-function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
-
-  if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
-    footerButtons.classList.add('animateSyncIcon');
-  } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
-    footerButtons.classList.remove('animateSyncIcon');
-  }
-
-  if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
-    footerButtons.classList.replace('savingLayout', 'syncingLayout');
-    enableSync.style.backgroundColor = 'transparent';
-    // Start blink animation on saving-indicator
-    savingIndicator.classList.add('blink');
-    // Reset CSS animation by removeing class
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-  } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
-    // Animate savingIndicator text
-    savingIndicator.classList.add('blink');
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-    setTimeout(() => {
-      enableSync.style.backgroundColor = null;
-    }, 400);
-    //
-    footerButtons.classList.replace('syncingLayout', 'savingLayout');
-  }
-
-  if (warning === true && !footerButtons.classList.contains('warning')) {
-    footerButtons.classList.add('warning');
-  } else if (warning === false && footerButtons.classList.contains('warning')) {
-    footerButtons.classList.remove('warning');
-  }
 }
 
-let loginTimeout;
-let editingInProcess = false;
+disconnectSync.addEventListener('click', disconnectFromSync);
 
 function enableSyncAction(editor) {
   if (editingInProcess) {
@@ -238,158 +241,6 @@ function getLastSyncedTime() {
 }
 
 document.addEventListener('DOMContentLoaded', getLastSyncedTime);
-
-chrome.runtime.onMessage.addListener(eventData => {
-  let time;
-  let content;
-  switch (eventData.action) {
-    case 'sync-authenticated':
-      setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
-      isAuthenticated = true;
-      // set title attr of footer to the currently logged in account
-      footerButtons.title = eventData.profile && eventData.profile.email;
-      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
-      browser.runtime.sendMessage({
-          action: 'kinto-load'
-        });
-      break;
-    case 'kinto-loaded':
-    clearTimeout(loginTimeout);
-    console.log('kinto-loaded', eventData);
-      content = eventData.data;
-      browser.storage.local.set({ last_modified: eventData.last_modified})
-        .then(() => {
-          getLastSyncedTime();
-          setTimeout(() => {
-            handleLocalContent(content);
-            document.getElementById('loading').style.display = 'none';
-          }, 10);
-        });
-      break;
-    case 'text-change':
-      //ignoreNextLoadEvent = true; // XXX: What was this here for?
-      loadContent();
-      break;
-    case 'text-syncing':
-      setAnimation(true); // animateSyncIcon, syncingLayout, warning
-      savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
-      break;
-    case 'text-editing':
-      savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
-      // Disable sync-action
-      editingInProcess = true;
-      break;
-    case 'text-synced':
-      browser.storage.local.set({ last_modified: eventData.last_modified})
-        .then(() => {
-          getLastSyncedTime();
-          browser.runtime.sendMessage('notes@mozilla.com', {
-            action: 'text-change'
-          });
-        });
-      break;
-    case 'text-saved':
-      time = new Date().toLocaleTimeString();
-      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
-      // Enable sync-action
-      editingInProcess = false;
-      break;
-    case 'disconnected':
-      disconnectSync.style.display = 'none';
-      footerButtons.title = null; // remove profile email from title attribute
-      isAuthenticated = false;
-      setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
-      getLastSyncedTime();
-      break;
-  }
-});
-
-function getPadStats(editor) {
-  const text = editor.getData();
-
-  const styles = {
-    size: false,
-    bold: false,
-    italic: false,
-    strike: false,
-    list: false,
-    list_bulleted: false,
-    list_numbered: false
-  };
-
-  const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
-
-  for ( const value of range ) {
-    if (value.type === 'text') {
-      // Bold
-      if (value.item.textNode._attrs.get('bold')) {
-        styles.bold = true;
-      }
-      // Italic
-      if (value.item.textNode._attrs.get('italic')) {
-        styles.italic = true;
-      }
-    }
-
-    if (value.type === 'elementStart') {
-      // Size
-      if (value.item.name.indexOf('heading') === 0) {
-        styles.size = true;
-      }
-
-      // List
-      if (value.item.name === 'listItem') {
-        styles.list = true;
-        if (value.item._attrs.get('type') === 'bulleted') {
-          styles.list_bulleted = true;
-        } else if (value.item._attrs.get('type') === 'numbered') {
-          styles.list_numbered = true;
-        }
-      }
-    }
-  }
-
-  return {
-    syncEnabled: false,
-    characters: text.length,
-    lineBreaks: (text.match(/\n/g) || []).length,
-    usesSize: styles.size,
-    usesBold: styles.bold,
-    usesItalics: styles.italic,
-    usesStrikethrough: styles.strike,
-    usesList: styles.list
-  };
-}
-
-function localizeEditorButtons () {
-  // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
-  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
-    sel.remove();
-  });
-
-  let userOSKey;
-
-  if (navigator.appVersion.indexOf('Mac') !== -1)
-    userOSKey = '⌘';
-  else
-    userOSKey = 'Ctrl';
-
-  const size = document.querySelector('button.ck-button:nth-child(1)'),
-    // Need to target buttons by index. Ref: https://github.com/ckeditor/ckeditor5-basic-styles/issues/59
-    bold = document.querySelector('button.ck-button:nth-child(2)'),
-    italic = document.querySelector('button.ck-button:nth-child(3)'),
-    strike = document.querySelector('button.ck-button:nth-child(4)'),
-    bullet = document.querySelector('button.ck-button:nth-child(5)'),
-    ordered = document.querySelector('button.ck-button:nth-child(6)');
-
-// Setting button titles in place of tooltips
-  size.title = browser.i18n.getMessage('fontSizeTitle');
-  bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
-  italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
-  strike.title = browser.i18n.getMessage('strikethroughTitle');
-  ordered.title = browser.i18n.getMessage('numberedListTitle');
-  bullet.title = browser.i18n.getMessage('bulletedListTitle');
-}
 
 // Create a connection with the background script to handle open and
 // close events.
