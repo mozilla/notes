@@ -18,6 +18,8 @@ function migrationCheck(editor) {
   console.log('Editor migration started...');
   const quill = new Quill('#migrationPlaceholder', {});
 
+  syncNowEnabledCheck();
+
   // get the old data from Quill storage
   return browser.storage.local.get(['notes']).then((data) => {
     if (data && data.notes) {
@@ -62,4 +64,27 @@ function migrationCheck(editor) {
     // render contents of quill to make HTML export possible
     quill.setContents(data.notes);
   });
+}
+
+/**
+ * If users asked to sync before we show them that sync is now available
+ */
+function syncNowEnabledCheck() {
+  const noteDiv = document.getElementById('sync-note');
+  const syncNoteBody = document.getElementById('sync-note-dialog');
+  syncNoteBody.textContent = browser.i18n.getMessage('syncReady');
+  const closeButton = document.getElementById('close-button');
+
+  // do not block editor on this getter
+  browser.storage.local.get('asked-for-syncing').then((data) => {
+    if(data && data['asked-for-syncing']) {
+      noteDiv.classList.toggle('visible');
+      browser.storage.local.remove('asked-for-syncing');
+    }
+  });
+
+  closeButton.addEventListener('click', () => {
+    noteDiv.classList.toggle('visible');
+  });
+
 }

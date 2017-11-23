@@ -8,15 +8,14 @@ const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
 const giveFeedbackButton = document.getElementById('give-feedback-button');
-const noteDiv = document.getElementById('sync-note');
-const syncNoteBody = document.getElementById('sync-note-dialog');
-const closeButton = document.getElementById('close-button');
+const giveFeedbackMenuItem = document.getElementById('give-feedback');
 
 let isAuthenticated = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
-syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
+giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
 giveFeedbackButton.setAttribute('href', SURVEY_PATH);
+giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
@@ -46,7 +45,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
                 content
               });
 
-              updateSavingIndicator();
               // Debounce this second event
               chrome.runtime.sendMessage({
                 action: 'metrics-changed',
@@ -100,7 +98,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
 });
 
 
-let ignoreNextLoadEvent = false;
 function handleLocalContent(editor, data) {
   if (!data.hasOwnProperty('notes2')) {
     editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
@@ -149,10 +146,6 @@ disconnectSync.addEventListener('click', () => {
   });
 });
 
-closeButton.addEventListener('click', () => {
-  noteDiv.classList.toggle('visible');
-});
-
 /**
  * Set animation on footerButtons toolbar
  * @param {Boolean} animateSyncIcon Start looping animation on sync icon
@@ -196,7 +189,6 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
 let loginTimeout;
 let editingInProcess = false;
 
-
 function enableSyncAction(editor) {
   if (editingInProcess) {
     return;
@@ -229,31 +221,6 @@ function enableSyncAction(editor) {
   }
 }
 
-// gets the user-selected theme from local storage and applies respective CSS
-// file to the document
-function getThemeFromStorage() {
-  const getting = browser.storage.local.get(['theme']);
-  getting.then(function applyTheme(data) {
-    if (data.theme === 'dark') {
-      if (! document.getElementById('dark-styles')) {
-        const darkSS = document.createElement('link');
-        darkSS.id = 'dark-styles';
-        darkSS.type = 'text/css';
-        darkSS.rel = 'stylesheet';
-        darkSS.href = 'styles-dark.css';
-        document.getElementsByTagName('head')[0].appendChild(darkSS);
-      } else
-        return;
-    } else if (data.theme === 'default' || data.theme === undefined) {
-      if (document.getElementById('dark-styles')) {
-        const darkSS = document.getElementById('dark-styles');
-        darkSS.parentElement.removeChild(darkSS);
-      } else
-        return;
-    }
-  });
-}
-
 function getLastSyncedTime() {
   const getting = browser.storage.local.get(['last_modified', 'credentials']);
   getting.then(data => {
@@ -270,7 +237,6 @@ function getLastSyncedTime() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', getThemeFromStorage);
 document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 
 chrome.runtime.onMessage.addListener(eventData => {
@@ -301,7 +267,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         });
       break;
     case 'text-change':
-      ignoreNextLoadEvent = true;
+      //ignoreNextLoadEvent = true; // XXX: What was this here for?
       loadContent();
       break;
     case 'text-syncing':
@@ -310,7 +276,6 @@ chrome.runtime.onMessage.addListener(eventData => {
       break;
     case 'text-editing':
       savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
-      setAnimation(true);
       // Disable sync-action
       editingInProcess = true;
       break;
@@ -328,9 +293,6 @@ chrome.runtime.onMessage.addListener(eventData => {
       savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
       // Enable sync-action
       editingInProcess = false;
-      break;
-    case 'theme-changed':
-      getThemeFromStorage();
       break;
     case 'disconnected':
       disconnectSync.style.display = 'none';
