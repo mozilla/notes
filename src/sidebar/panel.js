@@ -104,7 +104,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
 function handleLocalContent(editor, data) {
   if (!data.hasOwnProperty('notes2')) {
-    editor.setData(`## ${browser.i18n.getMessage('welcomeTitle2')}\n\n${browser.i18n.getMessage('welcomeText2')}`);
+    editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
   } else {
     if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
       editor.setData(data.notes2);
