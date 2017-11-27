@@ -59,7 +59,7 @@ function authenticate() {
     redirectUri: browser.identity.getRedirectURL(),
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
-    const key = loginDetails.keys['https://identity.mozilla.org/apps/notes'];
+    const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
     const credentials = {
       access_token: loginDetails.access_token,
       refresh_token: loginDetails.refresh_token,
