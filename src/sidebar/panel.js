@@ -26,6 +26,9 @@ giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
 giveFeedbackButton.setAttribute('href', SURVEY_PATH);
 giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
+// ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
+let ignoreNextLoadEvent = false;
+
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
     options: [
@@ -39,7 +42,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 }).then(editor => {
   return migrationCheck(editor)
     .then(() => {
-      let ignoreNextLoadEvent = false;
+
 
       editor.document.on('change', (eventInfo, name) => {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
@@ -70,12 +73,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
         enableSyncAction(editor);
       };
 
-      loadContent(editor)
-        .then(() => {
-          document.getElementById('loading').style.display = 'none';
-        });
-
       customizeEditor(editor);
+      loadContent();
 
       chrome.runtime.onMessage.addListener(eventData => {
         let time;
@@ -106,7 +105,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
           case 'text-change':
             ignoreNextLoadEvent = true;
-            loadContent(editor);
+            loadContent();
             break;
           case 'text-syncing':
             setAnimation(true); // animateSyncIcon, syncingLayout, warning
@@ -148,32 +147,38 @@ ClassicEditor.create(document.querySelector('#editor'), {
 });
 
 
-function handleLocalContent(editor, data) {
-  if (!data.hasOwnProperty('notes2')) {
-    editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
+function loadContent() {
+  ignoreNextLoadEvent = true;
+  chrome.runtime.sendMessage({
+    action: 'kinto-load'
+  });
+}
+
+function handleLocalContent(editor, content) {
+  if (!content) {
+    browser.storage.local.get('notes2').then((data) => {
+      if (!data.hasOwnProperty('notes2')) {
+        editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
+        ignoreNextLoadEvent = true;
+      } else {
+        editor.setData(data.notes2);
+        chrome.runtime.sendMessage({
+          action: 'kinto-save',
+          content: data.notes2
+        }).then(() => {
+          // Clean-up
+          // TODO: Scary below
+          browser.storage.local.remove('notes2');
+        });
+      }
+    });
   } else {
-    if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
-      editor.setData(data.notes2);
-      browser.runtime.sendMessage({
-        action: 'kinto-save',
-        content: data.notes
-      }).then(() => {
-        // Clean-up
-        browser.storage.local.remove('notes2');
-      });
+    if (editor.getData() !== content) {
+      editor.setData(content);
     }
   }
 }
 
-function loadContent(editor) {
-  return new Promise((resolve) => {
-    browser.storage.local.get(['notes2'], data => {
-      // If we have a bearer, we try to save the content.
-      handleLocalContent(editor, data);
-      resolve();
-    });
-  });
-}
 
 function disconnectFromSync () {
   disconnectSync.style.display = 'none';
