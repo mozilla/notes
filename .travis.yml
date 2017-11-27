@@ -3,6 +3,11 @@ language: node_js
 node_js:
   - "6"
 
-script:
-  - npm run build
-  - npm run lint
+matrix:
+  include:
+    - script: npm run build-ck
+      env: BUILD_CK
+    - script: npm run build
+      env: BUILD_NOTES
+    - script: npm run lint
+      env: LINT
