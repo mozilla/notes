@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.0 (unreleased)
+
+* No changes yet.
+
+
 ## 1.9.0 (2017-11-24)
 
 * Move from Quii.JS to CKEditor 5
