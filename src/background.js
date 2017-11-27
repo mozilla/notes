@@ -135,9 +135,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
         action: 'theme-changed'
       });
       break;
-    case 'link-clicked':
-      sendMetrics('link-clicked', eventData.content);
-      break;
   }
 });
 

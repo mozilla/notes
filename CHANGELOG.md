@@ -1,9 +1,14 @@
 # Changelog
 
-## 1.9.0 (unreleased)
+## 1.10.0 (unreleased)
 
-* Add links support
-* Fix toolbar border
+* No changes yet.
+
+
+## 1.9.0 (2017-11-24)
+
+* Move from Quii.JS to CKEditor 5
+* Basic Markdown features
 
 
 ## 1.8.0 (2017-10-09)
