@@ -1,0 +1,38 @@
+{
+    "name": "com.firefox.testpilot.notes",
+    "displayName": "Firefox Notes",
+    "version": "1.0.0",
+    "description": "A sample Apache Cordova application that responds to the deviceready event.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Apache Cordova Team",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "cordova-android": "^6.2.3",
+        "cordova-plugin-browsersync": "^0.1.6",
+        "cordova-plugin-console": "^1.0.7",
+        "cordova-plugin-google-analytics": "^1.8.3",
+        "cordova-plugin-inappbrowser": "^1.7.1",
+        "cordova-plugin-secure-storage": "^2.6.8",
+        "cordova-plugin-splashscreen": "^4.0.3",
+        "cordova-plugin-whitelist": "^1.3.2",
+        "fxa-crypto-relier": "github:vladikoff/fxa-crypto-relier#c1929c5eaafc53679af5141ebc70dd0efc3203dd",
+        "quill": "^1.2.6"
+    },
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-browsersync": {},
+            "cordova-plugin-console": {},
+            "cordova-plugin-secure-storage": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-google-analytics": {}
+        },
+        "platforms": [
+            "android"
+        ]
+    }
+}

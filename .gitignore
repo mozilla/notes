@@ -6,3 +6,8 @@ src/_locales
 web-ext-artifacts/
 test/dist/*
 ckeditor-build/build/*
+
+android/.idea
+
+#Mac
+.DS_Store
