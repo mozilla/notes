@@ -21,9 +21,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
     options: [
       { modelElement: 'paragraph', title: 'P', class: 'ck-heading_paragraph' },
-      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' },
+      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' },
       { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
-      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
+      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' }
     ]
   },
   toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
