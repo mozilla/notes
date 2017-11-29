@@ -110,6 +110,16 @@ browser.runtime.onMessage.addListener(function(eventData) {
       credentials.clear();
       break;
     case 'kinto-load':
+      retrieveNote(client).then((result) => {
+        console.log('Collection had record', result);
+        browser.runtime.sendMessage({
+          action: 'kinto-loaded',
+          data: result && typeof result.data !== 'undefined' ? result.data.content : null,
+          last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+        });
+      });
+      break;
+    case 'kinto-sync':
       loadFromKinto(client, credentials);
       break;
     case 'kinto-save':

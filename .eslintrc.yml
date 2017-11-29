@@ -18,6 +18,7 @@ globals:
   Kinto: false
   KintoClient: false
   loadFromKinto: false
+  retrieveNote: false
   Quill: false
   saveToKinto: false
   TestPilotGA: false

@@ -28,6 +28,7 @@ giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
+let lastModified;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
@@ -83,45 +84,40 @@ ClassicEditor.create(document.querySelector('#editor'), {
             footerButtons.title = eventData.profile && eventData.profile.email;
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
-              action: 'kinto-load'
+              action: 'kinto-sync'
             });
             break;
           case 'kinto-loaded':
             clearTimeout(loginTimeout);
             console.log('kinto-loaded', eventData);
             content = eventData.data;
-            browser.storage.local.set({ last_modified: eventData.last_modified})
-              .then(() => {
-                getLastSyncedTime();
-                setTimeout(() => {
-                  handleLocalContent(editor, content);
-                  document.getElementById('loading').style.display = 'none';
-                }, 10);
-              });
+            lastModified = eventData.last_modified;
+            getLastSyncedTime();
+            handleLocalContent(editor, content);
+            document.getElementById('loading').style.display = 'none';
             break;
           case 'text-change':
             ignoreNextLoadEvent = true;
-            loadContent();
+            browser.runtime.sendMessage({
+              action: 'kinto-load'
+            });
             break;
           case 'text-syncing':
             setAnimation(true); // animateSyncIcon, syncingLayout, warning
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             break;
           case 'text-editing':
+            if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
             savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
             // Disable sync-action
             editingInProcess = true;
             break;
           case 'text-synced':
-            browser.storage.local.set({ last_modified: eventData.last_modified})
-              .then(() => {
-                ignoreNextLoadEvent = true;
-                handleLocalContent(editor, eventData.content);
-                getLastSyncedTime();
-                browser.runtime.sendMessage('notes@mozilla.com', {
-                  action: 'text-change'
-                });
-              });
+            lastModified = eventData.last_modified;
+            if (ignoreNextLoadEvent || eventData.conflict) {
+              handleLocalContent(editor, eventData.content);
+            }
+            getLastSyncedTime();
             break;
           case 'text-saved':
             time = new Date().toLocaleTimeString();
@@ -146,10 +142,16 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
 
 function loadContent() {
+  browser.storage.local.get('credentials').then((data) => {
+    if (data.hasOwnProperty('credentials')) {
+      isAuthenticated = true;
+    }
+  });
   ignoreNextLoadEvent = true;
   chrome.runtime.sendMessage({
-    action: 'kinto-load'
+    action: 'kinto-sync'
   });
+
 }
 
 function handleLocalContent(editor, content) {
@@ -165,7 +167,6 @@ function handleLocalContent(editor, content) {
           content: data.notes2
         }).then(() => {
           // Clean-up
-          // TODO: Scary below
           browser.storage.local.remove('notes2');
         });
       }
@@ -204,7 +205,7 @@ function enableSyncAction(editor) {
     // Trigger manual sync
     setAnimation(true);
     browser.runtime.sendMessage({
-        action: 'kinto-load'
+        action: 'kinto-sync'
       });
   } else if (!isAuthenticated && footerButtons.classList.contains('savingLayout')) {
     // Login
@@ -228,19 +229,16 @@ function enableSyncAction(editor) {
 }
 
 function getLastSyncedTime() {
-  const getting = browser.storage.local.get(['last_modified', 'credentials']);
-  getting.then(data => {
-    if (data.hasOwnProperty('credentials')) {
-      const time = new Date(data.last_modified).toLocaleTimeString();
-      savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
-      disconnectSync.style.display = 'block';
-      isAuthenticated = true;
-      setAnimation(false, true);
-    } else {
-      const time = new Date().toLocaleTimeString();
-      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
-    }
-  });
+  if (isAuthenticated) {
+    const time = new Date(lastModified).toLocaleTimeString();
+    savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
+    disconnectSync.style.display = 'block';
+    isAuthenticated = true;
+    setAnimation(false, true);
+  } else {
+    const time = new Date().toLocaleTimeString();
+    savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', getLastSyncedTime);

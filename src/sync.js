@@ -211,6 +211,7 @@ function syncKinto(client, credentials) {
             totalOps += '\n====== On this computer: ======\n\n';
             totalOps += conflict.local.content;
 
+            client.conflict = true;
             resolution = {
               id: conflict.remote.id,
               content: totalOps,
@@ -315,6 +316,7 @@ function saveToKinto(client, credentials, content) {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
+        client.conflict = false;
         return syncKinto(client, credentials);
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
@@ -324,6 +326,7 @@ function saveToKinto(client, credentials, content) {
           action: 'text-synced',
           content: result.data.content,
           last_modified: result.data.last_modified,
+          conflict: client.conflict
         });
       })
       .then(() => {
