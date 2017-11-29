@@ -43,13 +43,10 @@ function migrationCheck(editor) {
       // set CKEditor contents
       editor.setData(oldNoteDataHtml);
 
-      // get the new data as Markdown
-      const newData = editor.getData();
-
       // place into CKEditor storage
-      return browser.storage.local.set({ notes2: newData }).then(() => {
+      return browser.storage.local.set({ notes2: oldNoteDataHtml }).then(() => {
         // call setData again to remove spacing issues, force re-render
-        editor.setData(newData);
+        editor.setData(oldNoteDataHtml);
 
         chrome.runtime.sendMessage({
           action: 'metrics-migrated'

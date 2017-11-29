@@ -200,13 +200,22 @@ function syncKinto(client, credentials) {
       if (syncResult && syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
           console.log('Handling conflict', conflict);
-          let totalOps = conflict.remote.content.ops.slice();
-          totalOps.push({ insert: '\n====== On this computer: ======\n\n' });
-          totalOps = totalOps.concat(conflict.local.content.ops);
-          const resolution = {
-            id: conflict.remote.id,
-            content: {ops: totalOps},
-          };
+          let resolution;
+          if (conflict.remote === null) {
+            resolution = {
+              id: conflict.local.id,
+              content: conflict.local.content,
+            };
+          } else {
+            let totalOps = conflict.remote.content;
+            totalOps += '\n====== On this computer: ======\n\n';
+            totalOps += conflict.local.content;
+
+            resolution = {
+              id: conflict.remote.id,
+              content: {ops: totalOps},
+            };
+          }
           return collection.resolve(conflict, resolution);
         }))
           .then(() => syncKinto(client, credentials));
