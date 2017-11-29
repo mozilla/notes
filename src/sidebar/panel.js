@@ -50,12 +50,11 @@ ClassicEditor.create(document.querySelector('#editor'), {
         if (isFocused || name === 'rename') {
           const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined) {
-            chrome.runtime.sendMessage('notes@mozilla.com', {
+            chrome.runtime.sendMessage({
               action: 'kinto-save',
               content
             });
 
-            // Debounce this second event
             chrome.runtime.sendMessage({
               action: 'metrics-changed',
               context: getPadStats(editor)

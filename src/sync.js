@@ -213,7 +213,7 @@ function syncKinto(client, credentials) {
 
             resolution = {
               id: conflict.remote.id,
-              content: {ops: totalOps},
+              content: totalOps,
             };
           }
           return collection.resolve(conflict, resolution);
