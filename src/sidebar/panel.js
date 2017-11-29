@@ -49,7 +49,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename') {
           const content = editor.getData();
-          if (!ignoreNextLoadEvent && content != undefined) {
+          if (!ignoreNextLoadEvent && content !== undefined) {
             chrome.runtime.sendMessage('notes@mozilla.com', {
               action: 'kinto-save',
               content
