@@ -28,6 +28,7 @@ giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
+let ignoreTextSynced = false;
 let lastModified;
 
 ClassicEditor.create(document.querySelector('#editor'), {
@@ -51,6 +52,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         if (isFocused || name === 'rename') {
           const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined) {
+            ignoreTextSynced = true;
             chrome.runtime.sendMessage({
               action: 'kinto-save',
               content
@@ -60,10 +62,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
               action: 'metrics-changed',
               context: getPadStats(editor)
             });
-          } else {
-            ignoreNextLoadEvent = false;
           }
         }
+        ignoreNextLoadEvent = false;
       });
 
       enableSync.onclick = () => {
@@ -114,9 +115,11 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
           case 'text-synced':
             lastModified = eventData.last_modified;
-            if (ignoreNextLoadEvent || eventData.conflict) {
+            console.log('Marker', ignoreNextLoadEvent,  eventData.conflict);
+            if (!ignoreTextSynced || eventData.conflict) {
               handleLocalContent(editor, eventData.content);
             }
+            ignoreTextSynced = false;
             getLastSyncedTime();
             break;
           case 'text-saved':
