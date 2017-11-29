@@ -115,6 +115,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'text-synced':
             browser.storage.local.set({ last_modified: eventData.last_modified})
               .then(() => {
+                ignoreNextLoadEvent = true;
+                handleLocalContent(editor, eventData.content);
                 getLastSyncedTime();
                 browser.runtime.sendMessage('notes@mozilla.com', {
                   action: 'text-change'

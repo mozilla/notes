@@ -218,7 +218,9 @@ function syncKinto(client, credentials) {
           }
           return collection.resolve(conflict, resolution);
         }))
-          .then(() => syncKinto(client, credentials));
+          .then(() => {
+            return syncKinto(client, credentials);
+          });
       }
     })
     .catch(error => {
@@ -320,6 +322,7 @@ function saveToKinto(client, credentials, content) {
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
+          content: result.data.content,
           last_modified: result.data.last_modified,
         });
       })
