@@ -34,66 +34,51 @@ var app = {
       this.setupDOM();
   },
   loadContent: function() {
-    const content = this.storage.getItem('notes');
+    const content = this.storage.getItem('notes2');
     return JSON.parse(content);
   },
-  handleLocalContent: function(content) {
-    const data = content || {};
-    if (!data.hasOwnProperty('notes')) {
-      this.quill.setContents({
-        ops: [
-          { attributes: { fontSize: 30, bold: true }, insert: 'Hello from the other side' },
-          { insert: '\n\n'},
-          {
-            attributes: { size: 'large' },
-            insert:
-              'Second welcome text'
-          },
-          { insert: '\n\n'}
-        ]
-      });
-    } else {
-        if (JSON.stringify(this.quill.getContents()) !== JSON.stringify(data.notes)) {
-            this.quill.setContents(data.notes);
+  handleLocalContent: function(editor, content) {
+    if (!content) {
+      const data = this.storage.getItem('notes2')
+        if (!data) {
+          editor.setData(`<h2>Welcome</h2>`);
+        } else {
+          console.log('got notes2');
         }
+    } else {
+      if (editor.getData() !== content) {
+        editor.setData(content);
+      }
     }
   },
   saveContent: function (content) {
-      this.storage.setItem('notes', JSON.stringify(content));
+      this.storage.setItem('notes2', JSON.stringify(content));
       return;
   },
   setupQuill: function() {
-    const formats = [
-      'bold',
-      'font',
-      'italic',
-      'size',
-      'strike',
-      'indent',
-      'list',
-      'direction',
-      'align'
-    ];
-
-    const Block = Quill.import('blots/block');
-    Block.tagName = 'DIV';
-    Quill.register(Block, true);
-
-    const fontSizeStyle = Quill.import('attributors/style/size');
-    Quill.register(fontSizeStyle, true);
-    this.quill = new Quill('#editor', {
-      theme: 'snow',
-      placeholder: 'Replace with localized welcomes msg',
-      modules: {
-        toolbar: false
+    debugger
+    ClassicEditor.create(document.querySelector('#editor'), {
+      heading: {
+        options: [
+          { modelElement: 'paragraph', title: 'P', class: 'ck-heading_paragraph' },
+          { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' },
+          { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
+          { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
+        ]
       },
-      formats: formats // enabled formats, see https://github.com/quilljs/quill/issues/1108
-    });
+      toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
+    }).then(editor => {
+        editor.document.on('change', (eventInfo, name) => {
 
-    this.quill.on('text-change', function() {
-      const content = this.quill.getContents();
-      this.saveContent({ notes: content });
-    }.bind(this));
+        });
+        const localContent = this.loadContent();
+        this.handleLocalContent(editor, localContent);
+        document.getElementById('p2').style.display = 'none';
+        document.getElementById('editor').style.display = 'block';
+
+    }).catch(error => {
+      console.error(error);
+    });
   },
   setupDOM: function() {
     const self = this;
@@ -108,10 +93,6 @@ var app = {
       document.getElementById('editor-container').style.display = 'block';
       setTimeout(function() {
         self.setupQuill();
-        const localContent = self.loadContent();
-        self.handleLocalContent(localContent);
-        document.getElementById('p2').style.display = 'none';
-        document.getElementById('editor').style.display = 'block';
       }, 2000);
     });
 

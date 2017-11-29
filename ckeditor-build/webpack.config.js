@@ -31,9 +31,6 @@ module.exports = {
     new CKEditorWebpackPlugin({
       languages: ['en']
     }),
-    new BabiliPlugin(null, {
-      comments: false
-    }),
     new webpack.BannerPlugin({
       banner: bundler.getLicenseBanner(),
       raw: true

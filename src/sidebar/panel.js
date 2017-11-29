@@ -42,8 +42,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
 }).then(editor => {
   return migrationCheck(editor)
     .then(() => {
-
-
       editor.document.on('change', (eventInfo, name) => {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.

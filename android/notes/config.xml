@@ -24,12 +24,12 @@
     </platform>
     <icon height="57" src="res/icon/notes-512.png" width="57" />
     <splash height="512" src="res/icon/notes-512-fade.png" width="512" />
-    <engine name="android" spec="^6.2.3" />
+    <engine name="android" spec="^6.4.0" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-browsersync" spec="^0.1.6" />
-    <plugin name="cordova-plugin-console" spec="^1.0.7" />
-    <plugin name="cordova-plugin-google-analytics" spec="^1.8.3" />
-    <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
+    <plugin name="cordova-plugin-console" spec="^1.1.0" />
     <plugin name="cordova-plugin-secure-storage" spec="^2.6.8" />
-    <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
+    <plugin name="cordova-plugin-splashscreen" spec="^4.1.0" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2" />
+    <plugin name="cordova-plugin-google-analytics" spec="^1.8.3" />
 </widget>
