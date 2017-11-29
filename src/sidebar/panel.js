@@ -49,23 +49,20 @@ ClassicEditor.create(document.querySelector('#editor'), {
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename') {
           const content = editor.getData();
-          browser.storage.local.set({ notes2: content }).then(() => {
-            // Notify other sidebars
-            if (!ignoreNextLoadEvent) {
-              chrome.runtime.sendMessage('notes@mozilla.com', {
-                action: 'kinto-save',
-                content
-              });
+          if (!ignoreNextLoadEvent && content != undefined) {
+            chrome.runtime.sendMessage('notes@mozilla.com', {
+              action: 'kinto-save',
+              content
+            });
 
-              // Debounce this second event
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats(editor)
-              });
-            } else {
-              ignoreNextLoadEvent = false;
-            }
-          });
+            // Debounce this second event
+            chrome.runtime.sendMessage({
+              action: 'metrics-changed',
+              context: getPadStats(editor)
+            });
+          } else {
+            ignoreNextLoadEvent = false;
+          }
         }
       });
 
