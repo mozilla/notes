@@ -206,8 +206,9 @@ function syncKinto(client, credentials) {
               content: conflict.local.content,
             };
           } else {
+            const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
-            totalOps += '\n====== On this computer: ======\n\n';
+            totalOps += `\n${mergeWarning}\n\n`;
             totalOps += conflict.local.content;
 
             client.conflict = true;
