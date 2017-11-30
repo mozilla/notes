@@ -16,7 +16,12 @@ describe('Authorization', function() {
       kid: "20171005",
       kty: "kty",
     },
-    access_token: "access_token"
+    access_token: "access_token",
+    metadata: {
+      server: 'https://oauth.accounts.firefox.com/v1',
+      client: 'f00',
+      scope: ['profile', 'https://']
+    }
   };
 
   let sandbox;
@@ -120,6 +125,15 @@ describe('Authorization', function() {
         }
       });
 
+      fetchMock.post('end:/verify', {
+        responses: [{
+          status: 200,
+          body: {
+            data: {}
+          }
+        }]
+      });
+
       installEncryptedRecord();
 
       decryptMock = sandbox.stub(global, 'decrypt');
@@ -135,6 +149,7 @@ describe('Authorization', function() {
 
       credentials = {
         get: sinon.stub().resolves(staticCredential),
+        set: sinon.stub().resolves(staticCredential),
         clear: sinon.stub()
       };
 

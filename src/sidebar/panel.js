@@ -89,7 +89,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'kinto-loaded':
             clearTimeout(loginTimeout);
             content = eventData.data;
-            lastModified = eventData.last_modified;
+            // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
+            lastModified = Date.now();
             getLastSyncedTime();
             handleLocalContent(editor, content);
             document.getElementById('loading').style.display = 'none';

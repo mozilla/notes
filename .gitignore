@@ -6,3 +6,4 @@ src/_locales
 web-ext-artifacts/
 test/dist/*
 ckeditor-build/build/*
+build/
