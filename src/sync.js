@@ -199,7 +199,6 @@ function syncKinto(client, credentials) {
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
-          console.log('Handling conflict', conflict);
           let resolution;
           if (conflict.remote === null) {
             resolution = {
@@ -216,6 +215,7 @@ function syncKinto(client, credentials) {
               id: conflict.remote.id,
               content: totalOps,
             };
+            sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
@@ -228,16 +228,16 @@ function syncKinto(client, credentials) {
       if (error.response && error.response.status === 401) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
-        return credentials.clear();
+        return reconnectSync(credentials);
       } else if (error instanceof ServerKeyNewerError) {
         // If the key date is greater than current one, log the user out.
-        console.error(error);
-        return credentials.clear();
+        console.error(error); // eslint-disable-line no-console
+        return reconnectSync(credentials);
       } else if (error instanceof ServerKeyOlderError) {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
-        console.error(error);
+        console.error(error); // eslint-disable-line no-console
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
@@ -252,12 +252,20 @@ function syncKinto(client, credentials) {
         return Promise.resolve(null);
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
-        return credentials.clear();
+        return reconnectSync(credentials);
       } else {
-        console.error(error);
+        console.error(error); // eslint-disable-line no-console
+        reconnectSync(credentials);
         return Promise.reject(error);
       }
     });
+}
+
+function reconnectSync(credentials) {
+  credentials.clear();
+  browser.runtime.sendMessage('notes@mozilla.com', {
+    action: 'reconnect'
+  });
 }
 
 function retrieveNote(client) {
@@ -286,7 +294,6 @@ function loadFromKinto(client, credentials) {
   // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
-      console.log('Collection had record', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         data: result && typeof result.data !== 'undefined' ? result.data.content : null,

@@ -139,3 +139,21 @@ An event fired whenever the user changes the theme. Includes:
 - `cd4`
 - `cd5`
 - `cd6`
+
+#### `login-success`
+An event fired when FxA login succeeds
+
+#### `login-failed`
+An event fired when FxA login fails
+
+#### `webext-button-authenticate`
+An event fired when user presses the sync button
+
+#### `webext-button-disconnect`
+An event fired when user logs out of sync
+
+#### `handle-conflict`
+An event fired when sync resolved a sync conflict
+
+#### `reconnect-sync`
+An event fired when user loses sync due to a password reset or change

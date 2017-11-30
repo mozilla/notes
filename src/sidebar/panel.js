@@ -17,6 +17,7 @@ disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
 let isAuthenticated = false;
+let waitingToReconnect = false;
 let loginTimeout;
 let editingInProcess = false;
 
@@ -44,8 +45,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
 }).then(editor => {
   return migrationCheck(editor)
     .then(() => {
-
-
       editor.document.on('change', (eventInfo, name) => {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
@@ -75,7 +74,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
       loadContent();
 
       chrome.runtime.onMessage.addListener(eventData => {
-        let time;
         let content;
         switch (eventData.action) {
           case 'sync-authenticated':
@@ -90,7 +88,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
           case 'kinto-loaded':
             clearTimeout(loginTimeout);
-            console.log('kinto-loaded', eventData);
             content = eventData.data;
             lastModified = eventData.last_modified;
             getLastSyncedTime();
@@ -109,13 +106,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
           case 'text-editing':
             if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
-            savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            if (! waitingToReconnect) {
+              savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            }
             // Disable sync-action
             editingInProcess = true;
             break;
           case 'text-synced':
             lastModified = eventData.last_modified;
-            console.log('Marker', ignoreNextLoadEvent,  eventData.conflict);
             if (!ignoreTextSynced || eventData.conflict) {
               handleLocalContent(editor, eventData.content);
             }
@@ -123,10 +121,16 @@ ClassicEditor.create(document.querySelector('#editor'), {
             getLastSyncedTime();
             break;
           case 'text-saved':
-            time = new Date().toLocaleTimeString();
-            savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+            if (! waitingToReconnect) {
+              // persist reconnect warning, do not override with the 'saved at'
+              savingIndicator.textContent = browser.i18n.getMessage('savedComplete', formatFooterTime());
+            }
             // Enable sync-action
             editingInProcess = false;
+            break;
+          case 'reconnect':
+            clearTimeout(loginTimeout);
+            reconnectSync();
             break;
           case 'disconnected':
             disconnectSync.style.display = 'none';
@@ -140,9 +144,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
     });
 
 }).catch(error => {
-  console.error(error);
+  console.error(error); // eslint-disable-line no-console
 });
-
 
 function loadContent() {
   browser.storage.local.get('credentials').then((data) => {
@@ -181,8 +184,18 @@ function handleLocalContent(editor, content) {
   }
 }
 
+function reconnectSync () {
+  waitingToReconnect = true;
+  isAuthenticated = false;
+  setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+  savingIndicator.textContent = browser.i18n.getMessage('reconnectSync');
+  chrome.runtime.sendMessage({
+    action: 'metrics-reconnect-sync'
+  });
+}
 
 function disconnectFromSync () {
+  waitingToReconnect = false;
   disconnectSync.style.display = 'none';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
@@ -210,7 +223,7 @@ function enableSyncAction(editor) {
     browser.runtime.sendMessage({
         action: 'kinto-sync'
       });
-  } else if (!isAuthenticated && footerButtons.classList.contains('savingLayout')) {
+  } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
     // Login
     setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
 
@@ -229,18 +242,23 @@ function enableSyncAction(editor) {
       context: getPadStats(editor)
     });
   }
+
+  waitingToReconnect = false;
 }
 
 function getLastSyncedTime() {
+  if (waitingToReconnect) {
+    // persist reconnect warning, do not override with the 'saved at'
+    return;
+  }
+
   if (isAuthenticated) {
-    const time = new Date(lastModified).toLocaleTimeString();
-    savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
+    savingIndicator.textContent = browser.i18n.getMessage('syncComplete', formatFooterTime(lastModified));
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
     setAnimation(false, true);
   } else {
-    const time = new Date().toLocaleTimeString();
-    savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+    savingIndicator.textContent = browser.i18n.getMessage('savedComplete', formatFooterTime());
   }
 }
 

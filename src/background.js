@@ -1,3 +1,4 @@
+/* exported sendMetrics */
 /**
  * Google Analytics / TestPilot Metrics
  */
@@ -57,6 +58,7 @@ function authenticate() {
     redirectUri: browser.identity.getRedirectURL(),
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
+    sendMetrics('login-success');
     const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
     const credentials = {
       access_token: loginDetails.access_token,
@@ -68,7 +70,6 @@ function authenticate() {
         scope: FXA_SCOPES
       }
     };
-    console.log('Login succeeded', credentials);
 
     fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
       browser.storage.local.set({credentials}).then(() => {
@@ -80,12 +81,11 @@ function authenticate() {
       });
     });
   }, (err) => {
-    console.error('login failed', err);
+    console.error('FxA login failed', err); // eslint-disable-line no-console
     chrome.runtime.sendMessage({
-      action: 'authenticated',
-      err: err
+      action: 'reconnect'
     });
-    throw err;
+    sendMetrics('login-failed');
   });
 }
 browser.runtime.onMessage.addListener(function(eventData) {
@@ -111,7 +111,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'kinto-load':
       retrieveNote(client).then((result) => {
-        console.log('Collection had record', result);
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
           data: result && typeof result.data !== 'undefined' ? result.data.content : null,
@@ -136,6 +135,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'metrics-migrated-before':
       sendMetrics('metrics-migrated-before', eventData.context);
+      break;
+    case 'metrics-reconnect-sync':
+      sendMetrics('reconnect-sync', eventData.context);
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);

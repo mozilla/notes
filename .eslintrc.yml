@@ -13,6 +13,7 @@ globals:
   BrowserStorageCredentials: false
   fxaCryptoRelier: false
   fxaFetchProfile: false
+  formatFooterTime: false
   Jose: false
   JoseJWE: false
   Kinto: false

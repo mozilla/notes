@@ -1,4 +1,4 @@
-/* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation */
+/* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation, formatFooterTime */
 function customizeEditor(editor) {
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
@@ -149,4 +149,12 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
   }
 }
 
-
+/**
+ * Formats time for the Notes footer
+ * @param time
+ * @returns {string}
+ */
+function formatFooterTime(date) {
+  date = date || Date.now();
+  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}

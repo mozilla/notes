@@ -61,8 +61,7 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
         // if error attempt to renew access token
         return fetch(refreshTokenRequest);
       }
-    }, (err) => {
-      console.log('Failed to verify token', err);
+    }, () => {
       throw new Error('Failed to verify token');
     }).then((resp) => {
       if (! resp) {
@@ -74,8 +73,7 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
         // if failed to renew then throw
         throw new Error('Failed to renew token');
       }
-    }, (err) => {
-      console.log('Failed to renew token', err);
+    }, () => {
       throw new Error('Failed to renew token');
     }).then((renewResp) => {
       if (renewResp) {

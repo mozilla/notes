@@ -72,7 +72,7 @@
     "postformat": "npm run lint:js -- --fix",
     "postinstall": "npm run build-ck && node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
-    "start": "web-ext run -s src",
+    "start": "web-ext run -s src & npm run build-ck --watch",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
     "test": "npm-run-all test:*",
