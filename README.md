@@ -35,10 +35,11 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 
 ## Licenses
 
-[Mozilla Public License Version 2.0](LICENSE)
+* [Mozilla Public License Version 2.0](LICENSE)
 
-[Quill Rich Text Editor License](https://github.com/quilljs/quill/blob/develop/LICENSE)
-[CKEditor Text Editor License](https://github.com/ckeditor/ckeditor5/blob/master/LICENSE.md) used under MPL licence
+* [Quill Rich Text Editor License](https://github.com/quilljs/quill/blob/develop/LICENSE)
+* [CKEditor Text Editor License](https://github.com/ckeditor/ckeditor5/blob/master/LICENSE.md) used under MPL licence
+* [Material Design Components in HTML/CSS/JS License](https://github.com/google/material-design-lite/blob/mdl-1.x/LICENSE)
 
 ## Design
 
