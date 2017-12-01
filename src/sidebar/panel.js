@@ -228,6 +228,9 @@ function enableSyncAction(editor) {
     // Login
     setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
 
+    // enable disable sync button
+    disconnectSync.style.display = 'block';
+
     setTimeout(() => {
       savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
     }, 200); // Delay text for smooth animation
@@ -235,7 +238,6 @@ function enableSyncAction(editor) {
     loginTimeout = setTimeout(() => {
       setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
       savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
-      disconnectSync.style.display = 'block';
     }, 5000);
 
     browser.runtime.sendMessage({
