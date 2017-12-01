@@ -124,7 +124,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'text-saved':
             if (! waitingToReconnect) {
               // persist reconnect warning, do not override with the 'saved at'
-              savingIndicator.textContent = browser.i18n.getMessage('savedComplete', formatFooterTime());
+              savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
             }
             // Enable sync-action
             editingInProcess = false;
@@ -254,12 +254,12 @@ function getLastSyncedTime() {
   }
 
   if (isAuthenticated) {
-    savingIndicator.textContent = browser.i18n.getMessage('syncComplete', formatFooterTime(lastModified));
+    savingIndicator.textContent = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified));
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
     setAnimation(false, true);
   } else {
-    savingIndicator.textContent = browser.i18n.getMessage('savedComplete', formatFooterTime());
+    savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
   }
 }
 
