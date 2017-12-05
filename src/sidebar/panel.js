@@ -17,6 +17,7 @@ disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
 let isAuthenticated = false;
+let waitingToReconnect = false;
 let loginTimeout;
 let editingInProcess = false;
 
@@ -28,14 +29,16 @@ giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
+let ignoreTextSynced = false;
+let lastModified;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
     options: [
       { modelElement: 'paragraph', title: 'P', class: 'ck-heading_paragraph' },
-      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' },
+      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' },
       { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
-      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
+      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' }
     ]
   },
   toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
@@ -47,24 +50,20 @@ ClassicEditor.create(document.querySelector('#editor'), {
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename') {
           const content = editor.getData();
-          browser.storage.local.set({ notes2: content }).then(() => {
-            // Notify other sidebars
-            if (!ignoreNextLoadEvent) {
-              chrome.runtime.sendMessage('notes@mozilla.com', {
-                action: 'kinto-save',
-                content
-              });
+          if (!ignoreNextLoadEvent && content !== undefined) {
+            ignoreTextSynced = true;
+            chrome.runtime.sendMessage({
+              action: 'kinto-save',
+              content
+            });
 
-              // Debounce this second event
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats(editor)
-              });
-            } else {
-              ignoreNextLoadEvent = false;
-            }
-          });
+            chrome.runtime.sendMessage({
+              action: 'metrics-changed',
+              context: getPadStats(editor)
+            });
+          }
         }
+        ignoreNextLoadEvent = false;
       });
 
       enableSync.onclick = () => {
@@ -75,7 +74,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
       loadContent();
 
       chrome.runtime.onMessage.addListener(eventData => {
-        let time;
         let content;
         switch (eventData.action) {
           case 'sync-authenticated':
@@ -85,49 +83,55 @@ ClassicEditor.create(document.querySelector('#editor'), {
             footerButtons.title = eventData.profile && eventData.profile.email;
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
-              action: 'kinto-load'
+              action: 'kinto-sync'
             });
             break;
           case 'kinto-loaded':
             clearTimeout(loginTimeout);
-            console.log('kinto-loaded', eventData);
             content = eventData.data;
-            browser.storage.local.set({ last_modified: eventData.last_modified})
-              .then(() => {
-                getLastSyncedTime();
-                setTimeout(() => {
-                  handleLocalContent(editor, content);
-                  document.getElementById('loading').style.display = 'none';
-                }, 10);
-              });
+            // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
+            lastModified = Date.now();
+            getLastSyncedTime();
+            handleLocalContent(editor, content);
+            document.getElementById('loading').style.display = 'none';
             break;
           case 'text-change':
             ignoreNextLoadEvent = true;
-            loadContent();
+            browser.runtime.sendMessage({
+              action: 'kinto-load'
+            });
             break;
           case 'text-syncing':
             setAnimation(true); // animateSyncIcon, syncingLayout, warning
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             break;
           case 'text-editing':
-            savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            if (! waitingToReconnect) {
+              savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            }
             // Disable sync-action
             editingInProcess = true;
             break;
           case 'text-synced':
-            browser.storage.local.set({ last_modified: eventData.last_modified})
-              .then(() => {
-                getLastSyncedTime();
-                browser.runtime.sendMessage('notes@mozilla.com', {
-                  action: 'text-change'
-                });
-              });
+            lastModified = eventData.last_modified;
+            if (!ignoreTextSynced || eventData.conflict) {
+              handleLocalContent(editor, eventData.content);
+            }
+            ignoreTextSynced = false;
+            getLastSyncedTime();
             break;
           case 'text-saved':
-            time = new Date().toLocaleTimeString();
-            savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
+            if (! waitingToReconnect) {
+              // persist reconnect warning, do not override with the 'saved at'
+              savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+            }
             // Enable sync-action
             editingInProcess = false;
+            break;
+          case 'reconnect':
+            clearTimeout(loginTimeout);
+            reconnectSync();
             break;
           case 'disconnected':
             disconnectSync.style.display = 'none';
@@ -141,15 +145,20 @@ ClassicEditor.create(document.querySelector('#editor'), {
     });
 
 }).catch(error => {
-  console.error(error);
+  console.error(error); // eslint-disable-line no-console
 });
 
-
 function loadContent() {
+  browser.storage.local.get('credentials').then((data) => {
+    if (data.hasOwnProperty('credentials')) {
+      isAuthenticated = true;
+    }
+  });
   ignoreNextLoadEvent = true;
   chrome.runtime.sendMessage({
-    action: 'kinto-load'
+    action: 'kinto-sync'
   });
+
 }
 
 function handleLocalContent(editor, content) {
@@ -165,7 +174,6 @@ function handleLocalContent(editor, content) {
           content: data.notes2
         }).then(() => {
           // Clean-up
-          // TODO: Scary below
           browser.storage.local.remove('notes2');
         });
       }
@@ -177,8 +185,18 @@ function handleLocalContent(editor, content) {
   }
 }
 
+function reconnectSync () {
+  waitingToReconnect = true;
+  isAuthenticated = false;
+  setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+  savingIndicator.textContent = browser.i18n.getMessage('reconnectSync');
+  chrome.runtime.sendMessage({
+    action: 'metrics-reconnect-sync'
+  });
+}
 
 function disconnectFromSync () {
+  waitingToReconnect = false;
   disconnectSync.style.display = 'none';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
@@ -204,11 +222,14 @@ function enableSyncAction(editor) {
     // Trigger manual sync
     setAnimation(true);
     browser.runtime.sendMessage({
-        action: 'kinto-load'
+        action: 'kinto-sync'
       });
-  } else if (!isAuthenticated && footerButtons.classList.contains('savingLayout')) {
+  } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
     // Login
     setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+
+    // enable disable sync button
+    disconnectSync.style.display = 'block';
 
     setTimeout(() => {
       savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
@@ -217,7 +238,6 @@ function enableSyncAction(editor) {
     loginTimeout = setTimeout(() => {
       setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
       savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
-      disconnectSync.style.display = 'block';
     }, 5000);
 
     browser.runtime.sendMessage({
@@ -225,22 +245,24 @@ function enableSyncAction(editor) {
       context: getPadStats(editor)
     });
   }
+
+  waitingToReconnect = false;
 }
 
 function getLastSyncedTime() {
-  const getting = browser.storage.local.get(['last_modified', 'credentials']);
-  getting.then(data => {
-    if (data.hasOwnProperty('credentials')) {
-      const time = new Date(data.last_modified).toLocaleTimeString();
-      savingIndicator.textContent = browser.i18n.getMessage('syncComplete', time);
-      disconnectSync.style.display = 'block';
-      isAuthenticated = true;
-      setAnimation(false, true);
-    } else {
-      const time = new Date().toLocaleTimeString();
-      savingIndicator.textContent = browser.i18n.getMessage('savedComplete', time);
-    }
-  });
+  if (waitingToReconnect) {
+    // persist reconnect warning, do not override with the 'saved at'
+    return;
+  }
+
+  if (isAuthenticated) {
+    savingIndicator.textContent = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified));
+    disconnectSync.style.display = 'block';
+    isAuthenticated = true;
+    setAnimation(false, true);
+  } else {
+    savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+  }
 }
 
 document.addEventListener('DOMContentLoaded', getLastSyncedTime);

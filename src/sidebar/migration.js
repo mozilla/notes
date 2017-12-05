@@ -15,7 +15,7 @@ migrationCloseButton.addEventListener('click', () => {
 });
 
 function migrationCheck(editor) {
-  console.log('Editor migration started...');
+  console.log('Editor migration started...');  // eslint-disable-line no-console
   const quill = new Quill('#migrationPlaceholder', {});
 
   syncNowEnabledCheck();
@@ -29,7 +29,7 @@ function migrationCheck(editor) {
       browser.storage.local.set({ notesQuillBackup: data.notes });
     } else {
       // if there is no old data then nothing to do
-      console.log('Already migrated.');
+      console.log('Already migrated.');  // eslint-disable-line no-console
 
       chrome.runtime.sendMessage({
         action: 'metrics-migrated-before'
@@ -43,20 +43,17 @@ function migrationCheck(editor) {
       // set CKEditor contents
       editor.setData(oldNoteDataHtml);
 
-      // get the new data as Markdown
-      const newData = editor.getData();
-
       // place into CKEditor storage
-      return browser.storage.local.set({ notes2: newData }).then(() => {
+      return browser.storage.local.set({ notes2: oldNoteDataHtml }).then(() => {
         // call setData again to remove spacing issues, force re-render
-        editor.setData(newData);
+        editor.setData(oldNoteDataHtml);
 
         chrome.runtime.sendMessage({
           action: 'metrics-migrated'
         });
 
         migrationNote.classList.toggle('visible');
-        console.log('Editor migration complete.');
+        console.log('Editor migration complete.');  // eslint-disable-line no-console
       });
 
     });

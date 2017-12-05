@@ -12,7 +12,6 @@ const files = [
   copySync('node_modules/jose-jwe-jws/LICENSE', 'src/vendor/jose.LICENCE'),
   copySync('node_modules/fxa-crypto-relier/dist/fxa-crypto-relier/fxa-crypto-relier.js', 'src/vendor/fxa-crypto-relier/fxa-crypto-relier.js'),
   copySync('node_modules/material-design-lite/material.min.js', 'src/sidebar/vendor/material.js'),
-  copySync('node_modules/material-design-lite/material.min.css', 'src/sidebar/vendor/material.css'),
   copySync('node_modules/material-design-lite/LICENSE', 'src/sidebar/vendor/material.LICENSE'),
   copySync('node_modules/@ckeditor/ckeditor5-build-classic/LICENSE.md', 'src/sidebar/vendor/ckeditor.LICENSE'),
   // Remove quill after migration
