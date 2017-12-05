@@ -8,6 +8,7 @@ test/dist/*
 ckeditor-build/build/*
 
 android/.idea
+mobile/notes-mobile/platforms
 
 #Mac
 .DS_Store

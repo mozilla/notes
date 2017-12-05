@@ -345,7 +345,8 @@ function getXcodeArchiveArgs (projectName, projectPath, outputPath, exportOption
         '-exportArchive',
         '-archivePath', projectName + '.xcarchive',
         '-exportOptionsPlist', exportOptionsPath,
-        '-exportPath', outputPath
+        '-exportPath', outputPath,
+        '-allowProvisioningUpdates'
     ].concat(autoProvisioning ? ['-allowProvisioningUpdates'] : []);
 }
 
