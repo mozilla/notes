@@ -1,0 +1,120 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "cordova-plugin-whitelist@1",
+        "scope": null,
+        "escapedName": "cordova-plugin-whitelist",
+        "name": "cordova-plugin-whitelist",
+        "rawSpec": "1",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/Users/vladikoff/dev/notes/mobile/notes-mobile"
+    ]
+  ],
+  "_from": "cordova-plugin-whitelist@>=1.0.0 <2.0.0",
+  "_id": "cordova-plugin-whitelist@1.3.3",
+  "_inCache": true,
+  "_location": "/cordova-plugin-whitelist",
+  "_nodeVersion": "6.6.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/cordova-plugin-whitelist-1.3.3.tgz_1510361682681_0.11782261240296066"
+  },
+  "_npmUser": {
+    "name": "stevegill",
+    "email": "stevengill97@gmail.com"
+  },
+  "_npmVersion": "4.6.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "cordova-plugin-whitelist@1",
+    "scope": null,
+    "escapedName": "cordova-plugin-whitelist",
+    "name": "cordova-plugin-whitelist",
+    "rawSpec": "1",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-whitelist/-/cordova-plugin-whitelist-1.3.3.tgz",
+  "_shasum": "b5e85ecdbbfe5aeded40a1bf4ee2372e67d96fb4",
+  "_shrinkwrap": null,
+  "_spec": "cordova-plugin-whitelist@1",
+  "_where": "/Users/vladikoff/dev/notes/mobile/notes-mobile",
+  "author": {
+    "name": "Apache Software Foundation"
+  },
+  "bugs": {
+    "url": "https://issues.apache.org/jira/browse/CB"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  },
+  "dependencies": {},
+  "description": "Cordova Whitelist Plugin",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "b5e85ecdbbfe5aeded40a1bf4ee2372e67d96fb4",
+    "tarball": "https://registry.npmjs.org/cordova-plugin-whitelist/-/cordova-plugin-whitelist-1.3.3.tgz"
+  },
+  "engines": {
+    "cordovaDependencies": {
+      "0.0.0": {
+        "cordova-android": ">=4.0.0"
+      },
+      "2.0.0": {
+        "cordova": ">100"
+      }
+    }
+  },
+  "homepage": "https://github.com/apache/cordova-plugin-whitelist#readme",
+  "keywords": [
+    "cordova",
+    "whitelist",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "license": "Apache-2.0",
+  "maintainers": [
+    {
+      "name": "bowserj",
+      "email": "bowserj@apache.org"
+    },
+    {
+      "name": "csantanapr",
+      "email": "csantana23@gmail.com"
+    },
+    {
+      "name": "filmaj",
+      "email": "maj.fil@gmail.com"
+    },
+    {
+      "name": "purplecabbage",
+      "email": "purplecabbage@gmail.com"
+    },
+    {
+      "name": "shazron",
+      "email": "shazron@gmail.com"
+    },
+    {
+      "name": "stevegill",
+      "email": "stevengill97@gmail.com"
+    }
+  ],
+  "name": "cordova-plugin-whitelist",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apache/cordova-plugin-whitelist.git"
+  },
+  "version": "1.3.3"
+}
