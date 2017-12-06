@@ -16,6 +16,10 @@ function customizeEditor(editor) {
     });
   });
 
+  document.addEventListener('drop', () => {
+    editor.fire('changesDone');
+  });
+
   localizeEditorButtons();
 }
 
