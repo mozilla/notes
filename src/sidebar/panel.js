@@ -20,6 +20,7 @@ let isAuthenticated = false;
 let waitingToReconnect = false;
 let loginTimeout;
 let editingInProcess = false;
+let syncingInProcess = false;
 
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
@@ -104,6 +105,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'text-syncing':
             setAnimation(true); // animateSyncIcon, syncingLayout, warning
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            // Disable sync-action
+            syncingInProcess = true;
             break;
           case 'text-editing':
             if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
@@ -120,6 +123,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
             }
             ignoreTextSynced = false;
             getLastSyncedTime();
+            // Enable sync-action
+            syncingInProcess = false;
             break;
           case 'text-saved':
             if (! waitingToReconnect) {
@@ -132,6 +137,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'reconnect':
             clearTimeout(loginTimeout);
             reconnectSync();
+            // Enable sync-action
+            syncingInProcess = false;
             break;
           case 'disconnected':
             disconnectSync.style.display = 'none';
@@ -214,7 +221,7 @@ function disconnectFromSync () {
 disconnectSync.addEventListener('click', disconnectFromSync);
 
 function enableSyncAction(editor) {
-  if (editingInProcess) {
+  if (editingInProcess || syncingInProcess) {
     return;
   }
 
