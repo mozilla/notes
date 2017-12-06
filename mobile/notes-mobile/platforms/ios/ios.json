@@ -11,6 +11,10 @@
             {
               "xml": "<feature name=\"InAppBrowser\"><param name=\"ios-package\" value=\"CDVInAppBrowser\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"SplashScreen\"><param name=\"ios-package\" value=\"CDVSplashScreen\" /><param name=\"onload\" value=\"true\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -18,11 +22,14 @@
     }
   },
   "installed_plugins": {
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
-    },
     "cordova-plugin-inappbrowser": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
     }
   },
   "dependent_plugins": {},
@@ -35,10 +42,19 @@
         "cordova.InAppBrowser.open",
         "window.open"
       ]
+    },
+    {
+      "id": "cordova-plugin-splashscreen.SplashScreen",
+      "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+      "pluginId": "cordova-plugin-splashscreen",
+      "clobbers": [
+        "navigator.splashscreen"
+      ]
     }
   ],
   "plugin_metadata": {
+    "cordova-plugin-inappbrowser": "1.7.2",
     "cordova-plugin-whitelist": "1.3.3",
-    "cordova-plugin-inappbrowser": "1.7.2"
+    "cordova-plugin-splashscreen": "4.1.0"
   }
 }

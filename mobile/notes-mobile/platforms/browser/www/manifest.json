@@ -1,11 +1,11 @@
 {
   "background_color": "#FFF",
   "display": "standalone",
-  "name": "HelloCordova",
-  "short_name": "HelloCordova",
-  "version": "org.mozilla.ios.Klar.debug",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
-  "author": "Apache Cordova Team",
+  "name": "Notes",
+  "short_name": "Notes",
+  "version": "org.mozilla.ios.notes.debug",
+  "description": "TestPilot Notes experiment",
+  "author": "Notes Team",
   "icons": [],
   "start_url": "index.html"
 }

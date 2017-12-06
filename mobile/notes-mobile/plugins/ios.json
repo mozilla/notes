@@ -7,11 +7,14 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
-    },
     "cordova-plugin-inappbrowser": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "org.mozilla.ios.notes.debug"
     }
   },
   "dependent_plugins": {}

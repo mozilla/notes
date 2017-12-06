@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.mozilla.ios.Klar.debug" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>HelloCordova</name>
+<widget id="org.mozilla.ios.notes.debug" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Notes</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        TestPilot Notes experiment
     </description>
     <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+        Notes Team
     </author>
     <content src="index.html" />
     <access origin="*" />

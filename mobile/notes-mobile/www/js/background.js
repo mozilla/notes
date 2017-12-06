@@ -410,7 +410,7 @@ function authenticate() {
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
     const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
-    alert(JSON.stringify(key))
+    //alert(JSON.stringify(key))
     //alert(JSON.stringify(loginDetails))
     const creds = {
       access_token: loginDetails.access_token,
@@ -426,12 +426,12 @@ function authenticate() {
 
     fxaFetchProfile(FXA_PROFILE_SERVER, creds.access_token).then((profile) => {
       console.log(profile);
-      alert(JSON.stringify(profile));
+      //alert(JSON.stringify(profile));
       try {
         window.localStorage.setItem('credentials', JSON.stringify(creds));
 
         loadFromKinto(client, creds).then((data) => {
-          document.querySelector('.app').innerHTML = data.content;
+          document.querySelector('.ck-editor__main').innerHTML = data.content;
         });
 
         //loadFromKinto(client, credentials);
@@ -531,3 +531,36 @@ const defaultTheme = {
 //       browser.storage.local.set(defaultTheme);
 //   });
 //
+
+const enableSync = document.getElementById('enable-sync');
+const exit = document.getElementById('give-feedback-button');
+
+enableSync.onclick = () => {
+  const creds = window.localStorage.getItem('credentials');
+  if (creds) {
+    loadFromKinto(client, JSON.parse(creds)).then((data) => {
+      document.querySelector('.ck-editor__main').innerHTML = data.content;
+    });
+  } else {
+    authenticate();
+  }
+};
+
+var refreshy = function () {
+  var creds = window.localStorage.getItem('credentials');
+  if (creds) {
+    loadFromKinto(client, JSON.parse(creds)).then((data) => {
+      document.querySelector('.ck-editor__main').innerHTML = data.content;
+    });
+  }
+  setTimeout(refreshy, 10000);
+};
+
+refreshy();
+
+
+exit.onclick = () => {
+  window.localStorage.removeItem('credentials')
+  document.querySelector('.ck-editor__main').innerHTML = '';
+  alert('Disconnected')
+};

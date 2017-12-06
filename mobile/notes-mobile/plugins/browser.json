@@ -12,6 +12,9 @@
     },
     "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "io.cordova.hellocordova"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "org.mozilla.ios.Klar.debug"
     }
   },
   "dependent_plugins": {}
