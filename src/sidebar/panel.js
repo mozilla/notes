@@ -80,6 +80,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
           case 'sync-authenticated':
             setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
             isAuthenticated = true;
+            waitingToReconnect = false;
+            clearTimeout(loginTimeout);
             // set title attr of footer to the currently logged in account
             footerButtons.title = eventData.profile && eventData.profile.email;
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
@@ -245,6 +247,7 @@ function enableSyncAction(editor) {
     loginTimeout = setTimeout(() => {
       setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
       savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+      waitingToReconnect = true;
     }, 5000);
 
     browser.runtime.sendMessage({
