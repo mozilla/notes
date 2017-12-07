@@ -4,6 +4,7 @@ html {
   line-height: 1.2em;
   overflow: hidden;
   margin: 0;
+  --sync-animation-duration: .4s;
 }
 
 body, body .ck-editor {
@@ -101,47 +102,144 @@ footer {
 
 #footer-buttons {
   align-items: stretch;
+  position: relative;
   border-top: 1px solid #d7d7db;
   display: flex;
   justify-content: space-between;
   width: 100%;
   height: 40px;
+  background-color: transparent;
+  transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
 }
 
-#saving-indicator {
+/* warning style */
+#footer-buttons.warning {
+  background-color: rgb(255, 236, 173);
+  transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
+}
+
+#footer-buttons.warning div:first-child {
+  color: black;
+}
+
+#footer-buttons div:first-child {
+  position: relative;
   flex: 1 0;
-  padding: 10px;
+  padding: 10px 40px 10px 10px;
   color: #969696;
   text-align: left;
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition: padding 0s .2s;
 }
 
+#footer-buttons.syncingLayout div:first-child {
+  padding: 10px 10px 10px 40px;
+  transition: padding 0s .2s;
+}
+
+/* Hide saving-indication then move enable-sync then show saving-indicator */
+@keyframes blink {
+  0% { opacity: 1; }
+  25% { opacity: 0; }
+  75% { opacity: 0; }
+  100% { opacity: 1; }
+}
+#saving-indicator.blink {
+  animation-name: blink;
+  animation-duration: var(--sync-animation-duration);
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+/* Sync icon */
 #enable-sync {
-  background-image: url('sync-16-inactive.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 40px;
+  cursor: pointer;
   border-left: 1px solid #d7d7db;
   display: flex;
-  flex: 0 0 40px;
+  justify-content: center;
+  align-items: center;
 }
 
-#give-feedback {
-  background-image: url('feedback.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
+.savingLayout #enable-sync {
+  margin-right: 0px;
+  transition: margin var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) .05s, border 0s cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+}
+
+.syncingLayout #enable-sync  {
+  margin-right: calc(100% - 40px);
+  background: none;
+  border-left: none;
+  transition: margin var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) .05s;
+}
+
+.savingLayout #enable-sync:hover {
+  background-color: #ebebee;
+}
+
+.syncingLayout #enable-sync:hover {
+  background: transparent;
+}
+
+/* Animate sync icon */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+#enable-sync svg {
+  animation-name: rotate;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+.animateSyncIcon #enable-sync svg {
+  animation-play-state: running;
+}
+
+.animateSyncIcon #enable-sync svg path {
+  fill: #4E92DD;
+}
+
+/* Feedback button on right side */
+#give-feedback-button {
+  cursor: pointer;
   border-left: 1px solid #d7d7db;
   display: flex;
   flex: 0 0 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Display feedback button with opacity */
+.savingLayout #give-feedback-button {
+  opacity: 1;
+  z-index: 1;
+  visiblity: visible;
+  transition: opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+}
+
+/* Hide Feedback button with opacity */
+.syncingLayout #give-feedback-button {
+  opacity: 0;
+  z-index: 0;
+  cursor: default;
+  visiblity: hidden;
+  transition: opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1), visibity 0s var(--sync-animation-duration);
 }
 
 #footer-buttons button,
 #footer-buttons a {
-  background-color: #f9f9fa;
   transition: background 50ms;
 }
 
@@ -166,7 +264,7 @@ footer {
 #migration-note {
   display: none;
   padding: 3px 0 5px 0;
-  background: #FFECAD;
+  background: #B6FEB4;
   width: 100%;
   position: relative;
   margin: 0 auto;
@@ -211,6 +309,55 @@ footer {
 #sync-note.visible,
 #migration-note.visible {
   display: block;
+}
+
+
+/* Select menu from sync */
+#context-menu-button {
+  background-size: 3px;
+  background-image: url('three-dots.svg');
+  background-position:  50%;
+  background-repeat: no-repeat;
+  width: 22px;
+  text-align: left;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  bottom: 6px;
+}
+
+#context-menu-button:hover,
+#context-menu-button:focus,
+#context-menu-button:active {
+  background-color: rgba(128, 128, 128, 0.2) !important;
+}
+
+/* Hide select menu on saving mode */
+.savingLayout #context-menu-button{
+  opacity: 0;
+  visibility: none;
+  z-index: 0;
+  transition: visibility 0s var(--sync-animation-duration), opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
+}
+
+/* Show select menu on syncing mode */
+.syncingLayout #context-menu-button{
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+  transition: visibility 0s var(--sync-animation-duration), opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+}
+
+.context-menu {
+  font-family: inherit;
+  padding: 0;
+}
+
+.context-menu-item {
+  font-size: 12px;
+  padding: 0 0 0 15px;
+  height: 18px;
+  line-height: 30px;
 }
 
 /**

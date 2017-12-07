@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "1.10.0dev",
+  "version": "2.0.0dev",
   "default_locale": "en_US",
   "author": "Mozilla Test Pilot team",
   "applications": {
@@ -23,11 +23,18 @@
   },
   "permissions": [
     "storage",
+    "identity",
     "https://ssl.google-analytics.com/collect"
   ],
   "background": {
     "scripts": [
+      "vendor/jose.js",
+      "vendor/kinto-http.js",
+      "vendor/kinto.js",
+      "vendor/fxa-crypto-relier/fxa-crypto-relier.js",
       "vendor/testpilot-ga.js",
+      "fxa-utils.js",
+      "sync.js",
       "background.js"
     ]
   },

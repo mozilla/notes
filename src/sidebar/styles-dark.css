@@ -6,13 +6,49 @@ body {
   background-color: #272B35;
 }
 
-#enable-sync {
-  background-image: url('dark-svg/sync-16-dark.svg');
+#enable-sync svg path {
+  fill: #e6e6e6 !important;
 }
 
-#give-feedback {
-  background-image: url('dark-svg/feedback-dark.svg');
+#footer-buttons.warning #enable-sync svg path {
+  fill: #333333 !important;
 }
+
+.savingLayout #enable-sync:hover {
+  background-color: #323744;
+}
+
+#give-feedback-button svg path {
+  fill: #e6e6e6 !important;
+}
+
+/* material-design-lite (MDL) menu */
+#context-menu-button {
+  background-image: url('dark-svg/three-dots-dark.svg');
+}
+
+#footer-buttons.warning #context-menu-button {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.mdl-menu__outline {
+  background: #272B35;
+  transition: none;
+}
+
+.context-menu-item {
+  color: #e6e6e6;
+  background-color: #272B35;
+}
+
+.context-menu-item:hover {
+  background-color: #323744;
+}
+
+.context-menu-item:active {
+  background-color: #3d4352;
+}
+/* end MDL menu */
 
 #footer-buttons button,
 #footer-buttons a {
@@ -104,7 +140,7 @@ body {
 background: transparent;
 }
 
-#notes .ck-toolbar .ck-button .ck-icon, 
+#notes .ck-toolbar .ck-button .ck-icon,
 #notes .ck-toolbar a.ck-button .ck-icon {
   background: transparent;
 }
