@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.10.0 (unreleased)
+## 2.0.0 (2017-12-08)
 
-* No changes yet.
+* Add Sync support wiht Kinto
 
 
 ## 1.9.0 (2017-11-24)
