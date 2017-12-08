@@ -114,7 +114,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = true;
             break;
           case 'text-editing':
-            if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            if (isAuthenticated) {
+              setAnimation(true); // animateSyncIcon, syncingLayout, warning
+              syncingInProcess = true;
+            }
             if (! waitingToReconnect) {
               savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
             }
