@@ -16,6 +16,8 @@ const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
+const INITIAL_CONTENT = `<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`;
+
 let isAuthenticated = false;
 let waitingToReconnect = false;
 let loginTimeout;
@@ -51,7 +53,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
           const content = editor.getData();
-          if (!ignoreNextLoadEvent && content !== undefined) {
+          if (!ignoreNextLoadEvent && content !== undefined &&
+              content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
             chrome.runtime.sendMessage({
               action: 'kinto-save',
@@ -111,7 +114,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = true;
             break;
           case 'text-editing':
-            if (isAuthenticated) setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            if (isAuthenticated) {
+              setAnimation(true); // animateSyncIcon, syncingLayout, warning
+              syncingInProcess = true;
+            }
             if (! waitingToReconnect) {
               savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
             }
@@ -174,7 +180,7 @@ function handleLocalContent(editor, content) {
   if (!content) {
     browser.storage.local.get('notes2').then((data) => {
       if (!data.hasOwnProperty('notes2')) {
-        editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
+        editor.setData(INITIAL_CONTENT);
         ignoreNextLoadEvent = true;
       } else {
         editor.setData(data.notes2);
