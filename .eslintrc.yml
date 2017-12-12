@@ -3,17 +3,34 @@ env:
   es6: true
   webextensions: true
 
+parserOptions:
+  ecmaVersion: 2017
+
 extends:
   - eslint:recommended
 
 globals:
-  KintoClient: false
-  Quill: false
+  BrowserStorageCredentials: false
+  ClassicEditor: false
   Jose: false
   JoseJWE: false
+  Kinto: false
+  KintoClient: false
+  Quill: false
   TestPilotGA: false
-  ClassicEditor: false
+  customizeEditor: false
+  disconnectFromKinto: false
+  formatFooterTime: false
+  fxaCryptoRelier: false
+  fxaFetchProfile: false
+  fxaRenewCredential: false
+  getPadStats: false
+  loadFromKinto: false
+  localizeEditorButtons: false
   migrationCheck: false
+  retrieveNote: false
+  saveToKinto: false
+  setAnimation: false
 
 root: true
 

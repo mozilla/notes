@@ -15,8 +15,10 @@ migrationCloseButton.addEventListener('click', () => {
 });
 
 function migrationCheck(editor) {
-  console.log('Editor migration started...');
+  console.log('Editor migration started...');  // eslint-disable-line no-console
   const quill = new Quill('#migrationPlaceholder', {});
+
+  syncNowEnabledCheck();
 
   // get the old data from Quill storage
   return browser.storage.local.get(['notes']).then((data) => {
@@ -27,7 +29,7 @@ function migrationCheck(editor) {
       browser.storage.local.set({ notesQuillBackup: data.notes });
     } else {
       // if there is no old data then nothing to do
-      console.log('Already migrated.');
+      console.log('Already migrated.');  // eslint-disable-line no-console
 
       chrome.runtime.sendMessage({
         action: 'metrics-migrated-before'
@@ -41,20 +43,17 @@ function migrationCheck(editor) {
       // set CKEditor contents
       editor.setData(oldNoteDataHtml);
 
-      // get the new data as Markdown
-      const newData = editor.getData();
-
       // place into CKEditor storage
-      return browser.storage.local.set({ notes2: newData }).then(() => {
+      return browser.storage.local.set({ notes2: oldNoteDataHtml }).then(() => {
         // call setData again to remove spacing issues, force re-render
-        editor.setData(newData);
+        editor.setData(oldNoteDataHtml);
 
         chrome.runtime.sendMessage({
           action: 'metrics-migrated'
         });
 
         migrationNote.classList.toggle('visible');
-        console.log('Editor migration complete.');
+        console.log('Editor migration complete.');  // eslint-disable-line no-console
       });
 
     });
@@ -62,4 +61,27 @@ function migrationCheck(editor) {
     // render contents of quill to make HTML export possible
     quill.setContents(data.notes);
   });
+}
+
+/**
+ * If users asked to sync before we show them that sync is now available
+ */
+function syncNowEnabledCheck() {
+  const noteDiv = document.getElementById('sync-note');
+  const syncNoteBody = document.getElementById('sync-note-dialog');
+  syncNoteBody.textContent = browser.i18n.getMessage('syncReady');
+  const closeButton = document.getElementById('close-button');
+
+  // do not block editor on this getter
+  browser.storage.local.get('asked-for-syncing').then((data) => {
+    if(data && data['asked-for-syncing']) {
+      noteDiv.classList.toggle('visible');
+      browser.storage.local.remove('asked-for-syncing');
+    }
+  });
+
+  closeButton.addEventListener('click', () => {
+    noteDiv.classList.toggle('visible');
+  });
+
 }

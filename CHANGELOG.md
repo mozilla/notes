@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0 (2017-12-08)
+
+* Add Sync support wiht Kinto
+
+
 ## 1.9.0 (2017-11-24)
 
 * Move from Quii.JS to CKEditor 5

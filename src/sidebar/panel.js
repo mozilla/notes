@@ -5,225 +5,283 @@ const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
 const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
-const savingIndicator = document.getElementById('saving-indicator');
+const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
-const giveFeedback = document.getElementById('give-feedback');
-const noteDiv = document.getElementById('sync-note');
-const syncNoteBody = document.getElementById('sync-note-dialog');
-const closeButton = document.getElementById('close-button');
+const giveFeedbackButton = document.getElementById('give-feedback-button');
+const giveFeedbackMenuItem = document.getElementById('give-feedback');
+const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+
+const disconnectSync = document.getElementById('disconnect-from-sync');
+disconnectSync.style.display = 'none';
+disconnectSync.textContent = browser.i18n.getMessage('disableSync');
+
+const INITIAL_CONTENT = `<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`;
+
+let isAuthenticated = false;
+let waitingToReconnect = false;
+let loginTimeout;
+let editingInProcess = false;
+let syncingInProcess = false;
+
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
-syncNoteBody.textContent = browser.i18n.getMessage('syncNotReady2');
-giveFeedback.setAttribute('title', browser.i18n.getMessage('giveFeedback'));
-giveFeedback.setAttribute('href', SURVEY_PATH);
+giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
+giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
+giveFeedbackButton.setAttribute('href', SURVEY_PATH);
+giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
+
+// ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
+let ignoreNextLoadEvent = false;
+let ignoreTextSynced = false;
+let lastModified;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
     options: [
       { modelElement: 'paragraph', title: 'P', class: 'ck-heading_paragraph' },
-      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' },
+      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' },
       { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
-      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' }
+      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' }
     ]
   },
   toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
 }).then(editor => {
   return migrationCheck(editor)
     .then(() => {
-      let ignoreNextLoadEvent = false;
-
       editor.document.on('change', (eventInfo, name) => {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
-        if (isFocused || name === 'rename') {
+        if (isFocused || name === 'rename' || name === 'insert') {
           const content = editor.getData();
-          browser.storage.local.set({ notes2: content }).then(() => {
-            // Notify other sidebars
-            if (!ignoreNextLoadEvent) {
-              chrome.runtime.sendMessage('notes@mozilla.com', {
-                action: 'text-change'
-              });
+          if (!ignoreNextLoadEvent && content !== undefined &&
+              content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
+            ignoreTextSynced = true;
+            chrome.runtime.sendMessage({
+              action: 'kinto-save',
+              content
+            });
 
-              updateSavingIndicator();
-              // Debounce this second event
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats(editor)
-              });
-            } else {
-              ignoreNextLoadEvent = false;
-            }
-          });
+            chrome.runtime.sendMessage({
+              action: 'metrics-changed',
+              context: getPadStats(editor)
+            });
+          }
         }
+        ignoreNextLoadEvent = false;
       });
 
       enableSync.onclick = () => {
-        noteDiv.classList.toggle('visible');
-        browser.runtime.sendMessage({
-          action: 'authenticate',
-          context: getPadStats(editor)
-        });
+        enableSyncAction(editor);
       };
 
-      loadContent(editor)
-        .then(() => {
-          document.getElementById('loading').style.display = 'none';
-        });
+      customizeEditor(editor);
+      loadContent();
 
       chrome.runtime.onMessage.addListener(eventData => {
+        let content;
         switch (eventData.action) {
+          case 'sync-authenticated':
+            setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+            isAuthenticated = true;
+            waitingToReconnect = false;
+            clearTimeout(loginTimeout);
+            // set title attr of footer to the currently logged in account
+            footerButtons.title = eventData.profile && eventData.profile.email;
+            savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            browser.runtime.sendMessage({
+              action: 'kinto-sync'
+            });
+            break;
+          case 'kinto-loaded':
+            clearTimeout(loginTimeout);
+            content = eventData.data;
+            // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
+            lastModified = Date.now();
+            getLastSyncedTime();
+            handleLocalContent(editor, content);
+            document.getElementById('loading').style.display = 'none';
+            break;
           case 'text-change':
             ignoreNextLoadEvent = true;
-            loadContent(editor);
+            browser.runtime.sendMessage({
+              action: 'kinto-load'
+            });
+            break;
+          case 'text-syncing':
+            setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            // Disable sync-action
+            syncingInProcess = true;
+            break;
+          case 'text-editing':
+            if (isAuthenticated) {
+              setAnimation(true); // animateSyncIcon, syncingLayout, warning
+              syncingInProcess = true;
+            }
+            if (! waitingToReconnect) {
+              savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            }
+            // Disable sync-action
+            editingInProcess = true;
+            break;
+          case 'text-synced':
+            lastModified = eventData.last_modified;
+            if (!ignoreTextSynced || eventData.conflict) {
+              handleLocalContent(editor, eventData.content);
+            }
+            ignoreTextSynced = false;
+            getLastSyncedTime();
+            // Enable sync-action
+            syncingInProcess = false;
+            break;
+          case 'text-saved':
+            if (! waitingToReconnect) {
+              // persist reconnect warning, do not override with the 'saved at'
+              savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+            }
+            // Enable sync-action
+            editingInProcess = false;
+            break;
+          case 'reconnect':
+            clearTimeout(loginTimeout);
+            reconnectSync();
+            // Enable sync-action
+            syncingInProcess = false;
+            break;
+          case 'disconnected':
+            disconnectSync.style.display = 'none';
+            footerButtons.title = null; // remove profile email from title attribute
+            isAuthenticated = false;
+            setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+            getLastSyncedTime();
             break;
         }
       });
-      // Disable right clicks
-      // Refs: https://stackoverflow.com/a/737043/186202
-      document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
-        sel.addEventListener('contextmenu', e => {
-          e.preventDefault();
-        });
-      });
-
-      // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
-      // Ref: https://github.com/mozilla/notes/issues/424
-      document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          editor.fire('changesDone');
-        });
-      });
-
-      localizeEditorButtons();
     });
 
 }).catch(error => {
-  console.error(error);
+  console.error(error); // eslint-disable-line no-console
 });
 
-
-function handleLocalContent(editor, data) {
-  if (!data.hasOwnProperty('notes2')) {
-    editor.setData(`<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`);
-  } else {
-    if (JSON.stringify(editor.getData()) !== JSON.stringify(data.notes2)) {
-      editor.setData(data.notes2);
+function loadContent() {
+  browser.storage.local.get('credentials').then((data) => {
+    if (data.hasOwnProperty('credentials')) {
+      isAuthenticated = true;
     }
-  }
+  });
+  ignoreNextLoadEvent = true;
+  chrome.runtime.sendMessage({
+    action: 'kinto-sync'
+  });
+
 }
 
-function loadContent(editor) {
-  return new Promise((resolve) => {
-    browser.storage.local.get(['notes2'], data => {
-      // If we have a bearer, we try to save the content.
-      handleLocalContent(editor, data);
-      resolve();
+function handleLocalContent(editor, content) {
+  if (!content) {
+    browser.storage.local.get('notes2').then((data) => {
+      if (!data.hasOwnProperty('notes2')) {
+        editor.setData(INITIAL_CONTENT);
+        ignoreNextLoadEvent = true;
+      } else {
+        editor.setData(data.notes2);
+        chrome.runtime.sendMessage({
+          action: 'kinto-save',
+          content: data.notes2
+        }).then(() => {
+          // Clean-up
+          browser.storage.local.remove('notes2');
+        });
+      }
     });
-  });
-}
-
-let savingIndicatorTimeout;
-function updateSavingIndicator() {
-  savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
-  const later = function() {
-    savingIndicatorTimeout = null;
-    savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
-  };
-  clearTimeout(savingIndicatorTimeout);
-  savingIndicatorTimeout = setTimeout(later, 300);
-}
-
-
-closeButton.addEventListener('click', () => {
-  noteDiv.classList.toggle('visible');
-});
-
-function getPadStats(editor) {
-  // const content = quill.getContents();
-  const text = editor.getData();
-  const styles = {
-    size: false,
-    bold: false,
-    italic: false,
-    strike: false,
-    list: false,
-    list_bulleted: false,
-    list_numbered: false
-  };
-
-  const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
-
-  for ( const value of range ) {
-    if (value.type === 'text') {
-      // Bold
-      if (value.item.textNode._attrs.get('bold')) {
-        styles.bold = true;
-      }
-      // Italic
-      if (value.item.textNode._attrs.get('italic')) {
-        styles.italic = true;
-      }
-    }
-
-    if (value.type === 'elementStart') {
-      // Size
-      if (value.item.name.indexOf('heading') === 0) {
-        styles.size = true;
-      }
-
-      // List
-      if (value.item.name === 'listItem') {
-        styles.list = true;
-        if (value.item._attrs.get('type') === 'bulleted') {
-          styles.list_bulleted = true;
-        } else if (value.item._attrs.get('type') === 'numbered') {
-          styles.list_numbered = true;
-        }
-      }
+  } else {
+    if (editor.getData() !== content) {
+      editor.setData(content);
     }
   }
-
-  return {
-    syncEnabled: false,
-    characters: text.length,
-    lineBreaks: (text.match(/\n/g) || []).length,
-    usesSize: styles.size,
-    usesBold: styles.bold,
-    usesItalics: styles.italic,
-    usesStrikethrough: styles.strike,
-    usesList: styles.list
-  };
 }
 
-function localizeEditorButtons () {
-  // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
-  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
-    sel.remove();
+function reconnectSync () {
+  waitingToReconnect = true;
+  isAuthenticated = false;
+  setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+  savingIndicator.textContent = browser.i18n.getMessage('reconnectSync');
+  chrome.runtime.sendMessage({
+    action: 'metrics-reconnect-sync'
   });
-
-  let userOSKey;
-
-  if (navigator.appVersion.indexOf('Mac') !== -1)
-    userOSKey = '⌘';
-  else
-    userOSKey = 'Ctrl';
-
-  const size = document.querySelector('button.ck-button:nth-child(1)'),
-    // Need to target buttons by index. Ref: https://github.com/ckeditor/ckeditor5-basic-styles/issues/59
-    bold = document.querySelector('button.ck-button:nth-child(2)'),
-    italic = document.querySelector('button.ck-button:nth-child(3)'),
-    strike = document.querySelector('button.ck-button:nth-child(4)'),
-    bullet = document.querySelector('button.ck-button:nth-child(5)'),
-    ordered = document.querySelector('button.ck-button:nth-child(6)');
-
-// Setting button titles in place of tooltips
-  size.title = browser.i18n.getMessage('fontSizeTitle');
-  bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
-  italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
-  strike.title = browser.i18n.getMessage('strikethroughTitle');
-  ordered.title = browser.i18n.getMessage('numberedListTitle');
-  bullet.title = browser.i18n.getMessage('bulletedListTitle');
 }
+
+function disconnectFromSync () {
+  waitingToReconnect = false;
+  disconnectSync.style.display = 'none';
+  isAuthenticated = false;
+  setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+  setTimeout(() => {
+    savingIndicator.textContent = browser.i18n.getMessage('disconnected');
+  }, 200);
+  setTimeout(() => {
+    getLastSyncedTime();
+  }, 2000);
+  browser.runtime.sendMessage('notes@mozilla.com', {
+    action: 'disconnected'
+  });
+}
+
+disconnectSync.addEventListener('click', disconnectFromSync);
+
+function enableSyncAction(editor) {
+  if (editingInProcess || syncingInProcess) {
+    return;
+  }
+
+  if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
+    // Trigger manual sync
+    setAnimation(true);
+    browser.runtime.sendMessage({
+        action: 'kinto-sync'
+      });
+  } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
+    // Login
+    setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+
+    // enable disable sync button
+    disconnectSync.style.display = 'block';
+
+    setTimeout(() => {
+      savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+    }, 200); // Delay text for smooth animation
+
+    loginTimeout = setTimeout(() => {
+      setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+      savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+      waitingToReconnect = true;
+    }, 5000);
+
+    browser.runtime.sendMessage({
+      action: 'authenticate',
+      context: getPadStats(editor)
+    });
+  }
+
+  waitingToReconnect = false;
+}
+
+function getLastSyncedTime() {
+  if (waitingToReconnect) {
+    // persist reconnect warning, do not override with the 'saved at'
+    return;
+  }
+
+  if (isAuthenticated) {
+    savingIndicator.textContent = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified));
+    disconnectSync.style.display = 'block';
+    isAuthenticated = true;
+    setAnimation(false, true);
+  } else {
+    savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+  }
+}
+
+document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 
 // Create a connection with the background script to handle open and
 // close events.
