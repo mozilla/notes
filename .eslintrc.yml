@@ -11,24 +11,25 @@ extends:
 
 globals:
   BrowserStorageCredentials: false
-  fxaCryptoRelier: false
-  fxaFetchProfile: false
-  formatFooterTime: false
+  ClassicEditor: false
   Jose: false
   JoseJWE: false
   Kinto: false
   KintoClient: false
-  loadFromKinto: false
-  retrieveNote: false
   Quill: false
-  saveToKinto: false
   TestPilotGA: false
-  ClassicEditor: false
-  migrationCheck: false
-  fxaRenewCredential: false
   customizeEditor: false
+  disconnectFromKinto: false
+  formatFooterTime: false
+  fxaCryptoRelier: false
+  fxaFetchProfile: false
+  fxaRenewCredential: false
   getPadStats: false
+  loadFromKinto: false
   localizeEditorButtons: false
+  migrationCheck: false
+  retrieveNote: false
+  saveToKinto: false
   setAnimation: false
 
 root: true

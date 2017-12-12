@@ -1,6 +1,7 @@
+/* exported BrowserStorageCredentials */
+/* exported disconnectFromKinto */
 /* exported loadFromKinto */
 /* exported saveToKinto */
-/* exported BrowserStorageCredentials */
 
 let syncDebounce = null;
 
@@ -345,4 +346,11 @@ function saveToKinto(client, credentials, content) {
   clearTimeout(syncDebounce);
   syncDebounce = setTimeout(later, 1000);
   return promise;
+}
+
+function disconnectFromKinto(client) {
+  const notes = client.collection('notes', {
+    idSchema: notesIdSchema,
+  });
+  return notes.resetSyncStatus();
 }
