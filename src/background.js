@@ -173,3 +173,8 @@ browser.storage.local.get()
       // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
 });
+
+// Handle onClick event for the toolbar button
+browser.browserAction.onClicked.addListener(() => {
+  browser.sidebarAction.open();
+});
