@@ -155,6 +155,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
             setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
             getLastSyncedTime();
             break;
+          case 'send-to-notes':
+            // insert eventData.text in editor
+            insertSelectedText(editor, eventData.text);
+            break;
         }
       });
     });
@@ -286,3 +290,9 @@ document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 // Create a connection with the background script to handle open and
 // close events.
 browser.runtime.connect();
+
+function insertSelectedText(editor, text) {
+  let currentNoteContents = editor.getData();
+  let updatedNotesContents = currentNoteContents + '\n' + text;
+  editor.setData(updatedNotesContents);
+}

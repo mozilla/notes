@@ -173,3 +173,16 @@ browser.storage.local.get()
       // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
 });
+
+// context menu for 'Send to Notes'
+browser.contextMenus.create({
+  id: "send-to-notes",
+  title: "Send to Notes",
+  contexts: ["selection"]
+});
+browser.contextMenus.onClicked.addListener((info, tab) => {
+  chrome.runtime.sendMessage({
+    action: 'send-to-notes',
+    text: info.selectionText
+  });
+});

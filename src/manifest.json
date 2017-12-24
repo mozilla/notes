@@ -22,6 +22,7 @@
     "default_panel": "sidebar/panel.html"
   },
   "permissions": [
+    "contextMenus",
     "storage",
     "identity",
     "https://ssl.google-analytics.com/collect"
