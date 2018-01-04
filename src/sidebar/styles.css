@@ -268,8 +268,8 @@ footer {
   width: 100%;
   position: relative;
   margin: 0 auto;
-  border: 1px solid #ccc;
-  border-bottom: 0;
+  border: 0;
+  border-top: 1px solid #ccc;
 }
 
 #migration-note {
