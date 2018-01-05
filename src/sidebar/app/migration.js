@@ -85,3 +85,5 @@ function syncNowEnabledCheck() {
   });
 
 }
+
+export default migrationCheck;

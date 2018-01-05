@@ -1,4 +1,8 @@
 /* exported TEXT_ALIGN_DIR */
+import migrationCheck from './migration';
+import {formatFooterTime, customizeEditor} from './editor';
+import './theme.js';
+
 const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
 const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';

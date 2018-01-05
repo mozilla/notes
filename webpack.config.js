@@ -8,6 +8,8 @@
 /* eslint-env node */
 
 const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -18,9 +20,24 @@ module.exports = {
 
   output: {
     // build to the extension src vendor directory
-    path: path.resolve(__dirname, 'build', 'sidebar'),
-    filename: 'app.js',
+    path: path.resolve(__dirname, 'build'),
+    filename: path.join('sidebar', 'app.js'),
   },
+  plugins: [
+    // cleanup build folder
+    new CleanWebpackPlugin([
+      'build'
+    ]),
+    // Moves files
+    new CopyWebpackPlugin([
+      {from: path.join('src')}
+    ], {
+      ignore: [
+          '.DS_Store',
+          // path.join('src', 'sidebar', 'app')
+      ],
+    }),
+  ],
 
   module: {
     rules: [
