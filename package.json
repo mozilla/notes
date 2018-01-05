@@ -18,7 +18,6 @@
     "@ckeditor/ckeditor5-heading": "vladikoff/ckeditor5-heading#short-heading",
     "@ckeditor/ckeditor5-list": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.2",
-    "babel-minify-webpack-plugin": "^0.2.0",
     "css-loader": "^0.28.7",
     "fxa-crypto-relier": "2.1.0",
     "jose-jwe-jws": "^0.1.5",
@@ -28,13 +27,18 @@
     "node-sass": "^4.6.1",
     "quill": "1.2.6",
     "raw-loader": "^0.5.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
-    "testpilot-ga": "^0.2.1",
-    "webpack": "^3.8.1",
-    "webpack-sources": "1.0.1"
+    "testpilot-ga": "^0.2.1"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.0",
     "chai-as-promised": "^7.1.1",
     "cross-spawn": "^5.1.0",
@@ -54,8 +58,10 @@
     "rimraf": "^2.6.1",
     "sinon": "^4.0.1",
     "sinon-chrome": "^2.2.1",
+    "transfer-webpack-plugin": "^0.1.4",
     "web-ext": "^1.9.1",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "webpack-sources": "1.0.1"
   },
   "homepage": "https://github.com/mozilla/notes#readme",
   "license": "MPL-2.0",
@@ -76,6 +82,7 @@
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
     "test": "npm-run-all test:*",
-    "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start"
+    "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start",
+    "webpack": "webpack --config webpack.config.js"
   }
 }

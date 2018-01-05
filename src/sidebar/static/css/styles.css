@@ -315,7 +315,7 @@ footer {
 /* Select menu from sync */
 #context-menu-button {
   background-size: 3px;
-  background-image: url('three-dots.svg');
+  background-image: url('../svg/three-dots.svg');
   background-position:  50%;
   background-repeat: no-repeat;
   width: 22px;

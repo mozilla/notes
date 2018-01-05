@@ -24,7 +24,7 @@ body {
 
 /* material-design-lite (MDL) menu */
 #context-menu-button {
-  background-image: url('dark-svg/three-dots-dark.svg');
+  background-image: url('../svg/three-dots-dark.svg');
 }
 
 #footer-buttons.warning #context-menu-button {
