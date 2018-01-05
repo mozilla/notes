@@ -79,11 +79,12 @@
     "postformat": "npm run lint:js -- --fix",
     "postinstall": "npm run build-ck && node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
-    "start": "npm run webpack && web-ext run -s build",
+    "start": "npm run webpack && web-ext run -s build & npm run webpack:watch",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start",
-    "webpack": "webpack --config webpack.config.js"
+    "webpack": "webpack --config webpack.config.js",
+    "webpack:watch": "webpack --config webpack.watch.js"
   }
 }

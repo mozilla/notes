@@ -23,6 +23,7 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     filename: path.join('sidebar', 'app.js'),
   },
+
   plugins: [
     // cleanup build folder
     new CleanWebpackPlugin([
@@ -34,7 +35,7 @@ module.exports = {
     ], {
       ignore: [
           '.DS_Store',
-          // path.join('src', 'sidebar', 'app')
+          path.join('src', 'sidebar', 'app')
       ],
     }),
   ],
