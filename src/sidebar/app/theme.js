@@ -30,5 +30,3 @@ chrome.runtime.onMessage.addListener(eventData => {
       getThemeFromStorage();
   }
 });
-
-module.export = {getThemeFromStorage};

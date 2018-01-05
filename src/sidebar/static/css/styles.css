@@ -7,7 +7,7 @@ html {
   --sync-animation-duration: .4s;
 }
 
-body, body .ck-editor {
+body, body #root, body .ck-editor {
   display: flex;
   flex-direction: column;
   height: 100%;

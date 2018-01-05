@@ -15,7 +15,7 @@ module.exports = {
   devtool: 'source-map',
 
   entry: [
-    path.resolve(__dirname, 'src', 'sidebar', 'app', 'panel.js'),
+    path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
   ],
 
   output: {
@@ -35,7 +35,7 @@ module.exports = {
     ], {
       ignore: [
           '.DS_Store',
-          path.join('src', 'sidebar', 'app')
+          path.join('src', 'sidebar', 'app', '*')
       ],
     }),
   ],
