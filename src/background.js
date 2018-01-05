@@ -150,13 +150,28 @@ browser.runtime.onMessage.addListener(function(eventData) {
   }
 });
 
+let addonIsOpen = false; // Used to toggle browserAction.onClicked event
+
+// Change Browser Action Icon from default to active
+function setIconToActive() {
+  browser.browserAction.setIcon({
+    path: {
+      16: 'icons/notes-48-active.png',
+      32: 'icons/notes-96-active.png'
+    }
+  });
+}
 
 // Handle opening and closing the add-on.
 function connected(p) {
   sendMetrics('open');
+  addonIsOpen = true;
+  setIconToActive();
 
   p.onDisconnect.addListener(() => {
     sendMetrics('close');
+    addonIsOpen = false;
+    browser.browserAction.setIcon({});
   });
 }
 browser.runtime.onConnect.addListener(connected);
@@ -172,4 +187,14 @@ browser.storage.local.get()
     if (!storedSettings.theme)
       // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
+});
+
+// Handle onClick event for the toolbar button
+browser.browserAction.onClicked.addListener(() => {
+  if (addonIsOpen) {
+    browser.sidebarAction.close();
+  } else {
+    browser.sidebarAction.open();
+    setIconToActive();
+  }
 });
