@@ -15,9 +15,24 @@ function customizeEditor(editor) {
       editor.fire('changesDone');
     });
   });
+  
+  document.addEventListener('dragover', () => {
+    const mainEditor = document.querySelector('.ck-editor__main');
+    mainEditor.style.border = '1px solid green';
+    mainEditor.style.backgroundColor = '#dcd6da';
+  });
+
+  document.addEventListener('dragleave', () => {
+    const mainEditor = document.querySelector('.ck-editor__main');
+    mainEditor.style.border = 'none';
+    mainEditor.style.backgroundColor = 'inherit';
+  });
 
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
+    const mainEditor = document.querySelector('.ck-editor__main');
+    mainEditor.style.border = 'none';
+    mainEditor.style.backgroundColor = 'inherit';
   });
 
   localizeEditorButtons();
