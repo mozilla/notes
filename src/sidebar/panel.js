@@ -73,6 +73,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
       enableSync.onclick = () => {
         enableSyncAction(editor);
       };
+      savingIndicator.onclick = () => {
+        savingIndicatorAction(editor);
+      };
 
       customizeEditor(editor);
       loadContent();
@@ -205,6 +208,7 @@ function reconnectSync () {
   isAuthenticated = false;
   setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
   savingIndicator.textContent = browser.i18n.getMessage('reconnectSync');
+  savingIndicator.style="cursor:pointer;";
   chrome.runtime.sendMessage({
     action: 'metrics-reconnect-sync'
   });
@@ -232,6 +236,9 @@ function enableSyncAction(editor) {
   if (editingInProcess || syncingInProcess) {
     return;
   }
+
+  savingIndicator.onclick="";
+  savingIndicator.style="";
 
   if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
     // Trigger manual sync
@@ -263,6 +270,14 @@ function enableSyncAction(editor) {
   }
 
   waitingToReconnect = false;
+}
+
+function savingIndicatorAction(editor){
+        var reconnect_message=browser.i18n.getMessage('reconnectSync');
+        console.log(reconnect_message);
+        console.log(savingIndicator.textContent);
+        if(savingIndicator.textContent===reconnect_message)
+        enableSyncAction(editor);
 }
 
 function getLastSyncedTime() {
