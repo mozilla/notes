@@ -25,10 +25,11 @@ body {
 /* material-design-lite (MDL) menu */
 #context-menu-button {
   background-image: url('dark-svg/three-dots-dark.svg');
+  background-color: #323744;
 }
 
 #footer-buttons.warning #context-menu-button {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  /*background-color: rgba(0, 0, 0, 0.5) !important;*/
 }
 
 .mdl-menu__outline {
@@ -52,7 +53,7 @@ body {
 
 #footer-buttons button,
 #footer-buttons a {
-  background-color: #272B35;
+  background-color: #393F4C;
   color: #e6e6e6;
   transition: background 50ms;
 }
