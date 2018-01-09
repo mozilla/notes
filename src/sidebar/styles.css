@@ -154,6 +154,10 @@ footer {
   animation-iteration-count: 1;
 }
 
+#saving-indicator {
+  cursor: pointer;
+}
+
 /* Sync icon */
 #enable-sync {
   position: absolute;

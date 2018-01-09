@@ -69,7 +69,11 @@ ClassicEditor.create(document.querySelector('#editor'), {
         }
         ignoreNextLoadEvent = false;
       });
-
+      
+      savingIndicator.onclick = () => {
+        enableSyncAction(editor);
+      };
+      // to make reconnectSync text Field act like savingIndicator
       enableSync.onclick = () => {
         enableSyncAction(editor);
       };
