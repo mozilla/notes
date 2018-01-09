@@ -69,13 +69,15 @@ ClassicEditor.create(document.querySelector('#editor'), {
         }
         ignoreNextLoadEvent = false;
       });
-
+      
+      savingIndicator.onclick = () => {
+        enableSyncAction(editor);
+      };
+      // to make reconnectSync text Field act like savingIndicator
       enableSync.onclick = () => {
         enableSyncAction(editor);
       };
-      savingIndicator.onclick = () => {
-        savingIndicatorAction(editor);
-      };
+
 
       customizeEditor(editor);
       loadContent();
@@ -237,8 +239,7 @@ function enableSyncAction(editor) {
     return;
   }
 
-  savingIndicator.onclick="";
-  savingIndicator.style="";
+  savingIndicator.style="";  //to remove cursor-pointer from text field
 
   if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
     // Trigger manual sync
@@ -270,14 +271,6 @@ function enableSyncAction(editor) {
   }
 
   waitingToReconnect = false;
-}
-
-function savingIndicatorAction(editor){
-        var reconnect_message=browser.i18n.getMessage('reconnectSync');
-        console.log(reconnect_message);
-        console.log(savingIndicator.textContent);
-        if(savingIndicator.textContent===reconnect_message)
-        enableSyncAction(editor);
 }
 
 function getLastSyncedTime() {
