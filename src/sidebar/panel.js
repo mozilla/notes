@@ -78,7 +78,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
         enableSyncAction(editor);
       };
 
-
       customizeEditor(editor);
       loadContent();
 
@@ -210,7 +209,6 @@ function reconnectSync () {
   isAuthenticated = false;
   setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
   savingIndicator.textContent = browser.i18n.getMessage('reconnectSync');
-  savingIndicator.style="cursor:pointer;";
   chrome.runtime.sendMessage({
     action: 'metrics-reconnect-sync'
   });
@@ -238,8 +236,6 @@ function enableSyncAction(editor) {
   if (editingInProcess || syncingInProcess) {
     return;
   }
-
-  savingIndicator.style="";  //to remove cursor-pointer from text field
 
   if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
     // Trigger manual sync
