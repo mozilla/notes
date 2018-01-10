@@ -1,5 +1,7 @@
 /* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation, formatFooterTime */
 function customizeEditor(editor) {
+  const mainEditor = document.querySelector('.ck-editor__main');
+
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
   document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
@@ -17,22 +19,16 @@ function customizeEditor(editor) {
   });
   
   document.addEventListener('dragover', () => {
-    const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = '1px solid green';
-    mainEditor.style.backgroundColor = '#dcd6da';
+    mainEditor.classList.add('drag-n-drop-focus');
   });
 
   document.addEventListener('dragleave', () => {
-    const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = 'none';
-    mainEditor.style.backgroundColor = 'inherit';
+    mainEditor.classList.remove('drag-n-drop-focus');
   });
 
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
-    const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = 'none';
-    mainEditor.style.backgroundColor = 'inherit';
+    mainEditor.classList.remove('drag-n-drop-focus');
   });
 
   localizeEditorButtons();

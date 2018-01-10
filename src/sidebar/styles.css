@@ -389,6 +389,12 @@ CKEditor overrides
   font-size: 16px;
 }
 
+#notes .drag-n-drop-focus,
+#notes .drag-n-drop-focus .ck-editor__editable {
+  border: 1px solid #008000;
+  background-color: #dcd6da;
+}
+
 .ck-heading-dropdown button {
   width: 45px;
   height: 25px;
