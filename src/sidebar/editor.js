@@ -18,21 +18,24 @@ function customizeEditor(editor) {
   
   document.addEventListener('dragover', () => {
     const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = '1px solid green';
-    mainEditor.style.backgroundColor = '#dcd6da';
+    const editableEditor = document.querySelector('.ck-editor__editable');
+    mainEditor.classList.add('drag-n-drop-focus');
+    editableEditor.classList.add('drag-n-drop-focus');
   });
 
   document.addEventListener('dragleave', () => {
     const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = 'none';
-    mainEditor.style.backgroundColor = 'inherit';
+    const editableEditor = document.querySelector('.ck-editor__editable');
+    mainEditor.classList.remove('drag-n-drop-focus');
+    editableEditor.classList.remove('drag-n-drop-focus');
   });
 
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
     const mainEditor = document.querySelector('.ck-editor__main');
-    mainEditor.style.border = 'none';
-    mainEditor.style.backgroundColor = 'inherit';
+    const editableEditor = document.querySelector('.ck-editor__editable');
+    mainEditor.classList.remove('drag-n-drop-focus');
+    editableEditor.classList.remove('drag-n-drop-focus');
   });
 
   localizeEditorButtons();

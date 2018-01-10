@@ -177,6 +177,11 @@ background: transparent;
   background-color: #0080ff;
 }
 
+#notes .drag-n-drop-focus {
+  border: 1px solid #ffff00;
+  background-color: #008080;
+}
+
 .ql-snow .ql-picker {
   color: #e6e6e6;
 }
