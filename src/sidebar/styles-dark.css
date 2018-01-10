@@ -177,7 +177,8 @@ background: transparent;
   background-color: #0080ff;
 }
 
-#notes .drag-n-drop-focus {
+#notes .drag-n-drop-focus,
+#notes .drag-n-drop-focus .ck-editor__editable {
   border: 1px solid #ffff00;
   background-color: #008080;
 }
