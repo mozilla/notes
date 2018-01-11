@@ -89,6 +89,10 @@ function getPadStats(editor) {
       if (value.item.textNode._attrs.get('italic')) {
         styles.italic = true;
       }
+      // Strikethrough
+      if (value.item.textNode._attrs.get('strike')) {
+        styles.strike = true;
+      }
     }
 
     if (value.type === 'elementStart') {
