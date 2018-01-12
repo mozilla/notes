@@ -192,7 +192,9 @@ browser.storage.local.get()
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener(() => {
   if (addonIsOpen) {
-    browser.sidebarAction.close();
+    browser.runtime.sendMessage('notes@mozilla.com', {
+      action: 'close'
+    });
   } else {
     browser.sidebarAction.open();
     setIconToActive();

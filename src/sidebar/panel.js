@@ -84,6 +84,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
       chrome.runtime.onMessage.addListener(eventData => {
         let content;
         switch (eventData.action) {
+          case 'close':
+            browser.sidebarAction.close();
+            break;
           case 'sync-authenticated':
             setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
             isAuthenticated = true;
