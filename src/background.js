@@ -150,16 +150,14 @@ browser.runtime.onMessage.addListener(function(eventData) {
   }
 });
 
-let addonIsOpen = false; // Used to toggle browserAction.onClicked event
+const addonIsClosedForWindow = {};
 
 // Handle opening and closing the add-on.
 function connected(p) {
   sendMetrics('open');
-  addonIsOpen = true;
 
   p.onDisconnect.addListener(() => {
     sendMetrics('close');
-    addonIsOpen = false;
   });
 }
 browser.runtime.onConnect.addListener(connected);
@@ -178,10 +176,12 @@ browser.storage.local.get()
 });
 
 // Handle onClick event for the toolbar button
-browser.browserAction.onClicked.addListener(() => {
-  if (addonIsOpen) {
-    browser.sidebarAction.close();
-  } else {
+browser.browserAction.onClicked.addListener((e) => {
+  if (addonIsClosedForWindow[e.id]) {
+    addonIsClosedForWindow[e.id] = false;
     browser.sidebarAction.open();
+  } else {
+    addonIsClosedForWindow[e.id] = true;
+    browser.sidebarAction.close();
   }
 });
