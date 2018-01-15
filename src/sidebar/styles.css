@@ -50,6 +50,10 @@ body .ck-editor .ck-editor__editable {
   padding-left: 20px;
 }
 
+.ck-editor__editable ol > li, .ck-editor__editable ul > li {
+  line-height: 1.5rem;
+}
+
 /**
 Custom list types for indents
 https://github.com/mozilla/notes/issues/413
@@ -424,3 +428,4 @@ CKEditor overrides
   padding: 0.1em;
   box-shadow: none;
 }
+
