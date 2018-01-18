@@ -1,9 +1,10 @@
 # Changelog
 
-## 2.1.0 (unreleased)
+## 2.1.1 (unreleased)
 
-* No changes yet.
-
+* Add a toolbar icon
+* Update translations
+* Fix theming colors
 
 ## 2.1.0 (2017-12-08)
 
