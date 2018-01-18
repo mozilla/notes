@@ -5,7 +5,6 @@
 * Upgrade the version number (i.e: 1.7.0):
   * Update `package.json` version number
   * Update `src/manifest.json` version number
-  * Update `src/background.js` version number
   * Update `CHANGELOG.md`
 
 ```
