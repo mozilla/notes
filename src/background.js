@@ -150,6 +150,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
   }
 });
 
+const addonIsClosedForWindow = {};
 
 // Handle opening and closing the add-on.
 function connected(p) {
@@ -172,4 +173,15 @@ browser.storage.local.get()
     if (!storedSettings.theme)
       // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
+});
+
+// Handle onClick event for the toolbar button
+browser.browserAction.onClicked.addListener((e) => {
+  if (addonIsClosedForWindow[e.id]) {
+    addonIsClosedForWindow[e.id] = false;
+    browser.sidebarAction.open();
+  } else {
+    addonIsClosedForWindow[e.id] = true;
+    browser.sidebarAction.close();
+  }
 });

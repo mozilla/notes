@@ -11,7 +11,7 @@ body {
 }
 
 #footer-buttons.warning #enable-sync svg path {
-  fill: #333333 !important;
+  fill: #000000 !important;
 }
 
 .savingLayout #enable-sync:hover {
@@ -25,10 +25,12 @@ body {
 /* material-design-lite (MDL) menu */
 #context-menu-button {
   background-image: url('dark-svg/three-dots-dark.svg');
+  background-color: #323744;
 }
 
 #footer-buttons.warning #context-menu-button {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: rgb(255, 236, 173);
+  background-image: url('three-dots.svg');
 }
 
 .mdl-menu__outline {
@@ -50,9 +52,8 @@ body {
 }
 /* end MDL menu */
 
-#footer-buttons button,
-#footer-buttons a {
-  background-color: #272B35;
+#footer-buttons button {
+  background-color: #393F4C;
   color: #e6e6e6;
   transition: background 50ms;
 }
@@ -173,6 +174,12 @@ background: transparent;
 
 #notes .ck-toolbar .ck-list__item_active:hover {
   background-color: #0080ff;
+}
+
+#notes .drag-n-drop-focus,
+#notes .drag-n-drop-focus .ck-editor__editable {
+  border: 1px solid #ffff00;
+  background-color: #008080;
 }
 
 .ql-snow .ql-picker {

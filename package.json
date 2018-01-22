@@ -2,8 +2,8 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.1.0",
-  "author": "Storage team",
+  "version": "2.1.1",
+  "author": "Test Pilot Mozilla Team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
   },
@@ -63,7 +63,7 @@
   "scripts": {
     "build": "node scripts/build-locales && web-ext build -s src",
     "build-ck": "cd ckeditor-build && webpack && cd ..",
-    "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' && npm run postinstall",
+    "clean": "rimraf web-ext-artifacts 'src/sidebar/vendor/!(.gitkeep)' 'src/vendor/!(.gitkeep)' && npm run postinstall",
     "format": "prettier 'src/**/!(vendor)/*.{css,js}' --single-quote --write",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
