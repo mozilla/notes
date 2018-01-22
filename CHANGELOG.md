@@ -1,8 +1,14 @@
 # Changelog
 
-## 2.1.0 (2017-12-08)
+## 2.2.0 (unrelease)
 
-* Fixing push build.
+* No changes yet.
+
+## 2.1.1 (2018-01-22)
+
+* Add a toolbar icon
+* Update translations
+* Fix theming colors
 
 
 ## 2.1.0 (2017-12-08)
