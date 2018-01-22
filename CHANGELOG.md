@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.1.0 (unreleased)
+## 2.1.0 (2017-12-08)
 
-* No changes yet.
+* Fixing push build.
 
 
 ## 2.1.0 (2017-12-08)
