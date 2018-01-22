@@ -122,7 +122,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
               setAnimation(true); // animateSyncIcon, syncingLayout, warning
               syncingInProcess = true;
             }
-            if (! waitingToReconnect) {
+            if (! waitingToReconnect && isAuthenticated) {
+              savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+            } else if (! waitingToReconnect) {
               savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
             }
             // Disable sync-action
@@ -139,7 +141,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'text-saved':
-            if (! waitingToReconnect) {
+            if (! waitingToReconnect && ! isAuthenticated) {
               // persist reconnect warning, do not override with the 'saved at'
               savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
             }
@@ -285,7 +287,7 @@ function getLastSyncedTime() {
     isAuthenticated = true;
     setAnimation(false, true);
   } else {
-    savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+    savingIndicator.textContent = browser.i18n.getMessage('changesSaved', formatFooterTime());
   }
 }
 
