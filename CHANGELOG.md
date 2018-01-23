@@ -2,7 +2,8 @@
 
 ## 2.2.0 (unrelease)
 
-* No changes yet.
+* Fix first edition not detected in new windows (#582)
+
 
 ## 2.1.1 (2018-01-22)
 
