@@ -177,7 +177,6 @@ function loadContent() {
       isAuthenticated = true;
     }
   });
-  ignoreNextLoadEvent = true;
   chrome.runtime.sendMessage({
     action: 'kinto-sync'
   });
