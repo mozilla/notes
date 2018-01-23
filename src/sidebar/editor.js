@@ -29,6 +29,10 @@ function customizeEditor(editor) {
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
     mainEditor.classList.remove('drag-n-drop-focus');
+    browser.runtime.sendMessage({
+      action: 'metrics-drag-n-drop',
+      context: getPadStats(editor)
+    });
   });
 
   localizeEditorButtons();
