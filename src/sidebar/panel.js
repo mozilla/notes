@@ -122,10 +122,12 @@ ClassicEditor.create(document.querySelector('#editor'), {
               setAnimation(true); // animateSyncIcon, syncingLayout, warning
               syncingInProcess = true;
             }
-            if (! waitingToReconnect && isAuthenticated) {
-              savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
-            } else if (! waitingToReconnect) {
-              savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            if (!waitingToReconnect) {
+              if (isAuthenticated) {
+                savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+              } else {
+                savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+              }
             }
             // Disable sync-action
             editingInProcess = true;
