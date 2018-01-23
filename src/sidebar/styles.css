@@ -406,7 +406,8 @@ CKEditor overrides
 }
 
 .ck-heading-dropdown .ck-dropdown__panel {
-  width: 70px;
+  width: auto;
+  min-width: 70px;
 }
 
 #notes .ck-toolbar > * {
