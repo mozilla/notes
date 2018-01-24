@@ -11,6 +11,8 @@ const giveFeedbackButton = document.getElementById('give-feedback-button');
 const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+const migrationNote = document.getElementById('migration-note');
+const migrationBody = document.getElementById('migration-note-dialog');
 
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
@@ -53,7 +55,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
-          const content = editor.getData();
+          let content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
@@ -68,7 +70,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
             if (content.length > 6000) {
               console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
-              if (lastGood != null) {
+              if (lastGood !== null) {
                 content = lastGood;
               }
             }
