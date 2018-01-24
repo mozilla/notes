@@ -56,15 +56,31 @@ ClassicEditor.create(document.querySelector('#editor'), {
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
-            chrome.runtime.sendMessage({
-              action: 'kinto-save',
-              content
-            });
+            if (content.length > 5000) {
+              console.error('Maximum notepad size reached:', content.length);  // eslint-disable-line no-console
+              migrationNote.classList.add('visible');
+              migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+            } else {
+              migrationNote.classList.remove('visible');
+            }
 
-            chrome.runtime.sendMessage({
-              action: 'metrics-changed',
-              context: getPadStats(editor)
-            });
+            if (content.length > 6000) {
+              console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
+              ignoreNextLoadEvent = true;
+              chrome.runtime.sendMessage({
+                action: 'kinto-load'
+              });
+            } else {
+              chrome.runtime.sendMessage({
+                action: 'kinto-save',
+                content
+              });
+
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats(editor)
+              });
+            }
           }
         }
         ignoreNextLoadEvent = false;
@@ -202,7 +218,8 @@ function handleLocalContent(editor, content) {
     });
   } else {
     if (editor.getData() !== content) {
-      editor.setData(content);
+      // Prevent from loading too big content but allow for conflict handling.
+      editor.setData(content.substring(0, 15000));
     }
   }
 }
