@@ -178,7 +178,7 @@ function loadContent() {
     }
   });
   chrome.runtime.sendMessage({
-    action: 'kinto-sync'
+    action: 'kinto-load'  // Load locally.
   });
 
 }
