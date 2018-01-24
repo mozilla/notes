@@ -34,6 +34,7 @@ giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 let ignoreNextLoadEvent = false;
 let ignoreTextSynced = false;
 let lastModified;
+let lastGood = null;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
@@ -61,29 +62,28 @@ ClassicEditor.create(document.querySelector('#editor'), {
               migrationNote.classList.add('visible');
               migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
             } else {
+              lastGood = content;
               migrationNote.classList.remove('visible');
             }
 
             if (content.length > 6000) {
               console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
-              ignoreNextLoadEvent = true;
-              chrome.runtime.sendMessage({
-                action: 'kinto-load'
-              });
-            } else {
-              chrome.runtime.sendMessage({
-                action: 'kinto-save',
-                content
-              });
-
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats(editor)
-              });
+              if (lastGood != null) {
+                content = lastGood;
+              }
             }
+            chrome.runtime.sendMessage({
+              action: 'kinto-save',
+              content
+            });
+
+            chrome.runtime.sendMessage({
+              action: 'metrics-changed',
+              context: getPadStats(editor)
+            });
           }
+          ignoreNextLoadEvent = false;
         }
-        ignoreNextLoadEvent = false;
       });
       
       savingIndicator.onclick = () => {
@@ -203,7 +203,8 @@ function handleLocalContent(editor, content) {
   if (!content) {
     browser.storage.local.get('notes2').then((data) => {
       if (!data.hasOwnProperty('notes2')) {
-        editor.setData(INITIAL_CONTENT);
+        lastGood = INITIAL_CONTENT;
+        editor.setData(lastGood);
         ignoreNextLoadEvent = true;
       } else {
         editor.setData(data.notes2);
@@ -219,7 +220,8 @@ function handleLocalContent(editor, content) {
   } else {
     if (editor.getData() !== content) {
       // Prevent from loading too big content but allow for conflict handling.
-      editor.setData(content.substring(0, 15000));
+      lastGood = content.substring(0, 15000);
+      editor.setData(lastGood);
     }
   }
 }
