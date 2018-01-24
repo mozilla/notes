@@ -158,7 +158,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             break;
           case 'disconnected':
             disconnectSync.style.display = 'none';
-            footerButtons.title = null; // remove profile email from title attribute
+            footerButtons.removeAttribute('title');// remove profile email from title attribute
             isAuthenticated = false;
             setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
             getLastSyncedTime();

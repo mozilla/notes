@@ -120,6 +120,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
         sendMetrics('webext-button-disconnect', eventData.context);
         credentials.clear();
       });
+      chrome.runtime.sendMessage({
+        action: 'disconnected'
+      });
       break;
     case 'kinto-load':
       retrieveNote(client).then((result) => {
