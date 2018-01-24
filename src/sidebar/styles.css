@@ -1,5 +1,5 @@
 html {
-  height: 100vh;
+  height: 100%;
   font-family: sans-serif;
   line-height: 1.2em;
   overflow: hidden;
@@ -10,7 +10,7 @@ html {
 body, body .ck-editor {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   margin: 0;
   overflow: hidden;
   padding: 0;
@@ -32,7 +32,7 @@ body .ck-editor__main {
   flex: auto;
   font-size: 14px;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -40,7 +40,7 @@ body .ck-editor__main {
 body .ck-editor .ck-editor__editable {
   flex: auto;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   border: 0;
   box-shadow: none;
   cursor: text;
@@ -74,7 +74,7 @@ List indents end
  */
 
 div#loading {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   position: absolute;
   top: 0;
