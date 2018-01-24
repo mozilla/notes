@@ -2,6 +2,7 @@
 
 ## 2.2.0 (unrelease)
 
+* Add the full heading names (#528)
 * Fix first edition not detected in new windows (#582)
 
 
