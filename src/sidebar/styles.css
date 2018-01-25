@@ -430,3 +430,11 @@ CKEditor overrides
   box-shadow: none;
 }
 
+.cls-1{
+  fill:none;stroke:#333;
+  stroke-miterlimit:10;
+} 
+
+.cls-2{
+  fill:#333;
+} 
