@@ -30,6 +30,10 @@ giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
 giveFeedbackButton.setAttribute('href', SURVEY_PATH);
 giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
+giveFeedbackButton.addEventListener('dragstart', (e) => {
+  e.preventDefault();
+});
+
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
 let ignoreTextSynced = false;
