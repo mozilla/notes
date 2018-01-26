@@ -11,6 +11,8 @@ const giveFeedbackButton = document.getElementById('give-feedback-button');
 const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+const migrationNote = document.getElementById('migration-note');
+const migrationBody = document.getElementById('migration-note-dialog');
 
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
@@ -38,6 +40,7 @@ giveFeedbackButton.addEventListener('dragstart', (e) => {
 let ignoreNextLoadEvent = false;
 let ignoreTextSynced = false;
 let lastModified;
+let lastGood = null;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
@@ -56,10 +59,25 @@ ClassicEditor.create(document.querySelector('#editor'), {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
-          const content = editor.getData();
+          let content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
+            if (content.length > 5000) {
+              console.error('Maximum notepad size reached:', content.length);  // eslint-disable-line no-console
+              migrationNote.classList.add('visible');
+              migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+            } else {
+              lastGood = content;
+              migrationNote.classList.remove('visible');
+            }
+
+            if (content.length > 6000) {
+              console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
+              if (lastGood !== null) {
+                content = lastGood;
+              }
+            }
             chrome.runtime.sendMessage({
               action: 'kinto-save',
               content
@@ -70,8 +88,8 @@ ClassicEditor.create(document.querySelector('#editor'), {
               context: getPadStats(editor)
             });
           }
+          ignoreNextLoadEvent = false;
         }
-        ignoreNextLoadEvent = false;
       });
       
       savingIndicator.onclick = () => {
@@ -191,7 +209,8 @@ function handleLocalContent(editor, content) {
   if (!content) {
     browser.storage.local.get('notes2').then((data) => {
       if (!data.hasOwnProperty('notes2')) {
-        editor.setData(INITIAL_CONTENT);
+        lastGood = INITIAL_CONTENT;
+        editor.setData(lastGood);
         ignoreNextLoadEvent = true;
       } else {
         editor.setData(data.notes2);
@@ -206,7 +225,9 @@ function handleLocalContent(editor, content) {
     });
   } else {
     if (editor.getData() !== content) {
-      editor.setData(content);
+      // Prevent from loading too big content but allow for conflict handling.
+      lastGood = content.substring(0, 15000);
+      editor.setData(lastGood);
     }
   }
 }
