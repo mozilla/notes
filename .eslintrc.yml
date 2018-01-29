@@ -28,6 +28,8 @@ globals:
   loadFromKinto: false
   localizeEditorButtons: false
   migrationCheck: false
+  migrationNote: false
+  migrationBody: false
   retrieveNote: false
   saveToKinto: false
   setAnimation: false
