@@ -272,16 +272,12 @@ footer {
 #migration-note {
   display: none;
   padding: 3px 0 5px 0;
-  background: #B6FEB4;
+  background: #ffe900;
   width: 100%;
   position: relative;
   margin: 0 auto;
   border: 0;
   border-top: 1px solid #ccc;
-}
-
-#migration-note {
-  background: #00FFFE;
 }
 
 #close-button,
