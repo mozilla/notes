@@ -11,8 +11,6 @@ const giveFeedbackButton = document.getElementById('give-feedback-button');
 const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
-const migrationNote = document.getElementById('migration-note');
-const migrationBody = document.getElementById('migration-note-dialog');
 
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
