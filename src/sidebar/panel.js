@@ -29,8 +29,10 @@ giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
 giveFeedbackButton.setAttribute('href', SURVEY_PATH);
 giveFeedbackButton.setAttribute('target', '_blank');
+giveFeedbackButton.setAttribute('rel', 'noopener');
 giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 giveFeedbackMenuItem.setAttribute('target', '_blank');
+giveFeedbackMenuItem.setAttribute('rel', 'noopener');
 
 giveFeedbackButton.addEventListener('dragstart', (e) => {
   e.preventDefault();
