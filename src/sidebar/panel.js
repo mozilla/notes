@@ -28,6 +28,7 @@ enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
 giveFeedbackButton.setAttribute('href', SURVEY_PATH);
+giveFeedbackButton.setAttribute('target', '_blank');
 giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 giveFeedbackButton.addEventListener('dragstart', (e) => {
