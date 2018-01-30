@@ -36,15 +36,15 @@ giveFeedbackButton.addEventListener('click', (e) => {
   e.preventDefault();
   browser.tabs.create({
     url: SURVEY_PATH
-  })
-})
+  });
+});
 
 giveFeedbackMenuItem.addEventListener('click', (e) => {
   e.preventDefault();
-browser.tabs.create({
-  url: SURVEY_PATH
-})
-})
+  browser.tabs.create({
+    url: SURVEY_PATH
+  });
+});
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
