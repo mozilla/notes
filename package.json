@@ -75,6 +75,7 @@
     "start": "web-ext run -s src",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
+    "start-deved": "npm start -- --firefox=firefoxdeveloperedition",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start"
   }
