@@ -118,9 +118,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             waitingToReconnect = false;
             clearTimeout(loginTimeout);
             // set title attr of footer to the currently logged in account
-           
-            const footerButtonMail = "Sync to"
-            footerButtons.title =  `${footerButtonMail} ${eventData.profile && eventData.profile.email} `;
+            footerButtons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
               action: 'kinto-sync'
@@ -317,7 +315,7 @@ function getLastSyncedTime() {
   if (isAuthenticated) {
     giveFeedbackButton.style.display = 'none';
     savingIndicator.classList.add('black');
-    savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified)); 
+    savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified)); 
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
     setAnimation(false, true);
