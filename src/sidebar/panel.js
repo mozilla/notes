@@ -111,7 +111,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
       chrome.runtime.onMessage.addListener(eventData => {
         let content;
-        let userEmail;
         switch (eventData.action) {
           case 'sync-authenticated':
             setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
@@ -206,7 +205,7 @@ function loadContent() {
   browser.storage.local.get('credentials').then((data) => {
     if (data.hasOwnProperty('credentials')) {
       isAuthenticated = true;
-      userEmail = localStorage.getItem('userEmail');
+      const userEmail = localStorage.getItem('userEmail');
       if (userEmail) {
         footerButtons.title = userEmail;
       }
