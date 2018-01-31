@@ -111,6 +111,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
 
       chrome.runtime.onMessage.addListener(eventData => {
         let content;
+        let userEmail;
         switch (eventData.action) {
           case 'sync-authenticated':
             setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
@@ -119,6 +120,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             clearTimeout(loginTimeout);
             // set title attr of footer to the currently logged in account
             footerButtons.title = eventData.profile && eventData.profile.email;
+            localStorage.setItem('userEmail', footerButtons.title);
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
               action: 'kinto-sync'
@@ -185,6 +187,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'disconnected':
+            localStorage.removeItem('userEmail');
             disconnectSync.style.display = 'none';
             footerButtons.removeAttribute('title');// remove profile email from title attribute
             isAuthenticated = false;
@@ -203,6 +206,10 @@ function loadContent() {
   browser.storage.local.get('credentials').then((data) => {
     if (data.hasOwnProperty('credentials')) {
       isAuthenticated = true;
+      userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        footerButtons.title = userEmail;
+      }
     }
   });
   chrome.runtime.sendMessage({
