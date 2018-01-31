@@ -119,10 +119,6 @@ ClassicEditor.create(document.querySelector('#editor'), {
             });
             break;
           case 'kinto-loaded':
-            userEmail = localStorage.getItem('userEmail');
-            if(userEmail) {
-              footerButtons.title = userEmail;
-            }
             clearTimeout(loginTimeout);
             content = eventData.data;
             // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
@@ -202,6 +198,10 @@ function loadContent() {
   browser.storage.local.get('credentials').then((data) => {
     if (data.hasOwnProperty('credentials')) {
       isAuthenticated = true;
+      userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        footerButtons.title = userEmail;
+      }
     }
   });
   chrome.runtime.sendMessage({
