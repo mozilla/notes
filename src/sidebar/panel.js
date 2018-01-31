@@ -330,7 +330,7 @@ function getLastSyncedTime() {
     savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified)); 
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
-    setAnimation(false, true);
+    setAnimation(false, true, false, true);  // animateSyncIcon, syncingLayout, warning, syncSuccess
   } else {
     savingIndicator.classList.remove('actionable');
     savingIndicator.textContent = browser.i18n.getMessage('changesSaved', formatFooterTime());

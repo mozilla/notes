@@ -126,6 +126,10 @@ footer {
   color: black;
 }
 
+#footer-buttons.syncSuccess div:first-child {
+  color: black;
+}
+
 #footer-buttons div:first-child {
   position: relative;
   flex: 1 0;
