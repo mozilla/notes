@@ -27,12 +27,20 @@ let syncingInProcess = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
-giveFeedbackButton.setAttribute('href', SURVEY_PATH);
-giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
+
+function giveFeedbackCallback(e) {
+  e.preventDefault();
+  browser.tabs.create({
+    url: SURVEY_PATH
+  });
+}
 
 giveFeedbackButton.addEventListener('dragstart', (e) => {
   e.preventDefault();
 });
+
+giveFeedbackButton.addEventListener('click', giveFeedbackCallback);
+giveFeedbackMenuItem.addEventListener('click', giveFeedbackCallback);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
@@ -89,7 +97,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
           ignoreNextLoadEvent = false;
         }
       });
-      
+
       savingIndicator.onclick = () => {
         enableSyncAction(editor);
       };
