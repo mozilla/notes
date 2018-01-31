@@ -119,7 +119,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             clearTimeout(loginTimeout);
             // set title attr of footer to the currently logged in account
             if (eventData.profile) {
-            footerButtons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`
+              footerButtons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`
             }
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
