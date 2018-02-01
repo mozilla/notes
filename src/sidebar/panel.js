@@ -39,6 +39,10 @@ giveFeedbackButton.addEventListener('dragstart', (e) => {
   e.preventDefault();
 });
 
+giveFeedbackMenuItem.addEventListener('dragstart', (e) => {
+  e.preventDefault();
+});
+
 giveFeedbackButton.addEventListener('click', giveFeedbackCallback);
 giveFeedbackMenuItem.addEventListener('click', giveFeedbackCallback);
 
