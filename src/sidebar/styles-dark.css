@@ -193,6 +193,8 @@ background: transparent;
   background-color: #272B35;
 }
 .mdl-menu__item:hover {
-  background-color: #323744; }
+  background-color: #323744; 
+}
 .mdl-menu__item:active {
-  background-color: #3d4352; }
+  background-color: #3d4352;
+ }
