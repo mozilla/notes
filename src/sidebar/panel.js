@@ -231,6 +231,7 @@ function handleLocalContent(editor, content) {
         editor.setData(lastGood);
         ignoreNextLoadEvent = true;
       } else {
+        editor.setData("");
         editor.setData(data.notes2);
         chrome.runtime.sendMessage({
           action: 'kinto-save',
