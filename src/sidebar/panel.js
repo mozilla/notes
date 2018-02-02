@@ -245,8 +245,8 @@ function handleLocalContent(editor, content) {
   } else {
     if (editor.getData() !== content) {
       // Prevent from loading too big content but allow for conflict handling.
-      lastGood = content;
-      editor.setData(lastGood);
+      lastGood = content.substring(0, 50000);
+      editor.setData(content);
     }
   }
 }
