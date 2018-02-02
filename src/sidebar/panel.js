@@ -69,7 +69,11 @@ ClassicEditor.create(document.querySelector('#editor'), {
         }
         ignoreNextLoadEvent = false;
       });
-
+      
+      savingIndicator.onclick = () => {
+        enableSyncAction(editor);
+      };
+      // to make reconnectSync text Field act like savingIndicator
       enableSync.onclick = () => {
         enableSyncAction(editor);
       };
@@ -217,6 +221,7 @@ function reconnectSync () {
 function disconnectFromSync () {
   waitingToReconnect = false;
   disconnectSync.style.display = 'none';
+  giveFeedbackButton.style.display = 'inherit';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
   setTimeout(() => {
@@ -239,12 +244,14 @@ function enableSyncAction(editor) {
 
   if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
     // Trigger manual sync
+    giveFeedbackButton.style.display = 'none';
     setAnimation(true);
     browser.runtime.sendMessage({
         action: 'kinto-sync'
       });
   } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
     // Login
+    giveFeedbackButton.style.display = 'none';
     setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
 
     // enable disable sync button
@@ -276,6 +283,7 @@ function getLastSyncedTime() {
   }
 
   if (isAuthenticated) {
+    giveFeedbackButton.style.display = 'none';
     savingIndicator.textContent = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified));
     disconnectSync.style.display = 'block';
     isAuthenticated = true;

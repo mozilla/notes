@@ -1,5 +1,7 @@
 /* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation, formatFooterTime */
 function customizeEditor(editor) {
+  const mainEditor = document.querySelector('.ck-editor__main');
+
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
   document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
@@ -15,9 +17,18 @@ function customizeEditor(editor) {
       editor.fire('changesDone');
     });
   });
+  
+  document.addEventListener('dragover', () => {
+    mainEditor.classList.add('drag-n-drop-focus');
+  });
+
+  document.addEventListener('dragleave', () => {
+    mainEditor.classList.remove('drag-n-drop-focus');
+  });
 
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
+    mainEditor.classList.remove('drag-n-drop-focus');
   });
 
   localizeEditorButtons();
@@ -77,6 +88,10 @@ function getPadStats(editor) {
       // Italic
       if (value.item.textNode._attrs.get('italic')) {
         styles.italic = true;
+      }
+      // Strikethrough
+      if (value.item.textNode._attrs.get('strike')) {
+        styles.strike = true;
       }
     }
 

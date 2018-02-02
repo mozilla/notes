@@ -50,6 +50,10 @@ body .ck-editor .ck-editor__editable {
   padding-left: 20px;
 }
 
+.ck-editor__editable ol > li, .ck-editor__editable ul > li {
+  line-height: 1.5rem;
+}
+
 /**
 Custom list types for indents
 https://github.com/mozilla/notes/issues/413
@@ -152,6 +156,10 @@ footer {
   animation-duration: var(--sync-animation-duration);
   animation-timing-function: linear;
   animation-iteration-count: 1;
+}
+
+#saving-indicator {
+  cursor: pointer;
 }
 
 /* Sync icon */
@@ -268,8 +276,8 @@ footer {
   width: 100%;
   position: relative;
   margin: 0 auto;
-  border: 1px solid #ccc;
-  border-bottom: 0;
+  border: 0;
+  border-top: 1px solid #ccc;
 }
 
 #migration-note {
@@ -322,7 +330,7 @@ footer {
   text-align: left;
   position: absolute;
   right: 6px;
-  top: 6px;
+  top: 5px;
   bottom: 6px;
 }
 
@@ -385,6 +393,12 @@ CKEditor overrides
   font-size: 16px;
 }
 
+#notes .drag-n-drop-focus,
+#notes .drag-n-drop-focus .ck-editor__editable {
+  border: 1px solid #008000;
+  background-color: #dcd6da;
+}
+
 .ck-heading-dropdown button {
   width: 45px;
   height: 25px;
@@ -414,3 +428,4 @@ CKEditor overrides
   padding: 0.1em;
   box-shadow: none;
 }
+

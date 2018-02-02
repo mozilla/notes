@@ -150,6 +150,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
   }
 });
 
+const addonIsClosedForWindow = {};
 
 // Handle opening and closing the add-on.
 function connected(p) {
@@ -174,12 +175,24 @@ browser.storage.local.get()
       browser.storage.local.set(defaultTheme);
 });
 
+// Handle onClick event for the toolbar button
+browser.browserAction.onClicked.addListener((e) => {
+  if (addonIsClosedForWindow[e.id]) {
+    addonIsClosedForWindow[e.id] = false;
+    browser.sidebarAction.open();
+  } else {
+    addonIsClosedForWindow[e.id] = true;
+    browser.sidebarAction.close();
+  }
+});
+
 // context menu for 'Send to Notes'
 browser.contextMenus.create({
   id: "send-to-notes",
   title: "Send to Notes",
   contexts: ["selection"]
 });
+
 browser.contextMenus.onClicked.addListener((info, tab) => {
   chrome.runtime.sendMessage({
     action: 'send-to-notes',
