@@ -192,6 +192,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'disconnected':
+            giveFeedbackButton.style.display = 'inherit';
             localStorage.removeItem('userEmail');
             disconnectSync.style.display = 'none';
             footerButtons.removeAttribute('title');// remove profile email from title attribute
@@ -263,7 +264,6 @@ function reconnectSync () {
 function disconnectFromSync () {
   waitingToReconnect = false;
   disconnectSync.style.display = 'none';
-  giveFeedbackButton.style.display = 'inherit';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
   setTimeout(() => {
