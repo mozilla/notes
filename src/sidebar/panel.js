@@ -68,7 +68,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
-          let content = editor.getData();
+          const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
