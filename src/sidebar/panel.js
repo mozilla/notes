@@ -73,7 +73,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
-            if (content.length > 5000) {
+            if (content.length > 15000) {
               console.error('Maximum notepad size reached:', content.length);  // eslint-disable-line no-console
               migrationNote.classList.add('visible');
               migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
@@ -82,7 +82,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
               migrationNote.classList.remove('visible');
             }
 
-            if (content.length > 6000) {
+            if (content.length > 25000) {
               console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
               if (lastGood !== null) {
                 content = lastGood;
@@ -245,7 +245,7 @@ function handleLocalContent(editor, content) {
   } else {
     if (editor.getData() !== content) {
       // Prevent from loading too big content but allow for conflict handling.
-      lastGood = content.substring(0, 15000);
+      lastGood = content.substring(0, 50000);
       editor.setData(lastGood);
     }
   }
