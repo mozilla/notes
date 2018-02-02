@@ -426,6 +426,6 @@ CKEditor overrides
   box-shadow: none;
 }
 
-.black{
-  color:black;         
+.actionable {
+  color: black;
 }

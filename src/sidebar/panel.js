@@ -326,13 +326,13 @@ function getLastSyncedTime() {
 
   if (isAuthenticated) {
     giveFeedbackButton.style.display = 'none';
-    savingIndicator.classList.add('black');
+    savingIndicator.classList.add('actionable');
     savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified)); 
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
     setAnimation(false, true);
   } else {
-    savingIndicator.classList.remove('black');
+    savingIndicator.classList.remove('actionable');
     savingIndicator.textContent = browser.i18n.getMessage('changesSaved', formatFooterTime());
   }
 }

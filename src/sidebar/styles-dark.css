@@ -198,3 +198,7 @@ background: transparent;
 .mdl-menu__item:active {
   background-color: #3d4352;
  }
+
+.actionable {
+  color: white;
+}
