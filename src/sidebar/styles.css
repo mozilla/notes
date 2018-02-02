@@ -122,10 +122,6 @@ footer {
   transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
 }
 
-#footer-buttons.warning div:first-child {
-  color: black;
-}
-
 #footer-buttons div:first-child {
   position: relative;
   flex: 1 0;
@@ -142,6 +138,12 @@ footer {
 #footer-buttons.syncingLayout div:first-child {
   padding: 10px 10px 10px 40px;
   transition: padding 0s .2s;
+}
+
+#footer-buttons.warning div:first-child,
+#footer-buttons.actionable div:first-child
+{
+  color: black;
 }
 
 /* Hide saving-indication then move enable-sync then show saving-indicator */
@@ -228,6 +230,9 @@ footer {
   align-items: center;
 }
 
+.savingLayout #context-menu-button {
+  display: none;
+}
 
 /* Display feedback button with opacity */
 .savingLayout #give-feedback-button {
@@ -272,16 +277,12 @@ footer {
 #migration-note {
   display: none;
   padding: 3px 0 5px 0;
-  background: #B6FEB4;
+  background: #ffe900;
   width: 100%;
   position: relative;
   margin: 0 auto;
   border: 0;
   border-top: 1px solid #ccc;
-}
-
-#migration-note {
-  background: #00FFFE;
 }
 
 #close-button,
@@ -341,7 +342,7 @@ footer {
 }
 
 /* Hide select menu on saving mode */
-.savingLayout #context-menu-button{
+.savingLayout #context-menu-button {
   opacity: 0;
   visibility: none;
   z-index: 0;
@@ -349,7 +350,7 @@ footer {
 }
 
 /* Show select menu on syncing mode */
-.syncingLayout #context-menu-button{
+.syncingLayout #context-menu-button {
   opacity: 1;
   visibility: visible;
   z-index: 1;
@@ -406,7 +407,8 @@ CKEditor overrides
 }
 
 .ck-heading-dropdown .ck-dropdown__panel {
-  width: 70px;
+  width: auto;
+  min-width: 70px;
 }
 
 #notes .ck-toolbar > * {
@@ -428,4 +430,3 @@ CKEditor overrides
   padding: 0.1em;
   box-shadow: none;
 }
-

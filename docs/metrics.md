@@ -34,6 +34,7 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 - `cd6` - whether the user has, anywhere in their notepad, a list. One of `true` or `false`.
 - `cd7` - the UI element used to open or close the notepad. Possible values TBD, but may include `closeButton`, `sidebarButton`, and `sidebarSwitcher`.
 - `cd8` - the reason an editing session ended. One of `timeout` or `closed`.
+- `cd9` - whether the user was able to load the note panel or not. One of `true` or `false`.
 
 ### Events
 
@@ -42,12 +43,15 @@ An event fired when the user actively navigates to the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `open`
+- `cd9`
 
 #### `close`
 An event fired when the user actively navigates away from the Notes sidebar. Includes:
 
 - `ec` - `notes`
 - `ea` - `close`
+- `cd7`
+- `cd8`
 
 #### `changed`
 An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 20 seconds. Includes:
@@ -63,8 +67,6 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd4`
 - `cd5`
 - `cd6`
-- `cd7`
-- `cd8`
 
 #### `drag-n-drop`
 
@@ -81,8 +83,6 @@ An event fired when the user tries to drag or drop a content into the notepad.
 - `cd4`
 - `cd5`
 - `cd6`
-- `cd7`
-- `cd8`
 
 #### `sync-started`
 An event fired whenever the user attempts to login to sync. Includes:
@@ -98,62 +98,56 @@ An event fired whenever the user attempts to login to sync. Includes:
 - `cd5`
 - `cd6`
 
-#### `sync-enabled`
-An event fired whenever the user enables sync. Includes:
+#### `login-success`
+An event fired whenever the user enables sync successfully. Includes:
 
 - `ec` - `notes`
-- `ea` - `sync-enabled`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
+- `ea` - `login-success`
 
-#### `sync-disabled`
-An event fired whenever the user disables sync. Includes:
+#### `login-failed`
+An event fired whenever the user enables sync but the FxA login fails. Includes:
 
 - `ec` - `notes`
-- `ea` - `sync-disabled`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
+- `ea` - `login-failed`
 
 #### `theme-changed`
 An event fired whenever the user changes the theme. Includes:
 
 - `ec` - `notes`
 - `ea` - `theme-changed`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
-
-#### `login-success`
-An event fired when FxA login succeeds
-
-#### `login-failed`
-An event fired when FxA login fails
 
 #### `webext-button-authenticate`
 An event fired when user presses the sync button
 
+- `ec` - `notes`
+- `ea` - `webext-button-authenticate`
+
 #### `webext-button-disconnect`
 An event fired when user logs out of sync
+
+- `ec` - `notes`
+- `ea` - `webext-button-disconnect`
 
 #### `handle-conflict`
 An event fired when sync resolved a sync conflict
 
+- `ec` - `notes`
+- `ea` - `handle-conflict`
+
 #### `reconnect-sync`
-An event fired when user loses sync due to a password reset or change
+An event fired when user closes sync due to a password reset or change
+
+- `ec` - `notes`
+- `ea` - `reconnect-sync`
+
+#### `metrics-migrated`
+An event fired when the user migrate from Quill.JS to CKEditor
+
+- `ec` - `notes`
+- `ea` - `metrics-migrated`
+
+#### `metrics-migrated-before`
+An event fired when the migration from Quill.JS to CKEditor already happened
+
+- `ec` - `notes`
+- `ea` - `metrics-migrated-before`

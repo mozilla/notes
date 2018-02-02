@@ -11,6 +11,7 @@ const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
 const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
+let closeUI = null;
 
 // Kinto sync and encryption
 
@@ -31,19 +32,28 @@ function sendMetrics(event, context = {}) {
   const later = function() {
     timeouts[event] = null;
 
-    return analytics.sendEvent('notes', event, {
-      cm1: context.characters,
-      cm2: context.lineBreaks,
-      cm3: null,  // Size of the change
-      cd1: context.syncEnabled,
-      cd2: context.usesSize,
-      cd3: context.usesBold,
-      cd4: context.usesItalics,
-      cd5: context.usesStrikethrough,
-      cd6: context.usesList,
-      cd7: null, // Firefox UI used to open, close notepad
-      cd8: null, // reason editing session ended
-    });
+    let metrics = {};
+
+    if (event === 'open') {
+      metrics.cd9 = context.loaded === false ? false : true;
+    } else if (event === 'close') {
+      metrics.cd7 = context.closeUI;
+      metrics.cd8 = null; // reason editing session ended
+    } else if (event === 'changed' || event === 'drag-n-drop') {  // Editing
+      metrics = {
+        cm1: context.characters,
+        cm2: context.lineBreaks,
+        cm3: null,  // Size of the change
+        cd1: context.syncEnabled,
+        cd2: context.usesSize,
+        cd3: context.usesBold,
+        cd4: context.usesItalics,
+        cd5: context.usesStrikethrough,
+        cd6: context.usesList,
+      };
+    }
+
+    return analytics.sendEvent('notes', event, metrics);
   };
   clearTimeout(timeouts[event]);
   timeouts[event] = setTimeout(later, 20000);
@@ -109,6 +119,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
       disconnectFromKinto(client).then(() => {
         sendMetrics('webext-button-disconnect', eventData.context);
         credentials.clear();
+        chrome.runtime.sendMessage({
+          action: 'disconnected'
+        });
       });
       break;
     case 'kinto-load':
@@ -118,6 +131,8 @@ browser.runtime.onMessage.addListener(function(eventData) {
           data: result && typeof result.data !== 'undefined' ? result.data.content : null,
           last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
         });
+      }).catch(() => {
+        sendMetrics('open', {loaded: false});
       });
       break;
     case 'kinto-sync':
@@ -154,10 +169,11 @@ const addonIsClosedForWindow = {};
 
 // Handle opening and closing the add-on.
 function connected(p) {
-  sendMetrics('open');
+  sendMetrics('open', {loaded: true});
+  closeUI = 'closeButton';
 
   p.onDisconnect.addListener(() => {
-    sendMetrics('close');
+    sendMetrics('close', {'closeUI': closeUI});
   });
 }
 browser.runtime.onConnect.addListener(connected);
@@ -182,6 +198,7 @@ browser.browserAction.onClicked.addListener((e) => {
     browser.sidebarAction.open();
   } else {
     addonIsClosedForWindow[e.id] = true;
+    closeUI = 'sidebarButton';
     browser.sidebarAction.close();
   }
 });

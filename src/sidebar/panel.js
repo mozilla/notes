@@ -16,7 +16,7 @@ const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
-const INITIAL_CONTENT = `<h2>${browser.i18n.getMessage('welcomeTitle2')}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`;
+const INITIAL_CONTENT = `<h2>${browser.i18n.getMessage('welcomeTitle3')}</h2><p>${browser.i18n.getMessage('welcomeSubtitle')}</p><p><strong>${browser.i18n.getMessage('welcomeOpenNotes')}</strong></p><ul><li>${browser.i18n.getMessage('welcomeWindowsLinuxShortcut', '<code>Alt+Shift+W</code>')}</li><li>${browser.i18n.getMessage('welcomeMacShortcut', '<code>Opt+Shift+W</code>')}</li></ul><p><strong>${browser.i18n.getMessage('welcomeAccessNotes')}</strong></p><ul><li>${browser.i18n.getMessage('welcomeSyncInfo', '<strong>' + browser.i18n.getMessage('syncNotes') + '</strong>')}</li></ul><p>${browser.i18n.getMessage('welcomeFormatText')}</p><ul><li>${browser.i18n.getMessage('welcomeHeading').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li><li>${browser.i18n.getMessage('welcomeBold').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li><li>${browser.i18n.getMessage('welcomeItalics').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li><li>${browser.i18n.getMessage('welcomeBulleted').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li><li>${browser.i18n.getMessage('welcomeNumbered').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li><li>${browser.i18n.getMessage('welcomeCode').replace(/ ``/g, ' <code>`').replace(/``/g, '`</code>')}</li></ul><p><strong>${browser.i18n.getMessage('welcomeSuggestion')}</strong></p><ul><li>${browser.i18n.getMessage('welcomeGiveFeedback', '<strong>' + browser.i18n.getMessage('feedback') + '</strong>' )}</li></ul><p>${browser.i18n.getMessage('welcomeThatsIt')}</p>`;
 
 let isAuthenticated = false;
 let waitingToReconnect = false;
@@ -27,21 +27,38 @@ let syncingInProcess = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
-giveFeedbackButton.setAttribute('href', SURVEY_PATH);
-giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
+
+function giveFeedbackCallback(e) {
+  e.preventDefault();
+  browser.tabs.create({
+    url: SURVEY_PATH
+  });
+}
+
+giveFeedbackButton.addEventListener('dragstart', (e) => {
+  e.preventDefault();
+});
+
+giveFeedbackMenuItem.addEventListener('dragstart', (e) => {
+  e.preventDefault();
+});
+
+giveFeedbackButton.addEventListener('click', giveFeedbackCallback);
+giveFeedbackMenuItem.addEventListener('click', giveFeedbackCallback);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
 let ignoreTextSynced = false;
 let lastModified;
+let lastGood = null;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
     options: [
-      { modelElement: 'paragraph', title: 'P', class: 'ck-heading_paragraph' },
-      { modelElement: 'heading3', viewElement: 'h3', title: 'H3', class: 'ck-heading_heading3' },
-      { modelElement: 'heading2', viewElement: 'h2', title: 'H2', class: 'ck-heading_heading2' },
-      { modelElement: 'heading1', viewElement: 'h1', title: 'H1', class: 'ck-heading_heading1' }
+      { modelElement: 'heading1', viewElement: 'h1', title: browser.i18n.getMessage('title1'), class: 'ck-heading_heading1' },
+      { modelElement: 'heading2', viewElement: 'h2', title: browser.i18n.getMessage('title2'), class: 'ck-heading_heading2' },
+      { modelElement: 'heading3', viewElement: 'h3', title: browser.i18n.getMessage('title3'), class: 'ck-heading_heading3' },
+      { modelElement: 'paragraph', title: browser.i18n.getMessage('bodyText'), class: 'ck-heading_paragraph' }
     ]
   },
   toolbar: ['headings', 'bold', 'italic', 'strike', 'bulletedList', 'numberedList'],
@@ -52,10 +69,25 @@ ClassicEditor.create(document.querySelector('#editor'), {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
-          const content = editor.getData();
+          let content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
-              content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
+              content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
+            if (content.length > 15000) {
+              console.error('Maximum notepad size reached:', content.length);  // eslint-disable-line no-console
+              migrationNote.classList.add('visible');
+              migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+            } else {
+              lastGood = content;
+              migrationNote.classList.remove('visible');
+            }
+
+            if (content.length > 25000) {
+              console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
+              if (lastGood !== null) {
+                content = lastGood;
+              }
+            }
             chrome.runtime.sendMessage({
               action: 'kinto-save',
               content
@@ -66,10 +98,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
               context: getPadStats(editor)
             });
           }
+          ignoreNextLoadEvent = false;
         }
-        ignoreNextLoadEvent = false;
       });
-      
+
       savingIndicator.onclick = () => {
         enableSyncAction(editor);
       };
@@ -90,7 +122,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
             waitingToReconnect = false;
             clearTimeout(loginTimeout);
             // set title attr of footer to the currently logged in account
-            footerButtons.title = eventData.profile && eventData.profile.email;
+            if (eventData.profile) {
+              footerButtons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`;
+            }
+            localStorage.setItem('userEmail', footerButtons.title);
             savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
             browser.runtime.sendMessage({
               action: 'kinto-sync'
@@ -122,8 +157,12 @@ ClassicEditor.create(document.querySelector('#editor'), {
               setAnimation(true); // animateSyncIcon, syncingLayout, warning
               syncingInProcess = true;
             }
-            if (! waitingToReconnect) {
-              savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+            if (!waitingToReconnect) {
+              if (isAuthenticated) {
+                savingIndicator.textContent = browser.i18n.getMessage('syncProgress');
+              } else {
+                savingIndicator.textContent = browser.i18n.getMessage('savingChanges');
+              }
             }
             // Disable sync-action
             editingInProcess = true;
@@ -139,7 +178,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'text-saved':
-            if (! waitingToReconnect) {
+            if (! waitingToReconnect && ! isAuthenticated) {
               // persist reconnect warning, do not override with the 'saved at'
               savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
             }
@@ -153,8 +192,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'disconnected':
+            giveFeedbackButton.style.display = 'inherit';
+            localStorage.removeItem('userEmail');
             disconnectSync.style.display = 'none';
-            footerButtons.title = null; // remove profile email from title attribute
+            footerButtons.removeAttribute('title');// remove profile email from title attribute
             isAuthenticated = false;
             setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
             getLastSyncedTime();
@@ -175,11 +216,14 @@ function loadContent() {
   browser.storage.local.get('credentials').then((data) => {
     if (data.hasOwnProperty('credentials')) {
       isAuthenticated = true;
+      const userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        footerButtons.title = userEmail;
+      }
     }
   });
-  ignoreNextLoadEvent = true;
   chrome.runtime.sendMessage({
-    action: 'kinto-sync'
+    action: 'kinto-load'  // Load locally.
   });
 
 }
@@ -188,7 +232,8 @@ function handleLocalContent(editor, content) {
   if (!content) {
     browser.storage.local.get('notes2').then((data) => {
       if (!data.hasOwnProperty('notes2')) {
-        editor.setData(INITIAL_CONTENT);
+        lastGood = INITIAL_CONTENT;
+        editor.setData(lastGood);
         ignoreNextLoadEvent = true;
       } else {
         editor.setData(data.notes2);
@@ -203,7 +248,9 @@ function handleLocalContent(editor, content) {
     });
   } else {
     if (editor.getData() !== content) {
-      editor.setData(content);
+      // Prevent from loading too big content but allow for conflict handling.
+      lastGood = content.substring(0, 50000);
+      editor.setData(lastGood);
     }
   }
 }
@@ -221,7 +268,6 @@ function reconnectSync () {
 function disconnectFromSync () {
   waitingToReconnect = false;
   disconnectSync.style.display = 'none';
-  giveFeedbackButton.style.display = 'inherit';
   isAuthenticated = false;
   setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
   setTimeout(() => {
@@ -284,12 +330,12 @@ function getLastSyncedTime() {
 
   if (isAuthenticated) {
     giveFeedbackButton.style.display = 'none';
-    savingIndicator.textContent = browser.i18n.getMessage('syncComplete2', formatFooterTime(lastModified));
+    savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified)); 
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
-    setAnimation(false, true);
+    setAnimation(false, true, false, true);  // animateSyncIcon, syncingLayout, warning, syncSuccess
   } else {
-    savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
+    savingIndicator.textContent = browser.i18n.getMessage('changesSaved', formatFooterTime());
   }
 }
 

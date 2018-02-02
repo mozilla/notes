@@ -1,8 +1,16 @@
 # Changelog
 
-## 2.1.0 (unreleased)
+## 2.2.0 (unrelease)
 
-* No changes yet.
+* Add the full heading names (#528)
+* Fix first edition not detected in new windows (#582)
+
+
+## 2.1.1 (2018-01-22)
+
+* Add a toolbar icon
+* Update translations
+* Fix theming colors
 
 
 ## 2.1.0 (2017-12-08)

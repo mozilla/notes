@@ -15,7 +15,7 @@
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^2.0.22",
     "@ckeditor/ckeditor5-editor-classic": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-essentials": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-heading": "vladikoff/ckeditor5-heading#short-heading",
+    "@ckeditor/ckeditor5-heading": "Natim/ckeditor5-heading#short-heading",
     "@ckeditor/ckeditor5-list": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.2",
     "babel-minify-webpack-plugin": "^0.2.0",
@@ -75,6 +75,7 @@
     "start": "web-ext run -s src",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
+    "start-deved": "npm start -- --firefox=firefoxdeveloperedition",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start"
   }
