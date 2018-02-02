@@ -136,7 +136,7 @@ function getPadStats(editor) {
  *                                  if false, animate to savingLayout (sync icon on left)
  * @param {Boolean} warning         Apply yellow warning styling on toolbar
  */
-function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
+function setAnimation( animateSyncIcon = true, syncingLayout, warning, syncSuccess ) { // animateSyncIcon, syncingLayout, warning, syncSuccess
   const footerButtons = document.getElementById('footer-buttons');
   const enableSync = document.getElementById('enable-sync');
   const savingIndicator = document.getElementById('saving-indicator');
@@ -169,6 +169,12 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
     footerButtons.classList.add('warning');
   } else if (warning === false && footerButtons.classList.contains('warning')) {
     footerButtons.classList.remove('warning');
+  }
+
+  if (syncSuccess === true) {
+    footerButtons.classList.add('actionable');
+  } else {
+    footerButtons.classList.remove('actionable');
   }
 }
 

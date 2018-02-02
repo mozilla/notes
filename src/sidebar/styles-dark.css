@@ -68,6 +68,11 @@ body {
   background-color: #3d4352;
 }
 
+#footer-buttons.actionable div:first-child
+{
+  color: white;
+}
+
 ::-moz-selection {
   background-color: #5675B9;
   color: #fff;
