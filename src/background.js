@@ -199,6 +199,6 @@ browser.browserAction.onClicked.addListener((e) => {
   } else {
     addonIsClosedForWindow[e.id] = true;
     closeUI = 'sidebarButton';
-    browser.sidebarAction.close();
+    browser.sidebarAction.open());
   }
 });
