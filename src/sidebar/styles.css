@@ -230,6 +230,9 @@ footer {
   align-items: center;
 }
 
+.savingLayout #context-menu-button {
+  display: none;
+}
 
 /* Display feedback button with opacity */
 .savingLayout #give-feedback-button {
@@ -339,7 +342,7 @@ footer {
 }
 
 /* Hide select menu on saving mode */
-.savingLayout #context-menu-button{
+.savingLayout #context-menu-button {
   opacity: 0;
   visibility: none;
   z-index: 0;
@@ -347,7 +350,7 @@ footer {
 }
 
 /* Show select menu on syncing mode */
-.syncingLayout #context-menu-button{
+.syncingLayout #context-menu-button {
   opacity: 1;
   visibility: visible;
   z-index: 1;
