@@ -171,10 +171,10 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning, syncSucce
     footerButtons.classList.remove('warning');
   }
 
-  if (syncSuccess === true && !footerButtons.classList.contains('syncSuccess')) {
-    footerButtons.classList.add('syncSuccess');
-  } else if (footerButtons.classList.contains('syncSuccess')) {
-    footerButtons.classList.remove('syncSuccess');
+  if (syncSuccess === true) {
+    footerButtons.classList.add('actionable');
+  } else {
+    footerButtons.classList.remove('actionable');
   }
 }
 

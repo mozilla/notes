@@ -122,14 +122,6 @@ footer {
   transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
 }
 
-#footer-buttons.warning div:first-child {
-  color: black;
-}
-
-#footer-buttons.syncSuccess div:first-child {
-  color: black;
-}
-
 #footer-buttons div:first-child {
   position: relative;
   flex: 1 0;
@@ -146,6 +138,12 @@ footer {
 #footer-buttons.syncingLayout div:first-child {
   padding: 10px 10px 10px 40px;
   transition: padding 0s .2s;
+}
+
+#footer-buttons.warning div:first-child,
+#footer-buttons.actionable div:first-child
+{
+  color: black;
 }
 
 /* Hide saving-indication then move enable-sync then show saving-indicator */
@@ -428,8 +426,4 @@ CKEditor overrides
   width:100%!important;
   padding: 0.1em;
   box-shadow: none;
-}
-
-.actionable {
-  color: black;
 }
