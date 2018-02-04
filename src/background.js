@@ -193,12 +193,5 @@ browser.storage.local.get()
 
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener((e) => {
-  if (addonIsClosedForWindow[e.id]) {
-    addonIsClosedForWindow[e.id] = false;
     browser.sidebarAction.open();
-  } else {
-    addonIsClosedForWindow[e.id] = true;
-    closeUI = 'sidebarButton';
-    browser.sidebarAction.open();
-  }
 });
