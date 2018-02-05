@@ -3,9 +3,11 @@ const themeLegend = document.getElementById('themeTitle');
 const defaultThemeLabel = document.getElementById('default_label');
 const darkThemeLabel = document.getElementById('dark_label');
 
+/* eslint-disable no-unsanitized/property */
 themeLegend.innerHTML = browser.i18n.getMessage('themeLegend');
 defaultThemeLabel.innerHTML = browser.i18n.getMessage('defaultThemeTitle');
 darkThemeLabel.innerHTML = browser.i18n.getMessage('darkThemeTitle');
+/* eslint-enable no-unsanitized/property */
 
 const themeRadioBtn = document.getElementsByName('theme');
 
@@ -33,9 +35,7 @@ function getTheme() {
       continue;
   }
 
-  const selectedTheme = {
-    theme: theme
-  };
+  const selectedTheme = {theme};
 
   return selectedTheme;
 }

@@ -255,11 +255,10 @@ function syncKinto(client, credentials) {
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
         return reconnectSync(credentials);
-      } else {
-        console.error(error); // eslint-disable-line no-console
-        reconnectSync(credentials);
-        return Promise.reject(error);
       }
+      console.error(error); // eslint-disable-line no-console
+      reconnectSync(credentials);
+      return Promise.reject(error);
     });
 }
 
@@ -299,7 +298,7 @@ function loadFromKinto(client, credentials) {
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-        last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+        last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
       });
     });
 }

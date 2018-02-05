@@ -17,7 +17,7 @@ function customizeEditor(editor) {
       editor.fire('changesDone');
     });
   });
-  
+
   document.addEventListener('dragover', () => {
     mainEditor.classList.add('drag-n-drop-focus');
   });
@@ -38,7 +38,7 @@ function customizeEditor(editor) {
   localizeEditorButtons();
 }
 
-function localizeEditorButtons () {
+function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
   document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
     sel.remove();
@@ -185,5 +185,5 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning, syncSucce
  */
 function formatFooterTime(date) {
   date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 }
