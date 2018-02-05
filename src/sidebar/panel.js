@@ -50,7 +50,6 @@ giveFeedbackMenuItem.addEventListener('click', giveFeedbackCallback);
 let ignoreNextLoadEvent = false;
 let ignoreTextSynced = false;
 let lastModified;
-let lastGood = null;
 
 ClassicEditor.create(document.querySelector('#editor'), {
   heading: {
@@ -69,7 +68,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         const isFocused = document.querySelector('.ck-editor__editable').classList.contains('ck-focused');
         // Only use the focused editor or handle 'rename' events to set the data into storage.
         if (isFocused || name === 'rename' || name === 'insert') {
-          let content = editor.getData();
+          const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
               content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT) {
             ignoreTextSynced = true;
@@ -78,16 +77,9 @@ ClassicEditor.create(document.querySelector('#editor'), {
               migrationNote.classList.add('visible');
               migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
             } else {
-              lastGood = content;
               migrationNote.classList.remove('visible');
             }
 
-            if (content.length > 25000) {
-              console.error('Maximum notepad size exceeded. Reverting content.');  // eslint-disable-line no-console
-              if (lastGood !== null) {
-                content = lastGood;
-              }
-            }
             chrome.runtime.sendMessage({
               action: 'kinto-save',
               content
@@ -228,8 +220,7 @@ function handleLocalContent(editor, content) {
   if (!content) {
     browser.storage.local.get('notes2').then((data) => {
       if (!data.hasOwnProperty('notes2')) {
-        lastGood = INITIAL_CONTENT;
-        editor.setData(lastGood);
+        editor.setData(INITIAL_CONTENT);
         ignoreNextLoadEvent = true;
       } else {
         editor.setData(data.notes2);
@@ -245,8 +236,7 @@ function handleLocalContent(editor, content) {
   } else {
     if (editor.getData() !== content) {
       // Prevent from loading too big content but allow for conflict handling.
-      lastGood = content.substring(0, 50000);
-      editor.setData(lastGood);
+      editor.setData(content);
     }
   }
 }
