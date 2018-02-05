@@ -35,11 +35,11 @@ function sendMetrics(event, context = {}) {
     let metrics = {};
 
     if (event === 'open') {
-      metrics.cd9 = context.loaded === false ? false : true;
+      metrics.cd9 = context.loaded !== false;
     } else if (event === 'close') {
       metrics.cd7 = context.closeUI;
       metrics.cd8 = null; // reason editing session ended
-    } else if (event === 'changed' || event === 'drag-n-drop') {  // Editing
+    } else if (event === 'changed' || event === 'drag-n-drop') { // Editing
       metrics = {
         cm1: context.characters,
         cm2: context.lineBreaks,
@@ -129,7 +129,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
           data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-          last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+          last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
         });
       }).catch(() => {
         sendMetrics('open', {loaded: false});

@@ -41,6 +41,7 @@ plugins:
 root: true
 
 rules:
+  consistent-return: warn
   eqeqeq: error
   linebreak-style: [error, unix]
   no-console: warn
