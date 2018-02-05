@@ -40,6 +40,8 @@
     "cross-spawn": "^5.1.0",
     "eslint": "^4.0.0",
     "fetch-mock": "^5.12.2",
+    "eslint-plugin-mozilla": "0.4.9",
+    "eslint-plugin-no-unsanitized": "2.0.2",
     "fs-extra": "^4.0.1",
     "karma": "^1.7.1",
     "karma-coverage": "^1.1.1",
