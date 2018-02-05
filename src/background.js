@@ -165,8 +165,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
   }
 });
 
-const addonIsClosedForWindow = {};
-
 // Handle opening and closing the add-on.
 function connected(p) {
   sendMetrics('open', {loaded: true});
@@ -192,13 +190,6 @@ browser.storage.local.get()
 });
 
 // Handle onClick event for the toolbar button
-browser.browserAction.onClicked.addListener((e) => {
-  if (addonIsClosedForWindow[e.id]) {
-    addonIsClosedForWindow[e.id] = false;
+browser.browserAction.onClicked.addListener(() => {
     browser.sidebarAction.open();
-  } else {
-    addonIsClosedForWindow[e.id] = true;
-    closeUI = 'sidebarButton';
-    browser.sidebarAction.close();
-  }
 });
