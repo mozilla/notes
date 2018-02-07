@@ -1,4 +1,3 @@
-/* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation, formatFooterTime */
 function customizeEditor(editor) {
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202

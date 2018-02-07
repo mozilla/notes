@@ -8,6 +8,7 @@ html {
 }
 
 body,
+body > div,
 body #root,
 body .ck-editor {
   display: flex;

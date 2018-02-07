@@ -32,6 +32,10 @@ globals:
   migrationCheck: false
   retrieveNote: false
   setAnimation: false
+  BrowserStorageCredentials: false
+  loadFromKinto: false
+  disconnectFromKinto: false
+  saveToKinto: false
 
 plugins:
   - jsx-a11y

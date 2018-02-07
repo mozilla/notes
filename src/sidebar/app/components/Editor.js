@@ -7,6 +7,7 @@ const INITIAL_CONTENT = `<h2>${browser.i18n.getMessage(
 )}</h2><p>${browser.i18n.getMessage('welcomeText2')}</p>`;
 
 class Editor extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -14,6 +15,79 @@ class Editor extends React.Component {
       ignoreTextSynced: false
     };
     this.editor = null;
+
+    // Process events from chrome runtime onMessage
+    this.events = (eventData) => {
+      let content;
+      switch (eventData.action) {
+        case 'kinto-loaded':
+          content = eventData.data;
+
+          this.handleLocalContent(this.editor, content);
+          break;
+        case 'text-change':
+          this.setState({
+            ignoreNextLoadEvent: true
+          });
+          browser.runtime.sendMessage({
+            action: 'kinto-load'
+          });
+          break;
+        case 'text-synced':
+          if (!this.state.ignoreTextSynced || eventData.conflict) {
+            this.handleLocalContent(this.editor, eventData.content);
+          }
+
+          this.setState({
+            ignoreTextSynced: false
+          });
+          break;
+      }
+    };
+
+    this.handleLocalContent = function(editor, content) {
+      if (!content) {
+        browser.storage.local.get('notes2').then(data => {
+          if (!data.hasOwnProperty('notes2')) {
+            this.editor.setData(INITIAL_CONTENT);
+            this.setState({
+              ignoreNextLoadEvent: true
+            });
+          } else {
+            this.editor.setData(data.notes2);
+            chrome.runtime
+              .sendMessage({
+                action: 'kinto-save',
+                content: data.notes2
+              })
+              .then(() => {
+                // Clean-up
+                browser.storage.local.remove('notes2');
+              });
+          }
+        });
+      } else {
+        if (this.editor.getData() !== content) {
+          this.editor.setData(content);
+        }
+      }
+    };
+
+    this.loadContent = () => {
+      browser.storage.local.get('credentials').then(data => {
+        if (data.hasOwnProperty('credentials')) {
+          this.setState({
+            isAuthenticated: true
+          });
+        }
+      });
+      this.setState({
+        ignoreNextLoadEvent: true
+      });
+      chrome.runtime.sendMessage({
+        action: 'kinto-sync'
+      });
+    };
   }
 
   componentDidMount() {
@@ -101,78 +175,6 @@ class Editor extends React.Component {
 
   componentWillUnmount() {
     chrome.runtime.onMessage.removeListener(this.events);
-  }
-
-  // Process events from chrome runtime onMessage
-  events(eventData) {
-    let content;
-    switch (eventData.action) {
-      case 'kinto-loaded':
-        content = eventData.data;
-        this.handleLocalContent(this.editor, content);
-        break;
-      case 'text-change':
-        this.setState({
-          ignoreNextLoadEvent: true
-        });
-        browser.runtime.sendMessage({
-          action: 'kinto-load'
-        });
-        break;
-      case 'text-synced':
-        if (!this.state.ignoreTextSynced || eventData.conflict) {
-          this.handleLocalContent(this.editor, eventData.content);
-        }
-
-        this.setState({
-          ignoreTextSynced: false
-        });
-        break;
-    }
-  }
-
-  handleLocalContent(editor, content) {
-    if (!content) {
-      browser.storage.local.get('notes2').then(data => {
-        if (!data.hasOwnProperty('notes2')) {
-          this.editor.setData(INITIAL_CONTENT);
-          this.setState({
-            ignoreNextLoadEvent: true
-          });
-        } else {
-          this.editor.setData(data.notes2);
-          chrome.runtime
-            .sendMessage({
-              action: 'kinto-save',
-              content: data.notes2
-            })
-            .then(() => {
-              // Clean-up
-              browser.storage.local.remove('notes2');
-            });
-        }
-      });
-    } else {
-      if (this.editor.getData() !== content) {
-        this.editor.setData(content);
-      }
-    }
-  }
-
-  loadContent() {
-    browser.storage.local.get('credentials').then(data => {
-      if (data.hasOwnProperty('credentials')) {
-        this.setState({
-          isAuthenticated: true
-        });
-      }
-    });
-    this.setState({
-      ignoreNextLoadEvent: true
-    });
-    chrome.runtime.sendMessage({
-      action: 'kinto-sync'
-    });
   }
 
   render() {

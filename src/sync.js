@@ -133,7 +133,7 @@ class Credentials {
   }
 }
 
-class BrowserStorageCredentials extends Credentials {
+class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-unused-vars
   constructor(storage) {
     super();
     this.storage = storage;
@@ -285,11 +285,13 @@ function retrieveNote(client) {
  *   last_modified: the timestamp of the sync, or null
  * }
  */
-function loadFromKinto(client, credentials) {
+function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-vars
+  console.log('loadFromKinto', client, credentials);
   return syncKinto(client, credentials)
   // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
+      console.log(result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         data: result && typeof result.data !== 'undefined' ? result.data.content : null,
@@ -298,7 +300,7 @@ function loadFromKinto(client, credentials) {
     });
 }
 
-function saveToKinto(client, credentials, content) {
+function saveToKinto(client, credentials, content) { // eslint-disable-line no-unused-vars
   let resolve;
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
@@ -342,11 +344,10 @@ function saveToKinto(client, credentials, content) {
   return promise;
 }
 
-function disconnectFromKinto(client) {
+function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
   const notes = client.collection('notes', {
     idSchema: notesIdSchema,
   });
   return notes.resetSyncStatus();
 }
 
-export {BrowserStorageCredentials, disconnectFromKinto, loadFromKinto, saveToKinto};

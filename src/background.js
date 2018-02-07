@@ -1,8 +1,6 @@
-/* exported sendMetrics */
 /**
  * Google Analytics / TestPilot Metrics
  */
-import {BrowserStorageCredentials, disconnectFromKinto, loadFromKinto, saveToKinto} from './sync';
 
 const TRACKING_ID = 'UA-35433268-79';
 
@@ -90,8 +88,10 @@ function authenticate() {
     sendMetrics('login-failed');
   });
 }
+
 browser.runtime.onMessage.addListener(function(eventData) {
   const credentials = new BrowserStorageCredentials(browser.storage.local);
+
   switch (eventData.action) {
     case 'authenticate':
       credentials.get()
@@ -151,7 +151,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
   }
 });
-
 
 // Handle opening and closing the add-on.
 function connected(p) {
