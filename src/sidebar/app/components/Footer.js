@@ -37,7 +37,7 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
     enableSync.style.backgroundColor = 'transparent';
     // Start blink animation on saving-indicator
     savingIndicator.classList.add('blink');
-    // Reset CSS animation by removeing class
+    // Reset CSS animation by removing class
     setTimeout(() => savingIndicator.classList.remove('blink'), 400);
   } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
     // Animate savingIndicator text
