@@ -1,4 +1,6 @@
 function customizeEditor(editor) {
+  const mainEditor = document.querySelector('.ck-editor__main');
+
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
   document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach(sel => {
@@ -17,8 +19,21 @@ function customizeEditor(editor) {
       });
     });
 
+  document.addEventListener('dragover', () => {
+    mainEditor.classList.add('drag-n-drop-focus');
+  });
+
+  document.addEventListener('dragleave', () => {
+    mainEditor.classList.remove('drag-n-drop-focus');
+  });
+
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
+    mainEditor.classList.remove('drag-n-drop-focus');
+    browser.runtime.sendMessage({
+      action: 'metrics-drag-n-drop',
+      context: getPadStats(editor)
+    });
   });
 
   localizeEditorButtons();
@@ -78,6 +93,10 @@ function getPadStats(editor) {
       if (value.item.textNode._attrs.get('italic')) {
         styles.italic = true;
       }
+      // Strikethrough
+      if (value.item.textNode._attrs.get('strike')) {
+        styles.strike = true;
+      }
     }
 
     if (value.type === 'elementStart') {
@@ -109,50 +128,5 @@ function getPadStats(editor) {
     usesList: styles.list
   };
 }
-
-/**
- * Set animation on footerButtons toolbar
- *
- *
- * @param {Boolean} animateSyncIcon Start looping animation on sync icon
- * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
- *                                  if false, animate to savingLayout (sync icon on left)
- * @param {Boolean} warning         Apply yellow warning styling on toolbar
- */
-// function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
-//   const footerButtons = document.getElementById('footer-buttons');
-//   const enableSync = document.getElementById('enable-sync');
-//   const savingIndicator = document.getElementById('saving-indicator');
-
-//   if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
-//     footerButtons.classList.add('animateSyncIcon');
-//   } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
-//     footerButtons.classList.remove('animateSyncIcon');
-//   }
-
-//   if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
-//     footerButtons.classList.replace('savingLayout', 'syncingLayout');
-//     enableSync.style.backgroundColor = 'transparent';
-//     // Start blink animation on saving-indicator
-//     savingIndicator.classList.add('blink');
-//     // Reset CSS animation by removeing class
-//     setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-//   } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
-//     // Animate savingIndicator text
-//     savingIndicator.classList.add('blink');
-//     setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-//     setTimeout(() => {
-//       enableSync.style.backgroundColor = null;
-//     }, 400);
-//     //
-//     footerButtons.classList.replace('syncingLayout', 'savingLayout');
-//   }
-
-//   if (warning === true && !footerButtons.classList.contains('warning')) {
-//     footerButtons.classList.add('warning');
-//   } else if (warning === false && footerButtons.classList.contains('warning')) {
-//     footerButtons.classList.remove('warning');
-//   }
-// }
 
 export { customizeEditor, getPadStats };

@@ -11,12 +11,12 @@ function getThemeFromStorage() {
         darkSS.rel = 'stylesheet';
         darkSS.href = 'static/css/styles-dark.css';
         document.getElementsByTagName('head')[0].appendChild(darkSS);
-      } else return;
+      }
     } else if (data.theme === 'default' || data.theme === undefined) {
       if (document.getElementById('dark-styles')) {
         const darkSS = document.getElementById('dark-styles');
         darkSS.parentElement.removeChild(darkSS);
-      } else return;
+      }
     }
   });
 }

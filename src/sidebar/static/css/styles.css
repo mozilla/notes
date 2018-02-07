@@ -53,6 +53,10 @@ body .ck-editor .ck-editor__editable {
   padding-left: 20px;
 }
 
+.ck-editor__editable ol > li, .ck-editor__editable ul > li {
+  line-height: 1.5rem;
+}
+
 /**
 Custom list types for indents
 https://github.com/mozilla/notes/issues/413
@@ -125,10 +129,6 @@ footer {
     cubic-bezier(0.07, 0.95, 0, 1);
 }
 
-#footer-buttons.warning div:first-child {
-  color: black;
-}
-
 #footer-buttons div:first-child {
   position: relative;
   flex: 1 0;
@@ -145,6 +145,12 @@ footer {
 #footer-buttons.syncingLayout div:first-child {
   padding: 10px 10px 10px 40px;
   transition: padding 0s 0.2s;
+}
+
+#footer-buttons.warning div:first-child,
+#footer-buttons.actionable div:first-child
+{
+  color: black;
 }
 
 /* Hide saving-indication then move enable-sync then show saving-indicator */
@@ -167,6 +173,10 @@ footer {
   animation-duration: var(--sync-animation-duration);
   animation-timing-function: linear;
   animation-iteration-count: 1;
+}
+
+#saving-indicator {
+  cursor: pointer;
 }
 
 /* Sync icon */
@@ -242,6 +252,10 @@ footer {
   align-items: center;
 }
 
+.savingLayout #context-menu-button {
+  display: none;
+}
+
 /* Display feedback button with opacity */
 .savingLayout #give-feedback-button {
   opacity: 1;
@@ -287,16 +301,12 @@ footer {
 #migration-note {
   display: none;
   padding: 3px 0 5px 0;
-  background: #b6feb4;
+  background: #ffe900;
   width: 100%;
   position: relative;
   margin: 0 auto;
   border: 0;
   border-top: 1px solid #ccc;
-}
-
-#migration-note {
-  background: #00fffe;
 }
 
 #close-button,
@@ -410,6 +420,12 @@ CKEditor overrides
   font-size: 16px;
 }
 
+#notes .drag-n-drop-focus,
+#notes .drag-n-drop-focus .ck-editor__editable {
+  border: 1px solid #008000;
+  background-color: #dcd6da;
+}
+
 .ck-heading-dropdown button {
   width: 45px;
   height: 25px;
@@ -417,7 +433,8 @@ CKEditor overrides
 }
 
 .ck-heading-dropdown .ck-dropdown__panel {
-  width: 70px;
+  width: auto;
+  min-width: 70px;
 }
 
 #notes .ck-toolbar > * {

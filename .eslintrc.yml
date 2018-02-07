@@ -30,6 +30,8 @@ globals:
   getPadStats: false
   localizeEditorButtons: false
   migrationCheck: false
+  migrationNote: false
+  migrationBody: false
   retrieveNote: false
   setAnimation: false
   BrowserStorageCredentials: false
@@ -44,6 +46,7 @@ plugins:
 root: true
 
 rules:
+  consistent-return: warn
   eqeqeq: error
   linebreak-style: [error, unix]
   no-console: warn

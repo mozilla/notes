@@ -9,10 +9,7 @@ import React from 'react';
  */
 function formatFooterTime(date) {
   date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 }
 
 /**
@@ -336,7 +333,8 @@ class Footer extends React.Component {
 
         <div id="footer-buttons" className="savingLayout">
           <div>
-            <span id="saving-indicator">{this.state.savingIndicatorText}</span>
+            <button id="saving-indicator" style={{background: 'none', paddingBottom: '12px', 'color': 'inherit'}}
+              onClick={() => this.enableSyncAction()}>{this.state.savingIndicatorText}</button>
             <button
               id="enable-sync"
               onClick={() => this.enableSyncAction()}

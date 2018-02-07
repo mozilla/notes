@@ -8,7 +8,7 @@
   "applications": {
     "gecko": {
       "id": "notes@mozilla.com",
-      "strict_min_version": "54.0a1",
+      "strict_min_version": "57.0",
       "update_url": "https://testpilot.firefox.com/files/notes@mozilla.com/updates.json"
     }
   },
@@ -20,6 +20,24 @@
     "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
     "default_panel": "sidebar/index.html"
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": {
+      "16": "icons/notes.svg",
+      "32": "icons/notes.svg"
+    },
+    "default_area": "navbar",
+    "default_title": "Firefox Notes",
+    "theme_icons": [{
+      "light": "icons/notes-48-light.png",
+      "dark": "icons/notes-48-dark.png",
+      "size": 16
+    }, {
+      "light": "icons/notes-96-light.png",
+      "dark": "icons/notes-96-dark.png",
+      "size": 32
+    }]
   },
   "permissions": [
     "storage",

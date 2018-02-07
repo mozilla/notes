@@ -1,6 +1,7 @@
 /**
  * Module that provides utils for Firefox Accounts
  */
+
 /**
  *
  * @param {String} FXA_PROFILE_SERVER - profile server
@@ -13,19 +14,19 @@ function fxaFetchProfile(FXA_PROFILE_SERVER, token) { // eslint-disable-line no-
   });
   const request = new Request(`${FXA_PROFILE_SERVER}/profile`, {
     method: 'GET',
-    headers: headers
+    headers
   });
 
   return fetch(request).then((resp) => {
     if (resp.status === 200) {
       return resp.json();
-    } else {
-      throw new Error('Failed to fetch profile');
     }
+    throw new Error('Failed to fetch profile');
   });
 }
 
-function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+function fxaRenewCredential(credential) {
   const fxaOAuthServer = credential.metadata.server;
   const clientId = credential.metadata.client_id;
   const scope = credential.metadata.scope;
@@ -37,7 +38,7 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
 
   const accessTokenVerifyRequest = new Request(`${fxaOAuthServer}/verify`, {
     method: 'POST',
-    headers: headers,
+    headers,
     body: JSON.stringify({
       token: accessToken,
     })
@@ -45,11 +46,13 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
 
   const refreshTokenRequest = new Request(`${fxaOAuthServer}/token`, {
     method: 'POST',
-    headers: headers,
+    headers,
     body: JSON.stringify({
-      client_id: clientId, // eslint-disable-line camelcase
-      grant_type: 'refresh_token', // eslint-disable-line camelcase
-      refresh_token: refreshToken, // eslint-disable-line camelcase
+      // eslint-disable camelcase
+      client_id: clientId,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      // eslint-enable camelcase
       scope: scope.join(' ')
     })
   });
@@ -64,15 +67,14 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
     }, () => {
       throw new Error('Failed to verify token');
     }).then((resp) => {
-      if (! resp) {
+      if (!resp) {
         // no response means we never made the request
         return null;
       } else if (resp.status === 200) {
         return resp.json();
-      } else {
-        // if failed to renew then throw
-        throw new Error('Failed to renew token');
       }
+      // if failed to renew then throw
+      throw new Error('Failed to renew token');
     }, () => {
       throw new Error('Failed to renew token');
     }).then((renewResp) => {
@@ -80,8 +82,6 @@ function fxaRenewCredential(credential) { // eslint-disable-line no-unused-vars
         // if a renew response then update credential
         credential.access_token = renewResp.access_token;
       }
-
       return credential;
     });
-
 }
