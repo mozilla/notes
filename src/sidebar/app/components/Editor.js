@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { getPadStats, customizeEditor } from '../editor.js';
 
@@ -18,7 +17,7 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    ClassicEditor.create(ReactDOM.findDOMNode(this), {
+    ClassicEditor.create(this.node, {
       heading: {
         options: [
           {
@@ -122,7 +121,7 @@ class Editor extends React.Component {
         break;
       case 'text-synced':
         if (!this.state.ignoreTextSynced || eventData.conflict) {
-          handleLocalContent(this.editor, eventData.content);
+          this.handleLocalContent(this.editor, eventData.content);
         }
 
         this.setState({
@@ -177,7 +176,14 @@ class Editor extends React.Component {
   }
 
   render() {
-    return <div id="editor" />;
+    return (
+      <div
+        ref={node => {
+          this.node = node;
+        }}
+        id="editor"
+      />
+    );
   }
 }
 

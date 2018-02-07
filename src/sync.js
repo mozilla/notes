@@ -1,10 +1,4 @@
-/* exported BrowserStorageCredentials */
-/* exported disconnectFromKinto */
-/* exported loadFromKinto */
-/* exported saveToKinto */
-
 let syncDebounce = null;
-
 
 const cryptographer = new Jose.WebCryptographer();
 cryptographer.setKeyEncryptionAlgorithm('A256KW');
@@ -354,3 +348,5 @@ function disconnectFromKinto(client) {
   });
   return notes.resetSyncStatus();
 }
+
+export {BrowserStorageCredentials, disconnectFromKinto, loadFromKinto, saveToKinto};

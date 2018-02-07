@@ -15,7 +15,6 @@ extends:
   - plugin:jsx-a11y/recommended
 
 globals:
-  BrowserStorageCredentials: false
   ClassicEditor: false
   Jose: false
   JoseJWE: false
@@ -24,17 +23,14 @@ globals:
   Quill: false
   TestPilotGA: false
   customizeEditor: false
-  disconnectFromKinto: false
   formatFooterTime: false
   fxaCryptoRelier: false
   fxaFetchProfile: false
   fxaRenewCredential: false
   getPadStats: false
-  loadFromKinto: false
   localizeEditorButtons: false
   migrationCheck: false
   retrieveNote: false
-  saveToKinto: false
   setAnimation: false
 
 plugins:

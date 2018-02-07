@@ -1,39 +1,39 @@
 /* exported TEXT_ALIGN_DIR */
-import { formatFooterTime, customizeEditor } from './editor';
+// import { formatFooterTime, customizeEditor } from './editor';
 
-const UI_LANG = browser.i18n.getUILanguage();
-const RTL_LANGS = ['ar', 'fa', 'he'];
-const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
-const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
-const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
+// const UI_LANG = browser.i18n.getUILanguage();
+// const RTL_LANGS = ['ar', 'fa', 'he'];
+// const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
+// const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+// const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
-const footerButtons = document.getElementById('footer-buttons');
-const enableSync = document.getElementById('enable-sync');
-const giveFeedbackButton = document.getElementById('give-feedback-button');
-const giveFeedbackMenuItem = document.getElementById('give-feedback');
-const savingIndicator = document.getElementById('saving-indicator');
-savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
+// const footerButtons = document.getElementById('footer-buttons');
+// const enableSync = document.getElementById('enable-sync');
+// const giveFeedbackButton = document.getElementById('give-feedback-button');
+// const giveFeedbackMenuItem = document.getElementById('give-feedback');
+// const savingIndicator = document.getElementById('saving-indicator');
+// savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
-const disconnectSync = document.getElementById('disconnect-from-sync');
-disconnectSync.style.display = 'none';
-disconnectSync.textContent = browser.i18n.getMessage('disableSync');
+// const disconnectSync = document.getElementById('disconnect-from-sync');
+// disconnectSync.style.display = 'none';
+// disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
-const isAuthenticated = false;
-let waitingToReconnect = false;
-let loginTimeout;
-const editingInProcess = false;
-const syncingInProcess = false;
+// const isAuthenticated = false;
+// let waitingToReconnect = false;
+// let loginTimeout;
+// const editingInProcess = false;
+// const syncingInProcess = false;
 
-enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
-giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
-giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
-giveFeedbackButton.setAttribute('href', SURVEY_PATH);
-giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
+// enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
+// giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
+// giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
+// giveFeedbackButton.setAttribute('href', SURVEY_PATH);
+// giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
-const ignoreNextLoadEvent = false;
-const ignoreTextSynced = false;
-let lastModified;
+// const ignoreNextLoadEvent = false;
+// const ignoreTextSynced = false;
+// let lastModified;
 
 // ClassicEditor.create(document.querySelector('#editor'), {
 //   heading: {
@@ -52,7 +52,7 @@ let lastModified;
 //     if (isFocused || name === 'rename' || name === 'insert') {
 //       const content = editor.getData();
 //       if (!ignoreNextLoadEvent && content !== undefined &&
-//           content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
+//           content.replace('&nbsp;', ' ') !== INITIAL_CONTENT) {
 //         ignoreTextSynced = true;
 //         chrome.runtime.sendMessage({
 //           action: 'kinto-save',
@@ -225,45 +225,45 @@ let lastModified;
 
 // disconnectSync.addEventListener('click', disconnectFromSync);
 
-function enableSyncAction(editor) {
-  if (editingInProcess || syncingInProcess) {
-    return;
-  }
+// function enableSyncAction(editor) {
+//   if (editingInProcess || syncingInProcess) {
+//     return;
+//   }
 
-  if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
-    // Trigger manual sync
-    setAnimation(true);
-    browser.runtime.sendMessage({
-      action: 'kinto-sync'
-    });
-  } else if (
-    !isAuthenticated &&
-    (footerButtons.classList.contains('savingLayout') || waitingToReconnect)
-  ) {
-    // Login
-    setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+//   if (isAuthenticated && footerButtons.classList.contains('syncingLayout')) {
+//     // Trigger manual sync
+//     setAnimation(true);
+//     browser.runtime.sendMessage({
+//       action: 'kinto-sync'
+//     });
+//   } else if (
+//     !isAuthenticated &&
+//     (footerButtons.classList.contains('savingLayout') || waitingToReconnect)
+//   ) {
+//     // Login
+//     setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
 
-    // enable disable sync button
-    disconnectSync.style.display = 'block';
+//     // enable disable sync button
+//     disconnectSync.style.display = 'block';
 
-    setTimeout(() => {
-      savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
-    }, 200); // Delay text for smooth animation
+//     setTimeout(() => {
+//       savingIndicator.textContent = browser.i18n.getMessage('openingLogin');
+//     }, 200); // Delay text for smooth animation
 
-    loginTimeout = setTimeout(() => {
-      setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
-      savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
-      waitingToReconnect = true;
-    }, 5000);
+//     loginTimeout = setTimeout(() => {
+//       setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+//       savingIndicator.textContent = browser.i18n.getMessage('pleaseLogin');
+//       waitingToReconnect = true;
+//     }, 5000);
 
-    browser.runtime.sendMessage({
-      action: 'authenticate',
-      context: getPadStats(editor)
-    });
-  }
+//     browser.runtime.sendMessage({
+//       action: 'authenticate',
+//       context: getPadStats(editor)
+//     });
+//   }
 
-  waitingToReconnect = false;
-}
+//   waitingToReconnect = false;
+// }
 
 // function getLastSyncedTime() {
 //   if (waitingToReconnect) {

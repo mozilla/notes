@@ -2,6 +2,8 @@
 /**
  * Google Analytics / TestPilot Metrics
  */
+import {BrowserStorageCredentials, disconnectFromKinto, loadFromKinto, saveToKinto} from './sync';
+
 const TRACKING_ID = 'UA-35433268-79';
 
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';

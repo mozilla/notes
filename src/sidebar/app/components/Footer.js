@@ -104,10 +104,10 @@ class Footer extends React.Component {
     chrome.runtime.onMessage.removeListener(this.events);
   }
 
-  events = eventData => {
+  events(eventData) {
     const footerButtons = document.getElementById('footer-buttons');
 
-    let content;
+    // let content;
     switch (eventData.action) {
       case 'sync-authenticated':
         setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
@@ -218,9 +218,9 @@ class Footer extends React.Component {
         this.getLastSyncedTime();
         break;
     }
-  };
+  }
 
-  getLastSyncedTime = () => {
+  getLastSyncedTime() {
     if (this.state.waitingToReconnect) {
       // persist reconnect warning, do not override with the 'saved at'
       return;
@@ -244,9 +244,9 @@ class Footer extends React.Component {
         )
       });
     }
-  };
+  }
 
-  disconnectFromSync = () => {
+  disconnectFromSync() {
     this.setState({
       waitingToReconnect: false,
       isAuthenticated: false
@@ -264,9 +264,9 @@ class Footer extends React.Component {
     browser.runtime.sendMessage('notes@mozilla.com', {
       action: 'disconnected'
     });
-  };
+  }
 
-  enableSyncAction = editor => {
+  enableSyncAction(editor) {
     if (this.state.editingInProcess || this.state.syncingInProcess) {
       return;
     }
@@ -310,20 +310,24 @@ class Footer extends React.Component {
       // Problem not having editor in Footer Component
       browser.runtime.sendMessage({
         action: 'authenticate',
-        context: null // getPadStats(editor)
+        context: getPadStats(editor)
       });
     }
 
     this.setState({
       waitingToReconnect: false
     });
-  };
+  }
 
   render() {
     return (
       <footer>
         <div id="sync-note">
-          <img src="static/svg/close.svg" id="close-button" />
+          <img
+            src="static/svg/close.svg"
+            alt="Close button"
+            id="close-button"
+          />
           <p id="sync-note-dialog" />
         </div>
 
@@ -384,16 +388,18 @@ class Footer extends React.Component {
             >
               <li
                 id="disconnect-from-sync"
-                onClick={this.disconnectFromSync}
                 className="mdl-menu__item context-menu-item"
               />
               <li>
                 <a
+                  onClick={this.disconnectFromSync}
                   id="give-feedback"
                   className="mdl-menu__item context-menu-item"
                   title={browser.i18n.getMessage('feedback')}
                   href={SURVEY_PATH}
-                />
+                >
+                  {' '}
+                </a>
               </li>
             </ul>
           </div>
