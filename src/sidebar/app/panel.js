@@ -1,5 +1,5 @@
 /* exported TEXT_ALIGN_DIR */
-import {formatFooterTime, customizeEditor} from './editor';
+import { formatFooterTime, customizeEditor } from './editor';
 
 const UI_LANG = browser.i18n.getUILanguage();
 const RTL_LANGS = ['ar', 'fa', 'he'];
@@ -18,12 +18,11 @@ const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
 
-
-let isAuthenticated = false;
+const isAuthenticated = false;
 let waitingToReconnect = false;
 let loginTimeout;
-let editingInProcess = false;
-let syncingInProcess = false;
+const editingInProcess = false;
+const syncingInProcess = false;
 
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
@@ -32,8 +31,8 @@ giveFeedbackButton.setAttribute('href', SURVEY_PATH);
 giveFeedbackMenuItem.setAttribute('href', SURVEY_PATH);
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
-let ignoreNextLoadEvent = false;
-let ignoreTextSynced = false;
+const ignoreNextLoadEvent = false;
+const ignoreTextSynced = false;
 let lastModified;
 
 // ClassicEditor.create(document.querySelector('#editor'), {
@@ -235,11 +234,14 @@ function enableSyncAction(editor) {
     // Trigger manual sync
     setAnimation(true);
     browser.runtime.sendMessage({
-        action: 'kinto-sync'
-      });
-  } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
+      action: 'kinto-sync'
+    });
+  } else if (
+    !isAuthenticated &&
+    (footerButtons.classList.contains('savingLayout') || waitingToReconnect)
+  ) {
     // Login
-    setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+    setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
 
     // enable disable sync button
     disconnectSync.style.display = 'block';

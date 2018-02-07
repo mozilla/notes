@@ -4,10 +4,12 @@ html {
   line-height: 1.2em;
   overflow: hidden;
   margin: 0;
-  --sync-animation-duration: .4s;
+  --sync-animation-duration: 0.4s;
 }
 
-body, body #root, body .ck-editor {
+body,
+body #root,
+body .ck-editor {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -36,7 +38,6 @@ body .ck-editor__main {
   overflow: hidden;
 }
 
-
 body .ck-editor .ck-editor__editable {
   flex: auto;
   flex-direction: column;
@@ -46,7 +47,8 @@ body .ck-editor .ck-editor__editable {
   cursor: text;
 }
 
-.ck-editor__editable ol, .ck-editor__editable ul {
+.ck-editor__editable ol,
+.ck-editor__editable ul {
   padding-left: 20px;
 }
 
@@ -54,11 +56,13 @@ body .ck-editor .ck-editor__editable {
 Custom list types for indents
 https://github.com/mozilla/notes/issues/413
  */
-ol ol, ol ol ol ol ol {
+ol ol,
+ol ol ol ol ol {
   list-style-type: lower-alpha;
 }
 
-ol ol ol, ol ol ol ol ol ol {
+ol ol ol,
+ol ol ol ol ol ol {
   list-style-type: lower-roman;
 }
 
@@ -109,13 +113,15 @@ footer {
   width: 100%;
   height: 40px;
   background-color: transparent;
-  transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
+  transition: background var(--sync-animation-duration)
+    cubic-bezier(0.07, 0.95, 0, 1);
 }
 
 /* warning style */
 #footer-buttons.warning {
   background-color: rgb(255, 236, 173);
-  transition: background var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
+  transition: background var(--sync-animation-duration)
+    cubic-bezier(0.07, 0.95, 0, 1);
 }
 
 #footer-buttons.warning div:first-child {
@@ -132,20 +138,28 @@ footer {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: padding 0s .2s;
+  transition: padding 0s 0.2s;
 }
 
 #footer-buttons.syncingLayout div:first-child {
   padding: 10px 10px 10px 40px;
-  transition: padding 0s .2s;
+  transition: padding 0s 0.2s;
 }
 
 /* Hide saving-indication then move enable-sync then show saving-indicator */
 @keyframes blink {
-  0% { opacity: 1; }
-  25% { opacity: 0; }
-  75% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 #saving-indicator.blink {
   animation-name: blink;
@@ -170,14 +184,17 @@ footer {
 
 .savingLayout #enable-sync {
   margin-right: 0px;
-  transition: margin var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) .05s, border 0s cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+  transition: margin var(--sync-animation-duration)
+      cubic-bezier(0.07, 0.95, 0, 1) 0.05s,
+    border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 }
 
-.syncingLayout #enable-sync  {
+.syncingLayout #enable-sync {
   margin-right: calc(100% - 40px);
   background: none;
   border-left: none;
-  transition: margin var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) .05s;
+  transition: margin var(--sync-animation-duration)
+    cubic-bezier(0.07, 0.95, 0, 1) 0.05s;
 }
 
 .savingLayout #enable-sync:hover {
@@ -190,8 +207,12 @@ footer {
 
 /* Animate sync icon */
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 #enable-sync svg {
   animation-name: rotate;
@@ -206,7 +227,7 @@ footer {
 }
 
 .animateSyncIcon #enable-sync svg path {
-  fill: #4E92DD;
+  fill: #4e92dd;
 }
 
 /* Feedback button on right side */
@@ -220,13 +241,13 @@ footer {
   align-items: center;
 }
 
-
 /* Display feedback button with opacity */
 .savingLayout #give-feedback-button {
   opacity: 1;
   z-index: 1;
   visiblity: visible;
-  transition: opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+  transition: opacity var(--sync-animation-duration)
+    cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 }
 
 /* Hide Feedback button with opacity */
@@ -235,7 +256,9 @@ footer {
   z-index: 0;
   cursor: default;
   visiblity: hidden;
-  transition: opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1), visibity 0s var(--sync-animation-duration);
+  transition: opacity var(--sync-animation-duration)
+      cubic-bezier(0.07, 0.95, 0, 1),
+    visibity 0s var(--sync-animation-duration);
 }
 
 #footer-buttons button,
@@ -253,7 +276,6 @@ footer {
   background-color: #d7d7db;
 }
 
-
 #menu {
   position: absolute;
   bottom: 10px;
@@ -264,7 +286,7 @@ footer {
 #migration-note {
   display: none;
   padding: 3px 0 5px 0;
-  background: #B6FEB4;
+  background: #b6feb4;
   width: 100%;
   position: relative;
   margin: 0 auto;
@@ -273,7 +295,7 @@ footer {
 }
 
 #migration-note {
-  background: #00FFFE;
+  background: #00fffe;
 }
 
 #close-button,
@@ -289,13 +311,13 @@ footer {
 #close-button:hover,
 #migration-close-button:hover {
   cursor: pointer;
-  opacity: 0.6
+  opacity: 0.6;
 }
 
 #close-button:active,
 #migration-close-button:active {
   cursor: pointer;
-  opacity: 0.8
+  opacity: 0.8;
 }
 
 #sync-note-dialog,
@@ -311,12 +333,11 @@ footer {
   display: block;
 }
 
-
 /* Select menu from sync */
 #context-menu-button {
   background-size: 3px;
   background-image: url('../svg/three-dots.svg');
-  background-position:  50%;
+  background-position: 50%;
   background-repeat: no-repeat;
   width: 22px;
   text-align: left;
@@ -333,19 +354,22 @@ footer {
 }
 
 /* Hide select menu on saving mode */
-.savingLayout #context-menu-button{
+.savingLayout #context-menu-button {
   opacity: 0;
   visibility: none;
   z-index: 0;
-  transition: visibility 0s var(--sync-animation-duration), opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1);
+  transition: visibility 0s var(--sync-animation-duration),
+    opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1);
 }
 
 /* Show select menu on syncing mode */
-.syncingLayout #context-menu-button{
+.syncingLayout #context-menu-button {
   opacity: 1;
   visibility: visible;
   z-index: 1;
-  transition: visibility 0s var(--sync-animation-duration), opacity var(--sync-animation-duration) cubic-bezier(.07,.95,0,1) var(--sync-animation-duration);
+  transition: visibility 0s var(--sync-animation-duration),
+    opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1)
+      var(--sync-animation-duration);
 }
 
 .context-menu {
@@ -388,7 +412,7 @@ CKEditor overrides
 .ck-heading-dropdown button {
   width: 45px;
   height: 25px;
-  padding: 2px 2px 2px 5px!important;
+  padding: 2px 2px 2px 5px !important;
 }
 
 .ck-heading-dropdown .ck-dropdown__panel {
@@ -409,8 +433,8 @@ CKEditor overrides
 }
 
 .ck-balloon-panel {
-  left: 0!important;
-  width:100%!important;
+  left: 0 !important;
+  width: 100% !important;
   padding: 0.1em;
   box-shadow: none;
 }

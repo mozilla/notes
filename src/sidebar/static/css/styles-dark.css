@@ -1,9 +1,9 @@
 body {
-  background-color: #393F4C;
+  background-color: #393f4c;
 }
 
-#notes .ck-toolbar  {
-  background-color: #272B35;
+#notes .ck-toolbar {
+  background-color: #272b35;
 }
 
 #enable-sync svg path {
@@ -32,13 +32,13 @@ body {
 }
 
 .mdl-menu__outline {
-  background: #272B35;
+  background: #272b35;
   transition: none;
 }
 
 .context-menu-item {
   color: #e6e6e6;
-  background-color: #272B35;
+  background-color: #272b35;
 }
 
 .context-menu-item:hover {
@@ -52,7 +52,7 @@ body {
 
 #footer-buttons button,
 #footer-buttons a {
-  background-color: #272B35;
+  background-color: #272b35;
   color: #e6e6e6;
   transition: background 50ms;
 }
@@ -68,7 +68,7 @@ body {
 }
 
 ::-moz-selection {
-  background-color: #5675B9;
+  background-color: #5675b9;
   color: #fff;
 }
 
@@ -88,8 +88,8 @@ body {
   fill: none;
 }
 
-.ck-editor__editable  {
-  background-color: #393F4C;
+.ck-editor__editable {
+  background-color: #393f4c;
   color: #e6e6e6;
 }
 
@@ -113,7 +113,7 @@ body {
 
 #notes .ck-toolbar * {
   color: #e6e6e6;
-  background: #272B35;
+  background: #272b35;
 }
 
 #notes .ck-toolbar button.ck-on *,
@@ -137,7 +137,7 @@ body {
 }
 
 #notes .ck-toolbar .ck-button__label {
-background: transparent;
+  background: transparent;
 }
 
 #notes .ck-toolbar .ck-button .ck-icon,
@@ -179,5 +179,5 @@ background: transparent;
   color: #e6e6e6;
 }
 .ql-snow .ql-picker-options {
-  background-color: #393F4C;
+  background-color: #393f4c;
 }

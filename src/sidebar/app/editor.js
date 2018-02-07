@@ -2,7 +2,7 @@
 function customizeEditor(editor) {
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
-  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
+  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach(sel => {
     sel.addEventListener('contextmenu', e => {
       e.preventDefault();
     });
@@ -10,11 +10,13 @@ function customizeEditor(editor) {
 
   // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
   // Ref: https://github.com/mozilla/notes/issues/424
-  document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      editor.fire('changesDone');
+  document
+    .querySelectorAll('.ck-heading-dropdown .ck-list__item')
+    .forEach(btn => {
+      btn.addEventListener('click', () => {
+        editor.fire('changesDone');
+      });
     });
-  });
 
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
@@ -23,18 +25,16 @@ function customizeEditor(editor) {
   localizeEditorButtons();
 }
 
-function localizeEditorButtons () {
+function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
-  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
+  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach(sel => {
     sel.remove();
   });
 
   let userOSKey;
 
-  if (navigator.appVersion.indexOf('Mac') !== -1)
-    userOSKey = '⌘';
-  else
-    userOSKey = 'Ctrl';
+  if (navigator.appVersion.indexOf('Mac') !== -1) userOSKey = '⌘';
+  else userOSKey = 'Ctrl';
 
   const size = document.querySelector('button.ck-button:nth-child(1)'),
     // Need to target buttons by index. Ref: https://github.com/ckeditor/ckeditor5-basic-styles/issues/59
@@ -44,10 +44,11 @@ function localizeEditorButtons () {
     bullet = document.querySelector('button.ck-button:nth-child(5)'),
     ordered = document.querySelector('button.ck-button:nth-child(6)');
 
-// Setting button titles in place of tooltips
+  // Setting button titles in place of tooltips
   size.title = browser.i18n.getMessage('fontSizeTitle');
   bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
-  italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
+  italic.title =
+    browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
   strike.title = browser.i18n.getMessage('strikethroughTitle');
   ordered.title = browser.i18n.getMessage('numberedListTitle');
   bullet.title = browser.i18n.getMessage('bulletedListTitle');
@@ -66,9 +67,9 @@ function getPadStats(editor) {
     list_numbered: false
   };
 
-  const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
+  const range = ClassicEditor.imports.range.createIn(editor.document.getRoot());
 
-  for ( const value of range ) {
+  for (const value of range) {
     if (value.type === 'text') {
       // Bold
       if (value.item.textNode._attrs.get('bold')) {
@@ -155,4 +156,4 @@ function getPadStats(editor) {
 //   }
 // }
 
-export { customizeEditor, getPadStats};
+export { customizeEditor, getPadStats };
