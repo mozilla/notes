@@ -13,10 +13,7 @@ class Panel extends React.Component {
   componentWillUnmount() {}
 
   render() {
-    return [
-        <Editor key="editor" />,
-        <Footer key="footer" />
-    ];
+    return [<Editor key="editor" />, <Footer key="footer" />];
   }
 }
 

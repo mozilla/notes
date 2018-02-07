@@ -31,7 +31,7 @@ function getTheme() {
     else continue;
   }
 
-  const selectedTheme = {theme};
+  const selectedTheme = { theme };
 
   return selectedTheme;
 }

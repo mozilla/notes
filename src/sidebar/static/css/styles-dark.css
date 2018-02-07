@@ -53,7 +53,7 @@ body {
 /* end MDL menu */
 
 #footer-buttons button {
-  background-color: #393F4C;
+  background-color: #393f4c;
   color: #e6e6e6;
   transition: background 50ms;
 }
@@ -68,8 +68,7 @@ body {
   background-color: #3d4352;
 }
 
-#footer-buttons.actionable div:first-child
-{
+#footer-buttons.actionable div:first-child {
   color: white;
 }
 
@@ -195,14 +194,14 @@ body {
 }
 
 .mdl-menu__item:focus {
-  background-color: #272B35;
+  background-color: #272b35;
 }
 .mdl-menu__item:hover {
   background-color: #323744;
 }
 .mdl-menu__item:active {
   background-color: #3d4352;
- }
+}
 
 .actionable {
   color: white;

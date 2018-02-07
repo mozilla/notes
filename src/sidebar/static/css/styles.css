@@ -53,7 +53,8 @@ body .ck-editor .ck-editor__editable {
   padding-left: 20px;
 }
 
-.ck-editor__editable ol > li, .ck-editor__editable ul > li {
+.ck-editor__editable ol > li,
+.ck-editor__editable ul > li {
   line-height: 1.5rem;
 }
 
@@ -148,8 +149,7 @@ footer {
 }
 
 #footer-buttons.warning div:first-child,
-#footer-buttons.actionable div:first-child
-{
+#footer-buttons.actionable div:first-child {
   color: black;
 }
 

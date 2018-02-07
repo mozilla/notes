@@ -9,7 +9,10 @@ import React from 'react';
  */
 function formatFooterTime(date) {
   date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  return new Date(date).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 /**
@@ -73,7 +76,6 @@ function setAnimation(animateSyncIcon = true, syncingLayout, warning) {
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 class Footer extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -84,7 +86,7 @@ class Footer extends React.Component {
     };
     this.loginTimeout = null;
 
-    this.events = (eventData) => {
+    this.events = eventData => {
       const footerButtons = document.getElementById('footer-buttons');
       // let content;
       switch (eventData.action) {
@@ -275,7 +277,6 @@ class Footer extends React.Component {
 
         const that = this;
         setTimeout(() => {
-
           that.setState({
             savingIndicatorText: browser.i18n.getMessage('openingLogin')
           });
@@ -333,8 +334,17 @@ class Footer extends React.Component {
 
         <div id="footer-buttons" className="savingLayout">
           <div>
-            <button id="saving-indicator" style={{background: 'none', paddingBottom: '12px', 'color': 'inherit'}}
-              onClick={() => this.enableSyncAction()}>{this.state.savingIndicatorText}</button>
+            <button
+              id="saving-indicator"
+              style={{
+                background: 'none',
+                paddingBottom: '12px',
+                color: 'inherit'
+              }}
+              onClick={() => this.enableSyncAction()}
+            >
+              {this.state.savingIndicatorText}
+            </button>
             <button
               id="enable-sync"
               onClick={() => this.enableSyncAction()}
@@ -391,8 +401,9 @@ class Footer extends React.Component {
                 <button
                   id="disconnect-from-sync"
                   className="mdl-menu__item context-menu-item"
-                  style={{width: '100%'}}
-                  onClick={() => this.disconnectFromSync()}>
+                  style={{ width: '100%' }}
+                  onClick={() => this.disconnectFromSync()}
+                >
                   {browser.i18n.getMessage('disableSync')}
                 </button>
               </li>
