@@ -7,7 +7,9 @@
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
   },
-  "engines" : { "node" : ">=8" },
+  "engines": {
+    "node": ">=8"
+  },
   "dependencies": {
     "@ckeditor/ckeditor5-autoformat": "vladikoff/ckeditor5-autoformat#fix-numbered-list",
     "@ckeditor/ckeditor5-basic-styles": "^1.0.0-alpha.2",
@@ -37,6 +39,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-minify-webpack-plugin": "^0.2.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
@@ -46,6 +49,8 @@
     "copy-webpack-plugin": "^4.3.1",
     "cross-spawn": "^5.1.0",
     "eslint": "^4.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
     "fetch-mock": "^5.12.2",
     "fs-extra": "^4.0.1",
     "karma": "^1.7.1",

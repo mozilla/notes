@@ -4,10 +4,15 @@ env:
   webextensions: true
 
 parserOptions:
+  ecmaFeatures:
+    jsx: true
   ecmaVersion: 2017
+  sourceType: module
 
 extends:
   - eslint:recommended
+  - plugin:react/recommended
+  - plugin:jsx-a11y/recommended
 
 globals:
   BrowserStorageCredentials: false
@@ -31,6 +36,10 @@ globals:
   retrieveNote: false
   saveToKinto: false
   setAnimation: false
+
+plugins:
+  - jsx-a11y
+  - react
 
 root: true
 
