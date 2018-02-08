@@ -26,10 +26,10 @@ module.exports = {
     ]),
     // Moves files
     new CopyWebpackPlugin([
-      {from: path.join('src')}
+      { from: path.join('src') }
     ], {
       ignore: [
-          path.join('src', 'sidebar', 'app', '*')
+          path.join('sidebar', 'app', '**', '*')
       ],
     }),
   ],
