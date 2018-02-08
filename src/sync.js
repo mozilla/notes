@@ -285,12 +285,10 @@ function retrieveNote(client) {
  * }
  */
 function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-vars
-  console.log('loadFromKinto', client, credentials);
   return syncKinto(client, credentials)
   // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
-      console.log(result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         data: result && typeof result.data !== 'undefined' ? result.data.content : null,
