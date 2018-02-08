@@ -7,8 +7,8 @@ const INITIAL_CONTENT = `
   <p>${browser.i18n.getMessage('welcomeSubtitle')}</p>
   <p><strong>${browser.i18n.getMessage('welcomeOpenNotes')}</strong></p>
   <ul>
-    <li>${browser.i18n.getMessage('welcomeWindowsLinuxShortcut','<code>Alt+Shift+W</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeMacShortcut','<code>Opt+Shift+W</code>')}</li>
+    <li>${browser.i18n.getMessage('welcomeWindowsLinuxShortcut', '<code>Alt+Shift+W</code>')}</li>
+    <li>${browser.i18n.getMessage('welcomeMacShortcut', '<code>Opt+Shift+W</code>')}</li>
   </ul>
   <p><strong>${browser.i18n.getMessage('welcomeAccessNotes')}</strong></p>
   <ul>
@@ -27,7 +27,7 @@ const INITIAL_CONTENT = `
   </ul>
   <p><strong>${browser.i18n.getMessage('welcomeSuggestion')}</strong></p>
   <ul>
-    <li>${browser.i18n.getMessage('welcomeGiveFeedback','<strong>' + browser.i18n.getMessage('feedback') + '</strong>')}</li>
+    <li>${browser.i18n.getMessage('welcomeGiveFeedback', '<strong>' + browser.i18n.getMessage('feedback') + '</strong>')}</li>
   </ul>
   <p>${browser.i18n.getMessage('welcomeThatsIt')}</p>
 `;
@@ -91,11 +91,9 @@ class Editor extends React.Component {
               });
           }
         });
-      } else {
-        if (this.editor.getData() !== content) {
+      } else if (this.editor.getData() !== content) {
           this.editor.setData(content);
         }
-      }
     };
 
     this.loadContent = () => {

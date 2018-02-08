@@ -113,7 +113,7 @@ class Footer extends React.Component {
           });
           this.getLastSyncedTime();
           // TODO Implement optimistic UI
-          //document.getElementById('loading').style.display = 'none';
+          // document.getElementById('loading').style.display = 'none';
           break;
         case 'text-change':
           this.setState({

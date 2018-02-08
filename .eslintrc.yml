@@ -11,6 +11,7 @@ parserOptions:
 
 extends:
   - eslint:recommended
+  - plugin:mozilla/recommended
   - plugin:react/recommended
   - plugin:jsx-a11y/recommended
 
@@ -40,6 +41,7 @@ globals:
   saveToKinto: false
 
 plugins:
+  - mozilla
   - jsx-a11y
   - react
 
