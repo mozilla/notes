@@ -1,3 +1,9 @@
+
+// const UI_LANG = browser.i18n.getUILanguage();
+// const RTL_LANGS = ['ar', 'fa', 'he'];
+// const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
+// const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+
 function customizeEditor(editor) {
   const mainEditor = document.querySelector('.ck-editor__main');
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import { getPadStats } from '../editor.js';
+const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 /**
  * Formats time for the Notes footer
@@ -72,8 +72,6 @@ function setAnimation(animateSyncIcon = true, syncingLayout, warning) {
     footerButtons.classList.remove('warning');
   }
 }
-
-const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 
 class Footer extends React.Component {
   constructor(props) {
