@@ -23,4 +23,5 @@ matrix:
       before_install:
     - script: npm run lint
       env: LINT
+      before_script: npm run build
       before_install:
