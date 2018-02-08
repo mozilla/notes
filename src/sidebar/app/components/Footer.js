@@ -1,95 +1,76 @@
 import React from 'react';
+import classNames from 'classnames';
 
-const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
+import SyncIcon from './icons/SyncIcon';
+import FeedbackIcon from './icons/FeedbackIcon';
 
-/**
- * Formats time for the Notes footer
- * @param time
- * @returns {string}
- */
-function formatFooterTime(date) {
-  date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
 
-/**
- * Set animation on footerButtons toolbar
- *
- *
- * @param {Boolean} animateSyncIcon Start looping animation on sync icon
- * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
- *                                  if false, animate to savingLayout (sync icon on left)
- * @param {Boolean} warning         Apply yellow warning styling on toolbar
- */
-function setAnimation(animateSyncIcon = true, syncingLayout, warning) {
-  // animateSyncIcon, syncingLayout, warning
-  const footerButtons = document.getElementById('footer-buttons');
-  const enableSync = document.getElementById('enable-sync');
-  const savingIndicator = document.getElementById('saving-indicator');
+import { formatFooterTime } from '../utils';
 
-  if (
-    animateSyncIcon === true &&
-    !footerButtons.classList.contains('animateSyncIcon')
-  ) {
-    footerButtons.classList.add('animateSyncIcon');
-  } else if (
-    animateSyncIcon === false &&
-    footerButtons.classList.contains('animateSyncIcon')
-  ) {
-    footerButtons.classList.remove('animateSyncIcon');
-  }
-
-  if (
-    syncingLayout === true &&
-    footerButtons.classList.contains('savingLayout')
-  ) {
-    footerButtons.classList.replace('savingLayout', 'syncingLayout');
-    enableSync.style.backgroundColor = 'transparent';
-    // Start blink animation on saving-indicator
-    savingIndicator.classList.add('blink');
-    // Reset CSS animation by removing class
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-  } else if (
-    syncingLayout === false &&
-    footerButtons.classList.contains('syncingLayout')
-  ) {
-    // Animate savingIndicator text
-    savingIndicator.classList.add('blink');
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-    setTimeout(() => {
-      enableSync.style.backgroundColor = null;
-    }, 400);
-    //
-    footerButtons.classList.replace('syncingLayout', 'savingLayout');
-  }
-
-  if (warning === true && !footerButtons.classList.contains('warning')) {
-    footerButtons.classList.add('warning');
-  } else if (warning === false && footerButtons.classList.contains('warning')) {
-    footerButtons.classList.remove('warning');
-  }
-}
+import { SURVEY_PATH } from '../constants';
 
 class Footer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       savingIndicatorText: '',
+      syncingIndicatorText: '',
       waitingToReconnect: false,
       isAuthenticated: false,
-      lastModified: Date.now()
+      lastModified: Date.now(),
+      syncingLayout: false
     };
     this.loginTimeout = null;
 
+    /**
+     * Set animation on footerButtons toolbar
+     *
+     *
+     * @param {Boolean} animateSyncIcon Start looping animation on sync icon
+     * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
+     *                                  if false, animate to savingLayout (sync icon on left)
+     * @param {Boolean} warning         Apply yellow warning styling on toolbar
+     */
+    this.setAnimation = (animateSyncIcon = true, syncingLayout, warning) => {
+      // animateSyncIcon, syncingLayout, warning
+      const enableSync = document.getElementById('enable-sync');
+      const savingIndicator = document.getElementById('saving-indicator');
+
+      if (syncingLayout === true && !this.state.syncingLayout) {
+
+        enableSync.style.backgroundColor = 'transparent';
+
+        // enableSync.style.backgroundColor = 'transparent';
+        // Start blink animation on saving-indicator
+        savingIndicator.classList.add('blink');
+        // Reset CSS animation by removing class
+        setTimeout(() => savingIndicator.classList.remove('blink'), 400);
+
+      } else if (syncingLayout === false && this.state.syncingLayout) {
+        // Animate savingIndicator text
+        savingIndicator.classList.add('blink');
+
+        setTimeout(() => savingIndicator.classList.remove('blink'), 400);
+
+        setTimeout(() => {
+          enableSync.style.backgroundColor = null;
+        }, 400);
+        //
+      }
+
+      this.setState({
+        animateSyncIcon,
+        syncingLayout,
+        warning
+      });
+
+    };
+
     this.events = eventData => {
-      const footerButtons = document.getElementById('footer-buttons');
       // let content;
       switch (eventData.action) {
         case 'sync-authenticated':
-          setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+          this.setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
           clearTimeout(this.loginTimeout);
 
           this.setState({
@@ -99,7 +80,7 @@ class Footer extends React.Component {
           });
 
           // set title attr of footer to the currently logged in account
-          footerButtons.title = eventData.profile && eventData.profile.email;
+          this.footerButtons.title = eventData.profile && eventData.profile.email;
 
           browser.runtime.sendMessage({
             action: 'kinto-sync'
@@ -124,7 +105,7 @@ class Footer extends React.Component {
           });
           break;
         case 'text-syncing':
-          setAnimation(true); // animateSyncIcon, syncingLayout, warning
+          this.setAnimation(true); // animateSyncIcon, syncingLayout, warning
           this.setState({
             savingIndicatorText: browser.i18n.getMessage('syncProgress'),
             syncingInProcess: true
@@ -133,7 +114,7 @@ class Footer extends React.Component {
           break;
         case 'text-editing':
           if (this.state.isAuthenticated) {
-            setAnimation(true); // animateSyncIcon, syncingLayout, warning
+            this.setAnimation(true); // animateSyncIcon, syncingLayout, warning
             this.setState({
               syncingInProcess: true
             });
@@ -182,7 +163,7 @@ class Footer extends React.Component {
             syncingInProcess: false
           });
 
-          setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+          this.setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
 
           chrome.runtime.sendMessage({
             action: 'metrics-reconnect-sync'
@@ -214,7 +195,7 @@ class Footer extends React.Component {
           ),
           isAuthenticated: true
         });
-        setAnimation(false, true);
+        this.setAnimation(false, true);
         // disconnectSync.style.display = 'block';
       } else {
         this.setState({
@@ -232,7 +213,7 @@ class Footer extends React.Component {
         isAuthenticated: false
       });
       // disconnectSync.style.display = 'none';
-      setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
+      this.setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
       setTimeout(() => {
         this.setState({
           savingIndicatorText: browser.i18n.getMessage('disconnected')
@@ -251,24 +232,20 @@ class Footer extends React.Component {
         return;
       }
 
-      const footerButtons = document.getElementById('footer-buttons');
-
       if (
-        this.state.isAuthenticated &&
-        footerButtons.classList.contains('syncingLayout')
+        this.state.isAuthenticated && this.state.syncingLayout
       ) {
         // Trigger manual sync
-        setAnimation(true);
+        this.setAnimation(true);
         browser.runtime.sendMessage({
           action: 'kinto-sync'
         });
       } else if (
-        !this.state.isAuthenticated &&
-        (footerButtons.classList.contains('savingLayout') ||
+        !this.state.isAuthenticated && (!this.state.syncingLayout ||
           this.state.waitingToReconnect)
       ) {
         // Login
-        setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
+        this.setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
 
         // enable disable sync button
         // disconnectSync.style.display = 'block';
@@ -281,7 +258,7 @@ class Footer extends React.Component {
         }, 200); // Delay text for smooth animation
 
         this.loginTimeout = setTimeout(() => {
-          setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
+          this.setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
           that.setState({
             savingIndicatorText: browser.i18n.getMessage('pleaseLogin'),
             waitingToReconnect: true
@@ -319,18 +296,19 @@ class Footer extends React.Component {
   }
 
   render() {
+    // Those classes define animation state on #footer-buttons
+    const footerClass = classNames({
+       savingLayout: !this.state.syncingLayout,
+       syncingLayout: this.state.syncingLayout,
+       warning: this.state.warning,
+       animateSyncIcon: this.state.animateSyncIcon
+    });
+
     return (
       <footer>
-        <div id="sync-note">
-          <img
-            src="static/svg/close.svg"
-            alt="Close button"
-            id="close-button"
-          />
-          <p id="sync-note-dialog" />
-        </div>
-
-        <div id="footer-buttons" className="savingLayout">
+        <div id="footer-buttons"
+          ref={footerButtons => this.footerButtons = footerButtons}
+          className={footerClass}>
           <div>
             <button
               id="saving-indicator"
@@ -348,17 +326,7 @@ class Footer extends React.Component {
               onClick={() => this.enableSyncAction()}
               className="notsyncing"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill="context-fill"
-                  d="M14 1a1 1 0 0 0-1 1v1.146A6.948 6.948 0 0 0 1.227 6.307a1 1 0 1 0 1.94.484A4.983 4.983 0 0 1 8 3a4.919 4.919 0 0 1 3.967 2H10a1 1 0 0 0 0 2h4a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm.046 7.481a1 1 0 0 0-1.213.728A4.983 4.983 0 0 1 8 13a4.919 4.919 0 0 1-3.967-2H6a1 1 0 0 0 0-2H2a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0v-1.146a6.948 6.948 0 0 0 11.773-3.161 1 1 0 0 0-.727-1.212z"
-                />
-              </svg>
+              <SyncIcon />
             </button>
           </div>
           <a
@@ -366,28 +334,7 @@ class Footer extends React.Component {
             title={browser.i18n.getMessage('feedback')}
             href={SURVEY_PATH}
           >
-            <svg
-              id="Layer_1"
-              width="20"
-              height="20"
-              data-name="Layer 1"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-            >
-              <defs>
-                <style>
-                  .cls-1{'{'}fill:none;stroke:#333;stroke-miterlimit:10{'}'}{' '}
-                  .cls-2{'{'}fill:#333{'}'}
-                </style>
-              </defs>
-              <path
-                className="cls-1"
-                d="M14.32 10.58A5.27 5.27 0 0 0 15 8c0-3.31-3.13-6-7-6S1 4.69 1 8s3.13 6 7 6a7.72 7.72 0 0 0 4.37-1.32L15 14z"
-              />
-              <circle className="cls-2" cx="8" cy="8" r="1" />
-              <circle className="cls-2" cx="4" cy="8" r="1" />
-              <circle className="cls-2" cx="12" cy="8" r="1" />
-            </svg>
+            <FeedbackIcon />
           </a>
           <div className="wrapper">
             <button id="context-menu-button" className="mdl-js-button" />

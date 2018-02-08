@@ -21,6 +21,7 @@
     "@ckeditor/ckeditor5-heading": "Natim/ckeditor5-heading#short-heading",
     "@ckeditor/ckeditor5-list": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.2",
+    "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
     "fxa-crypto-relier": "2.1.0",
     "jose-jwe-jws": "^0.1.5",

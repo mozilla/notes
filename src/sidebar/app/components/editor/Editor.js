@@ -1,36 +1,9 @@
 import React from 'react';
 
-import { getPadStats, customizeEditor } from '../editor.js';
+import { getPadStats, customizeEditor } from '../../editor';
 
-const INITIAL_CONTENT = `
-  <h2>${browser.i18n.getMessage('welcomeTitle3')}</h2>
-  <p>${browser.i18n.getMessage('welcomeSubtitle')}</p>
-  <p><strong>${browser.i18n.getMessage('welcomeOpenNotes')}</strong></p>
-  <ul>
-    <li>${browser.i18n.getMessage('welcomeWindowsLinuxShortcut', '<code>Alt+Shift+W</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeMacShortcut', '<code>Opt+Shift+W</code>')}</li>
-  </ul>
-  <p><strong>${browser.i18n.getMessage('welcomeAccessNotes')}</strong></p>
-  <ul>
-    <li>
-      ${browser.i18n.getMessage('welcomeSyncInfo', '<strong>' + browser.i18n.getMessage('syncNotes') + '</strong>')}
-    </li>
-  </ul>
-  <p>${browser.i18n.getMessage('welcomeFormatText')}</p>
-  <ul>
-    <li>${browser.i18n.getMessage('welcomeHeading').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeBold').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeItalics').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeBulleted').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeNumbered').replace(/ `/g, ' <code>').replace(/`/g, '</code>')}</li>
-    <li>${browser.i18n.getMessage('welcomeCode').replace(/ ``/g, ' <code>`').replace(/``/g, '`</code>')}</li>
-  </ul>
-  <p><strong>${browser.i18n.getMessage('welcomeSuggestion')}</strong></p>
-  <ul>
-    <li>${browser.i18n.getMessage('welcomeGiveFeedback', '<strong>' + browser.i18n.getMessage('feedback') + '</strong>')}</li>
-  </ul>
-  <p>${browser.i18n.getMessage('welcomeThatsIt')}</p>
-`;
+import INITIAL_CONFIG from './data/config.json';
+import INITIAL_CONTENT from './data/initialContent';
 
 class Editor extends React.Component {
   constructor(props) {
@@ -47,7 +20,6 @@ class Editor extends React.Component {
       switch (eventData.action) {
         case 'kinto-loaded':
           content = eventData.data;
-
           this.handleLocalContent(this.editor, content);
           break;
         case 'text-change':
@@ -92,8 +64,8 @@ class Editor extends React.Component {
           }
         });
       } else if (this.editor.getData() !== content) {
-          this.editor.setData(content);
-        }
+        this.editor.setData(content);
+      }
     };
 
     this.loadContent = () => {
@@ -114,43 +86,7 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    ClassicEditor.create(this.node, {
-      heading: {
-        options: [
-          {
-            modelElement: 'paragraph',
-            title: 'P',
-            class: 'ck-heading_paragraph'
-          },
-          {
-            modelElement: 'heading3',
-            viewElement: 'h3',
-            title: 'H3',
-            class: 'ck-heading_heading3'
-          },
-          {
-            modelElement: 'heading2',
-            viewElement: 'h2',
-            title: 'H2',
-            class: 'ck-heading_heading2'
-          },
-          {
-            modelElement: 'heading1',
-            viewElement: 'h1',
-            title: 'H1',
-            class: 'ck-heading_heading1'
-          }
-        ]
-      },
-      toolbar: [
-        'headings',
-        'bold',
-        'italic',
-        'strike',
-        'bulletedList',
-        'numberedList'
-      ]
-    })
+    ClassicEditor.create(this.node, INITIAL_CONFIG)
       .then(editor => {
         this.editor = editor;
 
