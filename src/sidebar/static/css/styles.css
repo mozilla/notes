@@ -143,6 +143,12 @@ footer {
   transition: padding 0s 0.2s;
 }
 
+#footer-buttons div:first-child button:first-child {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 #footer-buttons.syncingLayout div:first-child {
   padding: 10px 10px 10px 40px;
   transition: padding 0s 0.2s;
