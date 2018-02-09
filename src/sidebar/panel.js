@@ -76,6 +76,10 @@ ClassicEditor.create(document.querySelector('#editor'), {
               console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
               migrationNote.classList.add('visible');
               migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+              browser.runtime.sendMessage({
+                action: 'metrics-limit-reached',
+                context: getPadStats(editor)
+              });
             } else {
               migrationNote.classList.remove('visible');
             }
