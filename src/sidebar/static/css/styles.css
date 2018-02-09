@@ -143,10 +143,12 @@ footer {
   transition: padding 0s 0.2s;
 }
 
-#footer-buttons div:first-child button:first-child {
+#footer-buttons div:first-child p {
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
+  padding-right: 6px;
+  margin-top: 1px;
 }
 
 #footer-buttons.syncingLayout div:first-child {
@@ -157,32 +159,6 @@ footer {
 #footer-buttons.warning div:first-child,
 #footer-buttons.actionable div:first-child {
   color: black;
-}
-
-/* Hide saving-indication then move enable-sync then show saving-indicator */
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  25% {
-    opacity: 0;
-  }
-  75% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-#saving-indicator.blink {
-  animation-name: blink;
-  animation-duration: var(--sync-animation-duration);
-  animation-timing-function: linear;
-  animation-iteration-count: 1;
-}
-
-#saving-indicator {
-  cursor: pointer;
 }
 
 /* Sync icon */
@@ -197,6 +173,41 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.savingLayout #saving-indicator{
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .2s .2s;
+}
+
+.syncingLayout #saving-indicator{
+  transition: opacity .1s, visibility 0s .1s;
+  opacity: 0;
+  visibility: hidden;
+}
+
+#syncing-indicator {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: 1px;
+  position: absolute;
+  top: 8px;
+  padding-right: 40px;
+}
+
+.savingLayout #syncing-indicator{
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .1s, visibility 0s .2s;
+}
+
+.syncingLayout #syncing-indicator{
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .2s .2s;
+
 }
 
 .savingLayout #enable-sync {

@@ -34,7 +34,6 @@ class Editor extends React.Component {
           if (!this.state.ignoreTextSynced || eventData.conflict) {
             this.handleLocalContent(this.editor, eventData.content);
           }
-
           this.setState({
             ignoreTextSynced: false
           });

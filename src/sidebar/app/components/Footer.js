@@ -22,61 +22,17 @@ class Footer extends React.Component {
     };
     this.loginTimeout = null;
 
-    /**
-     * Set animation on footerButtons toolbar
-     *
-     *
-     * @param {Boolean} animateSyncIcon Start looping animation on sync icon
-     * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
-     *                                  if false, animate to savingLayout (sync icon on left)
-     * @param {Boolean} warning         Apply yellow warning styling on toolbar
-     */
-    this.setAnimation = (animateSyncIcon = true, syncingLayout, warning) => {
-      // animateSyncIcon, syncingLayout, warning
-      const enableSync = document.getElementById('enable-sync');
-      const savingIndicator = document.getElementById('saving-indicator');
-
-      if (syncingLayout === true && !this.state.syncingLayout) {
-
-        enableSync.style.backgroundColor = 'transparent';
-
-        // enableSync.style.backgroundColor = 'transparent';
-        // Start blink animation on saving-indicator
-        savingIndicator.classList.add('blink');
-        // Reset CSS animation by removing class
-        setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-
-      } else if (syncingLayout === false && this.state.syncingLayout) {
-        // Animate savingIndicator text
-        savingIndicator.classList.add('blink');
-
-        setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-
-        setTimeout(() => {
-          enableSync.style.backgroundColor = null;
-        }, 400);
-        //
-      }
-
-      this.setState({
-        animateSyncIcon,
-        syncingLayout,
-        warning
-      });
-
-    };
-
     this.events = eventData => {
       // let content;
       switch (eventData.action) {
         case 'sync-authenticated':
-          this.setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
           clearTimeout(this.loginTimeout);
 
           this.setState({
             isAuthenticated: true,
             waitingToReconnect: false,
-            savingIndicatorText: browser.i18n.getMessage('syncProgress')
+            syncingInProcess: true,
+            syncingIndicatorText: browser.i18n.getMessage('syncProgress')
           });
 
           // set title attr of footer to the currently logged in account
@@ -90,7 +46,8 @@ class Footer extends React.Component {
           clearTimeout(this.loginTimeout);
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
           this.setState({
-            lastModified: Date.now()
+            lastModified: Date.now(),
+            syncingInProcess: false
           });
           this.getLastSyncedTime();
           // TODO Implement optimistic UI
@@ -105,16 +62,14 @@ class Footer extends React.Component {
           });
           break;
         case 'text-syncing':
-          this.setAnimation(true); // animateSyncIcon, syncingLayout, warning
           this.setState({
-            savingIndicatorText: browser.i18n.getMessage('syncProgress'),
+            syncingIndicatorText: browser.i18n.getMessage('syncProgress'),
             syncingInProcess: true
           });
           // Disable sync-action
           break;
         case 'text-editing':
           if (this.state.isAuthenticated) {
-            this.setAnimation(true); // animateSyncIcon, syncingLayout, warning
             this.setState({
               syncingInProcess: true
             });
@@ -133,8 +88,8 @@ class Footer extends React.Component {
           // Enable sync-action
           this.setState({
             lastModified: eventData.last_modified,
-            ignoreTextSynced: false,
-            syncingInProcess: false
+            syncingInProcess: false,
+            isLoggingIn: false
           });
           this.getLastSyncedTime();
           break;
@@ -150,7 +105,8 @@ class Footer extends React.Component {
           }
           // Enable sync-action
           this.setState({
-            editingInProcess: false
+            editingInProcess: false,
+            syncingInProcess: false
           });
           break;
         case 'reconnect':
@@ -159,11 +115,10 @@ class Footer extends React.Component {
           this.setState({
             waitingToReconnect: true,
             isAuthenticated: false,
-            savingIndicatorText: browser.i18n.getMessage('reconnectSync'),
+            syncingIndicatorText: browser.i18n.getMessage('reconnectSync'),
             syncingInProcess: false
           });
 
-          this.setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
 
           chrome.runtime.sendMessage({
             action: 'metrics-reconnect-sync'
@@ -189,13 +144,12 @@ class Footer extends React.Component {
 
       if (this.state.isAuthenticated) {
         this.setState({
-          savingIndicatorText: browser.i18n.getMessage(
+          syncingIndicatorText: browser.i18n.getMessage(
             'syncComplete2',
             formatFooterTime(this.state.lastModified)
           ),
           isAuthenticated: true
         });
-        this.setAnimation(false, true);
         // disconnectSync.style.display = 'block';
       } else {
         this.setState({
@@ -210,13 +164,13 @@ class Footer extends React.Component {
     this.disconnectFromSync = () => {
       this.setState({
         waitingToReconnect: false,
-        isAuthenticated: false
+        isAuthenticated: false,
+        isLoggingIn: false
       });
       // disconnectSync.style.display = 'none';
-      this.setAnimation(false, false, false); // animateSyncIcon, syncingLayout, warning
       setTimeout(() => {
         this.setState({
-          savingIndicatorText: browser.i18n.getMessage('disconnected')
+          syncingIndicatorText: browser.i18n.getMessage('disconnected')
         });
       }, 200);
       setTimeout(() => {
@@ -233,10 +187,13 @@ class Footer extends React.Component {
       }
 
       if (
-        this.state.isAuthenticated && this.state.syncingLayout
+        this.state.isAuthenticated
       ) {
         // Trigger manual sync
-        this.setAnimation(true);
+
+        this.setState({
+          syncingInProcess: true
+        });
         browser.runtime.sendMessage({
           action: 'kinto-sync'
         });
@@ -245,23 +202,25 @@ class Footer extends React.Component {
           this.state.waitingToReconnect)
       ) {
         // Login
-        this.setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
 
+        this.setState({
+          isLoggingIn: true
+        });
         // enable disable sync button
         // disconnectSync.style.display = 'block';
 
         const that = this;
         setTimeout(() => {
           that.setState({
-            savingIndicatorText: browser.i18n.getMessage('openingLogin')
+            syncingIndicatorText: browser.i18n.getMessage('openingLogin')
           });
         }, 200); // Delay text for smooth animation
 
         this.loginTimeout = setTimeout(() => {
-          this.setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
           that.setState({
-            savingIndicatorText: browser.i18n.getMessage('pleaseLogin'),
-            waitingToReconnect: true
+            syncingIndicatorText: browser.i18n.getMessage('pleaseLogin'),
+            waitingToReconnect: true,
+            isLoggingIn: false
           });
         }, 5000);
 
@@ -298,10 +257,10 @@ class Footer extends React.Component {
   render() {
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
-       savingLayout: !this.state.syncingLayout,
-       syncingLayout: this.state.syncingLayout,
-       warning: this.state.warning,
-       animateSyncIcon: this.state.animateSyncIcon
+       savingLayout: !this.state.waitingToReconnect && !this.state.isAuthenticated && !this.state.isLoggingIn,
+       syncingLayout: this.state.waitingToReconnect || this.state.isAuthenticated || this.state.isLoggingIn,
+       warning: this.state.waitingToReconnect,
+       animateSyncIcon: (this.state.isLoggingIn || this.state.syncingInProcess) && !this.state.waitingToReconnect
     });
 
     return (
@@ -310,8 +269,22 @@ class Footer extends React.Component {
           ref={footerButtons => this.footerButtons = footerButtons}
           className={footerClass}>
           <div>
+            <p id="saving-indicator"
+              style={{
+                background: 'none',
+                paddingBottom: '12px',
+                color: 'inherit'
+              }}
+            >{this.state.savingIndicatorText}</p>
             <button
-              id="saving-indicator"
+              id="enable-sync"
+              onClick={() => this.enableSyncAction()}
+              className="notsyncing"
+            >
+              <SyncIcon />
+            </button>
+            <button
+              id="syncing-indicator"
               style={{
                 background: 'none',
                 paddingBottom: '12px',
@@ -319,14 +292,7 @@ class Footer extends React.Component {
               }}
               onClick={() => this.enableSyncAction()}
             >
-              {this.state.savingIndicatorText}
-            </button>
-            <button
-              id="enable-sync"
-              onClick={() => this.enableSyncAction()}
-              className="notsyncing"
-            >
-              <SyncIcon />
+              {this.state.syncingIndicatorText}
             </button>
           </div>
           <a
