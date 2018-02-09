@@ -151,7 +151,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       sendMetrics('metrics-migrated', eventData.context);
       break;
     case 'metrics-migrated-before':
-      sendMetrics('metrics-migrated-before', eventData.context);
+      sendMetrics('metrics-migrated-before');
       break;
     case 'metrics-reconnect-sync':
       sendMetrics('reconnect-sync', eventData.context);
