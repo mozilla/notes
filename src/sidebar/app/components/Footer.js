@@ -164,14 +164,10 @@ class Footer extends React.Component {
       this.setState({
         waitingToReconnect: false,
         isAuthenticated: false,
-        isLoggingIn: false
+        isLoggingIn: false,
+        syncingIndicatorText: browser.i18n.getMessage('disconnected')
       });
       // disconnectSync.style.display = 'none';
-      setTimeout(() => {
-        this.setState({
-          syncingIndicatorText: browser.i18n.getMessage('disconnected')
-        });
-      }, 200);
       setTimeout(() => {
         this.getLastSyncedTime();
       }, 2000);
@@ -202,17 +198,13 @@ class Footer extends React.Component {
         // Login
 
         this.setState({
-          isLoggingIn: true
+          isLoggingIn: true,
+          syncingIndicatorText: browser.i18n.getMessage('openingLogin')
         });
         // enable disable sync button
         // disconnectSync.style.display = 'block';
 
         const that = this;
-        setTimeout(() => {
-          that.setState({
-            syncingIndicatorText: browser.i18n.getMessage('openingLogin')
-          });
-        }, 200); // Delay text for smooth animation
 
         this.loginTimeout = setTimeout(() => {
           that.setState({
