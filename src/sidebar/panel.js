@@ -70,12 +70,16 @@ ClassicEditor.create(document.querySelector('#editor'), {
         if (isFocused || name === 'rename' || name === 'insert') {
           const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
-              content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT) {
+              content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
             ignoreTextSynced = true;
             if (content.length > 15000) {
-              console.error('Maximum notepad size reached:', content.length);  // eslint-disable-line no-console
+              console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
               migrationNote.classList.add('visible');
               migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+              browser.runtime.sendMessage({
+                action: 'metrics-limit-reached',
+                context: getPadStats(editor)
+              });
             } else {
               migrationNote.classList.remove('visible');
             }
@@ -170,7 +174,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
             syncingInProcess = false;
             break;
           case 'text-saved':
-            if (! waitingToReconnect && ! isAuthenticated) {
+            if (!waitingToReconnect && !isAuthenticated) {
               // persist reconnect warning, do not override with the 'saved at'
               savingIndicator.textContent = browser.i18n.getMessage('savedComplete2', formatFooterTime());
             }
@@ -233,15 +237,13 @@ function handleLocalContent(editor, content) {
         });
       }
     });
-  } else {
-    if (editor.getData() !== content) {
+  } else if (editor.getData() !== content) {
       // Prevent from loading too big content but allow for conflict handling.
       editor.setData(content);
     }
-  }
 }
 
-function reconnectSync () {
+function reconnectSync() {
   waitingToReconnect = true;
   isAuthenticated = false;
   setAnimation(false, true, true); // animateSyncIcon, syncingLayout, warning
@@ -251,7 +253,7 @@ function reconnectSync () {
   });
 }
 
-function disconnectFromSync () {
+function disconnectFromSync() {
   waitingToReconnect = false;
   disconnectSync.style.display = 'none';
   isAuthenticated = false;
@@ -284,7 +286,7 @@ function enableSyncAction(editor) {
   } else if (!isAuthenticated && (footerButtons.classList.contains('savingLayout') || waitingToReconnect)) {
     // Login
     giveFeedbackButton.style.display = 'none';
-    setAnimation(true, true, false);  // animateSyncIcon, syncingLayout, warning
+    setAnimation(true, true, false); // animateSyncIcon, syncingLayout, warning
 
     // enable disable sync button
     disconnectSync.style.display = 'block';
@@ -316,10 +318,11 @@ function getLastSyncedTime() {
 
   if (isAuthenticated) {
     giveFeedbackButton.style.display = 'none';
-    savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified)); 
+    // eslint-disable-next-line no-unsanitized/property
+    savingIndicator.innerHTML = browser.i18n.getMessage('syncComplete3', formatFooterTime(lastModified));
     disconnectSync.style.display = 'block';
     isAuthenticated = true;
-    setAnimation(false, true, false, true);  // animateSyncIcon, syncingLayout, warning, syncSuccess
+    setAnimation(false, true, false, true); // animateSyncIcon, syncingLayout, warning, syncSuccess
   } else {
     savingIndicator.textContent = browser.i18n.getMessage('changesSaved', formatFooterTime());
   }
