@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0 (unreleased)
+
+* No changes yet
+
+
 ## 2.2.0 (2018-02-12)
 
 * Add the full heading names (#528)
