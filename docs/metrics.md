@@ -151,3 +151,18 @@ An event fired when the migration from Quill.JS to CKEditor already happened
 
 - `ec` - `notes`
 - `ea` - `metrics-migrated-before`
+
+#### `limit-reached`
+
+An event fired when user goes over the pad limit (15000 character)
+
+- `ec` - `notes`
+- `ea` - `limit-reached`
+- `cm1`
+- `cm2`
+- `cd1`
+- `cd2`
+- `cd3`
+- `cd4`
+- `cd5`
+- `cd6`
