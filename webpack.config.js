@@ -55,9 +55,11 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif|svg|eot|woff|ttf|svg|woff2)$/,
         options: {
-          context: 'src/sidebar'
+          name: '[path][name].[ext]',
+          context: 'src',
+          publicPath: '../'
         },
-        loader: 'file-loader?name=[path][name].[ext]'
+        loader: 'file-loader'
       },
     ]
   }

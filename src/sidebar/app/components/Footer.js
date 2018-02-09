@@ -17,8 +17,7 @@ class Footer extends React.Component {
       syncingIndicatorText: '',
       waitingToReconnect: false,
       isAuthenticated: false,
-      lastModified: Date.now(),
-      syncingLayout: false
+      lastModified: Date.now()
     };
     this.loginTimeout = null;
 
@@ -198,8 +197,7 @@ class Footer extends React.Component {
           action: 'kinto-sync'
         });
       } else if (
-        !this.state.isAuthenticated && (!this.state.syncingLayout ||
-          this.state.waitingToReconnect)
+        !this.state.isAuthenticated || this.state.waitingToReconnect
       ) {
         // Login
 
