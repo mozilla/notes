@@ -24,13 +24,22 @@ body {
 
 /* material-design-lite (MDL) menu */
 #context-menu-button {
-  background-image: url('dark-svg/three-dots-dark.svg');
+  background-image: url('../svg/three-dots-dark.svg');
   background-color: #323744;
 }
 
 #footer-buttons.warning #context-menu-button {
   background-color: rgb(255, 236, 173);
-  background-image: url('three-dots.svg');
+  background-image: url('../svg/three-dots.svg');
+}
+
+#syncing-indicator {
+  background: none !important;
+  color: #e6e6e6 !important;
+}
+
+.warning #syncing-indicator {
+  color: black !important;
 }
 
 .mdl-menu__outline {
@@ -51,6 +60,10 @@ body {
   background-color: #3d4352;
 }
 /* end MDL menu */
+
+#footer-buttons p {
+  color: #e6e6e6;
+}
 
 #footer-buttons button {
   background-color: #393f4c;
