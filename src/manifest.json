@@ -2,13 +2,13 @@
   "manifest_version": 2,
   "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "default_locale": "en_US",
   "author": "Mozilla Test Pilot team",
   "applications": {
     "gecko": {
       "id": "notes@mozilla.com",
-      "strict_min_version": "54.0a1",
+      "strict_min_version": "57.0",
       "update_url": "https://testpilot.firefox.com/files/notes@mozilla.com/updates.json"
     }
   },

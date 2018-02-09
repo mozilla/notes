@@ -17,7 +17,7 @@ function customizeEditor(editor) {
       editor.fire('changesDone');
     });
   });
-  
+
   document.addEventListener('dragover', () => {
     mainEditor.classList.add('drag-n-drop-focus');
   });
@@ -29,12 +29,16 @@ function customizeEditor(editor) {
   document.addEventListener('drop', () => {
     editor.fire('changesDone');
     mainEditor.classList.remove('drag-n-drop-focus');
+    browser.runtime.sendMessage({
+      action: 'metrics-drag-n-drop',
+      context: getPadStats(editor)
+    });
   });
 
   localizeEditorButtons();
 }
 
-function localizeEditorButtons () {
+function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
   document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
     sel.remove();
@@ -132,7 +136,7 @@ function getPadStats(editor) {
  *                                  if false, animate to savingLayout (sync icon on left)
  * @param {Boolean} warning         Apply yellow warning styling on toolbar
  */
-function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // animateSyncIcon, syncingLayout, warning
+function setAnimation( animateSyncIcon = true, syncingLayout, warning, syncSuccess ) { // animateSyncIcon, syncingLayout, warning, syncSuccess
   const footerButtons = document.getElementById('footer-buttons');
   const enableSync = document.getElementById('enable-sync');
   const savingIndicator = document.getElementById('saving-indicator');
@@ -166,6 +170,12 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
   } else if (warning === false && footerButtons.classList.contains('warning')) {
     footerButtons.classList.remove('warning');
   }
+
+  if (syncSuccess === true) {
+    footerButtons.classList.add('actionable');
+  } else {
+    footerButtons.classList.remove('actionable');
+  }
 }
 
 /**
@@ -175,5 +185,5 @@ function setAnimation( animateSyncIcon = true, syncingLayout, warning ) { // ani
  */
 function formatFooterTime(date) {
   date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 }

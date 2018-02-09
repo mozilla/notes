@@ -8,6 +8,7 @@ parserOptions:
 
 extends:
   - eslint:recommended
+  - plugin:mozilla/recommended
 
 globals:
   BrowserStorageCredentials: false
@@ -28,13 +29,19 @@ globals:
   loadFromKinto: false
   localizeEditorButtons: false
   migrationCheck: false
+  migrationNote: false
+  migrationBody: false
   retrieveNote: false
   saveToKinto: false
   setAnimation: false
 
+plugins:
+  - mozilla
+
 root: true
 
 rules:
+  consistent-return: warn
   eqeqeq: error
   linebreak-style: [error, unix]
   no-console: warn

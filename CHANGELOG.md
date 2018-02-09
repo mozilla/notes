@@ -1,4 +1,11 @@
 # Changelog
+
+## 2.2.0 (2018-02-12)
+
+* Add the full heading names (#528)
+* Fix first edition not detected in new windows (#582)
+
+
 ## 2.1.1 (2018-01-22)
 
 * Add a toolbar icon

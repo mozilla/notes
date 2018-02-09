@@ -68,6 +68,11 @@ body {
   background-color: #3d4352;
 }
 
+#footer-buttons.actionable div:first-child
+{
+  color: white;
+}
+
 ::-moz-selection {
   background-color: #5675B9;
   color: #fff;
@@ -187,4 +192,18 @@ background: transparent;
 }
 .ql-snow .ql-picker-options {
   background-color: #393F4C;
+}
+
+.mdl-menu__item:focus {
+  background-color: #272B35;
+}
+.mdl-menu__item:hover {
+  background-color: #323744; 
+}
+.mdl-menu__item:active {
+  background-color: #3d4352;
+ }
+
+.actionable {
+  color: white;
 }

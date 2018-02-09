@@ -2,7 +2,7 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "author": "Test Pilot Mozilla Team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
@@ -15,7 +15,7 @@
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^2.0.22",
     "@ckeditor/ckeditor5-editor-classic": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-essentials": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-heading": "vladikoff/ckeditor5-heading#short-heading",
+    "@ckeditor/ckeditor5-heading": "Natim/ckeditor5-heading#short-heading",
     "@ckeditor/ckeditor5-list": "^1.0.0-alpha.2",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.2",
     "babel-minify-webpack-plugin": "^0.2.0",
@@ -38,7 +38,9 @@
     "chai": "^4.1.0",
     "chai-as-promised": "^7.1.1",
     "cross-spawn": "^5.1.0",
-    "eslint": "^4.0.0",
+    "eslint": "^4.17.0",
+    "eslint-plugin-mozilla": "^0.7.0",
+    "eslint-plugin-no-unsanitized": "^2.0.2",
     "fetch-mock": "^5.12.2",
     "fs-extra": "^4.0.1",
     "karma": "^1.7.1",
@@ -75,6 +77,7 @@
     "start": "web-ext run -s src",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
     "start-nightly": "npm start -- --firefox=nightly",
+    "start-deved": "npm start -- --firefox=firefoxdeveloperedition",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start"
   }

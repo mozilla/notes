@@ -11,11 +11,11 @@ const migrationBody = document.getElementById('migration-note-dialog');
 const migrationCloseButton = document.getElementById('migration-close-button');
 migrationBody.textContent = browser.i18n.getMessage('migratedEditor');
 migrationCloseButton.addEventListener('click', () => {
-  migrationNote.classList.toggle('visible');
+  migrationNote.classList.remove('visible');
 });
 
 function migrationCheck(editor) {
-  console.log('Editor migration started...');  // eslint-disable-line no-console
+  console.log('Editor migration started...'); // eslint-disable-line no-console
   const quill = new Quill('#migrationPlaceholder', {});
 
   syncNowEnabledCheck();
@@ -29,7 +29,7 @@ function migrationCheck(editor) {
       browser.storage.local.set({ notesQuillBackup: data.notes });
     } else {
       // if there is no old data then nothing to do
-      console.log('Already migrated.');  // eslint-disable-line no-console
+      console.log('Already migrated.'); // eslint-disable-line no-console
 
       chrome.runtime.sendMessage({
         action: 'metrics-migrated-before'
@@ -52,8 +52,8 @@ function migrationCheck(editor) {
           action: 'metrics-migrated'
         });
 
-        migrationNote.classList.toggle('visible');
-        console.log('Editor migration complete.');  // eslint-disable-line no-console
+        migrationNote.classList.add('visible');
+        console.log('Editor migration complete.'); // eslint-disable-line no-console
       });
 
     });
@@ -74,14 +74,14 @@ function syncNowEnabledCheck() {
 
   // do not block editor on this getter
   browser.storage.local.get('asked-for-syncing').then((data) => {
-    if(data && data['asked-for-syncing']) {
-      noteDiv.classList.toggle('visible');
+    if (data && data['asked-for-syncing']) {
+      noteDiv.classList.add('visible');
       browser.storage.local.remove('asked-for-syncing');
     }
   });
 
   closeButton.addEventListener('click', () => {
-    noteDiv.classList.toggle('visible');
+    noteDiv.classList.remove('visible');
   });
 
 }
