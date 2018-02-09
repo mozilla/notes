@@ -132,6 +132,12 @@ footer {
   }
 }
 
+#saving-indicator {
+  background: none;
+  padding-bottom: 12px;
+  color: inherit;
+}
+
 #syncing-indicator {
   width: 100%;
   text-overflow: ellipsis;
@@ -140,6 +146,13 @@ footer {
   position: absolute;
   top: 8px;
   padding-right: 40px;
+  background: none;
+  padding-bottom: 12px;
+  color: inherit;
+
+  &:hover {
+    background: none !important;
+  }
 }
 
 /* Animate sync icon */

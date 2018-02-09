@@ -53,9 +53,6 @@ class Footer extends React.Component {
           // document.getElementById('loading').style.display = 'none';
           break;
         case 'text-change':
-          this.setState({
-            ignoreNextLoadEvent: true
-          });
           browser.runtime.sendMessage({
             action: 'kinto-load'
           });
@@ -118,11 +115,9 @@ class Footer extends React.Component {
             syncingInProcess: false
           });
 
-
           chrome.runtime.sendMessage({
             action: 'metrics-reconnect-sync'
           });
-          // Enable sync-action
           break;
         case 'disconnected':
           // disconnectSync.style.display = 'none';
@@ -149,7 +144,7 @@ class Footer extends React.Component {
           ),
           isAuthenticated: true
         });
-        // disconnectSync.style.display = 'block';
+
       } else {
         this.setState({
           savingIndicatorText: browser.i18n.getMessage(
@@ -167,10 +162,11 @@ class Footer extends React.Component {
         isLoggingIn: false,
         syncingIndicatorText: browser.i18n.getMessage('disconnected')
       });
-      // disconnectSync.style.display = 'none';
+
       setTimeout(() => {
         this.getLastSyncedTime();
       }, 2000);
+
       browser.runtime.sendMessage('notes@mozilla.com', {
         action: 'disconnected'
       });
@@ -181,31 +177,23 @@ class Footer extends React.Component {
         return;
       }
 
-      if (
-        this.state.isAuthenticated
-      ) {
+      if (this.state.isAuthenticated) {
         // Trigger manual sync
-
         this.setState({
           syncingInProcess: true
         });
         browser.runtime.sendMessage({
           action: 'kinto-sync'
         });
-      } else if (
-        !this.state.isAuthenticated || this.state.waitingToReconnect
-      ) {
-        // Login
 
+      } else if (!this.state.isAuthenticated || this.state.waitingToReconnect) {
+        // Login
         this.setState({
           isLoggingIn: true,
           syncingIndicatorText: browser.i18n.getMessage('openingLogin')
         });
-        // enable disable sync button
-        // disconnectSync.style.display = 'block';
 
         const that = this;
-
         this.loginTimeout = setTimeout(() => {
           that.setState({
             syncingIndicatorText: browser.i18n.getMessage('pleaseLogin'),
@@ -259,48 +247,31 @@ class Footer extends React.Component {
           ref={footerButtons => this.footerButtons = footerButtons}
           className={footerClass}>
           <div>
-            <p id="saving-indicator"
-              style={{
-                background: 'none',
-                paddingBottom: '12px',
-                color: 'inherit'
-              }}
-            >{this.state.savingIndicatorText}</p>
+            <p id="saving-indicator">{this.state.savingIndicatorText}</p>
             <button
               id="enable-sync"
               onClick={() => this.enableSyncAction()}
-              className="notsyncing"
-            >
+              className="notsyncing">
               <SyncIcon />
             </button>
             <button
               id="syncing-indicator"
-              style={{
-                background: 'none',
-                paddingBottom: '12px',
-                color: 'inherit'
-              }}
-              onClick={() => this.enableSyncAction()}
-            >
+              onClick={() => this.enableSyncAction()}>
               {this.state.syncingIndicatorText}
             </button>
           </div>
-          <a
-            id="give-feedback-button"
+          <a id="give-feedback-button"
             title={browser.i18n.getMessage('feedback')}
-            href={SURVEY_PATH}
-          >
+            href={SURVEY_PATH}>
             <FeedbackIcon />
           </a>
           <div className="wrapper">
             <button id="context-menu-button" className="mdl-js-button" />
             <ul
               className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
-              data-mdl-for="context-menu-button"
-            >
+              data-mdl-for="context-menu-button">
               <li>
                 <button
-                  id="disconnect-from-sync"
                   className="mdl-menu__item context-menu-item"
                   style={{ width: '100%' }}
                   onClick={() => this.disconnectFromSync()}
@@ -309,12 +280,9 @@ class Footer extends React.Component {
                 </button>
               </li>
               <li>
-                <a
-                  id="give-feedback"
-                  className="mdl-menu__item context-menu-item"
-                  title={browser.i18n.getMessage('feedback')}
-                  href={SURVEY_PATH}
-                >
+                <a className="mdl-menu__item context-menu-item"
+                   title={browser.i18n.getMessage('feedback')}
+                   href={SURVEY_PATH}>
                   {browser.i18n.getMessage('feedback')}
                 </a>
               </li>
