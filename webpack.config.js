@@ -30,7 +30,7 @@ module.exports = {
     ], {
       ignore: [
           path.join('sidebar', 'app', '**', '*'),
-          path.join('sidebar', 'static', '**', '*')
+          path.join('sidebar', 'static', 'scss', '**', '*')
       ],
     }),
   ],
