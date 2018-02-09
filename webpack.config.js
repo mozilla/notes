@@ -29,7 +29,8 @@ module.exports = {
       { from: path.join('src') }
     ], {
       ignore: [
-          path.join('sidebar', 'app', '**', '*')
+          path.join('sidebar', 'app', '**', '*'),
+          path.join('sidebar', 'static', '**', '*')
       ],
     }),
   ],
@@ -40,6 +41,23 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: ['babel-loader?presets[]=env&presets[]=react&presets[]=stage-2&sourceMaps=true'],
+      },
+      {
+          test: /\.scss$/,
+          use: [{
+              loader: 'style-loader' // creates style nodes from JS strings
+          }, {
+              loader: 'css-loader' // translates CSS into CommonJS
+          }, {
+              loader: 'sass-loader' // compiles Sass to CSS
+          }]
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|eot|woff|ttf|svg|woff2)$/,
+        options: {
+          context: 'src/sidebar'
+        },
+        loader: 'file-loader?name=[path][name].[ext]'
       },
     ]
   }
