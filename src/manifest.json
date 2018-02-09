@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.2.0dev",
+  "version": "2.2.0",
   "default_locale": "en_US",
   "author": "Mozilla Test Pilot team",
   "applications": {

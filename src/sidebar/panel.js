@@ -70,7 +70,7 @@ ClassicEditor.create(document.querySelector('#editor'), {
         if (isFocused || name === 'rename' || name === 'insert') {
           const content = editor.getData();
           if (!ignoreNextLoadEvent && content !== undefined &&
-              content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+              content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
             ignoreTextSynced = true;
             if (content.length > 15000) {
               console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
