@@ -156,6 +156,8 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-reconnect-sync':
       sendMetrics('reconnect-sync', eventData.context);
       break;
+    case 'metrics-context-menu':
+      sendMetrics('context-menu', eventData.context);
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({

@@ -354,4 +354,7 @@ function insertSelectedText(editor, text) {
     updatedNotesContents = currentNoteContents + '\n' + text;
   }
   editor.setData(updatedNotesContents);
+  browser.runtime.sendMessage({
+    action: 'metrics-context-menu'
+  });
 }
