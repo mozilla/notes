@@ -4,6 +4,8 @@
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
 [![Waffle.io - Bug Triage](https://badge.waffle.io/mozilla/notes.svg?columns=all)](https://waffle.io/mozilla/notes)
 
+> Discussion Forum: [https://discourse.mozilla.org/c/test-pilot/notes](https://discourse.mozilla.org/c/test-pilot/notes)
+
 ## What does it aim for
 
 This project let you open a notepad in the Firefox toolbar to store notes about your browsing.

@@ -35,11 +35,11 @@ function sendMetrics(event, context = {}) {
     let metrics = {};
 
     if (event === 'open') {
-      metrics.cd9 = context.loaded === false ? false : true;
+      metrics.cd9 = context.loaded !== false;
     } else if (event === 'close') {
       metrics.cd7 = context.closeUI;
       metrics.cd8 = null; // reason editing session ended
-    } else if (event === 'changed' || event === 'drag-n-drop') {  // Editing
+    } else if (event === 'changed' || event === 'drag-n-drop') { // Editing
       metrics = {
         cm1: context.characters,
         cm2: context.lineBreaks,
@@ -129,7 +129,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
           data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-          last_modified: result  && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+          last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
         });
       }).catch(() => {
         sendMetrics('open', {loaded: false});
@@ -151,13 +151,17 @@ browser.runtime.onMessage.addListener(function(eventData) {
       sendMetrics('metrics-migrated', eventData.context);
       break;
     case 'metrics-migrated-before':
-      sendMetrics('metrics-migrated-before', eventData.context);
+      sendMetrics('metrics-migrated-before');
       break;
     case 'metrics-reconnect-sync':
       sendMetrics('reconnect-sync', eventData.context);
       break;
+    case 'metrics-limit-reached':
+      sendMetrics('limit-reached', eventData.context);
+      break;
     case 'metrics-context-menu':
       sendMetrics('context-menu', eventData.context);
+      break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({
@@ -166,8 +170,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
   }
 });
-
-const addonIsClosedForWindow = {};
 
 // Handle opening and closing the add-on.
 function connected(p) {
@@ -194,15 +196,8 @@ browser.storage.local.get()
 });
 
 // Handle onClick event for the toolbar button
-browser.browserAction.onClicked.addListener((e) => {
-  if (addonIsClosedForWindow[e.id]) {
-    addonIsClosedForWindow[e.id] = false;
+browser.browserAction.onClicked.addListener(() => {
     browser.sidebarAction.open();
-  } else {
-    addonIsClosedForWindow[e.id] = true;
-    closeUI = 'sidebarButton';
-    browser.sidebarAction.close();
-  }
 });
 
 // context menu for 'Send to Notes'

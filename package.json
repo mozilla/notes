@@ -2,8 +2,8 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.2.0dev",
-  "author": "Storage team",
+  "version": "2.3.0dev",
+  "author": "Test Pilot Mozilla Team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
   },
@@ -38,7 +38,9 @@
     "chai": "^4.1.0",
     "chai-as-promised": "^7.1.1",
     "cross-spawn": "^5.1.0",
-    "eslint": "^4.0.0",
+    "eslint": "^4.17.0",
+    "eslint-plugin-mozilla": "^0.7.0",
+    "eslint-plugin-no-unsanitized": "^2.0.2",
     "fetch-mock": "^5.12.2",
     "fs-extra": "^4.0.1",
     "karma": "^1.7.1",

@@ -15,7 +15,7 @@ migrationCloseButton.addEventListener('click', () => {
 });
 
 function migrationCheck(editor) {
-  console.log('Editor migration started...');  // eslint-disable-line no-console
+  console.log('Editor migration started...'); // eslint-disable-line no-console
   const quill = new Quill('#migrationPlaceholder', {});
 
   syncNowEnabledCheck();
@@ -29,7 +29,7 @@ function migrationCheck(editor) {
       browser.storage.local.set({ notesQuillBackup: data.notes });
     } else {
       // if there is no old data then nothing to do
-      console.log('Already migrated.');  // eslint-disable-line no-console
+      console.log('Already migrated.'); // eslint-disable-line no-console
 
       chrome.runtime.sendMessage({
         action: 'metrics-migrated-before'
@@ -53,7 +53,7 @@ function migrationCheck(editor) {
         });
 
         migrationNote.classList.add('visible');
-        console.log('Editor migration complete.');  // eslint-disable-line no-console
+        console.log('Editor migration complete.'); // eslint-disable-line no-console
       });
 
     });
@@ -74,7 +74,7 @@ function syncNowEnabledCheck() {
 
   // do not block editor on this getter
   browser.storage.local.get('asked-for-syncing').then((data) => {
-    if(data && data['asked-for-syncing']) {
+    if (data && data['asked-for-syncing']) {
       noteDiv.classList.add('visible');
       browser.storage.local.remove('asked-for-syncing');
     }
