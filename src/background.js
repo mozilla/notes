@@ -205,14 +205,17 @@ browser.browserAction.onClicked.addListener((e) => {
 
 // context menu for 'Send to Notes'
 browser.contextMenus.create({
-  id: "send-to-notes",
-  title: "Send to Notes",
-  contexts: ["selection"]
+  id: 'send-to-notes',
+  title: 'Send to Notes',
+  contexts: ['selection']
 });
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
-  chrome.runtime.sendMessage({
-    action: 'send-to-notes',
-    text: info.selectionText
-  });
+browser.contextMenus.onClicked.addListener((info) => {
+  browser.sidebarAction.open();
+  setTimeout(() => {
+    chrome.runtime.sendMessage({
+      action: 'send-to-notes',
+      text: info.selectionText
+    });
+  }, 700);
 });

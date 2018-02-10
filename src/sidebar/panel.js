@@ -346,7 +346,12 @@ document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 browser.runtime.connect();
 
 function insertSelectedText(editor, text) {
-  let currentNoteContents = editor.getData();
-  let updatedNotesContents = currentNoteContents + '\n' + text;
+  const currentNoteContents = editor.getData();
+  let updatedNotesContents = '';
+  if (currentNoteContents === '<p>&nbsp;</p>') {
+    updatedNotesContents = text;
+  } else {
+    updatedNotesContents = currentNoteContents + '\n' + text;
+  }
   editor.setData(updatedNotesContents);
 }
