@@ -233,10 +233,12 @@ class Footer extends React.Component {
   }
 
   render() {
+
+    const isSyncing = this.state.waitingToReconnect || this.state.isAuthenticated || this.state.isLoggingIn;
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
-       savingLayout: !this.state.waitingToReconnect && !this.state.isAuthenticated && !this.state.isLoggingIn,
-       syncingLayout: this.state.waitingToReconnect || this.state.isAuthenticated || this.state.isLoggingIn,
+       savingLayout: !isSyncing,
+       syncingLayout: isSyncing,
        warning: this.state.waitingToReconnect,
        animateSyncIcon: (this.state.isLoggingIn || this.state.syncingInProcess) && !this.state.waitingToReconnect
     });
