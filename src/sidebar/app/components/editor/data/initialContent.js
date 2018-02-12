@@ -26,6 +26,6 @@ const INITIAL_CONTENT = `
     <li>${browser.i18n.getMessage('welcomeGiveFeedback', '<strong>' + browser.i18n.getMessage('feedback') + '</strong>')}</li>
   </ul>
   <p>${browser.i18n.getMessage('welcomeThatsIt')}</p>
-`;
+`.replace(/(?:\n(?:\s*))+/g, '').trim();
 
 export default INITIAL_CONTENT;

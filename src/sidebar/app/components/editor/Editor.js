@@ -102,20 +102,17 @@ class Editor extends React.Component {
           if (isFocused || name === 'rename' || name === 'insert') {
             const content = editor.getData();
             if (!this.state.ignoreNextLoadEvent && content !== undefined &&
-                content.replace(/&nbsp;/g, ' ') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+                content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
               this.setState({
-              ignoreTextSynced: true
-            });
+                ignoreTextSynced: true
+              });
               if (content.length > 15000) {
                 console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                migrationNote.classList.add('visible');
                 migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
                 browser.runtime.sendMessage({
                   action: 'metrics-limit-reached',
                   context: getPadStats(editor)
                 });
-              } else {
-                migrationNote.classList.remove('visible');
               }
 
               chrome.runtime.sendMessage({
