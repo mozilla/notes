@@ -12,6 +12,10 @@ const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
+let FILE_PATH = '';
+const exportButton = document.getElementById('export');
+exportButton.textContent = 'Export';
+
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
@@ -97,6 +101,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
           ignoreNextLoadEvent = false;
         }
       });
+
+      exportButton.onclick = () => {
+          FILE_PATH = exportNotesContent(editor);
+          let downloading = browser.downloads.download({
+            url: FILE_PATH,
+            filename: 'notes.md'
+          });
+      };
 
       savingIndicator.onclick = () => {
         enableSyncAction(editor);
@@ -270,6 +282,13 @@ function disconnectFromSync() {
 }
 
 disconnectSync.addEventListener('click', disconnectFromSync);
+
+function exportNotesContent(editor) {
+  const notesContent = editor.getData();
+  const data = new Blob([notesContent], {'type': 'text/html'});
+  const file = window.URL.createObjectURL(data);
+  return file;
+}
 
 function enableSyncAction(editor) {
   if (editingInProcess || syncingInProcess) {
