@@ -107,7 +107,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       credentials.get()
         .then(result => {
           if (!result) {
-            sendMetrics('webext-button-authenticate', eventData.context);
+            sendMetrics('webext-button-authenticate');
             authenticate();
           } else {
             chrome.runtime.sendMessage({

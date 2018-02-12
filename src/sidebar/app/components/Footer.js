@@ -204,8 +204,7 @@ class Footer extends React.Component {
 
         // Problem not having editor in Footer Component
         browser.runtime.sendMessage({
-          action: 'authenticate',
-          context: null // getPadStats(editor)
+          action: 'authenticate'
         });
       }
 
