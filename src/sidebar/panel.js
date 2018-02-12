@@ -12,9 +12,14 @@ const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
-let FILE_PATH = '';
-const exportButton = document.getElementById('export');
-exportButton.textContent = 'Export';
+const exportHTMLButton = document.getElementById('export_html');
+const exportMarkdownButton = document.getElementById('export_markdown');
+exportHTMLButton.textContent = 'Export as HTML';
+exportMarkdownButton.textContent = 'Export as Markdown';
+
+const turndownService = new TurndownService({
+  headingStyle: 'atx'
+});
 
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
@@ -102,12 +107,12 @@ ClassicEditor.create(document.querySelector('#editor'), {
         }
       });
 
-      exportButton.onclick = () => {
-          FILE_PATH = exportNotesContent(editor);
-          let downloading = browser.downloads.download({
-            url: FILE_PATH,
-            filename: 'notes.md'
-          });
+      exportHTMLButton.onclick = () => {
+        exportNotes(editor, 'html');
+      };
+
+      exportMarkdownButton.onclick = () => {
+        exportNotes(editor, 'markdown');
       };
 
       savingIndicator.onclick = () => {
@@ -283,11 +288,26 @@ function disconnectFromSync() {
 
 disconnectSync.addEventListener('click', disconnectFromSync);
 
-function exportNotesContent(editor) {
-  const notesContent = editor.getData();
-  const data = new Blob([notesContent], {'type': 'text/html'});
-  const file = window.URL.createObjectURL(data);
-  return file;
+function exportNotes(editor, fileType) {
+  let notesContent = null;
+  let exportedFileName = null;
+  switch (fileType) {
+    case 'html':
+      notesContent = editor.getData();
+      exportedFileName = 'notes_html.md';
+      break;
+    case 'markdown':
+      notesContent = turndownService.turndown(editor.getData());
+      exportedFileName = 'notes_markdown.md';
+      break;
+  }
+
+  const data = new Blob([notesContent], {'type': 'text/markdown'});
+  const exportFilePath = window.URL.createObjectURL(data);
+  const downloading = browser.downloads.download({
+    url: exportFilePath,
+    filename: exportedFileName
+  });
 }
 
 function enableSyncAction(editor) {
