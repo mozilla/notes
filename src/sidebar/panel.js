@@ -9,9 +9,10 @@ const footerButtons = document.getElementById('footer-buttons');
 const enableSync = document.getElementById('enable-sync');
 const giveFeedbackButton = document.getElementById('give-feedback-button');
 const giveFeedbackMenuItem = document.getElementById('give-feedback');
+const openInTabMenuItem = document.getElementById('open-in-tab');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
-
+openInTabMenuItem.textContent = browser.i18n.getMessage('openInTab');
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
@@ -45,6 +46,13 @@ giveFeedbackMenuItem.addEventListener('dragstart', (e) => {
 
 giveFeedbackButton.addEventListener('click', giveFeedbackCallback);
 giveFeedbackMenuItem.addEventListener('click', giveFeedbackCallback);
+
+openInTabMenuItem.onclick = () => {
+  browser.tabs.create({
+    url: '/sidebar/panel.html',
+  });
+  browser.sidebarAction.close();
+};
 
 // ignoreNextLoadEvent is used to make sure the update does not trigger on other sidebars
 let ignoreNextLoadEvent = false;
