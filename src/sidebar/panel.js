@@ -291,18 +291,21 @@ disconnectSync.addEventListener('click', disconnectFromSync);
 function exportNotes(editor, fileType) {
   let notesContent = null;
   let exportedFileName = null;
+  let exportFileType = null;
   switch (fileType) {
     case 'html':
       notesContent = editor.getData();
-      exportedFileName = 'notes_html.md';
+      exportedFileName = 'notes.html';
+      exportFileType = 'text/html';
       break;
     case 'markdown':
       notesContent = turndownService.turndown(editor.getData());
-      exportedFileName = 'notes_markdown.md';
+      exportedFileName = 'notes.md';
+      exportFileType = 'text/markdown';
       break;
   }
 
-  const data = new Blob([notesContent], {'type': 'text/markdown'});
+  const data = new Blob([notesContent], {'type': exportFileType});
   const exportFilePath = window.URL.createObjectURL(data);
   const downloading = browser.downloads.download({
     url: exportFilePath,
