@@ -27,6 +27,7 @@ let syncingInProcess = false;
 enableSync.setAttribute('title', browser.i18n.getMessage('syncNotes'));
 giveFeedbackButton.setAttribute('title', browser.i18n.getMessage('feedback'));
 giveFeedbackMenuItem.text = browser.i18n.getMessage('feedback');
+giveFeedbackMenuItem.setAttribute('title', browser.i18n.getMessage('feedback'));
 
 function giveFeedbackCallback(e) {
   e.preventDefault();
