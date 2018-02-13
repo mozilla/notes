@@ -340,8 +340,8 @@ browser.runtime.connect();
 
 function insertSelectedText(editor, selectedText) {
   const currentNotesContent = editor.getData();
-  const updatedNotesContents = currentNotesContent + selectedText;
-  editor.setData(updatedNotesContents);
+  const updatedNotesContent = currentNotesContent + selectedText;
+  editor.setData(updatedNotesContent);
   browser.runtime.sendMessage({
     action: 'metrics-context-menu'
   });
