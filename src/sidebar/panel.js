@@ -338,14 +338,9 @@ document.addEventListener('DOMContentLoaded', getLastSyncedTime);
 // close events.
 browser.runtime.connect();
 
-function insertSelectedText(editor, text) {
-  const currentNoteContents = editor.getData();
-  let updatedNotesContents = '';
-  if (currentNoteContents === '<p>&nbsp;</p>') {
-    updatedNotesContents = text;
-  } else {
-    updatedNotesContents = currentNoteContents + '\n' + text;
-  }
+function insertSelectedText(editor, selectedText) {
+  const currentNotesContent = editor.getData();
+  let updatedNotesContents = currentNotesContent + selectedText;
   editor.setData(updatedNotesContents);
   browser.runtime.sendMessage({
     action: 'metrics-context-menu'
