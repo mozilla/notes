@@ -203,7 +203,7 @@ browser.browserAction.onClicked.addListener(() => {
 // context menu for 'Send to Notes'
 browser.contextMenus.create({
   id: 'send-to-notes',
-  title: 'Send to Notes',
+  title: browser.i18n.getMessage('sendToNotes'),
   contexts: ['selection']
 });
 
