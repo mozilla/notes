@@ -4,14 +4,18 @@ env:
   webextensions: true
 
 parserOptions:
+  ecmaFeatures:
+    jsx: true
   ecmaVersion: 2017
+  sourceType: module
 
 extends:
   - eslint:recommended
   - plugin:mozilla/recommended
+  - plugin:react/recommended
+  - plugin:jsx-a11y/recommended
 
 globals:
-  BrowserStorageCredentials: false
   ClassicEditor: false
   Jose: false
   JoseJWE: false
@@ -20,23 +24,26 @@ globals:
   Quill: false
   TestPilotGA: false
   customizeEditor: false
-  disconnectFromKinto: false
   formatFooterTime: false
   fxaCryptoRelier: false
   fxaFetchProfile: false
   fxaRenewCredential: false
   getPadStats: false
-  loadFromKinto: false
   localizeEditorButtons: false
   migrationCheck: false
   migrationNote: false
   migrationBody: false
   retrieveNote: false
-  saveToKinto: false
   setAnimation: false
+  BrowserStorageCredentials: false
+  loadFromKinto: false
+  disconnectFromKinto: false
+  saveToKinto: false
 
 plugins:
   - mozilla
+  - jsx-a11y
+  - react
 
 root: true
 

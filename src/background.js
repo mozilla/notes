@@ -1,7 +1,7 @@
-/* exported sendMetrics */
 /**
  * Google Analytics / TestPilot Metrics
  */
+
 const TRACKING_ID = 'UA-35433268-79';
 
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
@@ -98,14 +98,16 @@ function authenticate() {
     sendMetrics('login-failed');
   });
 }
+
 browser.runtime.onMessage.addListener(function(eventData) {
   const credentials = new BrowserStorageCredentials(browser.storage.local);
+
   switch (eventData.action) {
     case 'authenticate':
       credentials.get()
         .then(result => {
           if (!result) {
-            sendMetrics('webext-button-authenticate', eventData.context);
+            sendMetrics('webext-button-authenticate');
             authenticate();
           } else {
             chrome.runtime.sendMessage({

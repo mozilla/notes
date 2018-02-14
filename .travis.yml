@@ -2,7 +2,16 @@ language: node_js
 addons:
   firefox: latest
 node_js:
-  - "6"
+  - "8"
+before_install:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+script:
+  - npm run test
+env:
+  global:
+    - FIREFOX_BINARY: firefox
 
 matrix:
   include:
@@ -18,3 +27,5 @@ matrix:
       env: BUILD_NOTES
     - script: npm run lint
       env: LINT
+      before_script: npm run build
+      before_install:
