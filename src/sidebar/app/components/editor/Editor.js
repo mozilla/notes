@@ -52,7 +52,7 @@ class Editor extends React.Component {
 
           if (!data.hasOwnProperty('notes2')) {
             if (!this.editor) {
-              this.init(content);
+              this.init(INITIAL_CONTENT);
             } else {
               this.editor.setData(INITIAL_CONTENT);
             }
