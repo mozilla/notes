@@ -19,7 +19,7 @@
   "sidebar_action": {
     "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
-    "default_panel": "sidebar/panel.html"
+    "default_panel": "sidebar/index.html"
   },
   "browser_action": {
     "browser_style": true,

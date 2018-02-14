@@ -9,7 +9,7 @@ function getThemeFromStorage() {
         darkSS.id = 'dark-styles';
         darkSS.type = 'text/css';
         darkSS.rel = 'stylesheet';
-        darkSS.href = 'styles-dark.css';
+        darkSS.href = 'static/css/styles-dark.css';
         document.getElementsByTagName('head')[0].appendChild(darkSS);
       }
     } else if (data.theme === 'default' || data.theme === undefined) {
