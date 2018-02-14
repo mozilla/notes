@@ -12,6 +12,15 @@ const giveFeedbackMenuItem = document.getElementById('give-feedback');
 const savingIndicator = document.getElementById('saving-indicator');
 savingIndicator.textContent = browser.i18n.getMessage('changesSaved');
 
+const exportHTMLButton = document.getElementById('export_html');
+const exportMarkdownButton = document.getElementById('export_markdown');
+exportHTMLButton.textContent = 'Export as HTML';
+exportMarkdownButton.textContent = 'Export as Markdown';
+
+const turndownService = new TurndownService({
+  headingStyle: 'atx'
+});
+
 const disconnectSync = document.getElementById('disconnect-from-sync');
 disconnectSync.style.display = 'none';
 disconnectSync.textContent = browser.i18n.getMessage('disableSync');
@@ -98,6 +107,14 @@ ClassicEditor.create(document.querySelector('#editor'), {
           ignoreNextLoadEvent = false;
         }
       });
+
+      exportHTMLButton.onclick = () => {
+        exportNotes(editor, 'html');
+      };
+
+      exportMarkdownButton.onclick = () => {
+        exportNotes(editor, 'markdown');
+      };
 
       savingIndicator.onclick = () => {
         enableSyncAction(editor);
@@ -271,6 +288,31 @@ function disconnectFromSync() {
 }
 
 disconnectSync.addEventListener('click', disconnectFromSync);
+
+function exportNotes(editor, fileType) {
+  let notesContent = null;
+  let exportedFileName = null;
+  let exportFileType = null;
+  switch (fileType) {
+    case 'html':
+      notesContent = editor.getData();
+      exportedFileName = 'notes.html';
+      exportFileType = 'text/html';
+      break;
+    case 'markdown':
+      notesContent = turndownService.turndown(editor.getData());
+      exportedFileName = 'notes.md';
+      exportFileType = 'text/markdown';
+      break;
+  }
+
+  const data = new Blob([notesContent], {'type': exportFileType});
+  const exportFilePath = window.URL.createObjectURL(data);
+  const downloading = browser.downloads.download({
+    url: exportFilePath,
+    filename: exportedFileName
+  });
+}
 
 function enableSyncAction(editor) {
   if (editingInProcess || syncingInProcess) {

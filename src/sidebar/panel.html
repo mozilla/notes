@@ -46,6 +46,8 @@
       <div class="wrapper">
         <button id="context-menu-button" class="mdl-js-button"></button>
         <ul class="mdl-menu mdl-menu--top-right mdl-js-menu context-menu" data-mdl-for="context-menu-button">
+          <li><a id="export_html" class="mdl-menu__item context-menu-item"></a></li>
+          <li><a id="export_markdown" class="mdl-menu__item context-menu-item"></a></li>
           <li id="disconnect-from-sync" class="mdl-menu__item context-menu-item"></li>
           <li><a id="give-feedback" class="mdl-menu__item context-menu-item"></a></li>
         </ul>
@@ -56,6 +58,7 @@
   <!-- Include the ckeditor library -->
   <script src="vendor/ckeditor.js"></script>
   <script src="vendor/quill.js"></script>
+  <script src="vendor/turndown.js"></script>
   <!-- Initialize ckeditor -->
   <script src="editor.js"></script>
   <script src="migration.js"></script>
