@@ -193,15 +193,11 @@ footer {
   align-items: center;
 }
 
-.savingLayout #context-menu-button {
-  display: none;
-}
-
 /* Display feedback button with opacity */
 .savingLayout #give-feedback-button {
   opacity: 1;
   z-index: 1;
-  visiblity: visible;
+  visibility: visible;
   transition: opacity var(--sync-animation-duration)
     cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 }
@@ -211,10 +207,10 @@ footer {
   opacity: 0;
   z-index: 0;
   cursor: default;
-  visiblity: hidden;
+  visibility: hidden;
   transition: opacity var(--sync-animation-duration)
       cubic-bezier(0.07, 0.95, 0, 1),
-    visibity 0s var(--sync-animation-duration);
+    visibility 0s var(--sync-animation-duration);
 }
 
 #footer-buttons button,
@@ -261,21 +257,19 @@ footer {
 
 /* Hide select menu on saving mode */
 .savingLayout #context-menu-button {
+  z-index: 0;
   opacity: 0;
   visibility: none;
-  z-index: 0;
-  transition: visibility 0s var(--sync-animation-duration),
-    opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1);
+  transition: opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1),
+    visibility 0s var(--sync-animation-duration);
 }
 
 /* Show select menu on syncing mode */
 .syncingLayout #context-menu-button {
+  z-index: 1;
   opacity: 1;
   visibility: visible;
-  z-index: 1;
-  transition: visibility 0s var(--sync-animation-duration),
-    opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1)
-      var(--sync-animation-duration);
+  transition: opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 }
 
 .context-menu {
