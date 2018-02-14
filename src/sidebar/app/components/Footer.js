@@ -17,7 +17,8 @@ class Footer extends React.Component {
       syncingIndicatorText: '',
       waitingToReconnect: false,
       isAuthenticated: false,
-      lastModified: Date.now()
+      lastModified: Date.now(),
+      isKintoLoaded: false
     };
     this.loginTimeout = null;
 
@@ -46,11 +47,14 @@ class Footer extends React.Component {
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
           this.setState({
             lastModified: Date.now(),
-            syncingInProcess: false
+            syncingInProcess: false,
+            isKintoLoaded: true
           });
+
+          // Force refresh on Material Design Lite library to activate mdl-menu
+          componentHandler.upgradeAllRegistered(); // eslint-disable-line no-undef
+
           this.getLastSyncedTime();
-          // TODO Implement optimistic UI
-          // document.getElementById('loading').style.display = 'none';
           break;
         case 'text-change':
           browser.runtime.sendMessage({
@@ -233,6 +237,10 @@ class Footer extends React.Component {
 
   render() {
 
+    if (!this.state.isKintoLoaded) {
+      return '';
+    }
+
     const isSyncing = this.state.waitingToReconnect || this.state.isAuthenticated || this.state.isLoggingIn;
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
@@ -267,7 +275,8 @@ class Footer extends React.Component {
             <FeedbackIcon />
           </a>
           <div className="wrapper">
-            <button id="context-menu-button" className="mdl-js-button" />
+            <button id="context-menu-button"
+              className="mdl-js-button" />
             <ul
               className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
               data-mdl-for="context-menu-button">
