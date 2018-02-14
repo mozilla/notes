@@ -9,9 +9,9 @@ A notepad for Firefox
 > Discussion Forum: [https://discourse.mozilla.org/c/test-pilot/notes](https://discourse.mozilla.org/c/test-pilot/notes)
 
 
-## How can you use it
+## Contribute
 
-* Step 0: If you plan on sending pull-request, you should fork the repository.
+* Step 0: If you plan on sending a pull-request, you should fork the repository.
 * Step 1: Clone the [notes](https://github.com/mozilla/notes) repository or your fork.
 ```
 git clone https://github.com/mozilla/notes.git
