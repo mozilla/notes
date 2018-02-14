@@ -32,6 +32,7 @@ describe('Authorization', function() {
   afterEach(function() {
     sandbox.verifyAndRestore();
     browser.flush();
+    browser.runtime.sendMessage.reset();
   });
 
   it('should define syncKinto', function() {
@@ -204,7 +205,7 @@ describe('Authorization', function() {
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data.content).eql("<p>Resolution</p>");
-          const expectedContent = "<p>Hi there</p>\n====== On this computer: ======\n\n<p>Local</p>";
+          const expectedContent = "<p>Hi there</p><p>localized string</p><p>Local</p>";
           const expectedResolution = {
             id: "singleNote",
             content: expectedContent,
@@ -358,7 +359,9 @@ describe('Authorization', function() {
           chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
             action: 'text-synced',
-            last_modified: 'abc',
+            content: "def",
+            last_modified: "abc",
+            conflict: false
           });
         });
     });
