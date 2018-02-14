@@ -36,7 +36,7 @@ class Footer extends React.Component {
           });
 
           // set title attr of footer to the currently logged in account
-          this.footerButtons.title = eventData.profile && eventData.profile.email;
+          this.footerbuttons.title = eventData.profile && eventData.profile.email;
 
           browser.runtime.sendMessage({
             action: 'kinto-sync'
@@ -124,8 +124,6 @@ class Footer extends React.Component {
           });
           break;
         case 'disconnected':
-          // disconnectSync.style.display = 'none';
-          // footerButtons.title = null; // remove profile email from title attribute
           this.setState({
             isAuthenticated: false
           });
@@ -216,6 +214,13 @@ class Footer extends React.Component {
         waitingToReconnect: false
       });
     };
+
+    this.giveFeedbackCallback = (e) => {
+      e.preventDefault();
+      browser.tabs.create({
+        url: SURVEY_PATH
+      });
+    };
   }
 
   componentDidMount() {
@@ -253,7 +258,7 @@ class Footer extends React.Component {
     return (
       <footer>
         <div id="footer-buttons"
-          ref={footerButtons => this.footerButtons = footerButtons}
+          ref={footerbuttons => this.footerbuttons = footerbuttons}
           className={footerClass}>
           <div>
             <p id="saving-indicator">{this.state.savingIndicatorText}</p>
@@ -271,7 +276,8 @@ class Footer extends React.Component {
           </div>
           <a id="give-feedback-button"
             title={browser.i18n.getMessage('feedback')}
-            href={SURVEY_PATH}>
+            onClick={ this.giveFeedbackCallback }
+            href={ SURVEY_PATH }>
             <FeedbackIcon />
           </a>
           <div className="wrapper">
@@ -292,7 +298,8 @@ class Footer extends React.Component {
               <li>
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
-                   href={SURVEY_PATH}>
+                   onClick={ this.giveFeedbackCallback }
+                   href={ SURVEY_PATH }>
                   { browser.i18n.getMessage('feedback') }
                 </a>
               </li>
