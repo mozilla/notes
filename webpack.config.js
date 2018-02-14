@@ -38,7 +38,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.js$/, // Babel-loader compile jsx syntax to javascript
         exclude: /node_modules/,
         use: ['babel-loader?presets[]=env&presets[]=react&presets[]=stage-2&sourceMaps=true'],
       },
@@ -60,7 +60,7 @@ module.exports = {
           publicPath: '../'
         },
         loader: 'file-loader'
-      },
+      }
     ]
   }
 };
