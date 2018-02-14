@@ -139,7 +139,7 @@ describe('Authorization', function() {
       decryptMock = sandbox.stub(global, 'decrypt');
       decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
         id: "singleNote",
-        content: {ops: [{insert: "Hi there"}]},
+        content: "<p>Hi there</p>",
       });
 
       // sync() tries to gather local changes, even when a conflict
@@ -196,23 +196,15 @@ describe('Authorization', function() {
       });
       decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
         id: "singleNote",
-        content: {ops: [{insert: "Resolution"}]},
+        content: "<p>Resolution</p>",
       });
 
-      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}})
+      return collection.upsert({id: "singleNote", content: "<p>Local</p>"})
         .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
-          chai.expect(result.data.content).eql(
-            {ops: [
-              {insert: "Resolution"}
-            ]});
-          const expectedContent = {
-            ops: [
-              {insert: "Hi there"},
-              {insert: "\n====== On this computer: ======\n\n"},
-              {insert: "Local"},
-            ]};
+          chai.expect(result.data.content).eql("<p>Resolution</p>");
+          const expectedContent = "<p>Hi there</p>\n====== On this computer: ======\n\n<p>Local</p>";
           const expectedResolution = {
             id: "singleNote",
             content: expectedContent,
@@ -279,10 +271,7 @@ describe('Authorization', function() {
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data._status).eql("synced");
-          chai.expect(result.data.content).eql({
-            ops: [
-              {insert: "Hi there"}
-            ]});
+          chai.expect(result.data.content).eql("<p>Hi there</p>");
 
           // This sync will try to retrieve the record after 1234,
           // which has an older kid.
