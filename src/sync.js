@@ -203,7 +203,7 @@ function syncKinto(client, credentials) {
           } else {
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
-            totalOps += `\n${mergeWarning}\n\n`;
+            totalOps += `<p>${mergeWarning}</p>`;
             totalOps += conflict.local.content;
 
             client.conflict = true;
