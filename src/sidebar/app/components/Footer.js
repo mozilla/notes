@@ -141,7 +141,7 @@ class Footer extends React.Component {
       if (this.state.isAuthenticated) {
         this.setState({
           syncingIndicatorText: browser.i18n.getMessage(
-            'syncComplete2',
+            'syncComplete3',
             formatFooterTime(this.state.lastModified)
           ),
           isAuthenticated: true
@@ -150,7 +150,7 @@ class Footer extends React.Component {
       } else {
         this.setState({
           savingIndicatorText: browser.i18n.getMessage(
-            'savedComplete2',
+            'changesSaved',
             formatFooterTime(this.state.lastModified)
           )
         });
