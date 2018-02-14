@@ -293,7 +293,7 @@ class Footer extends React.Component {
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
                    href={SURVEY_PATH}>
-                  {browser.i18n.getMessage('feedback')}
+                  { browser.i18n.getMessage('feedback') }
                 </a>
               </li>
             </ul>

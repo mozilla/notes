@@ -40,7 +40,6 @@ git push origin production
 * Upgrade to next version in dev (i.e 1.8.0dev):
   * Update `package.json` next version number
   * Update `src/manifest.json` next version number
-  * Update `src/background.js` next version number
   * Prepare `CHANGELOG.md` for the next release
 
 ```
