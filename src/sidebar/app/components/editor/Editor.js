@@ -51,20 +51,12 @@ class Editor extends React.Component {
         browser.storage.local.get('notes2').then(data => {
 
           if (!data.hasOwnProperty('notes2')) {
-            if (!this.editor) {
-              this.init(INITIAL_CONTENT);
-            } else {
-              this.editor.setData(INITIAL_CONTENT);
-            }
+            this.init(INITIAL_CONTENT);
             this.setState({
               ignoreNextLoadEvent: true
             });
           } else {
-            if (!this.editor) {
-              this.init(data.notes2);
-            } else {
-              this.editor.setData(data.notes2);
-            }
+            this.init(data.notes2);
             chrome.runtime
               .sendMessage({
                 action: 'kinto-save',
@@ -76,10 +68,8 @@ class Editor extends React.Component {
               });
           }
         });
-      } else if (!this.editor) {
+      } else if (!this.editor || this.editor.getData() !== content) {
         this.init(content);
-      } else if (this.editor.getData() !== content) {
-        this.editor.setData(content);
       }
     };
 
@@ -103,56 +93,61 @@ class Editor extends React.Component {
       this.setState({
         content
       });
-      ClassicEditor.create(this.node, INITIAL_CONFIG)
-        .then(editor => {
-          this.editor = editor;
+      if (this.editor) {
+        this.editor.setData(content);
+      } else {
+        ClassicEditor.create(this.node, INITIAL_CONFIG)
+          .then(editor => {
+            this.editor = editor;
 
-          customizeEditor(editor);
-          // this.loadContent();
+            customizeEditor(editor);
+            // this.loadContent();
 
-          // chrome.runtime.onMessage.addListener(this.events);
+            // chrome.runtime.onMessage.addListener(this.events);
 
-          editor.document.on('change', (eventInfo, name) => {
-            const isFocused = document
-              .querySelector('.ck-editor__editable')
-              .classList.contains('ck-focused');
-            // Only use the focused editor or handle 'rename' events to set the data into storage.
-            if (isFocused || name === 'rename' || name === 'insert') {
-              const content = editor.getData();
-              if (!this.state.ignoreNextLoadEvent && content !== undefined &&
-                  content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-                this.setState({
-                  ignoreTextSynced: true
-                });
-                if (content.length > 15000) {
-                  console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                  migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
-                  browser.runtime.sendMessage({
-                    action: 'metrics-limit-reached',
+            editor.document.on('change', (eventInfo, name) => {
+              const isFocused = document
+                .querySelector('.ck-editor__editable')
+                .classList.contains('ck-focused');
+              // Only use the focused editor or handle 'rename' events to set the data into storage.
+              if (isFocused || name === 'rename' || name === 'insert') {
+                const content = editor.getData();
+                if (!this.state.ignoreNextLoadEvent && content !== undefined &&
+                    content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+                  this.setState({
+                    ignoreTextSynced: true
+                  });
+                  if (content.length > 15000) {
+                    console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
+                    migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+                    browser.runtime.sendMessage({
+                      action: 'metrics-limit-reached',
+                      context: getPadStats(editor)
+                    });
+                  }
+
+                  chrome.runtime.sendMessage({
+                    action: 'kinto-save',
+                    content
+                  });
+
+                  chrome.runtime.sendMessage({
+                    action: 'metrics-changed',
                     context: getPadStats(editor)
                   });
                 }
-
-                chrome.runtime.sendMessage({
-                  action: 'kinto-save',
-                  content
-                });
-
-                chrome.runtime.sendMessage({
-                  action: 'metrics-changed',
-                  context: getPadStats(editor)
-                });
               }
-            }
-            this.setState({
-              ignoreNextLoadEvent: false
-            });
+              this.setState({
+                ignoreNextLoadEvent: false
+              });
 
+            });
+          })
+          .catch(error => {
+            console.error(error); // eslint-disable-line no-console
           });
-        })
-        .catch(error => {
-          console.error(error); // eslint-disable-line no-console
-        });
+
+      }
     };
   }
 
