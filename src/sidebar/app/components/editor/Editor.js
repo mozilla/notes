@@ -2,7 +2,7 @@ import React from 'react';
 
 import { getPadStats, customizeEditor } from '../../editor';
 
-import INITIAL_CONFIG from './data/config.json';
+import INITIAL_CONFIG from './data/config';
 import INITIAL_CONTENT from './data/initialContent';
 
 class Editor extends React.Component {
