@@ -56,8 +56,6 @@ class Footer extends React.Component {
       isKintoLoaded: false,
       state: {}
     };
-    this.leftText = '';
-    this.rightText = '';
     this.loginTimeout = null;
 
     this.events = eventData => {
