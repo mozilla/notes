@@ -32,12 +32,6 @@ footer {
   transition: background var(--sync-animation-duration)
     cubic-bezier(0.07, 0.95, 0, 1);
 
-  &.warning {
-    button {
-      color: black;
-    }
-  }
-
   div:first-child {
     position: relative;
     flex: 1 0;
@@ -75,7 +69,11 @@ footer {
 #footer-buttons.warning {
   background-color: rgb(255, 236, 173);
   transition: background var(--sync-animation-duration)
-    cubic-bezier(0.07, 0.95, 0, 1);
+						 cubic-bezier(0.07, 0.95, 0, 1);
+
+  button {
+      color: black;
+  }
 }
 
 #footer-buttons.syncingLayout div:first-child {
