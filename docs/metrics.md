@@ -152,7 +152,7 @@ An event fired when the migration from Quill.JS to CKEditor already happened
 - `ec` - `notes`
 - `ea` - `metrics-migrated-before`
 
-#### `metrics-context-menu`
+#### `context-menu`
 An event fired when the "Send to Notes" context menu is used
 
 - `ec` - `notes`
