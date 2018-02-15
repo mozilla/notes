@@ -38,7 +38,7 @@ body {
   color: inherit !important;
 }
 
-#syncing-indicator.isClickable {
+#footer-buttons div:first-child.isClickable button {
   background: none !important;
   color: #e6e6e6 !important;
 }
@@ -70,7 +70,6 @@ body {
 
 #footer-buttons button {
   background-color: #393f4c;
-  color: #e6e6e6;
   transition: background 50ms;
 }
 
