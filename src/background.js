@@ -194,7 +194,18 @@ browser.storage.local.get()
       browser.storage.local.set(defaultTheme);
 });
 
-// Handle onClick event for the toolbar button
-browser.browserAction.onClicked.addListener(() => {
+async function toggleSidebar() {
+  if (browser.sidebarAction.hasOwnProperty('isOpen')) {
+    const isOpen = await browser.sidebarAction.isOpen({});
+    if (isOpen) {
+      browser.sidebarAction.close();
+    } else {
+      browser.sidebarAction.open();
+    }
+  } else {
     browser.sidebarAction.open();
-});
+  }
+}
+
+// Handle onClick event for the toolbar button
+browser.browserAction.onClicked.addListener(toggleSidebar);
