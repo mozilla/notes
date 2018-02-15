@@ -35,12 +35,18 @@ body {
 
 #syncing-indicator {
   background: none !important;
+  color: inherit !important;
+}
+
+#syncing-indicator.isClickable {
+  background: none !important;
   color: #e6e6e6 !important;
 }
 
 .warning #syncing-indicator {
   color: black !important;
 }
+
 
 .mdl-menu__outline {
   background: #272b35;

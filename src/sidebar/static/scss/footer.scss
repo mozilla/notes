@@ -118,7 +118,12 @@ footer {
     opacity: 1;
     visibility: visible;
     transition: opacity .2s .2s;
-    color: black;
+    cursor: default;
+
+    &.isClickable{
+      color: black;
+      cursor: pointer;
+    }
   }
   #enable-sync {
     margin-right: calc(100% - 40px);

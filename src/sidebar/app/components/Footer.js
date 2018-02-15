@@ -270,6 +270,7 @@ class Footer extends React.Component {
             </button>
             <button
               id="syncing-indicator"
+              className={(!this.state.isLoggingIn && !this.state.syncingInProcess) ? 'isClickable' : ''}
               onClick={() => this.enableSyncAction()}>
               {this.state.syncingIndicatorText}
             </button>
