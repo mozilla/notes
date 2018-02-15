@@ -51,6 +51,17 @@ footer {
       padding-right: 6px;
       margin-top: 1px;
     }
+
+    button {
+      cursor: default;
+    }
+
+    &.isClickable {
+      button {
+        color: black;
+        cursor: pointer !important;
+      }
+    }
   }
 }
 
@@ -58,7 +69,11 @@ footer {
 #footer-buttons.warning {
   background-color: rgb(255, 236, 173);
   transition: background var(--sync-animation-duration)
-    cubic-bezier(0.07, 0.95, 0, 1);
+						 cubic-bezier(0.07, 0.95, 0, 1);
+
+  button {
+      color: black;
+  }
 }
 
 #footer-buttons.syncingLayout div:first-child {
@@ -66,7 +81,6 @@ footer {
   transition: padding 0s 0.2s;
 }
 
-#footer-buttons.warning div:first-child,
 #footer-buttons.actionable div:first-child {
   color: black;
 }
@@ -78,7 +92,6 @@ footer {
   top: 0px;
   bottom: 0px;
   width: 40px;
-  cursor: pointer;
   border-left: 1px solid #d7d7db;
   display: flex;
   justify-content: center;
@@ -118,6 +131,7 @@ footer {
     opacity: 1;
     visibility: visible;
     transition: opacity .2s .2s;
+    cursor: default;
   }
   #enable-sync {
     margin-right: calc(100% - 40px);
@@ -178,8 +192,14 @@ footer {
   animation-play-state: running;
 }
 
-.animateSyncIcon #enable-sync svg path {
+.animateSyncIcon #enable-sync svg path,
+.syncingLayout>div:hover #enable-sync svg path {
   fill: #4e92dd;
+}
+
+// Always black on warning/yellow background
+.warning>div:hover #enable-sync svg path {
+  fill: black !important;
 }
 
 /* Feedback button on right side */

@@ -35,12 +35,18 @@ body {
 
 #syncing-indicator {
   background: none !important;
+  color: inherit !important;
+}
+
+#footer-buttons div:first-child.isClickable button {
+  background: none !important;
   color: #e6e6e6 !important;
 }
 
 .warning #syncing-indicator {
   color: black !important;
 }
+
 
 .mdl-menu__outline {
   background: #272b35;
@@ -64,7 +70,6 @@ body {
 
 #footer-buttons button {
   background-color: #393f4c;
-  color: #e6e6e6;
   transition: background 50ms;
 }
 
