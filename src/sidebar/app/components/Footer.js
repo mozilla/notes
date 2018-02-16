@@ -281,9 +281,10 @@ class Footer extends React.Component {
                 <button className="mdl-menu__item context-menu-item"
                    style={{ width: '100%' }}
                    onClick={ this.exportAsHTML }>
-                  { browser.i18n.getMessage('export-as-html') }
+                  { browser.i18n.getMessage('exportAsHTML') }
                 </button>
-              </li>
+        </li> {
+          this.state.isAuthenticated ?
               <li>
                 <button
                   className="mdl-menu__item context-menu-item"
@@ -292,8 +293,8 @@ class Footer extends React.Component {
                 >
                   {browser.i18n.getMessage('disableSync')}
                 </button>
-              </li>
-              <li>
+            </li> : null
+        }<li>
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
                    onClick={ this.giveFeedbackCallback }
