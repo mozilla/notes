@@ -64,7 +64,6 @@ function fxaRenewCredential(credential) {
         // if error attempt to renew access token
         return fetch(refreshTokenRequest);
       }
-      throw new Error('Failed to verify token');
     }, () => {
       throw new Error('Failed to verify token');
     }).then((resp) => {
