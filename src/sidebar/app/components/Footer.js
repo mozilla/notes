@@ -69,7 +69,9 @@ class Footer extends React.Component {
             isAuthenticated: true
           });
           // set title attr of footer to the currently logged in account
-          this.footerbuttons.title = eventData.profile && eventData.profile.email;
+          if (eventData.profile) {
+            this.footerbuttons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`;
+          }
           browser.runtime.sendMessage({
             action: 'kinto-sync'
           });
