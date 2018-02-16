@@ -4,7 +4,7 @@
 
 * Add send-to-notes context menu (#655)
 * Use React.js states to render the add-on frontend (#550)
-
+* Update the drag-n-drop feature to put the text at the end (#691)
 
 ## 2.2.0 (2018-02-12)
 
