@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getPadStats, customizeEditor } from '../../editor';
+import { getPadStats, customizeEditor, insertSelectedText } from '../../editor';
 
 import INITIAL_CONFIG from './data/config';
 import INITIAL_CONTENT from './data/initialContent';
@@ -45,7 +45,7 @@ class Editor extends React.Component {
           break;
         case 'send-to-notes':
           // insert eventData.text in editor
-          this.insertSelectedText(this.editor, eventData.text);
+          insertSelectedText(this.editor, eventData.text);
           break;
       }
     };
@@ -157,15 +157,6 @@ class Editor extends React.Component {
           });
 
       }
-    };
-
-    this.insertSelectedText = (editor, selectedText) => {
-      const currentNotesContent = editor.getData();
-      const updatedNotesContent = currentNotesContent + selectedText;
-      editor.setData(updatedNotesContent);
-      browser.runtime.sendMessage({
-        action: 'metrics-context-menu'
-      });
     };
   }
 
