@@ -10,7 +10,7 @@ import { SURVEY_PATH } from '../constants';
 const STATES = {
   SAVING: {
     savingLayout: true,
-    animateSyncIcon: true,
+    animateSyncIcon: false,
     leftText: () => browser.i18n.getMessage('savingChanges')
   },
   SAVED: {
