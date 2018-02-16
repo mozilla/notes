@@ -139,6 +139,7 @@ class Footer extends React.Component {
           });
           break;
         case 'disconnected':
+          clearTimeout(this.loginTimeout);
           this.setState({
             isAuthenticated: false
           });
@@ -292,7 +293,7 @@ class Footer extends React.Component {
                   { browser.i18n.getMessage('exportAsHTML') }
                 </button>
         </li> {
-          this.state.isAuthenticated ?
+          !this.state.state.savingLayout ?
               <li>
                 <button
                   className="mdl-menu__item context-menu-item"
