@@ -293,7 +293,7 @@ class Footer extends React.Component {
                   { browser.i18n.getMessage('exportAsHTML') }
                 </button>
         </li> {
-          !this.state.state.savingLayout ?
+          !this.state.state.savingLayout && !this.state.state.ignoreChange ?
               <li>
                 <button
                   className="mdl-menu__item context-menu-item"
