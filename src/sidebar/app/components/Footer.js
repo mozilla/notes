@@ -10,7 +10,7 @@ import { SURVEY_PATH } from '../constants';
 const STATES = {
   SAVING: {
     savingLayout: true,
-    animateSyncIcon: true,
+    animateSyncIcon: false,
     leftText: () => browser.i18n.getMessage('savingChanges')
   },
   SAVED: {
@@ -57,6 +57,10 @@ class Footer extends React.Component {
       state: {}
     };
     this.loginTimeout = null;
+
+    browser.runtime.getBrowserInfo().then((info) => {
+      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
+    });
 
     this.events = eventData => {
       // let content;
@@ -210,7 +214,7 @@ class Footer extends React.Component {
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
       browser.tabs.create({
-        url: SURVEY_PATH
+        url: this.surveyPath
       });
     };
   }
@@ -298,7 +302,7 @@ class Footer extends React.Component {
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
                    onClick={ this.giveFeedbackCallback }
-                   href={ SURVEY_PATH }>
+                   href={ this.surveyPath }>
                   { browser.i18n.getMessage('feedback') }
                 </a>
               </li>
