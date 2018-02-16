@@ -147,6 +147,19 @@ class Footer extends React.Component {
       }
     };
 
+    this.exportAsHTML = () => {
+      const notesContent = this.editor.getData();
+      const exportedFileName = 'notes.html';
+      const exportFileType = 'text/html';
+
+      const data = new Blob([notesContent], {'type': exportFileType});
+      const exportFilePath = window.URL.createObjectURL(data);
+      const downloading = browser.downloads.download({
+        url: exportFilePath,
+        filename: exportedFileName
+      });
+    };
+
     this.disconnectFromSync = () => {
       this.setState({
         state: STATES.DISCONNECTED
@@ -271,10 +284,17 @@ class Footer extends React.Component {
               className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
               data-mdl-for="context-menu-button">
               <li>
+                <button className="mdl-menu__item context-menu-item"
+                   style={{ width: '100%' }}
+                   onClick={ this.exportAsHTML }>
+                  { browser.i18n.getMessage('export-as-html') }
+                </button>
+              </li>
+              <li>
                 <button
                   className="mdl-menu__item context-menu-item"
                   style={{ width: '100%' }}
-                  onClick={() => this.disconnectFromSync()}
+                  onClick={ this.disconnectFromSync }
                 >
                   {browser.i18n.getMessage('disableSync')}
                 </button>
