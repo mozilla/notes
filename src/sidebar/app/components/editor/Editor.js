@@ -107,61 +107,66 @@ class Editor extends React.Component {
       this.setState({
         content
       });
-      ClassicEditor.create(this.node, INITIAL_CONFIG)
-        .then(editor => {
-          this.editor = editor;
+      if (this.editor) {
+        this.editor.setData(content);
+      } else {
+        ClassicEditor.create(this.node, INITIAL_CONFIG)
+          .then(editor => {
+            this.editor = editor;
 
-          customizeEditor(editor);
+            customizeEditor(editor);
 
-          // Send message to background.js stating editor has been initialized
-          // and is ready to receive content
-          chrome.runtime.sendMessage({action: 'editor-ready'});
+            // Send message to background.js stating editor has been initialized
+            // and is ready to receive content
+            chrome.runtime.sendMessage({action: 'editor-ready'});
 
-          // this.loadContent();
+            // this.loadContent();
 
-          // chrome.runtime.onMessage.addListener(this.events);
+            // chrome.runtime.onMessage.addListener(this.events);
 
-          editor.document.on('change', (eventInfo, name) => {
-            const isFocused = document
-              .querySelector('.ck-editor__editable')
-              .classList.contains('ck-focused');
-            // Only use the focused editor or handle 'rename' events to set the data into storage.
-            if (isFocused || name === 'rename' || name === 'insert') {
-              const content = editor.getData();
-              if (!this.state.ignoreNextLoadEvent && content !== undefined &&
-                  content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-                this.setState({
-                  ignoreTextSynced: true
-                });
-                if (content.length > 15000) {
-                  console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                  migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
-                  browser.runtime.sendMessage({
-                    action: 'metrics-limit-reached',
+            editor.document.on('change', (eventInfo, name) => {
+              const isFocused = document
+                .querySelector('.ck-editor__editable')
+                .classList.contains('ck-focused');
+              // Only use the focused editor or handle 'rename' events to set the data into storage.
+              if (isFocused || name === 'rename' || name === 'insert') {
+                const content = editor.getData();
+                if (!this.state.ignoreNextLoadEvent && content !== undefined &&
+                    content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+                  this.setState({
+                    ignoreTextSynced: true
+                  });
+                  if (content.length > 15000) {
+                    console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
+                    migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+                    browser.runtime.sendMessage({
+                      action: 'metrics-limit-reached',
+                      context: getPadStats(editor)
+                    });
+                  }
+
+                  chrome.runtime.sendMessage({
+                    action: 'kinto-save',
+                    content
+                  });
+
+                  chrome.runtime.sendMessage({
+                    action: 'metrics-changed',
                     context: getPadStats(editor)
                   });
                 }
-
-                chrome.runtime.sendMessage({
-                  action: 'kinto-save',
-                  content
-                });
-
-                chrome.runtime.sendMessage({
-                  action: 'metrics-changed',
-                  context: getPadStats(editor)
-                });
               }
-            }
-            this.setState({
-              ignoreNextLoadEvent: false
-            });
+              this.setState({
+                ignoreNextLoadEvent: false
+              });
 
+            });
+          })
+          .catch(error => {
+            console.error(error); // eslint-disable-line no-console
           });
-        })
-        .catch(error => {
-          console.error(error); // eslint-disable-line no-console
-        });
+
+      }
     };
 
     this.insertSelectedText = (editor, selectedText) => {
