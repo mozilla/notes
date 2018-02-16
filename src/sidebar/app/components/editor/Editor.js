@@ -55,20 +55,12 @@ class Editor extends React.Component {
         browser.storage.local.get('notes2').then(data => {
 
           if (!data.hasOwnProperty('notes2')) {
-            if (!this.editor) {
-              this.init(content);
-            } else {
-              this.editor.setData(INITIAL_CONTENT);
-            }
+            this.init(INITIAL_CONTENT);
             this.setState({
               ignoreNextLoadEvent: true
             });
           } else {
-            if (!this.editor) {
-              this.init(data.notes2);
-            } else {
-              this.editor.setData(data.notes2);
-            }
+            this.init(data.notes2);
             chrome.runtime
               .sendMessage({
                 action: 'kinto-save',
@@ -80,10 +72,8 @@ class Editor extends React.Component {
               });
           }
         });
-      } else if (!this.editor) {
+      } else if (!this.editor || this.editor.getData() !== content) {
         this.init(content);
-      } else if (this.editor.getData() !== content) {
-        this.editor.setData(content);
       }
     };
 

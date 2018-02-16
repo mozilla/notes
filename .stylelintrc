@@ -1,0 +1,7 @@
+{
+  "extends": "stylelint-config-recommended",
+  "rules": {
+    "no-descending-specificity": null,
+    "shorthand-property-no-redundant-values": null
+  }
+}

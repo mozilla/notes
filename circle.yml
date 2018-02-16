@@ -4,8 +4,8 @@ machine:
 
 test:
   override:
+    - npm run build
     - npm run lint
 
     # Build the extension and copy to artifacts directory.
-    - npm run build
     - cp web-ext-artifacts/*.zip $CIRCLE_ARTIFACTS
