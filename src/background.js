@@ -12,6 +12,7 @@ const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
+let isEditorReady = false;
 
 // Kinto sync and encryption
 
@@ -164,6 +165,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-context-menu':
       sendMetrics('context-menu', eventData.context);
       break;
+    case 'editor-ready':
+      isEditorReady = true;
+      break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({
@@ -179,6 +183,8 @@ function connected(p) {
   closeUI = 'closeButton';
 
   p.onDisconnect.addListener(() => {
+    // sidebar closed, therefore editor is not ready to receive any content
+    isEditorReady = false;
     sendMetrics('close', {'closeUI': closeUI});
   });
 }
@@ -199,7 +205,7 @@ browser.storage.local.get()
 
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener(() => {
-    browser.sidebarAction.open();
+  browser.sidebarAction.open();
 });
 
 // context menu for 'Send to Notes'
@@ -210,11 +216,23 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener((info) => {
+  // open sidebar which will trigger `isEditorReady`...
   browser.sidebarAction.open();
-  setTimeout(() => {
+  // then send selection text to Editor.js once editor instance is initialized and ready
+  sendSelectionText(info.selectionText);
+});
+
+function sendSelectionText(text) {
+  // if editor ready, go ahead and send selected text to be pasted in Notes,
+  // otherwise wait half a second before trying again
+  if (isEditorReady) {
     chrome.runtime.sendMessage({
       action: 'send-to-notes',
-      text: info.selectionText
+      text: text
     });
-  }, 700);
-});
+  } else {
+    setTimeout(() => {
+      sendSelectionText(text);
+    }, 500);
+  }
+}
