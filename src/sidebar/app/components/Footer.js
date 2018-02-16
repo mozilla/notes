@@ -271,12 +271,6 @@ class Footer extends React.Component {
               {this.rightText}
             </button>
           </div>
-          <a id="give-feedback-button"
-            title={browser.i18n.getMessage('feedback')}
-            onClick={ this.giveFeedbackCallback }
-            href={ SURVEY_PATH }>
-            <FeedbackIcon />
-          </a>
           <div className="wrapper">
             <button id="context-menu-button"
               className="mdl-js-button" />
