@@ -43,6 +43,10 @@ class Editor extends React.Component {
             ignoreTextSynced: false
           });
           break;
+        case 'send-to-notes':
+          // insert eventData.text in editor
+          this.insertSelectedText(this.editor, eventData.text);
+          break;
       }
     };
 
@@ -101,6 +105,11 @@ class Editor extends React.Component {
             this.editor = editor;
 
             customizeEditor(editor);
+
+            // Send message to background.js stating editor has been initialized
+            // and is ready to receive content
+            chrome.runtime.sendMessage({action: 'editor-ready'});
+
             // this.loadContent();
 
             // chrome.runtime.onMessage.addListener(this.events);
@@ -148,6 +157,15 @@ class Editor extends React.Component {
           });
 
       }
+    };
+
+    this.insertSelectedText = (editor, selectedText) => {
+      const currentNotesContent = editor.getData();
+      const updatedNotesContent = currentNotesContent + selectedText;
+      editor.setData(updatedNotesContent);
+      browser.runtime.sendMessage({
+        action: 'metrics-context-menu'
+      });
     };
   }
 
