@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 
 import SyncIcon from './icons/SyncIcon';
-import FeedbackIcon from './icons/FeedbackIcon';
 
 import { formatFooterTime } from '../utils';
 import { SURVEY_PATH } from '../constants';
@@ -158,7 +157,7 @@ class Footer extends React.Component {
 
       const data = new Blob([notesContent], {'type': exportFileType});
       const exportFilePath = window.URL.createObjectURL(data);
-      const downloading = browser.downloads.download({
+      browser.downloads.download({
         url: exportFilePath,
         filename: exportedFileName
       });
