@@ -33,8 +33,11 @@ function customizeEditor(editor) {
     mainEditor.classList.remove('drag-n-drop-focus');
   });
 
-  document.addEventListener('drop', () => {
-    editor.fire('changesDone');
+  document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.originalEvent.dataTransfer.items[0].getAsString(function(content) {
+      insertSelectedText(editor, content);
+    });
     mainEditor.classList.remove('drag-n-drop-focus');
     browser.runtime.sendMessage({
       action: 'metrics-drag-n-drop',
@@ -44,6 +47,16 @@ function customizeEditor(editor) {
 
   localizeEditorButtons();
 }
+
+function insertSelectedText(editor, selectedText) {
+  const currentNotesContent = editor.getData();
+  const updatedNotesContent = currentNotesContent + `<p>${selectedText.replace(/\n\n/g, '</p><p>')}</p>`;
+  editor.setData(updatedNotesContent);
+  browser.runtime.sendMessage({
+    action: 'metrics-context-menu'
+  });
+}
+
 
 function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
@@ -135,4 +148,4 @@ function getPadStats(editor) {
   };
 }
 
-export { customizeEditor, getPadStats };
+export { customizeEditor, getPadStats, insertSelectedText };
