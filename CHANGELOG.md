@@ -1,8 +1,9 @@
 # Changelog
 
-## 2.3.0 (unreleased)
+## 3.0.0 (unreleased)
 
-* No changes yet
+* Add send-to-notes context menu (#655)
+* Use React.js states to render the add-on frontend (#550)
 
 
 ## 2.2.0 (2018-02-12)
