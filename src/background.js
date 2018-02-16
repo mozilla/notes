@@ -222,17 +222,17 @@ browser.contextMenus.onClicked.addListener((info) => {
   sendSelectionText(info.selectionText);
 });
 
-function sendSelectionText(text) {
+function sendSelectionText(selectionText) {
   // if editor ready, go ahead and send selected text to be pasted in Notes,
   // otherwise wait half a second before trying again
   if (isEditorReady) {
     chrome.runtime.sendMessage({
       action: 'send-to-notes',
-      text: text
+      text: selectionText
     });
   } else {
     setTimeout(() => {
-      sendSelectionText(text);
+      sendSelectionText(selectionText);
     }, 500);
   }
 }
