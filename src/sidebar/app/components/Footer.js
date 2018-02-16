@@ -2,10 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 
 import SyncIcon from './icons/SyncIcon';
-import FeedbackIcon from './icons/FeedbackIcon';
 
 import { formatFooterTime } from '../utils';
 import { SURVEY_PATH } from '../constants';
+import INITIAL_CONTENT from './editor/data/initialContent';
+
 
 const STATES = {
   SAVING: {
@@ -53,6 +54,7 @@ class Footer extends React.Component {
     this.state = {
       isAuthenticated: false,
       lastModified: Date.now(),
+      content: INITIAL_CONTENT,
       isKintoLoaded: false,
       state: {}
     };
@@ -85,6 +87,7 @@ class Footer extends React.Component {
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
           this.setState({
             lastModified: Date.now(),
+            content: eventData.data || INITIAL_CONTENT,
             isKintoLoaded: true
           });
 
@@ -112,7 +115,8 @@ class Footer extends React.Component {
         case 'text-synced':
           // Enable sync-action
           this.setState({
-            lastModified: eventData.last_modified
+            lastModified: eventData.last_modified,
+            content: eventData.content || INITIAL_CONTENT
           });
           this.getLastSyncedTime();
           break;
@@ -135,6 +139,7 @@ class Footer extends React.Component {
           });
           break;
         case 'disconnected':
+          clearTimeout(this.loginTimeout);
           this.setState({
             isAuthenticated: false
           });
@@ -149,6 +154,19 @@ class Footer extends React.Component {
           state: this.state.isAuthenticated ? STATES.SYNCED : STATES.SAVED
         });
       }
+    };
+
+    this.exportAsHTML = () => {
+      const notesContent = this.state.content;
+      const exportedFileName = 'notes.html';
+      const exportFileType = 'text/html';
+
+      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
+      const exportFilePath = window.URL.createObjectURL(data);
+      browser.downloads.download({
+        url: exportFilePath,
+        filename: exportedFileName
+      });
     };
 
     this.disconnectFromSync = () => {
@@ -262,12 +280,6 @@ class Footer extends React.Component {
               {this.rightText}
             </button>
           </div>
-          <a id="give-feedback-button"
-            title={browser.i18n.getMessage('feedback')}
-            onClick={ this.giveFeedbackCallback }
-            href={ this.surveyPath }>
-            <FeedbackIcon />
-          </a>
           <div className="wrapper">
             <button id="context-menu-button"
               className="mdl-js-button" />
@@ -275,15 +287,23 @@ class Footer extends React.Component {
               className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
               data-mdl-for="context-menu-button">
               <li>
+                <button className="mdl-menu__item context-menu-item"
+                   style={{ width: '100%' }}
+                   onClick={ this.exportAsHTML }>
+                  { browser.i18n.getMessage('exportAsHTML') }
+                </button>
+        </li> {
+          !this.state.state.savingLayout && !this.state.state.ignoreChange ?
+              <li>
                 <button
                   className="mdl-menu__item context-menu-item"
                   style={{ width: '100%' }}
-                  onClick={() => this.disconnectFromSync()}
+                  onClick={ this.disconnectFromSync }
                 >
                   {browser.i18n.getMessage('disableSync')}
                 </button>
-              </li>
-              <li>
+            </li> : null
+        }<li>
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
                    onClick={ this.giveFeedbackCallback }

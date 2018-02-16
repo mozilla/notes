@@ -45,7 +45,7 @@ footer {
     transition: padding 0s 0.2s;
 
     p {
-      width: 100%;
+      width: calc(100% - 35px);
       text-overflow: ellipsis;
       overflow: hidden;
       padding-right: 6px;
@@ -93,6 +93,7 @@ footer {
   bottom: 0px;
   width: 40px;
   border-left: 1px solid #d7d7db;
+  border-right: 1px solid #d7d7db;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -110,7 +111,7 @@ footer {
     transition: opacity .1s, visibility 0s .2s;
   }
   #enable-sync {
-    margin-right: 0px;
+    margin-right: 32px;
     transition: margin var(--sync-animation-duration)
         cubic-bezier(0.07, 0.95, 0, 1) 0.05s,
       border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
@@ -153,7 +154,7 @@ footer {
 }
 
 #syncing-indicator {
-  width: 100%;
+  width: calc(100% - 25px);
   text-overflow: ellipsis;
   overflow: hidden;
   margin-top: 1px;
@@ -202,36 +203,6 @@ footer {
   fill: black !important;
 }
 
-/* Feedback button on right side */
-#give-feedback-button {
-  cursor: pointer;
-  border-left: 1px solid #d7d7db;
-  display: flex;
-  flex: 0 0 40px;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Display feedback button with opacity */
-.savingLayout #give-feedback-button {
-  opacity: 1;
-  z-index: 1;
-  visibility: visible;
-  transition: opacity var(--sync-animation-duration)
-    cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
-}
-
-/* Hide Feedback button with opacity */
-.syncingLayout #give-feedback-button {
-  opacity: 0;
-  z-index: 0;
-  cursor: default;
-  visibility: hidden;
-  transition: opacity var(--sync-animation-duration)
-      cubic-bezier(0.07, 0.95, 0, 1),
-    visibility 0s var(--sync-animation-duration);
-}
-
 #footer-buttons button,
 #footer-buttons a {
   transition: background 50ms;
@@ -272,23 +243,6 @@ footer {
 #context-menu-button:focus,
 #context-menu-button:active {
   background-color: rgba(128, 128, 128, 0.2) !important;
-}
-
-/* Hide select menu on saving mode */
-.savingLayout #context-menu-button {
-  z-index: 0;
-  opacity: 0;
-  visibility: none;
-  transition: opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1),
-    visibility 0s var(--sync-animation-duration);
-}
-
-/* Show select menu on syncing mode */
-.syncingLayout #context-menu-button {
-  z-index: 1;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity var(--sync-animation-duration) cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 }
 
 .context-menu {
