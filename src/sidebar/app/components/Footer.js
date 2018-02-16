@@ -5,6 +5,8 @@ import SyncIcon from './icons/SyncIcon';
 
 import { formatFooterTime } from '../utils';
 import { SURVEY_PATH } from '../constants';
+import INITIAL_CONTENT from './editor/data/initialContent';
+
 
 const STATES = {
   SAVING: {
@@ -52,6 +54,7 @@ class Footer extends React.Component {
     this.state = {
       isAuthenticated: false,
       lastModified: Date.now(),
+      content: INITIAL_CONTENT,
       isKintoLoaded: false,
       state: {}
     };
@@ -84,6 +87,7 @@ class Footer extends React.Component {
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
           this.setState({
             lastModified: Date.now(),
+            content: eventData.data || INITIAL_CONTENT,
             isKintoLoaded: true
           });
 
@@ -111,7 +115,8 @@ class Footer extends React.Component {
         case 'text-synced':
           // Enable sync-action
           this.setState({
-            lastModified: eventData.last_modified
+            lastModified: eventData.last_modified,
+            content: eventData.content || INITIAL_CONTENT
           });
           this.getLastSyncedTime();
           break;
@@ -151,11 +156,11 @@ class Footer extends React.Component {
     };
 
     this.exportAsHTML = () => {
-      const notesContent = this.editor.getData();
+      const notesContent = this.state.content;
       const exportedFileName = 'notes.html';
       const exportFileType = 'text/html';
 
-      const data = new Blob([notesContent], {'type': exportFileType});
+      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
       const exportFilePath = window.URL.createObjectURL(data);
       browser.downloads.download({
         url: exportFilePath,
