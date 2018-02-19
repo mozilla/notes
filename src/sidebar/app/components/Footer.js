@@ -20,7 +20,7 @@ class Footer extends React.Component {
     this.loginTimeout = null;
 
     browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = () => `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
+      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
     });
 
     this.STATES = {
