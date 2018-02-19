@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { getPadStats, customizeEditor, insertSelectedText } from '../../editor';
+import { getPadStats, customizeEditor, insertSelectedText } from '../utils/editor';
 
-import INITIAL_CONFIG from './data/config';
-import INITIAL_CONTENT from './data/initialContent';
+import INITIAL_CONFIG from '../data/editorConfig';
+import INITIAL_CONTENT from '../data/initialContent';
 
 class Editor extends React.Component {
   constructor(props) {

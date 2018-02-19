@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 import React from 'react';
 
-import Editor from './editor/Editor';
+import Editor from './Editor';
 import Footer from './Footer';
 
 class Panel extends React.Component {
