@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import SyncIcon from './icons/SyncIcon';
+import SyncIcon from './SyncIcon';
 
-import { formatFooterTime } from '../utils';
-import { SURVEY_PATH } from '../constants';
-import INITIAL_CONTENT from './editor/data/initialContent';
+import { formatFooterTime } from '../utils/utils';
+import { SURVEY_PATH } from '../utils/constants';
+import INITIAL_CONTENT from '../data/initialContent';
 
 class Footer extends React.Component {
   constructor(props) {
