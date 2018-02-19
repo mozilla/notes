@@ -7,47 +7,6 @@ import { formatFooterTime } from '../utils';
 import { SURVEY_PATH } from '../constants';
 import INITIAL_CONTENT from './editor/data/initialContent';
 
-
-const STATES = {
-  SAVING: {
-    savingLayout: true,
-    animateSyncIcon: false,
-    leftText: () => browser.i18n.getMessage('savingChanges')
-  },
-  SAVED: {
-    savingLayout: true,
-    isClickable: true,
-    leftText: () => browser.i18n.getMessage('changesSaved')
-  },
-  OPENINGLOGIN: {
-    ignoreChange: true,
-    animateSyncIcon: true,
-    rightText: () => browser.i18n.getMessage('openingLogin')
-  },
-  PLEASELOGIN: {
-    ignoreChange: true,
-    yellowBackground: true,
-    rightText: () => browser.i18n.getMessage('pleaseLogin')
-  },
-  RECONNECTSYNC: {
-    yellowBackground: true,
-    isClickable: true,
-    rightText: () => browser.i18n.getMessage('reconnectSync')
-  },
-  SYNCING: {
-    animateSyncIcon: true,
-    rightText: () => browser.i18n.getMessage('syncProgress')
-  },
-  SYNCED: {
-    isClickable: true,
-    rightText: (date) => browser.i18n.getMessage('syncComplete3', formatFooterTime(date))
-  },
-  DISCONNECTED: {
-    savingLayout: true,
-    rightText: () => browser.i18n.getMessage('disconnected')
-  }
-};
-
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -61,8 +20,51 @@ class Footer extends React.Component {
     this.loginTimeout = null;
 
     browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
+      this.surveyPath = () => `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
     });
+
+    this.STATES = {
+      SAVING: {
+        savingLayout: true,
+        animateSyncIcon: false,
+        leftText: () => browser.i18n.getMessage('savingChanges')
+      },
+      SAVED: {
+        savingLayout: true,
+        isClickable: true,
+        leftText: () => browser.i18n.getMessage('changesSaved'),
+        tooltip: () => browser.i18n.getMessage('syncNotes')
+      },
+      OPENINGLOGIN: {
+        ignoreChange: true,
+        animateSyncIcon: true,
+        rightText: () => browser.i18n.getMessage('openingLogin')
+      },
+      PLEASELOGIN: {
+        ignoreChange: true,
+        yellowBackground: true,
+        rightText: () => browser.i18n.getMessage('pleaseLogin')
+      },
+      RECONNECTSYNC: {
+        yellowBackground: true,
+        isClickable: true,
+        rightText: () => browser.i18n.getMessage('reconnectSync')
+      },
+      SYNCING: {
+        animateSyncIcon: true,
+        rightText: () => browser.i18n.getMessage('syncProgress'),
+        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
+      },
+      SYNCED: {
+        isClickable: true,
+        rightText: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.state.lastModified)),
+        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
+      },
+      DISCONNECTED: {
+        savingLayout: true,
+        rightText: () => browser.i18n.getMessage('disconnected')
+      }
+    };
 
     this.events = eventData => {
       // let content;
@@ -71,13 +73,10 @@ class Footer extends React.Component {
           clearTimeout(this.loginTimeout);
 
           this.setState({
-            state: STATES.SYNCING,
-            isAuthenticated: true
+            state: this.STATES.SYNCING,
+            isAuthenticated: true,
+            email: eventData.profile ? eventData.profile.email : null
           });
-          // set title attr of footer to the currently logged in account
-          if (eventData.profile) {
-            this.footerbuttons.title = `${browser.i18n.getMessage('syncToMail', eventData.profile.email)}`;
-          }
           browser.runtime.sendMessage({
             action: 'kinto-sync'
           });
@@ -103,13 +102,13 @@ class Footer extends React.Component {
           break;
         case 'text-syncing':
           this.setState({
-            state: STATES.SYNCING
+            state: this.STATES.SYNCING
           });
           // Disable sync-action
           break;
         case 'text-editing':
           this.setState({
-            state: this.state.isAuthenticated ? STATES.SYNCING : STATES.SAVING
+            state: this.state.isAuthenticated ? this.STATES.SYNCING : this.STATES.SAVING
           });
           break;
         case 'text-synced':
@@ -124,14 +123,14 @@ class Footer extends React.Component {
           if (!this.state.state.ignoreChange && !this.state.isAuthenticated) {
             // persist reconnect warning, do not override with the 'saved at'
             this.setState({
-              state: STATES.SAVED
+              state: this.STATES.SAVED
             });
           }
           break;
         case 'reconnect':
           clearTimeout(this.loginTimeout);
           this.setState({
-            state: STATES.RECONNECTSYNC
+            state: this.STATES.RECONNECTSYNC
           });
 
           chrome.runtime.sendMessage({
@@ -151,7 +150,7 @@ class Footer extends React.Component {
     this.getLastSyncedTime = () => {
       if (!this.state.state.ignoreChange) {
         this.setState({
-          state: this.state.isAuthenticated ? STATES.SYNCED : STATES.SAVED
+          state: this.state.isAuthenticated ? this.STATES.SYNCED : this.STATES.SAVED
         });
       }
     };
@@ -171,7 +170,7 @@ class Footer extends React.Component {
 
     this.disconnectFromSync = () => {
       this.setState({
-        state: STATES.DISCONNECTED
+        state: this.STATES.DISCONNECTED
       });
 
       setTimeout(() => {
@@ -190,7 +189,7 @@ class Footer extends React.Component {
       if (this.state.isAuthenticated) {
         // Trigger manual sync
         this.setState({
-          state: STATES.SYNCING
+          state: this.STATES.SYNCING
         });
         browser.runtime.sendMessage({
           action: 'kinto-sync'
@@ -199,13 +198,13 @@ class Footer extends React.Component {
       } else if (!this.state.isAuthenticated) {
         // Login
         this.setState({
-          state: STATES.OPENINGLOGIN
+          state: this.STATES.OPENINGLOGIN
         });
 
         const that = this;
         this.loginTimeout = setTimeout(() => {
           that.setState({
-            state:  STATES.PLEASELOGIN
+            state:  this.STATES.PLEASELOGIN
           });
         }, 5000);
 
@@ -256,10 +255,11 @@ class Footer extends React.Component {
     // We need to cache both text to allow opacity transition between state switch
     // On every rendering it will update text based on state
     if (this.state.state.rightText) {
-      this.rightText = this.state.state.rightText(this.state.lastModified);
+      this.rightText = this.state.state.rightText();
     } else if (this.state.state.leftText) {
-      this.leftText = this.state.state.leftText(this.state.lastModified);
+      this.leftText = this.state.state.leftText();
     }
+    this.tooltip = this.state.state.tooltip ? this.state.state.tooltip() : '';
 
     return (
       <footer>
@@ -270,12 +270,14 @@ class Footer extends React.Component {
             <p id="saving-indicator">{this.leftText}</p>
             <button
               id="enable-sync"
+              title={ this.tooltip }
               onClick={() => this.enableSyncAction()}
               className="notsyncing">
               <SyncIcon />
             </button>
             <button
               id="syncing-indicator"
+              title={ this.tooltip }
               onClick={() => this.enableSyncAction()}>
               {this.rightText}
             </button>
