@@ -287,12 +287,12 @@ class Footer extends React.Component {
               className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
               data-mdl-for="context-menu-button">
               <li>
-                <a className="mdl-menu__item context-menu-item"
+                <button className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('exportAsHTML')}
                    style={{ width: '100%' }}
                    onClick={ this.exportAsHTML }>
                   { browser.i18n.getMessage('exportAsHTML') }
-                </a>
+                </button>
         </li> {
           !this.state.state.savingLayout && !this.state.state.ignoreChange ?
               <li>
