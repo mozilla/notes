@@ -165,6 +165,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-context-menu':
       sendMetrics('context-menu', eventData.context);
       break;
+    case 'metrics-export-html':
+      sendMetrics('export-html');
+      break;
     case 'editor-ready':
       isEditorReady = true;
       break;

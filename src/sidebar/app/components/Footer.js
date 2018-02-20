@@ -166,6 +166,10 @@ class Footer extends React.Component {
         url: exportFilePath,
         filename: exportedFileName
       });
+
+      chrome.runtime.sendMessage({
+        action: 'metrics-export-html'
+      });
     };
 
     this.disconnectFromSync = () => {
