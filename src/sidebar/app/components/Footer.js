@@ -302,8 +302,8 @@ class Footer extends React.Component {
         </li> {
           !this.state.state.savingLayout && !this.state.state.ignoreChange ?
               <li>
-                <button
-                  className="mdl-menu__item context-menu-item"
+                <button className="mdl-menu__item context-menu-item"
+                  title={browser.i18n.getMessage('disableSync')}
                   style={{ width: '100%' }}
                   onClick={ this.disconnectFromSync }
                 >
