@@ -128,7 +128,7 @@ class Editor extends React.Component {
                   });
                   if (content.length > 15000) {
                     console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                    migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+                    // TODO: display 'maximumPadSizeExceeded' notification
                     browser.runtime.sendMessage({
                       action: 'metrics-limit-reached',
                       context: getPadStats(editor)
