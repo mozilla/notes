@@ -12,8 +12,7 @@ html {
 }
 
 body,
-body > div,
-body .ck-editor {
+body > div {
   display: flex;
   flex-direction: column;
   height: 100%;

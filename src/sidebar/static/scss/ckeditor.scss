@@ -2,6 +2,27 @@
   CKEditor overrides
 */
 
+.editorWrapper {
+  display: flex;
+  flex: calc(100% - 40px);
+  flex-direction: column;
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+
+}
+
+.ck-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
 #notes {
   .ck-toolbar {
     border: 0;
@@ -98,3 +119,38 @@
     box-shadow: none;
   }
 }
+
+// CSS related to Notifications
+#sync-note {
+  background: #00FFFE; // green background is: #B6FEB4;
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  border: 0;
+  border-top: 1px solid #ccc;
+  color: #424242;
+  font-size: 12px;
+  padding: 0px 15% 0px 10px;
+
+  button {
+    width: 16px;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    padding: 0 0;
+    opacity: 0.4;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.6
+    }
+    &:active {
+      cursor: pointer;
+      opacity: 0.8
+    }
+  }
+}
+
+
+
+

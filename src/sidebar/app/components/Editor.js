@@ -1,5 +1,7 @@
 import React from 'react';
 
+import CloseIcon from './CloseIcon';
+
 import { getPadStats, customizeEditor, insertSelectedText } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
@@ -11,6 +13,7 @@ class Editor extends React.Component {
     this.state = {
       ignoreNextLoadEvent: false,
       ignoreTextSynced: false,
+      wasLimitReached: false,
       isKintoLoaded: false,
       content: null
     };
@@ -93,6 +96,12 @@ class Editor extends React.Component {
       });
     };
 
+    this.closeNotification = () => {
+      this.setState({
+        wasLimitReached: false
+      });
+    };
+
     this.init = (content) => {
       this.setState({
         content
@@ -128,10 +137,17 @@ class Editor extends React.Component {
                   });
                   if (content.length > 15000) {
                     console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                    migrationBody.textContent = browser.i18n.getMessage('maximumPadSizeExceeded');
+                    // TODO: display 'maximumPadSizeExceeded' notification
+                    this.setState({
+                      wasLimitReached: true,
+                    });
                     browser.runtime.sendMessage({
                       action: 'metrics-limit-reached',
                       context: getPadStats(editor)
+                    });
+                  } else {
+                    this.setState({
+                      wasLimitReached: false,
                     });
                   }
 
@@ -165,7 +181,6 @@ class Editor extends React.Component {
     this.loadContent();
   }
 
-
   componentWillUnmount() {
     chrome.runtime.onMessage.removeListener(this.events);
   }
@@ -173,13 +188,20 @@ class Editor extends React.Component {
   render() {
 
     return (
-      <div
-        id="editor"
-        ref={node => {
-          this.node = node;
-        }}
-        dangerouslySetInnerHTML={{ __html: this.state.content }}
-      >
+      <div className="editorWrapper">
+        <div
+          id="editor"
+          ref={node => {
+            this.node = node;
+          }}
+          dangerouslySetInnerHTML={{ __html: this.state.content }}
+        >
+        </div>
+        { this.state.wasLimitReached ?
+        <div id="sync-note" style={{display: 'block'}}>
+          <button onClick={this.closeNotification}><CloseIcon /></button>
+          <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
+        </div> : null }
       </div>
     );
   }
