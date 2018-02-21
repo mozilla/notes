@@ -68,7 +68,8 @@ body {
 /* end MDL menu */
 
 
-#footer-buttons button {
+#footer-buttons button,
+#footer-buttons a {
   background-color: #393f4c;
   transition: background 50ms;
 }
