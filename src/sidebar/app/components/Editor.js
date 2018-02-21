@@ -13,7 +13,7 @@ class Editor extends React.Component {
     this.state = {
       ignoreNextLoadEvent: false,
       ignoreTextSynced: false,
-      isLimitReached: false,
+      wasLimitReached: false,
       isKintoLoaded: false,
       content: null
     };
@@ -98,7 +98,7 @@ class Editor extends React.Component {
 
     this.closeNotification = () => {
       this.setState({
-        isLimitReached: false
+        wasLimitReached: false
       });
     };
 
@@ -139,7 +139,7 @@ class Editor extends React.Component {
                     console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
                     // TODO: display 'maximumPadSizeExceeded' notification
                     this.setState({
-                      isLimitReached: true,
+                      wasLimitReached: true,
                     });
                     browser.runtime.sendMessage({
                       action: 'metrics-limit-reached',
@@ -147,7 +147,7 @@ class Editor extends React.Component {
                     });
                   } else {
                     this.setState({
-                      isLimitReached: false,
+                      wasLimitReached: false,
                     });
                   }
 
@@ -197,7 +197,7 @@ class Editor extends React.Component {
           dangerouslySetInnerHTML={{ __html: this.state.content }}
         >
         </div>
-        { this.state.isLimitReached ?
+        { this.state.wasLimitReached ?
         <div id="sync-note" style={{display: 'block'}}>
           <button onClick={this.closeNotification}><CloseIcon /></button>
           <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
