@@ -32,6 +32,7 @@ describe('Authorization', function() {
   afterEach(function() {
     sandbox.verifyAndRestore();
     browser.flush();
+    browser.runtime.sendMessage.reset();
   });
 
   it('should define syncKinto', function() {
@@ -139,7 +140,7 @@ describe('Authorization', function() {
       decryptMock = sandbox.stub(global, 'decrypt');
       decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
         id: "singleNote",
-        content: {ops: [{insert: "Hi there"}]},
+        content: "<p>Hi there</p>",
       });
 
       // sync() tries to gather local changes, even when a conflict
@@ -196,23 +197,15 @@ describe('Authorization', function() {
       });
       decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
         id: "singleNote",
-        content: {ops: [{insert: "Resolution"}]},
+        content: "<p>Resolution</p>",
       });
 
-      return collection.upsert({id: "singleNote", content: {ops: [{insert: "Local"}]}})
+      return collection.upsert({id: "singleNote", content: "<p>Local</p>"})
         .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
-          chai.expect(result.data.content).eql(
-            {ops: [
-              {insert: "Resolution"}
-            ]});
-          const expectedContent = {
-            ops: [
-              {insert: "Hi there"},
-              {insert: "\n====== On this computer: ======\n\n"},
-              {insert: "Local"},
-            ]};
+          chai.expect(result.data.content).eql("<p>Resolution</p>");
+          const expectedContent = "<p>Hi there</p><p>localized string</p><p>Local</p>";
           const expectedResolution = {
             id: "singleNote",
             content: expectedContent,
@@ -279,10 +272,7 @@ describe('Authorization', function() {
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data._status).eql("synced");
-          chai.expect(result.data.content).eql({
-            ops: [
-              {insert: "Hi there"}
-            ]});
+          chai.expect(result.data.content).eql("<p>Hi there</p>");
 
           // This sync will try to retrieve the record after 1234,
           // which has an older kid.
@@ -369,7 +359,9 @@ describe('Authorization', function() {
           chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
             action: 'text-synced',
-            last_modified: 'abc',
+            content: "def",
+            last_modified: "abc",
+            conflict: false
           });
         });
     });

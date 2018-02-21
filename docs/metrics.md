@@ -152,6 +152,12 @@ An event fired when the migration from Quill.JS to CKEditor already happened
 - `ec` - `notes`
 - `ea` - `metrics-migrated-before`
 
+#### `context-menu`
+An event fired when the "Send to Notes" context menu is used
+
+- `ec` - `notes`
+- `ea` - `metrics-context-menu`
+
 #### `limit-reached`
 
 An event fired when user goes over the pad limit (15000 character)

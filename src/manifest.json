@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Firefox Notes",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "default_locale": "en_US",
   "author": "Mozilla Test Pilot team",
   "applications": {
@@ -19,7 +19,7 @@
   "sidebar_action": {
     "default_icon": "icons/notes.svg",
     "default_title" : "Notes",
-    "default_panel": "sidebar/panel.html"
+    "default_panel": "sidebar/index.html"
   },
   "browser_action": {
     "browser_style": true,
@@ -40,6 +40,8 @@
     }]
   },
   "permissions": [
+    "downloads",
+    "contextMenus",
     "storage",
     "identity",
     "https://ssl.google-analytics.com/collect"

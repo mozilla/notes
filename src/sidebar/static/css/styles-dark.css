@@ -1,9 +1,9 @@
 body {
-  background-color: #393F4C;
+  background-color: #393f4c;
 }
 
-#notes .ck-toolbar  {
-  background-color: #272B35;
+#notes .ck-toolbar {
+  background-color: #272b35;
 }
 
 #enable-sync svg path {
@@ -24,23 +24,38 @@ body {
 
 /* material-design-lite (MDL) menu */
 #context-menu-button {
-  background-image: url('dark-svg/three-dots-dark.svg');
+  background-image: url('../svg/three-dots-dark.svg');
   background-color: #323744;
 }
 
 #footer-buttons.warning #context-menu-button {
   background-color: rgb(255, 236, 173);
-  background-image: url('three-dots.svg');
+  background-image: url('../svg/three-dots.svg');
 }
 
+#syncing-indicator {
+  background: none !important;
+  color: inherit !important;
+}
+
+#footer-buttons div:first-child.isClickable button {
+  background: none !important;
+  color: #e6e6e6 !important;
+}
+
+.warning #syncing-indicator {
+  color: black !important;
+}
+
+
 .mdl-menu__outline {
-  background: #272B35;
+  background: #272b35;
   transition: none;
 }
 
 .context-menu-item {
   color: #e6e6e6;
-  background-color: #272B35;
+  background-color: #272b35;
 }
 
 .context-menu-item:hover {
@@ -52,9 +67,10 @@ body {
 }
 /* end MDL menu */
 
-#footer-buttons button {
-  background-color: #393F4C;
-  color: #e6e6e6;
+
+#footer-buttons button,
+#footer-buttons a {
+  background-color: #393f4c;
   transition: background 50ms;
 }
 
@@ -68,13 +84,12 @@ body {
   background-color: #3d4352;
 }
 
-#footer-buttons.actionable div:first-child
-{
+#footer-buttons.actionable div:first-child {
   color: white;
 }
 
 ::-moz-selection {
-  background-color: #5675B9;
+  background-color: #5675b9;
   color: #fff;
 }
 
@@ -94,8 +109,8 @@ body {
   fill: none;
 }
 
-.ck-editor__editable  {
-  background-color: #393F4C;
+.ck-editor__editable {
+  background-color: #393f4c;
   color: #e6e6e6;
 }
 
@@ -119,7 +134,7 @@ body {
 
 #notes .ck-toolbar * {
   color: #e6e6e6;
-  background: #272B35;
+  background: #272b35;
 }
 
 #notes .ck-toolbar button.ck-on *,
@@ -143,7 +158,7 @@ body {
 }
 
 #notes .ck-toolbar .ck-button__label {
-background: transparent;
+  background: transparent;
 }
 
 #notes .ck-toolbar .ck-button .ck-icon,
@@ -191,18 +206,18 @@ background: transparent;
   color: #e6e6e6;
 }
 .ql-snow .ql-picker-options {
-  background-color: #393F4C;
+  background-color: #393f4c;
 }
 
 .mdl-menu__item:focus {
-  background-color: #272B35;
+  background-color: #272b35;
 }
 .mdl-menu__item:hover {
-  background-color: #323744; 
+  background-color: #323744;
 }
 .mdl-menu__item:active {
   background-color: #3d4352;
- }
+}
 
 .actionable {
   color: white;

@@ -1,0 +1,55 @@
+@import 'ckeditor';
+@import 'menu';
+@import 'footer';
+
+html {
+  height: 100%;
+  font-family: sans-serif;
+  line-height: 1.2em;
+  overflow: hidden;
+  margin: 0;
+  --sync-animation-duration: 0.4s;
+}
+
+body,
+body > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+/**
+Custom list types for indents
+https://github.com/mozilla/notes/issues/413
+ */
+ol ol,
+ol ol ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol,
+ol ol ol ol ol ol {
+  list-style-type: lower-roman;
+}
+
+ol ol ol ol {
+  list-style-type: decimal;
+}
+
+/**
+List indents end
+ */
+
+div#loading {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: 10;
+}
+

@@ -1,10 +1,15 @@
-/* exported customizeEditor, getPadStats, localizeEditorButtons, setAnimation, formatFooterTime */
+
+// const UI_LANG = browser.i18n.getUILanguage();
+// const RTL_LANGS = ['ar', 'fa', 'he'];
+// const LANG_DIR = RTL_LANGS.includes(UI_LANG) ? 'rtl' : 'ltr';
+// const TEXT_ALIGN_DIR = LANG_DIR === 'rtl' ? 'right' : 'left';
+
 function customizeEditor(editor) {
   const mainEditor = document.querySelector('.ck-editor__main');
 
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
-  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach((sel) => {
+  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach(sel => {
     sel.addEventListener('contextmenu', e => {
       e.preventDefault();
     });
@@ -12,11 +17,13 @@ function customizeEditor(editor) {
 
   // Fixes an issue with CKEditor and keeping multiple Firefox windows in sync
   // Ref: https://github.com/mozilla/notes/issues/424
-  document.querySelectorAll('.ck-heading-dropdown .ck-list__item').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      editor.fire('changesDone');
+  document
+    .querySelectorAll('.ck-heading-dropdown .ck-list__item')
+    .forEach(btn => {
+      btn.addEventListener('click', () => {
+        editor.fire('changesDone');
+      });
     });
-  });
 
   document.addEventListener('dragover', () => {
     mainEditor.classList.add('drag-n-drop-focus');
@@ -38,18 +45,26 @@ function customizeEditor(editor) {
   localizeEditorButtons();
 }
 
+function insertSelectedText(editor, selectedText) {
+  const currentNotesContent = editor.getData();
+  const updatedNotesContent = currentNotesContent + `<p>${selectedText.replace(/\n\n/g, '</p><p>')}</p>`;
+  editor.setData(updatedNotesContent);
+  browser.runtime.sendMessage({
+    action: 'metrics-context-menu'
+  });
+}
+
+
 function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
-  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach((sel) => {
+  document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach(sel => {
     sel.remove();
   });
 
   let userOSKey;
 
-  if (navigator.appVersion.indexOf('Mac') !== -1)
-    userOSKey = '⌘';
-  else
-    userOSKey = 'Ctrl';
+  if (navigator.appVersion.indexOf('Mac') !== -1) userOSKey = '⌘';
+  else userOSKey = 'Ctrl';
 
   const size = document.querySelector('button.ck-button:nth-child(1)'),
     // Need to target buttons by index. Ref: https://github.com/ckeditor/ckeditor5-basic-styles/issues/59
@@ -59,10 +74,11 @@ function localizeEditorButtons() {
     bullet = document.querySelector('button.ck-button:nth-child(5)'),
     ordered = document.querySelector('button.ck-button:nth-child(6)');
 
-// Setting button titles in place of tooltips
+  // Setting button titles in place of tooltips
   size.title = browser.i18n.getMessage('fontSizeTitle');
   bold.title = browser.i18n.getMessage('boldTitle') + ' (' + userOSKey + '+B)';
-  italic.title = browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
+  italic.title =
+    browser.i18n.getMessage('italicTitle') + ' (' + userOSKey + '+I)';
   strike.title = browser.i18n.getMessage('strikethroughTitle');
   ordered.title = browser.i18n.getMessage('numberedListTitle');
   bullet.title = browser.i18n.getMessage('bulletedListTitle');
@@ -81,9 +97,9 @@ function getPadStats(editor) {
     list_numbered: false
   };
 
-  const range = ClassicEditor.imports.range.createIn( editor.document.getRoot() );
+  const range = ClassicEditor.imports.range.createIn(editor.document.getRoot());
 
-  for ( const value of range ) {
+  for (const value of range) {
     if (value.type === 'text') {
       // Bold
       if (value.item.textNode._attrs.get('bold')) {
@@ -129,61 +145,4 @@ function getPadStats(editor) {
   };
 }
 
-/**
- * Set animation on footerButtons toolbar
- * @param {Boolean} animateSyncIcon Start looping animation on sync icon
- * @param {Boolean} syncingLayout   if true, animate to syncingLayout (sync icon on right)
- *                                  if false, animate to savingLayout (sync icon on left)
- * @param {Boolean} warning         Apply yellow warning styling on toolbar
- */
-function setAnimation( animateSyncIcon = true, syncingLayout, warning, syncSuccess ) { // animateSyncIcon, syncingLayout, warning, syncSuccess
-  const footerButtons = document.getElementById('footer-buttons');
-  const enableSync = document.getElementById('enable-sync');
-  const savingIndicator = document.getElementById('saving-indicator');
-
-  if (animateSyncIcon === true && !footerButtons.classList.contains('animateSyncIcon')) {
-    footerButtons.classList.add('animateSyncIcon');
-  } else if (animateSyncIcon === false && footerButtons.classList.contains('animateSyncIcon')) {
-    footerButtons.classList.remove('animateSyncIcon');
-  }
-
-  if (syncingLayout === true && footerButtons.classList.contains('savingLayout')) {
-    footerButtons.classList.replace('savingLayout', 'syncingLayout');
-    enableSync.style.backgroundColor = 'transparent';
-    // Start blink animation on saving-indicator
-    savingIndicator.classList.add('blink');
-    // Reset CSS animation by removeing class
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-  } else if (syncingLayout === false && footerButtons.classList.contains('syncingLayout')) {
-    // Animate savingIndicator text
-    savingIndicator.classList.add('blink');
-    setTimeout(() => savingIndicator.classList.remove('blink'), 400);
-    setTimeout(() => {
-      enableSync.style.backgroundColor = null;
-    }, 400);
-    //
-    footerButtons.classList.replace('syncingLayout', 'savingLayout');
-  }
-
-  if (warning === true && !footerButtons.classList.contains('warning')) {
-    footerButtons.classList.add('warning');
-  } else if (warning === false && footerButtons.classList.contains('warning')) {
-    footerButtons.classList.remove('warning');
-  }
-
-  if (syncSuccess === true) {
-    footerButtons.classList.add('actionable');
-  } else {
-    footerButtons.classList.remove('actionable');
-  }
-}
-
-/**
- * Formats time for the Notes footer
- * @param time
- * @returns {string}
- */
-function formatFooterTime(date) {
-  date = date || Date.now();
-  return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-}
+export { customizeEditor, getPadStats, insertSelectedText };

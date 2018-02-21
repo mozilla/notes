@@ -1,7 +1,7 @@
-/* exported sendMetrics */
 /**
  * Google Analytics / TestPilot Metrics
  */
+
 const TRACKING_ID = 'UA-35433268-79';
 
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
@@ -12,6 +12,7 @@ const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
+let isEditorReady = false;
 
 // Kinto sync and encryption
 
@@ -98,14 +99,16 @@ function authenticate() {
     sendMetrics('login-failed');
   });
 }
+
 browser.runtime.onMessage.addListener(function(eventData) {
   const credentials = new BrowserStorageCredentials(browser.storage.local);
+
   switch (eventData.action) {
     case 'authenticate':
       credentials.get()
         .then(result => {
           if (!result) {
-            sendMetrics('webext-button-authenticate', eventData.context);
+            sendMetrics('webext-button-authenticate');
             authenticate();
           } else {
             chrome.runtime.sendMessage({
@@ -159,6 +162,15 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-limit-reached':
       sendMetrics('limit-reached', eventData.context);
       break;
+    case 'metrics-context-menu':
+      sendMetrics('context-menu', eventData.context);
+      break;
+    case 'metrics-export-html':
+      sendMetrics('export-html');
+      break;
+    case 'editor-ready':
+      isEditorReady = true;
+      break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({
@@ -174,6 +186,8 @@ function connected(p) {
   closeUI = 'closeButton';
 
   p.onDisconnect.addListener(() => {
+    // sidebar closed, therefore editor is not ready to receive any content
+    isEditorReady = false;
     sendMetrics('close', {'closeUI': closeUI});
   });
 }
@@ -194,5 +208,36 @@ browser.storage.local.get()
 
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener(() => {
-    browser.sidebarAction.open();
+  browser.sidebarAction.open();
 });
+
+// context menu for 'Send to Notes'
+browser.contextMenus.create({
+  id: 'send-to-notes',
+  title: browser.i18n.getMessage('sendToNotes'),
+  contexts: ['selection'],
+  // disables context menu item for Notes' `index.html` page
+  documentUrlPatterns: ['<all_urls>']
+});
+
+browser.contextMenus.onClicked.addListener((info) => {
+  // open sidebar which will trigger `isEditorReady`...
+  browser.sidebarAction.open();
+  // then send selection text to Editor.js once editor instance is initialized and ready
+  sendSelectionText(info.selectionText);
+});
+
+function sendSelectionText(selectionText) {
+  // if editor ready, go ahead and send selected text to be pasted in Notes,
+  // otherwise wait half a second before trying again
+  if (isEditorReady) {
+    chrome.runtime.sendMessage({
+      action: 'send-to-notes',
+      text: selectionText
+    });
+  } else {
+    setTimeout(() => {
+      sendSelectionText(selectionText);
+    }, 500);
+  }
+}
