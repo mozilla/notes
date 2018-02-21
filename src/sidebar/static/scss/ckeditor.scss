@@ -4,9 +4,9 @@
 
 .editorWrapper {
   display: flex;
+  flex: calc(100% - 40px);
   flex-direction: column;
   flex-grow: 1;
-  flex: calc(100% - 40px);
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -21,10 +21,6 @@
   margin: 0;
   overflow: hidden;
   padding: 0;
-}
-
-.notification {
-
 }
 
 #notes {
