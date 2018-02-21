@@ -215,7 +215,9 @@ browser.browserAction.onClicked.addListener(() => {
 browser.contextMenus.create({
   id: 'send-to-notes',
   title: browser.i18n.getMessage('sendToNotes'),
-  contexts: ['selection']
+  contexts: ['selection'],
+  // disables context menu item for Notes' `index.html` page
+  documentUrlPatterns: ['<all_urls>']
 });
 
 browser.contextMenus.onClicked.addListener((info) => {
