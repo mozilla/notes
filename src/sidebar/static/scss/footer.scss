@@ -137,7 +137,7 @@ footer {
   #enable-sync {
     margin-right: calc(100% - 40px);
     background: none;
-    border-left: none;
+    border: none;
     transition: margin var(--sync-animation-duration)
       cubic-bezier(0.07, 0.95, 0, 1) 0.05s;
 
