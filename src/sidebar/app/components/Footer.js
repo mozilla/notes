@@ -188,7 +188,7 @@ class Footer extends React.Component {
 
     this.enableSyncAction = () => {
       // persist reconnect warning, do not override with the 'saved at'
-      if (this.state.state.ignoreChange) return;
+      if (!this.state.state.isClickable) return;
 
       if (this.state.isAuthenticated) {
         // Trigger manual sync
