@@ -1,0 +1,63 @@
+/**
+ * Define light and dark theme with CSS variables
+ */
+
+body {
+
+  &.lightTheme {
+    --color-text: black;
+    --color-border: #ccc;
+    --color-background: transparent;
+    --color-hover: transparent;
+    --color-active: transparent;
+    --color-blue: #4e92dd;
+    --color-drag-n-drop-border: #008000;
+    --color-drag-n-drop-background: #dcd6da;
+    // Footer
+    --color-footer-text: #969696;
+    --color-footer-border: #d7d7db;
+    --color-footer-border-hover: #ebebee;
+    // Warning footer
+    --color-yellow-text: black;
+    --color-yellow-background: rgb(255, 236, 173);
+    --color-yellow-button-hover: rgba(128,128,128,0.2);
+    // Notification
+    --color-notification-text: #424242;
+    --color-notification-cyan: #00FFFE;
+    --color-notification-green: #B6FEB4;
+    // Editor
+    // --color-ck-toolbar: rgb(247, 247, 247);
+    --color-ck-toolbar: rgb(247, 247, 247);
+    // Context menu
+    --context-menu-image: url('../svg/three-dots.svg');
+    --context-menu-image-yellow-background: url('../svg/three-dots.svg');
+  }
+
+  &.darkTheme {
+    --color-text: #e6e6e6;
+    --color-border: #ccc;
+    --color-background: #393f4c;
+    --color-hover: #323744;
+    --color-active: #3d4352;
+    --color-blue: #4e92dd;
+    --color-drag-n-drop-border: #ffff00;
+    --color-drag-n-drop-background: #008080;
+    // Footer
+    --color-footer-text: #969696;
+    --color-footer-border: #d7d7db;
+    --color-footer-border-hover: #323744;
+    // Warning footer
+    --color-yellow-text: black;
+    --color-yellow-background: rgb(255, 236, 173);
+    --color-yellow-button-hover: rgba(128,128,128,0.2);
+    // Notification
+    --color-notification-text: #424242;
+    --color-notification-cyan: #00FFFE;
+    --color-notification-green: #B6FEB4;
+    // Editor
+    --color-ck-toolbar: #272b35;
+    // Context menu
+    --context-menu-image: url('../svg/three-dots-dark.svg');
+    --context-menu-image-yellow-background: url('../svg/three-dots.svg');
+  }
+}

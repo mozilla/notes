@@ -1,3 +1,4 @@
+@import 'theme';
 @import 'ckeditor';
 @import 'menu';
 @import 'footer';
@@ -49,7 +50,7 @@ div#loading {
   position: absolute;
   top: 0;
   left: 0;
-  background: white;
+  background: var(--color-background);
   z-index: 10;
 }
 

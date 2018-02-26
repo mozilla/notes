@@ -1,36 +1,16 @@
-body {
-  background-color: #393f4c;
-}
-
-#notes .ck-toolbar {
-  background-color: #272b35;
-}
-
-#enable-sync svg path {
-  fill: #e6e6e6 !important;
-}
-
-#footer-buttons.warning #enable-sync svg path {
-  fill: #000000 !important;
-}
 
 .savingLayout #enable-sync:hover {
   background-color: #323744;
 }
 
 #give-feedback-button svg path {
-  fill: #e6e6e6 !important;
+  fill: var(--color-text) !important;
 }
 
 /* material-design-lite (MDL) menu */
 #context-menu-button {
-  background-image: url('../svg/three-dots-dark.svg');
-  background-color: #323744;
-}
-
-#footer-buttons.warning #context-menu-button {
-  background-color: rgb(255, 236, 173);
-  background-image: url('../svg/three-dots.svg');
+  background-image: var(--context-menu-image);
+  background-color: var(--color-footer-border-hover);
 }
 
 #syncing-indicator {
@@ -40,7 +20,7 @@ body {
 
 #footer-buttons div:first-child.isClickable button {
   background: none !important;
-  color: #e6e6e6 !important;
+  color: var(--color-text) !important;
 }
 
 .warning #syncing-indicator {
@@ -53,18 +33,7 @@ body {
   transition: none;
 }
 
-.context-menu-item {
-  color: #e6e6e6;
-  background-color: #272b35;
-}
 
-.context-menu-item:hover {
-  background-color: #323744;
-}
-
-.context-menu-item:active {
-  background-color: #3d4352;
-}
 /* end MDL menu */
 
 
@@ -93,47 +62,9 @@ body {
   color: #fff;
 }
 
-/* Overridden Quill classes */
-.ql-snow .ql-stroke {
-  stroke: #e6e6e6;
-}
-.ql-snow .ql-stroke-miter {
-  fill: none;
-  stroke: #e6e6e6;
-}
-.ql-snow .ql-fill,
-.ql-snow .ql-stroke.ql-fill {
-  fill: #e6e6e6;
-}
-.ql-snow .ql-empty {
-  fill: none;
-}
-
-.ck-editor__editable {
-  background-color: #393f4c;
-  color: #e6e6e6;
-}
-
-.ql-editor.ql-blank::before {
-  color: #ddd;
-}
-
-.ql-snow a {
-  color: #0080ff;
-}
-
-.ql-editor .ql-bg-blue {
-  background-color: #0080ff;
-}
-.ql-editor .ql-color-white {
-  color: #e6e6e6;
-}
-.ql-editor .ql-color-blue {
-  color: #0080ff;
-}
 
 #notes .ck-toolbar * {
-  color: #e6e6e6;
+  color: var(--color-text);
   background: #272b35;
 }
 
@@ -172,7 +103,7 @@ body {
 
 #notes .ck-toolbar button .ck-tooltip__text {
   border: solid thin #1c1f26;
-  color: #e6e6e6;
+  color: var(--color-text);
 }
 
 #notes .ck-toolbar .ck-tooltip.ck-tooltip_s .ck-tooltip__text::after {
@@ -189,24 +120,11 @@ body {
 
 #notes .ck-toolbar .ck-list__item_active {
   background-color: #0073e5;
-  color: #e6e6e6;
+  color: var(--color-text);
 }
 
 #notes .ck-toolbar .ck-list__item_active:hover {
   background-color: #0080ff;
-}
-
-#notes .drag-n-drop-focus,
-#notes .drag-n-drop-focus .ck-editor__editable {
-  border: 1px solid #ffff00;
-  background-color: #008080;
-}
-
-.ql-snow .ql-picker {
-  color: #e6e6e6;
-}
-.ql-snow .ql-picker-options {
-  background-color: #393f4c;
 }
 
 .mdl-menu__item:focus {

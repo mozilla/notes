@@ -23,12 +23,12 @@ footer {
 #footer-buttons {
   align-items: stretch;
   position: relative;
-  border-top: 1px solid #d7d7db;
+  border-top: 1px solid var(--color-footer-border);
   display: flex;
   justify-content: space-between;
   width: 100%;
   height: 40px;
-  background-color: transparent;
+  background-color: var(--color-background);
   transition: background var(--sync-animation-duration)
     cubic-bezier(0.07, 0.95, 0, 1);
 
@@ -36,7 +36,7 @@ footer {
     position: relative;
     flex: 1 0;
     padding: 10px 40px 10px 10px;
-    color: #969696;
+    color: var(--color-footer-text);
     text-align: left;
     display: block;
     overflow: hidden;
@@ -52,27 +52,38 @@ footer {
       margin-top: 1px;
     }
 
-    button {
+    button, a {
       cursor: default;
     }
 
     &.isClickable {
       button {
-        color: black;
+        color: var(--color-yellow-text);
         cursor: pointer !important;
       }
+    }
+  }
+
+  button, a {
+    transition: background 50ms;
+    background-color: var(--color-background);
+    &:hover {
+      background-color: var(--color-hover);
+    }
+    &:active{
+      background-color: var(--color-active);
     }
   }
 }
 
 /* warning style */
 #footer-buttons.warning {
-  background-color: rgb(255, 236, 173);
+  background-color: var(--color-yellow-background);
   transition: background var(--sync-animation-duration)
 						 cubic-bezier(0.07, 0.95, 0, 1);
 
   button {
-      color: black;
+    color: var(--color-text);
   }
 }
 
@@ -92,8 +103,8 @@ footer {
   top: 0px;
   bottom: 0px;
   width: 40px;
-  border-left: 1px solid #d7d7db;
-  border-right: 1px solid #d7d7db;
+  border-left: 1px solid var(--color-footer-border);
+  border-right: 1px solid var(--color-footer-border);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +128,7 @@ footer {
       border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
 
     &:hover {
-      background-color: #ebebee;
+      background-color: var(--color-footer-border-hover);
     }
   }
 }
@@ -187,6 +198,10 @@ footer {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-play-state: paused;
+
+  path {
+    fill: var(--color-text) !important;
+  }
 }
 
 .animateSyncIcon #enable-sync svg {
@@ -195,7 +210,7 @@ footer {
 
 .animateSyncIcon #enable-sync svg path,
 .syncingLayout>div:hover #enable-sync svg path {
-  fill: #4e92dd;
+  fill: var(--color-blue) !important;
 }
 
 // Always black on warning/yellow background
@@ -210,12 +225,12 @@ footer {
 
 #footer-buttons button:hover,
 #footer-buttons a:hover {
-  background-color: #ebebee;
+  background-color: var(--color-footer-border-hover);
 }
 
 #footer-buttons button:active,
 #footer-buttons a:active {
-  background-color: #d7d7db;
+  background-color: var(--color-footer-border);
 }
 
 #menu {
@@ -227,7 +242,7 @@ footer {
 /* Select menu from sync */
 #context-menu-button {
   background-size: 3px;
-  background-image: url('../svg/three-dots.svg');
+  background-image: var(--context-menu-image);
   background-position: 50%;
   background-repeat: no-repeat;
   width: 22px;
@@ -236,13 +251,17 @@ footer {
   right: 6px;
   top: 5px;
   bottom: 6px;
+}
 
+.warning #context-menu-button {
+  background-color: var(--color-yellow-background);
+  background-image: var(--context-menu-image-yellow-background);
 }
 
 #context-menu-button:hover,
 #context-menu-button:focus,
 #context-menu-button:active {
-  background-color: rgba(128, 128, 128, 0.2) !important;
+  background-color: var(--color-yellow-button-hover) !important;
 }
 
 .context-menu {
@@ -255,4 +274,13 @@ footer {
   padding: 0 0 0 15px;
   height: 18px;
   line-height: 30px;
+  color: var(--color-text);
+
+  background-color: #272b35;
+  &:hover {
+    background-color: #323744;
+  }
+  &:active {
+    background-color: var(--color-active);
+  }
 }
