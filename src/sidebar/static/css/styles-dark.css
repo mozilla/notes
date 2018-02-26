@@ -40,7 +40,7 @@ body {
 
 #footer-buttons div:first-child.isClickable button {
   background: none !important;
-  color: #e6e6e6 !important;
+  color: black !important;
 }
 
 .warning #syncing-indicator {
@@ -86,6 +86,10 @@ body {
 
 #footer-buttons.actionable div:first-child {
   color: white;
+}
+
+#footer-buttons.warning button {
+  color: #e6e6e6;
 }
 
 ::-moz-selection {
