@@ -40,10 +40,11 @@ body {
 
 #footer-buttons div:first-child.isClickable button {
   background: none !important;
-  color: black !important;
+  color: #e6e6e6 !important;
 }
 
-.warning #syncing-indicator {
+.warning #syncing-indicator,
+#footer-buttons.warning div:first-child.isClickable button {
   color: black !important;
 }
 
