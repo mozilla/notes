@@ -205,14 +205,14 @@ const defaultNotesLocation = { location: 'sidebar' };
 browser.storage.local.get(['theme', 'location'])
   .then((storedSettings) => {
     // if no location or theme settings exists...
-    if (! storedSettings.location) {
+    if (!storedSettings.location) {
        // set defaultNotesLocation as initial location in local storage
       browser.storage.local.set(defaultNotesLocation);
       currentNotesLocation = defaultNotesLocation.location;
     } else {
       currentNotesLocation = storedSettings.location;
     }
-    if (! storedSettings.theme) {
+    if (!storedSettings.theme) {
        // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
     }
@@ -264,8 +264,8 @@ function sendSelectionText(selectionText) {
 
 function openNotesInTab() {
   // Check if there are any Notes tabs currently open...
-  const anyExistingNotesTabs = browser.tabs.query({ title: 'Firefox Notes' })
-    .then(notesTabs => {
+  const anyExistingNotesTabs = browser.tabs.query({ title: 'Firefox Notes' });
+  anyExistingNotesTabs.then(notesTabs => {
       // If no open Notes tabs, create a new Notes instance in a new tab
       if (notesTabs.length === 0) {
         // Close the Notes sidebar if open...

@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function getSetting(settingOption) {
   let selectedSetting = {};
   switch (settingOption) {
-    case 'location':
+    case 'location': {
       let location = '';
       for (let i = 0; i < locationRadioBtn.length; i++) {
         if (locationRadioBtn[i].checked)
@@ -51,7 +51,8 @@ function getSetting(settingOption) {
       }
       selectedSetting = { location };
       break;
-    case 'theme':
+    }
+    case 'theme': {
       let theme = '';
       for (let i = 0; i < themeRadioBtn.length; i++) {
         if (themeRadioBtn[i].checked)
@@ -61,6 +62,7 @@ function getSetting(settingOption) {
       }
       selectedSetting = { theme };
       break;
+    }
   }
   return selectedSetting;
 }
