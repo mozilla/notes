@@ -140,18 +140,6 @@ An event fired when user closes sync due to a password reset or change
 - `ec` - `notes`
 - `ea` - `reconnect-sync`
 
-#### `metrics-migrated`
-An event fired when the user migrate from Quill.JS to CKEditor
-
-- `ec` - `notes`
-- `ea` - `metrics-migrated`
-
-#### `metrics-migrated-before`
-An event fired when the migration from Quill.JS to CKEditor already happened
-
-- `ec` - `notes`
-- `ea` - `metrics-migrated-before`
-
 #### `context-menu`
 An event fired when the "Send to Notes" context menu is used
 

@@ -98,43 +98,9 @@ body {
   color: #fff;
 }
 
-/* Overridden Quill classes */
-.ql-snow .ql-stroke {
-  stroke: #e6e6e6;
-}
-.ql-snow .ql-stroke-miter {
-  fill: none;
-  stroke: #e6e6e6;
-}
-.ql-snow .ql-fill,
-.ql-snow .ql-stroke.ql-fill {
-  fill: #e6e6e6;
-}
-.ql-snow .ql-empty {
-  fill: none;
-}
-
 .ck-editor__editable {
   background-color: #393f4c;
   color: #e6e6e6;
-}
-
-.ql-editor.ql-blank::before {
-  color: #ddd;
-}
-
-.ql-snow a {
-  color: #0080ff;
-}
-
-.ql-editor .ql-bg-blue {
-  background-color: #0080ff;
-}
-.ql-editor .ql-color-white {
-  color: #e6e6e6;
-}
-.ql-editor .ql-color-blue {
-  color: #0080ff;
 }
 
 #notes .ck-toolbar * {
@@ -205,13 +171,6 @@ body {
 #notes .drag-n-drop-focus .ck-editor__editable {
   border: 1px solid #ffff00;
   background-color: #008080;
-}
-
-.ql-snow .ql-picker {
-  color: #e6e6e6;
-}
-.ql-snow .ql-picker-options {
-  background-color: #393f4c;
 }
 
 .mdl-menu__item:focus {

@@ -150,12 +150,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-drag-n-drop':
       sendMetrics('drag-n-drop', eventData.context);
       break;
-    case 'metrics-migrated':
-      sendMetrics('metrics-migrated', eventData.context);
-      break;
-    case 'metrics-migrated-before':
-      sendMetrics('metrics-migrated-before');
-      break;
     case 'metrics-reconnect-sync':
       sendMetrics('reconnect-sync', eventData.context);
       break;
