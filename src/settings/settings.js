@@ -10,41 +10,75 @@ darkThemeLabel.innerHTML = browser.i18n.getMessage('darkThemeTitle');
 /* eslint-enable no-unsanitized/property */
 
 const themeRadioBtn = document.getElementsByName('theme');
+const locationRadioBtn = document.getElementsByName('location');
 
 function loadSavedData(data) {
   const theme = data.theme;
+  const location = data.location;
 
-  if (theme === 'default') themeRadioBtn[0].checked = true;
-  else if (theme === 'dark') themeRadioBtn[1].checked = true;
+  if (theme === 'default')
+    themeRadioBtn[0].checked = true;
+  else if (theme === 'dark')
+    themeRadioBtn[1].checked = true;
+
+  if (location === 'sidebar')
+    locationRadioBtn[0].checked = true;
+  else if (location === 'new_tab')
+    locationRadioBtn[1].checked = true;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  const savedData = browser.storage.local.get('theme');
+  const savedData = browser.storage.local.get(['theme', 'location']);
   savedData.then(loadSavedData);
 });
 
-function getTheme() {
-  let theme = '';
-
-  for (let i = 0; i < themeRadioBtn.length; i++) {
-    if (themeRadioBtn[i].checked) theme = themeRadioBtn[i].value;
-    else continue;
+function getSetting(settingOption) {
+  let selectedSetting = {};
+  switch (settingOption) {
+    case 'location':
+      let location = '';
+      for (let i = 0; i < locationRadioBtn.length; i++) {
+        if (locationRadioBtn[i].checked)
+          location = locationRadioBtn[i].value;
+        else
+          continue;
+      }
+      selectedSetting = { location };
+      break;
+    case 'theme':
+      let theme = '';
+      for (let i = 0; i < themeRadioBtn.length; i++) {
+        if (themeRadioBtn[i].checked)
+          theme = themeRadioBtn[i].value;
+        else
+          continue;
+      }
+      selectedSetting = { theme };
+      break;
   }
-
-  const selectedTheme = { theme };
-
-  return selectedTheme;
+  return selectedSetting;
 }
 
 for (let i = 0; i < themeRadioBtn.length; i++) {
   themeRadioBtn[i].onclick = function() {
-    const theme = getTheme();
-
+    const theme = getSetting('theme');
     browser.storage.local.set(theme);
-
     // notify background.js that theme settings have changed
     browser.runtime.sendMessage({
-      action: 'theme-changed'
+      action: 'theme-changed',
+      context: theme
+    });
+  };
+}
+
+for (let i = 0; i < locationRadioBtn.length; i++) {
+  locationRadioBtn[i].onclick = function() {
+    const location = getSetting('location');
+    browser.storage.local.set(location);
+    // notify background.js that location settings have changed
+    browser.runtime.sendMessage({
+      action: 'location-changed',
+      context: location
     });
   };
 }

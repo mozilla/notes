@@ -13,6 +13,7 @@ const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
 let isEditorReady = false;
+let currentNotesLocation = '';
 
 // Kinto sync and encryption
 
@@ -172,10 +173,14 @@ browser.runtime.onMessage.addListener(function(eventData) {
       isEditorReady = true;
       break;
     case 'theme-changed':
-      sendMetrics('theme-changed', eventData.content);
+      sendMetrics('theme-changed', eventData.context);
       browser.runtime.sendMessage({
         action: 'theme-changed'
       });
+      break;
+    case 'location-changed':
+      currentNotesLocation = eventData.context.location;
+      sendMetrics('location-changed', eventData.context);
       break;
   }
 });
@@ -194,21 +199,32 @@ function connected(p) {
 browser.runtime.onConnect.addListener(connected);
 
 
-const defaultTheme = {
-  theme: 'default'
-};
+const defaultTheme = { theme: 'default' };
+const defaultNotesLocation = { location: 'sidebar' };
 
-browser.storage.local.get()
+browser.storage.local.get(['theme', 'location'])
   .then((storedSettings) => {
-    // if no theme setting exists...
-    if (!storedSettings.theme)
-      // set defaultTheme as initial theme in local storage
+    // if no location or theme settings exists...
+    if (! storedSettings.location) {
+       // set defaultNotesLocation as initial location in local storage
+      browser.storage.local.set(defaultNotesLocation);
+      currentNotesLocation = defaultNotesLocation.location;
+    } else {
+      currentNotesLocation = storedSettings.location;
+    }
+    if (! storedSettings.theme) {
+       // set defaultTheme as initial theme in local storage
       browser.storage.local.set(defaultTheme);
+    }
 });
 
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener(() => {
-  browser.sidebarAction.open();
+  if (currentNotesLocation === 'new_tab') {
+    openNotesInTab();
+  } else {
+    browser.sidebarAction.open();
+  }
 });
 
 // context menu for 'Send to Notes'
@@ -221,8 +237,12 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener((info) => {
-  // open sidebar which will trigger `isEditorReady`...
-  browser.sidebarAction.open();
+  // open Notes (either in sidebar or new tab) which will trigger `isEditorReady`...
+  if (currentNotesLocation === 'new_tab') {
+    openNotesInTab();
+  } else {
+    browser.sidebarAction.open();
+  }
   // then send selection text to Editor.js once editor instance is initialized and ready
   sendSelectionText(info.selectionText);
 });
@@ -240,4 +260,27 @@ function sendSelectionText(selectionText) {
       sendSelectionText(selectionText);
     }, 500);
   }
+}
+
+function openNotesInTab() {
+  // Check if there are any Notes tabs currently open...
+  const anyExistingNotesTabs = browser.tabs.query({ title: 'Firefox Notes' })
+    .then(notesTabs => {
+      // If no open Notes tabs, create a new Notes instance in a new tab
+      if (notesTabs.length === 0) {
+        // Close the Notes sidebar if open...
+        // browser.sidebarAction.isOpen({})
+        //   .then(() => {
+        //     browser.sidebarAction.close();
+        //   });
+        // browser.tabs.create({
+        //   url: '/sidebar/index.html'
+        // });
+        // Error: sidebarAction.close may only be called from a user input handler
+        // Blocked by Bugzilla #1438465
+        browser.tabs.create({
+          url: '/sidebar/index.html'
+        });
+      }
+    });
 }

@@ -9,14 +9,23 @@
   <body>
 
     <div class="settings-content">
-      <div id="section-theme">
-        <label id="themeTitle"></label>
+      <div class="settingsSection" id="section-theme">
+        <label class="sectionTitle" id="themeTitle"></label>
 
         <input type="radio" name="theme" value="default" id="theme_default">
         <label for="theme_default" id="default_label"></label>
 
         <input type="radio" name="theme" value="dark" id="theme_dark">
         <label for="theme_dark" id="dark_label"></label>
+      </div>
+      <div class="settingsSection">
+        <label class="sectionTitle" id="notesLocationTitle">Open Notes in...</label>
+
+        <input type="radio" name="location" value="sidebar" id="location_sidebar">
+        <label for="location_sidebar" id="location_default_label">Sidebar</label>
+
+        <input type="radio" name="location" value="new_tab" id="location_tab">
+        <label for="location_tab" id="location_tab_label">New Tab</label>
       </div>
     </div>
 
