@@ -3,11 +3,17 @@ const themeLegend = document.getElementById('themeTitle');
 const defaultThemeLabel = document.getElementById('default_label');
 const darkThemeLabel = document.getElementById('dark_label');
 
-/* eslint-disable no-unsanitized/property */
-themeLegend.innerHTML = browser.i18n.getMessage('themeLegend');
-defaultThemeLabel.innerHTML = browser.i18n.getMessage('defaultThemeTitle');
-darkThemeLabel.innerHTML = browser.i18n.getMessage('darkThemeTitle');
-/* eslint-enable no-unsanitized/property */
+const locationLegend = document.getElementById('locationTitle');
+const defaultLocationLabel = document.getElementById('location_default_label');
+const tabLocationLabel = document.getElementById('location_tab_label');
+
+themeLegend.textContent = browser.i18n.getMessage('themeLegend');
+defaultThemeLabel.textContent = browser.i18n.getMessage('defaultThemeTitle');
+darkThemeLabel.textContent = browser.i18n.getMessage('darkThemeTitle');
+
+locationLegend.textContent = browser.i18n.getMessage('locationLegend');
+defaultLocationLabel.textContent = browser.i18n.getMessage('defaultLocationLabel');
+tabLocationLabel.textContent = browser.i18n.getMessage('tabLocationLabel');
 
 const themeRadioBtn = document.getElementsByName('theme');
 const locationRadioBtn = document.getElementsByName('location');
