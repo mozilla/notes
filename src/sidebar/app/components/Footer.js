@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import SyncIcon from './SyncIcon';
 
-import { formatFooterTime } from '../utils/utils';
+import { formatFooterTime, getFirstNonEmptyElement } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
 
@@ -156,10 +156,24 @@ class Footer extends React.Component {
     };
 
     this.exportAsHTML = () => {
+      // get Notes content
       const notesContent = this.state.content;
-      const exportedFileName = 'notes.html';
-      const exportFileType = 'text/html';
+      // assign contents to container element for later parsing
+      let parentElement = document.createElement('div');
+      parentElement.innerHTML = notesContent;
 
+      let exportedFileName =  '';
+      // get the first child element with text
+      let nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
+
+      // if non-empty child element exists, set the filename to the element's `textContent`
+      if (nonEmptyChildElement) {
+        exportedFileName = `${nonEmptyChildElement.textContent.trim()}.html`;
+      } else { // if child elements are empty (aka empty notepad), set filename to 'blank.html'
+        exportedFileName = 'blank.html';
+      }
+
+      const exportFileType = 'text/html';
       const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
       const exportFilePath = window.URL.createObjectURL(data);
       browser.downloads.download({
