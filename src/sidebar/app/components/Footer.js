@@ -7,7 +7,6 @@ import SyncIcon from './SyncIcon';
 
 import { formatFooterTime } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
-import INITIAL_CONTENT from '../data/initialContent';
 
 import { disconnect, exportHTML } from '../actions';
 
@@ -18,7 +17,6 @@ class Footer extends React.Component {
     this.state = {
       isAuthenticated: false,
       lastModified: Date.now(),
-      content: INITIAL_CONTENT,
       isKintoLoaded: false,
       state: {}
     };
@@ -72,7 +70,6 @@ class Footer extends React.Component {
     };
 
     this.events = eventData => {
-      // let content;
       switch (eventData.action) {
         case 'sync-authenticated':
           clearTimeout(this.loginTimeout);
@@ -91,7 +88,6 @@ class Footer extends React.Component {
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
           this.setState({
             lastModified: Date.now(),
-            content: eventData.data || INITIAL_CONTENT,
             isKintoLoaded: true
           });
 
@@ -119,8 +115,7 @@ class Footer extends React.Component {
         case 'text-synced':
           // Enable sync-action
           this.setState({
-            lastModified: eventData.last_modified,
-            content: eventData.content || INITIAL_CONTENT
+            lastModified: eventData.last_modified
           });
           this.getLastSyncedTime();
           break;
@@ -228,28 +223,6 @@ class Footer extends React.Component {
     chrome.runtime.onMessage.addListener(this.events);
   }
 
-  // This is triggered when redux update state.
-  // Might come from anywhere
-  componentDidUpdate(nextProps, nextState) {
-    // if (nextProps.state.note.isSaving) {
-    //   this.setState({
-    //     state: this.STATES.SAVING
-    //   });
-    // } else if (nextProps.state.note.isSyncing) {
-    //   this.setState({
-    //     state: this.STATES.SYNCING
-    //   });
-    // } else if (nextProps.state.sync.email) {
-    //   this.setState({
-    //     state: this.STATES.SYNCED
-    //   });
-    // } else {
-    //   this.setState({
-    //     state: this.STATES.SAVED
-    //   });
-    // }
-  }
-
   componentWillUnmount() {
     chrome.runtime.onMessage.removeListener(this.events);
   }
@@ -309,8 +282,8 @@ class Footer extends React.Component {
                    onClick={ () => this.exportAsHTML() }>
                   { browser.i18n.getMessage('exportAsHTML') }
                 </button>
-        </li> {
-          !this.state.state.savingLayout && !this.state.state.ignoreChange ?
+              </li>
+              { !this.state.state.savingLayout && !this.state.state.ignoreChange ?
               <li>
                 <button className="mdl-menu__item context-menu-item"
                   title={browser.i18n.getMessage('disableSync')}
@@ -319,8 +292,9 @@ class Footer extends React.Component {
                 >
                   {browser.i18n.getMessage('disableSync')}
                 </button>
-            </li> : null
-        }<li>
+              </li> : null
+              }
+              <li>
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
                    onClick={ this.giveFeedbackCallback }

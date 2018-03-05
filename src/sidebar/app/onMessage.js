@@ -8,8 +8,9 @@ import { SYNC_AUTHENTICATED,
          RECONNECT,
          DISCONNECTED,
          SEND_TO_NOTES,
+         PROPAGATE_REDUX } from './utils/constants';
          // Actions
-         authenticate,
+import { authenticate,
          disconnect,
          saved,
          synced,
@@ -17,7 +18,8 @@ import { SYNC_AUTHENTICATED,
          saving,
          reconnect,
          textChange,
-         sendToNote } from './actions';
+         sendToNote,
+         popagateRedux } from './actions';
 import { INITIAL_CONTENT } from './data/initialContent';
 import store from './store';
 
@@ -65,76 +67,29 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case TEXT_SYNCING:
         store.dispatch(syncing());
-        // this.setState({
-        //   state: this.STATES.SYNCING
-        // });
         break;
       case TEXT_EDITING:
         store.dispatch(saving());
-        // this.setState({
-        //   state: this.state.isAuthenticated ? this.STATES.SYNCING : this.STATES.SAVING
-        // });
         break;
       case TEXT_SYNCED:
         if (store.getState().sync.email) {
           store.dispatch(synced(eventData.last_modified));
         }
-        // Enable sync-action
-        // this.setState({
-        //   lastModified: eventData.last_modified,
-        //   content: eventData.content || INITIAL_CONTENT
-        // });
-        // this.getLastSyncedTime();
         break;
       case TEXT_SAVED:
         store.dispatch(saved());
-        // if (!this.state.state.ignoreChange && !this.state.isAuthenticated) {
-        //   // persist reconnect warning, do not override with the 'saved at'
-        //   this.setState({
-        //     state: this.STATES.SAVED
-        //   });
-        // }
         break;
       case RECONNECT:
-        // clearTimeout(this.loginTimeout);
-        // this.setState({
-        //   state: this.STATES.RECONNECTSYNC
-        // });
         store.dispatch(reconnect());
-
         break;
       case DISCONNECTED:
         store.dispatch(disconnect());
         break;
-
-      //
-      // EDITOR EVENTS
-      //
-      // case 'kinto-loaded':
-        // content = eventData.data;
-        // this.handleLocalContent(this.editor, content);
-        // this.setState({
-        //   isKintoLoaded: true
-        // });
-        // break;
-      // case 'text-change':
-        // this.setState({
-        //   ignoreNextLoadEvent: true
-        // });
-        // browser.runtime.sendMessage({
-        //   action: 'kinto-load'
-        // });
-        // break;
-      // case 'text-synced':
-        // if (!this.state.ignoreTextSynced || eventData.conflict) {
-        //   this.handleLocalContent(this.editor, eventData.content);
-        // }
-        // this.setState({
-        //   ignoreTextSynced: false
-        // });
-        // break;
       case SEND_TO_NOTES:
         store.dispatch(sendToNote(eventData.text));
+        break;
+      case PROPAGATE_REDUX:
+        store.dispatch(popagateRedux(eventData.state, eventData.id));
         break;
     }
 });

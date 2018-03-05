@@ -177,6 +177,13 @@ browser.runtime.onMessage.addListener(function(eventData) {
         action: 'theme-changed'
       });
       break;
+    case 'propagate-redux':
+      browser.runtime.sendMessage({
+        action: 'propagate-redux',
+        id: parseInt(eventData.id) + 1,
+        state: eventData.state
+      });
+      break;
   }
 });
 

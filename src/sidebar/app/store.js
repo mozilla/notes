@@ -1,15 +1,39 @@
-
 import { createStore, applyMiddleware } from 'redux';
 import notesApp from './reducers';
+// import { PROPAGATE_REDUX, TEXT_CHANGE } from './utils/constants';
+/**
+ * `Propage` function insure data sync between multiple instance of Notes
+ */
 
-// On every change we send new state to background.
+// let id = 0;
+
 const propagate = store => next => action => {
-  const result = next(action);
-  browser.runtime.sendMessage('notes@mozilla.com', {
-    action: 'propagate-redux',
-    state: store.getState()
-  });
-  return result;
+  // let result = null;
+  // if (action.type === PROPAGATE_REDUX) {
+  //   if (action.id <= id) {
+  //     id = action.id;
+  //   } else {
+  //     // Override state
+  //     id = action.id;
+  //     result = next(action);
+  //   }
+  // } else {
+  //   result = next(action);
+  //   id = id + 1; // Avoid infinite loop
+
+  //   if (action.type === TEXT_CHANGE) {
+  //     chrome.runtime.sendMessage({
+  //       action: PROPAGATE_REDUX,
+  //       id,
+  //       state: store.getState()
+  //     });
+  //   }
+  // }
+  // if (result) {
+  //   return result;
+  // }
+
+  return next(action);
 };
 
 const store = createStore(

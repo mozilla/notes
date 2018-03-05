@@ -1,28 +1,16 @@
-/*
- * action types
- */
-
-import { MAXIMUM_PAD_SIZE } from './utils/constants';
-
-// FOR LEGACY PURPOSE, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
-export const SYNC_AUTHENTICATED = 'sync-authenticated';
-export const KINTO_LOADED = 'kinto-loaded';
-export const TEXT_CHANGE = 'text-change';
-export const TEXT_SYNCING = 'text-syncing';
-export const TEXT_EDITING = 'text-editing';
-export const TEXT_SYNCED = 'text-synced';
-export const TEXT_SAVED = 'text-saved';
-export const RECONNECT = 'reconnect';
-export const DISCONNECTED = 'disconnected';
-export const SEND_TO_NOTES = 'send-to-notes';
-export const EXPORT_HTML = 'export-html';
-// END OF LEGACY NAMING
-
-export const OPENING_LOGIN = 'opening-login';
-export const PLEASE_LOGIN = 'please-login';
-
-export const UPDATE_REDUX = 'update-redux';
-
+import { MAXIMUM_PAD_SIZE,
+         SYNC_AUTHENTICATED,
+         KINTO_LOADED,
+         TEXT_CHANGE,
+         TEXT_SYNCING,
+         TEXT_EDITING,
+         TEXT_SYNCED,
+         TEXT_SAVED,
+         RECONNECT,
+         DISCONNECTED,
+         SEND_TO_NOTES,
+         EXPORT_HTML,
+         PROPAGATE_REDUX } from './utils/constants';
 /*
  * action creators
  */
@@ -116,4 +104,8 @@ export function disconnect() {
     action: 'disconnected'
   });
   return { type: DISCONNECTED };
+}
+
+export function popagateRedux(state, id) {
+  return { type: PROPAGATE_REDUX, state, id};
 }

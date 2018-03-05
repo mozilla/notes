@@ -5,8 +5,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import Panel from './components/Panel';
 
-import './utils/theme.js'; // Initialize theming
-import './onMessage.js'; // Initialize chrome.runtime.onMessage.addListener
+import './onMessage.js'; // addListener chrome.runtime.onMessage
+import './utils/theme.js'; // addListener theming
 import '../static/scss/styles.scss';
 
 ReactDOM.render(

@@ -8,8 +8,9 @@ import {
   TEXT_SYNCING,
   TEXT_EDITING,
   KINTO_LOADED,
-  SEND_TO_NOTES
-} from './actions';
+  SEND_TO_NOTES,
+  PROPAGATE_REDUX
+} from './utils/constants';
 
 function sync(state = {}, action) {
   switch (action.type) {
@@ -21,6 +22,8 @@ function sync(state = {}, action) {
       return Object.assign({}, state, {
         email: null
       });
+    case PROPAGATE_REDUX:
+      return Object.assign({}, state, action.state.sync);
     default:
       return state;
   }
@@ -32,6 +35,8 @@ function kinto(state = {}, action) {
       return Object.assign({}, state, {
         loaded: true
       });
+    case PROPAGATE_REDUX:
+      return Object.assign({}, state, action.state.kinto);
     default:
       return state;
   }
@@ -66,6 +71,8 @@ function note(state = {content: ''}, action) {
       return Object.assign({}, state, {
         content: state.content + '<p>' + action.content.replace(/\n\n/g, '</p><p>') + '</p>'
       });
+    case PROPAGATE_REDUX:
+      return Object.assign({}, state, action.state.note);
     default:
       return state;
   }
