@@ -1,188 +1,82 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import CloseIcon from './CloseIcon';
 
-import { getPadStats, customizeEditor, insertSelectedText } from '../utils/editor';
+import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
 import INITIAL_CONTENT from '../data/initialContent';
 
+import { MAXIMUM_PAD_SIZE } from '../utils/constants';
+import { textChange } from '../actions';
+
 class Editor extends React.Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props);
+    this.props = props;
+    this.editor = null; // Editor object
+    this.ignoreNextUpdate = false; // Used to ignore infinite loop on editor change
+
     this.state = {
-      ignoreNextLoadEvent: false,
-      ignoreTextSynced: false,
-      wasLimitReached: false,
-      isKintoLoaded: false,
-      content: null
-    };
-    this.editor = null;
-
-    // Process events from chrome runtime onMessage
-    this.events = eventData => {
-      let content;
-      switch (eventData.action) {
-        case 'kinto-loaded':
-          content = eventData.data;
-          this.handleLocalContent(this.editor, content);
-          this.setState({
-            isKintoLoaded: true
-          });
-          break;
-        case 'text-change':
-          this.setState({
-            ignoreNextLoadEvent: true
-          });
-          browser.runtime.sendMessage({
-            action: 'kinto-load'
-          });
-          break;
-        case 'text-synced':
-          if (!this.state.ignoreTextSynced || eventData.conflict) {
-            this.handleLocalContent(this.editor, eventData.content);
-          }
-          this.setState({
-            ignoreTextSynced: false
-          });
-          break;
-        case 'send-to-notes':
-          // insert eventData.text in editor
-          insertSelectedText(this.editor, eventData.text);
-          break;
-      }
+      hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
     };
 
-    this.handleLocalContent = function(editor, content) {
-      if (!content) {
-        browser.storage.local.get('notes2').then(data => {
-
-          if (!data.hasOwnProperty('notes2')) {
-            this.init(INITIAL_CONTENT);
-            this.setState({
-              ignoreNextLoadEvent: true
-            });
-          } else {
-            this.init(data.notes2);
-            chrome.runtime
-              .sendMessage({
-                action: 'kinto-save',
-                content: data.notes2
-              })
-              .then(() => {
-                // Clean-up
-                browser.storage.local.remove('notes2');
-              });
-          }
-        });
-      } else if (!this.editor || this.editor.getData() !== content) {
-        this.init(content);
-      }
-    };
-
-    this.loadContent = () => {
-      browser.storage.local.get('credentials').then(data => {
-        if (data.hasOwnProperty('credentials')) {
-          this.setState({
-            isAuthenticated: true
-          });
-        }
-      });
-      this.setState({
-        ignoreNextLoadEvent: true
-      });
-      chrome.runtime.sendMessage({
-        action: 'kinto-sync'
-      });
-    };
-
-    this.closeNotification = () => {
-      this.setState({
-        wasLimitReached: false
-      });
-    };
+    this.closeNotification = () => this.setState({ hideNotification: true });
 
     this.init = (content) => {
-      this.setState({
-        content
-      });
       if (this.editor) {
         this.editor.setData(content);
-      } else {
-        ClassicEditor.create(this.node, INITIAL_CONFIG)
-          .then(editor => {
-            this.editor = editor;
-
-            customizeEditor(editor);
-
-            // Send message to background.js stating editor has been initialized
-            // and is ready to receive content
-            chrome.runtime.sendMessage({action: 'editor-ready'});
-
-            // this.loadContent();
-
-            // chrome.runtime.onMessage.addListener(this.events);
-
-            editor.document.on('change', (eventInfo, name) => {
-              const isFocused = document
-                .querySelector('.ck-editor__editable')
-                .classList.contains('ck-focused');
-              // Only use the focused editor or handle 'rename' events to set the data into storage.
-              if (isFocused || name === 'rename' || name === 'insert') {
-                const content = editor.getData();
-                if (!this.state.ignoreNextLoadEvent && content !== undefined &&
-                    content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-                  this.setState({
-                    ignoreTextSynced: true
-                  });
-                  if (content.length > 15000) {
-                    console.error('Maximum notepad size reached:', content.length); // eslint-disable-line no-console
-                    // TODO: display 'maximumPadSizeExceeded' notification
-                    this.setState({
-                      wasLimitReached: true,
-                    });
-                    browser.runtime.sendMessage({
-                      action: 'metrics-limit-reached',
-                      context: getPadStats(editor)
-                    });
-                  } else {
-                    this.setState({
-                      wasLimitReached: false,
-                    });
-                  }
-
-                  chrome.runtime.sendMessage({
-                    action: 'kinto-save',
-                    content
-                  });
-
-                  chrome.runtime.sendMessage({
-                    action: 'metrics-changed',
-                    context: getPadStats(editor)
-                  });
-                }
-              }
-              this.setState({
-                ignoreNextLoadEvent: false
-              });
-
-            });
-          })
-          .catch(error => {
-            console.error(error); // eslint-disable-line no-console
-          });
-
       }
     };
   }
 
   componentDidMount() {
-    chrome.runtime.onMessage.addListener(this.events);
-    this.loadContent();
+    ClassicEditor.create(this.node, INITIAL_CONFIG)
+      .then(editor => {
+        this.editor = editor;
+        customizeEditor(editor);
+        // Send message to background.js stating editor has been initialized
+        // and is ready to receive content
+        chrome.runtime.sendMessage({action: 'editor-ready'});
+
+        editor.document.on('change', (eventInfo, name) => {
+          const isFocused = document
+            .querySelector('.ck-editor__editable')
+            .classList.contains('ck-focused');
+          // Only use the focused editor or handle 'rename' events to set the data into storage.
+          if (isFocused || name === 'rename' || name === 'insert') {
+            const content = editor.getData();
+            if (content !== undefined &&
+                content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+
+              this.ignoreNextUpdate = true;
+              this.props.dispatch(textChange(content));
+
+              chrome.runtime.sendMessage({
+                action: 'metrics-changed',
+                context: getPadStats(editor)
+              });
+            }
+          }
+
+        });
+      })
+      .catch(error => {
+        console.error(error); // eslint-disable-line no-console
+      });
   }
 
-  componentWillUnmount() {
-    chrome.runtime.onMessage.removeListener(this.events);
+  // This is triggered when redux update state.
+  // Might come from anywhere
+  componentDidUpdate(nextProps, nextState) {
+    if (this.ignoreNextUpdate) {
+      this.ignoreNextUpdate = false;
+    } else if (this.editor && this.props.state && this.props.state.note &&
+        this.editor.getData() !== this.props.state.note.content) {
+        this.init(this.props.state.note.content);
+    }
   }
 
   render() {
@@ -194,10 +88,10 @@ class Editor extends React.Component {
           ref={node => {
             this.node = node;
           }}
-          dangerouslySetInnerHTML={{ __html: this.state.content }}
+          dangerouslySetInnerHTML={{ __html: this.props.state.note.content }}
         >
         </div>
-        { this.state.wasLimitReached ?
+        { !this.state.hideNotification && this.state.content && this.state.content.length > MAXIMUM_PAD_SIZE ?
         <div id="sync-note" style={{display: 'block'}}>
           <button onClick={this.closeNotification}><CloseIcon /></button>
           <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
@@ -207,4 +101,15 @@ class Editor extends React.Component {
   }
 }
 
-export default Editor;
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
+
+Editor.propTypes = {
+    state: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(Editor);

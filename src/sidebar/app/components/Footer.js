@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import SyncIcon from './SyncIcon';
@@ -7,9 +9,12 @@ import { formatFooterTime } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
 
+import { disconnect } from '../actions';
+
 class Footer extends React.Component {
   constructor(props) {
     super(props);
+    this.props = props;
     this.state = {
       isAuthenticated: false,
       lastModified: Date.now(),
@@ -80,7 +85,7 @@ class Footer extends React.Component {
           browser.runtime.sendMessage({
             action: 'kinto-sync'
           });
-          break;
+        break;
         case 'kinto-loaded':
           clearTimeout(this.loginTimeout);
           // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
@@ -142,7 +147,7 @@ class Footer extends React.Component {
           this.setState({
             isAuthenticated: false
           });
-          this.getLastSyncedTime();
+          // this.getLastSyncedTime();
           break;
       }
     };
@@ -181,9 +186,7 @@ class Footer extends React.Component {
         this.getLastSyncedTime();
       }, 2000);
 
-      browser.runtime.sendMessage('notes@mozilla.com', {
-        action: 'disconnected'
-      });
+      props.dispatch(disconnect());
     };
 
     this.enableSyncAction = () => {
@@ -238,6 +241,28 @@ class Footer extends React.Component {
 
     this.getLastSyncedTime();
     chrome.runtime.onMessage.addListener(this.events);
+  }
+
+  // This is triggered when redux update state.
+  // Might come from anywhere
+  componentDidUpdate(nextProps, nextState) {
+    // if (nextProps.state.note.isSaving) {
+    //   this.setState({
+    //     state: this.STATES.SAVING
+    //   });
+    // } else if (nextProps.state.note.isSyncing) {
+    //   this.setState({
+    //     state: this.STATES.SYNCING
+    //   });
+    // } else if (nextProps.state.sync.email) {
+    //   this.setState({
+    //     state: this.STATES.SYNCED
+    //   });
+    // } else {
+    //   this.setState({
+    //     state: this.STATES.SAVED
+    //   });
+    // }
   }
 
   componentWillUnmount() {
@@ -326,4 +351,15 @@ class Footer extends React.Component {
   }
 }
 
-export default Footer;
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
+
+Footer.propTypes = {
+    state: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(Footer);

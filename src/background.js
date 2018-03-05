@@ -193,7 +193,6 @@ function connected(p) {
 }
 browser.runtime.onConnect.addListener(connected);
 
-
 const defaultTheme = {
   theme: 'default'
 };
