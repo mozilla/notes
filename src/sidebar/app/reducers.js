@@ -12,69 +12,69 @@ import {
   PROPAGATE_REDUX
 } from './utils/constants';
 
-function sync(state = {}, action) {
+function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
-      return Object.assign({}, state, {
+      return Object.assign({}, sync, {
         email: action.email
       });
     case DISCONNECTED:
-      return Object.assign({}, state, {
+      return Object.assign({}, sync, {
         email: null
       });
     case PROPAGATE_REDUX:
-      return Object.assign({}, state, action.state.sync);
+      return Object.assign({}, sync, action.state.sync);
     default:
-      return state;
+      return sync;
   }
 }
 
-function kinto(state = {}, action) {
+function kinto(kinto = {}, action) {
   switch (action.type) {
     case KINTO_LOADED:
-      return Object.assign({}, state, {
+      return Object.assign({}, kinto, {
         loaded: true
       });
     case PROPAGATE_REDUX:
-      return Object.assign({}, state, action.state.kinto);
+      return Object.assign({}, kinto, action.state.kinto);
     default:
-      return state;
+      return kinto;
   }
 }
 
-function note(state = {content: ''}, action) {
+function note(note = {content: ''}, action) {
   switch (action.type) {
     case TEXT_CHANGE:
-      return Object.assign({}, state, {
+      return Object.assign({}, note, {
         content: action.content,
         lastModified: new Date()
       });
     case TEXT_SYNCED:
-      return Object.assign({}, state, {
+      return Object.assign({}, note, {
         lastSynced: action.date,
         isSyncing: false
       });
     case TEXT_SAVED:
-      return Object.assign({}, state, {
+      return Object.assign({}, note, {
         lastSaved: new Date(),
         isSaving: false
       });
     case TEXT_SYNCING:
-      return Object.assign({}, state, {
+      return Object.assign({}, note, {
         isSyncing: true
       });
     case TEXT_EDITING:
-      return Object.assign({}, state, {
+      return Object.assign({}, note, {
         isSaving: true
       });
     case SEND_TO_NOTES:
-      return Object.assign({}, state, {
-        content: state.content + '<p>' + action.content.replace(/\n\n/g, '</p><p>') + '</p>'
+      return Object.assign({}, note, {
+        content: note.content + '<p>' + action.content.replace(/\n\n/g, '</p><p>') + '</p>'
       });
     case PROPAGATE_REDUX:
-      return Object.assign({}, state, action.state.note);
+      return Object.assign({}, note, action.state.note);
     default:
-      return state;
+      return note;
   }
 }
 
