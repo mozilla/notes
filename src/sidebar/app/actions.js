@@ -15,6 +15,7 @@ export const TEXT_SAVED = 'text-saved';
 export const RECONNECT = 'reconnect';
 export const DISCONNECTED = 'disconnected';
 export const SEND_TO_NOTES = 'send-to-notes';
+export const EXPORT_HTML = 'export-html';
 // END OF LEGACY NAMING
 
 export const OPENING_LOGIN = 'opening-login';
@@ -74,6 +75,33 @@ export function reconnect() {
 
 export function loaded(content) {
   return { type: KINTO_LOADED, content };
+}
+
+export function exportHTML(content) {
+
+  const exportedFileName = 'notes.html';
+  const exportFileType = 'text/html';
+  const data = new Blob([`
+    <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <title>Notes</title>
+        </head>
+        <body>${content}</body>
+    </html>`.trim()], {'type': exportFileType});
+
+  const exportFilePath = window.URL.createObjectURL(data);
+
+  browser.downloads.download({
+    url: exportFilePath,
+    filename: exportedFileName
+  });
+
+  chrome.runtime.sendMessage({
+    action: 'metrics-export-html'
+  });
+  return { type: EXPORT_HTML, content };
 }
 
 export function sendToNote(content) {

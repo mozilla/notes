@@ -9,7 +9,7 @@ import { formatFooterTime } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
 
-import { disconnect } from '../actions';
+import { disconnect, exportHTML } from '../actions';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -160,22 +160,7 @@ class Footer extends React.Component {
       }
     };
 
-    this.exportAsHTML = () => {
-      const notesContent = this.state.content;
-      const exportedFileName = 'notes.html';
-      const exportFileType = 'text/html';
-
-      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
-      const exportFilePath = window.URL.createObjectURL(data);
-      browser.downloads.download({
-        url: exportFilePath,
-        filename: exportedFileName
-      });
-
-      chrome.runtime.sendMessage({
-        action: 'metrics-export-html'
-      });
-    };
+    this.exportAsHTML = () => props.dispatch(exportHTML(this.props.state.note.content));
 
     this.disconnectFromSync = () => {
       this.setState({
@@ -321,7 +306,7 @@ class Footer extends React.Component {
                 <button className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('exportAsHTML')}
                    style={{ width: '100%' }}
-                   onClick={ this.exportAsHTML }>
+                   onClick={ () => this.exportAsHTML() }>
                   { browser.i18n.getMessage('exportAsHTML') }
                 </button>
         </li> {
