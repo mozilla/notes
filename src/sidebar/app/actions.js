@@ -77,6 +77,9 @@ export function loaded(content) {
 }
 
 export function sendToNote(content) {
+  browser.runtime.sendMessage({
+    action: 'metrics-context-menu'
+  });
   return { type: SEND_TO_NOTES, content };
 }
 
