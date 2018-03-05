@@ -10,6 +10,11 @@ class Panel extends React.Component {
     // Create a connection with the background script to handle open and
     // close events.
     browser.runtime.connect();
+
+    // Request kinto sync
+    chrome.runtime.sendMessage({
+      action: 'kinto-sync'
+    });
   }
 
   render() {
