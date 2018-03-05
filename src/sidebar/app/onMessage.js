@@ -20,9 +20,8 @@ import { authenticate,
          textChange,
          sendToNote,
          popagateRedux } from './actions';
-import { INITIAL_CONTENT } from './data/initialContent';
+import INITIAL_CONTENT from './data/initialContent';
 import store from './store';
-
 /**
  * For each event, action on redux to update UI. No longer any event from chrome in components
  * Share state between instances ... update-redux?
