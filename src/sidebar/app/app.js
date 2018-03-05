@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { insertSelectedText } from './utils/editor';
 // import { thunk } from 'redux-thunk';
 // import { applyMiddleware } from 'redux';
 
@@ -91,13 +90,6 @@ chrome.runtime.onMessage.addListener(eventData => {
         } else {
           store.dispatch(textChange(eventData.data));
         }
-
-        // store.dispatch(loaded(eventData.data));
-
-        // // Force refresh on Material Design Lite library to activate mdl-menu
-        // componentHandler.upgradeAllRegistered(); // eslint-disable-line no-undef
-
-        // store.dispatch(loaded());
         break;
       case TEXT_CHANGE:
         browser.runtime.sendMessage({
@@ -175,12 +167,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         // });
         // break;
       case SEND_TO_NOTES:
-        // insert eventData.text in editor
-        // insertSelectedText(this.editor, eventData.text);
         store.dispatch(sendToNote(eventData.text));
-        browser.runtime.sendMessage({
-          action: 'metrics-context-menu'
-        });
         break;
     }
 });

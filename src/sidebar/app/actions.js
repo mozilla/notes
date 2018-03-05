@@ -84,7 +84,7 @@ export function sendToNote(content) {
 }
 
 export function disconnect() {
-  browser.runtime.sendMessage('notes@mozilla.com', {
+  browser.runtime.sendMessage({
     action: 'disconnected'
   });
   return { type: DISCONNECTED };
