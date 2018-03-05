@@ -21,7 +21,6 @@ globals:
   JoseJWE: false
   Kinto: false
   KintoClient: false
-  Quill: false
   TestPilotGA: false
   customizeEditor: false
   formatFooterTime: false

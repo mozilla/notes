@@ -13,10 +13,7 @@ const files = [
   copySync('node_modules/fxa-crypto-relier/dist/fxa-crypto-relier/fxa-crypto-relier.js', 'src/vendor/fxa-crypto-relier/fxa-crypto-relier.js'),
   copySync('node_modules/material-design-lite/material.min.js', 'src/sidebar/vendor/material.js'),
   copySync('node_modules/material-design-lite/LICENSE', 'src/sidebar/vendor/material.LICENSE'),
-  copySync('node_modules/@ckeditor/ckeditor5-build-classic/LICENSE.md', 'src/sidebar/vendor/ckeditor.LICENSE'),
-  // Remove quill after migration
-  copySync('node_modules/quill/LICENSE', 'src/sidebar/vendor/quill.LICENSE'),
-  copySync('node_modules/quill/dist/quill.min.js', 'src/sidebar/vendor/quill.js')
+  copySync('node_modules/@ckeditor/ckeditor5-build-classic/LICENSE.md', 'src/sidebar/vendor/ckeditor.LICENSE')
 ];
 
 Promise.all(files).catch(err => {

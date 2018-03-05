@@ -2,7 +2,7 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "3.0.0dev",
+  "version": "3.1.0dev",
   "author": "Test Pilot Mozilla Team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
@@ -28,7 +28,6 @@
     "kinto": "^10.0.0",
     "kinto-http": "4.3.4",
     "material-design-lite": "1.3.0",
-    "quill": "1.2.6",
     "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -97,8 +96,8 @@
     "prebuild": "npm run clean",
     "start": "npm run webpack && web-ext run -s build & npm run webpack:watch",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
-    "start-nightly": "npm start -- --firefox=nightly",
-    "start-deved": "npm start -- --firefox=firefoxdeveloperedition",
+    "start-nightly": "npm run webpack && web-ext run -s build --firefox=nightly & npm run webpack:watch",
+    "start-deved": "npm run webpack && web-ext run -s build --firefox=firefoxdeveloperedition & npm run webpack:watch",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start",
     "webpack": "webpack --config webpack.config.js",
