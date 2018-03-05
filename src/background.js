@@ -174,7 +174,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'propagate-redux':
       browser.runtime.sendMessage({
         action: 'propagate-redux',
-        id: parseInt(eventData.id) + 1,
+        id: eventData.id,
         state: eventData.state
       });
       break;
