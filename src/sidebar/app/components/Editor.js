@@ -45,6 +45,7 @@ class Editor extends React.Component {
             if (content !== undefined &&
                 content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
 
+              this.setState({ hideNotification: false });
               this.props.dispatch(textChange(content));
 
               chrome.runtime.sendMessage({
@@ -79,7 +80,7 @@ class Editor extends React.Component {
           dangerouslySetInnerHTML={{ __html: this.props.state.note.content }}
         >
         </div>
-        { !this.state.hideNotification && this.state.content && this.state.content.length > MAXIMUM_PAD_SIZE ?
+        { !this.state.hideNotification && this.props.state.note.content.length > MAXIMUM_PAD_SIZE ?
         <div id="sync-note" style={{display: 'block'}}>
           <button onClick={this.closeNotification}><CloseIcon /></button>
           <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
