@@ -40,6 +40,7 @@ export function textChange(content) {
 }
 
 export function authenticate(email) {
+  localStorage.setItem('userEmail', email);
   browser.runtime.sendMessage({
     action: 'kinto-sync'
   });
@@ -67,6 +68,7 @@ export function loaded(content) {
 }
 
 export function disconnect() {
+  localStorage.removeItem('userEmail');
   browser.runtime.sendMessage({
     action: 'disconnected'
   });

@@ -94,7 +94,7 @@ class Footer extends React.Component {
   componentDidMount() {
     browser.storage.local.get('credentials').then(data => {
       if (data.hasOwnProperty('credentials')) {
-        this.props.dispatch(authenticate(''));
+        this.props.dispatch(authenticate(localStorage.getItem('userEmail')));
       }
     });
   }
