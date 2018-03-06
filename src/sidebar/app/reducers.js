@@ -70,8 +70,8 @@ function note(note = {content: ''}, action) {
       return Object.assign({}, note, {
         content: action.content,
         lastModified: new Date(),
-        isSaving: true,
-        isSyncing: true
+        isSaving: !action.isInitialContent,
+        isSyncing: !action.isInitialContent
       });
     case TEXT_SYNCED:
       return Object.assign({}, note, {

@@ -12,24 +12,31 @@ import { MAXIMUM_PAD_SIZE,
          EXPORT_HTML,
          PLEASE_LOGIN,
          OPENING_LOGIN } from './utils/constants';
+
+import INITIAL_CONTENT from './data/initialContent';
+
 /*
  * action creators
  */
 export function textChange(content) {
-
-  chrome.runtime.sendMessage({
-    action: 'kinto-save',
-    content
-  });
-  if (content.length > MAXIMUM_PAD_SIZE) {
-    console.error( // eslint-disable-line no-console
-      'Maximum notepad size reached:', content.length
-    );
-    browser.runtime.sendMessage({
-      action: 'metrics-limit-reached'
+  let isInitialContent = false;
+  if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+    chrome.runtime.sendMessage({
+      action: 'kinto-save',
+      content
     });
+    if (content.length > MAXIMUM_PAD_SIZE) {
+      console.error( // eslint-disable-line no-console
+        'Maximum notepad size reached:', content.length
+      );
+      browser.runtime.sendMessage({
+        action: 'metrics-limit-reached'
+      });
+    }
+  } else {
+    isInitialContent = true;
   }
-  return { type: TEXT_CHANGE, content };
+  return { type: TEXT_CHANGE, content, isInitialContent };
 }
 
 export function authenticate(email) {

@@ -74,7 +74,6 @@ class Footer extends React.Component {
     };
 
     this.enableSyncAction = () => {
-      // persist reconnect warning, do not override with the 'saved at'
       if (!this.currentState.isClickable) return;
       if (this.props.state.sync.email) {
         props.dispatch(authenticate(this.props.state.sync.email));
@@ -100,6 +99,7 @@ class Footer extends React.Component {
     });
   }
 
+  // Not a big fan of all those if.
   componentWillReceiveProps(nextProps) {
     const state = nextProps.state;
     if (state.sync.email) { // If user is authenticated
