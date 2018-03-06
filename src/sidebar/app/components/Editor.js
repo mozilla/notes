@@ -17,7 +17,6 @@ class Editor extends React.Component {
     super(props);
     this.props = props;
     this.editor = null; // Editor object
-    this.ignoreNextUpdate = false; // Used to ignore infinite loop on editor change
 
     this.state = {
       hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
@@ -46,7 +45,6 @@ class Editor extends React.Component {
             if (content !== undefined &&
                 content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
 
-              this.ignoreNextUpdate = true;
               this.props.dispatch(textChange(content));
 
               chrome.runtime.sendMessage({
