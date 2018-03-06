@@ -9,21 +9,45 @@ import {
   TEXT_EDITING,
   KINTO_LOADED,
   SEND_TO_NOTES,
-  PROPAGATE_REDUX
+  OPENING_LOGIN,
+  RECONNECT_SYNC,
+  PLEASE_LOGIN
 } from './utils/constants';
 
 function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
       return Object.assign({}, sync, {
+        isOpeningLogin: false,
+        isPleaseLogin: false,
+        isReconnectSync: false,
         email: action.email
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
-        email: null
+        email: null,
+        isOpeningLogin: false,
+        isPleaseLogin: false,
+        isReconnectSync: false,
       });
-    case PROPAGATE_REDUX:
-      return Object.assign({}, sync, action.state.sync);
+    case OPENING_LOGIN:
+      return Object.assign({}, sync, {
+        isOpeningLogin: true,
+        isPleaseLogin: false,
+        isReconnectSync: false,
+      });
+    case PLEASE_LOGIN:
+      return Object.assign({}, sync, {
+        isOpeningLogin: false,
+        isPleaseLogin: true,
+        isReconnectSync: false,
+      });
+    case RECONNECT_SYNC:
+      return Object.assign({}, sync, {
+        isOpeningLogin: false,
+        isPleaseLogin: false,
+        isReconnectSync: true,
+      });
     default:
       return sync;
   }
@@ -33,10 +57,8 @@ function kinto(kinto = {}, action) {
   switch (action.type) {
     case KINTO_LOADED:
       return Object.assign({}, kinto, {
-        loaded: true
+        isLoaded: true
       });
-    case PROPAGATE_REDUX:
-      return Object.assign({}, kinto, action.state.kinto);
     default:
       return kinto;
   }
@@ -47,7 +69,9 @@ function note(note = {content: ''}, action) {
     case TEXT_CHANGE:
       return Object.assign({}, note, {
         content: action.content,
-        lastModified: new Date()
+        lastModified: new Date(),
+        isSaving: true,
+        isSyncing: true
       });
     case TEXT_SYNCED:
       return Object.assign({}, note, {
@@ -71,8 +95,10 @@ function note(note = {content: ''}, action) {
       return Object.assign({}, note, {
         content: note.content + '<p>' + action.content.replace(/\n\n/g, '</p><p>') + '</p>'
       });
-    case PROPAGATE_REDUX:
-      return Object.assign({}, note, action.state.note);
+    case SYNC_AUTHENTICATED:
+      return Object.assign({}, note, {
+        isSyncing: true
+      });
     default:
       return note;
   }

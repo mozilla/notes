@@ -5,7 +5,7 @@ import { SYNC_AUTHENTICATED,
          TEXT_EDITING,
          TEXT_SYNCED,
          TEXT_SAVED,
-         RECONNECT,
+         RECONNECT_SYNC,
          DISCONNECTED,
          SEND_TO_NOTES,
          PROPAGATE_REDUX } from './utils/constants';
@@ -16,10 +16,11 @@ import { authenticate,
          synced,
          syncing,
          saving,
-         reconnect,
+         reconnectSync,
          textChange,
          sendToNote,
-         popagateRedux } from './actions';
+         popagateRedux,
+         loaded } from './actions';
 import INITIAL_CONTENT from './data/initialContent';
 import store from './store';
 /**
@@ -38,6 +39,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case KINTO_LOADED:
+        store.dispatch(loaded());
         if (!eventData.data) {
           browser.storage.local.get('notes2').then(data => {
             if (!data.hasOwnProperty('notes2')) {
@@ -78,11 +80,13 @@ chrome.runtime.onMessage.addListener(eventData => {
       case TEXT_SAVED:
         store.dispatch(saved());
         break;
-      case RECONNECT:
-        store.dispatch(reconnect());
+      case RECONNECT_SYNC:
+        store.dispatch(reconnectSync());
         break;
       case DISCONNECTED:
-        store.dispatch(disconnect());
+        if (store.getState().sync.email) {
+          store.dispatch(disconnect());
+        }
         break;
       case SEND_TO_NOTES:
         store.dispatch(sendToNote(eventData.text));

@@ -12,12 +12,12 @@ export const TEXT_SYNCING = 'text-syncing';
 export const TEXT_EDITING = 'text-editing';
 export const TEXT_SYNCED = 'text-synced';
 export const TEXT_SAVED = 'text-saved';
-export const RECONNECT = 'reconnect';
+export const OPENING_LOGIN = 'opening-login';
+export const PLEASE_LOGIN = 'please-login';
+export const RECONNECT_SYNC = 'reconnect';
 export const DISCONNECTED = 'disconnected';
 export const SEND_TO_NOTES = 'send-to-notes';
 export const EXPORT_HTML = 'export-html';
-export const OPENING_LOGIN = 'opening-login';
-export const PLEASE_LOGIN = 'please-login';
 
 // Internal action to sync redux state between all instances
 export const PROPAGATE_REDUX = 'propagate-redux';

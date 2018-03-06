@@ -6,11 +6,12 @@ import { MAXIMUM_PAD_SIZE,
          TEXT_EDITING,
          TEXT_SYNCED,
          TEXT_SAVED,
-         RECONNECT,
+         RECONNECT_SYNC,
          DISCONNECTED,
          SEND_TO_NOTES,
          EXPORT_HTML,
-         PROPAGATE_REDUX } from './utils/constants';
+         PLEASE_LOGIN,
+         OPENING_LOGIN } from './utils/constants';
 /*
  * action creators
  */
@@ -54,17 +55,37 @@ export function saved() {
   return { type: TEXT_SAVED };
 }
 
-export function reconnect() {
-  chrome.runtime.sendMessage({
-    action: 'metrics-reconnect-sync'
-  });
-  return { type: RECONNECT };
-}
-
 export function loaded(content) {
   return { type: KINTO_LOADED, content };
 }
 
+export function disconnect() {
+  browser.runtime.sendMessage({
+    action: 'disconnected'
+  });
+  return { type: DISCONNECTED };
+}
+
+// LOGIN PROCESS
+export function openLogin() {
+  browser.runtime.sendMessage({
+    action: 'authenticate'
+  });
+  return { type: OPENING_LOGIN };
+}
+
+export function pleaseLogin() {
+  return { type: PLEASE_LOGIN };
+}
+
+export function reconnectSync() {
+  chrome.runtime.sendMessage({
+    action: 'metrics-reconnect-sync'
+  });
+  return { type: RECONNECT_SYNC };
+}
+
+// EXPORT HTML
 export function exportHTML(content) {
 
   const exportedFileName = 'notes.html';
@@ -99,13 +120,3 @@ export function sendToNote(content) {
   return { type: SEND_TO_NOTES, content };
 }
 
-export function disconnect() {
-  browser.runtime.sendMessage({
-    action: 'disconnected'
-  });
-  return { type: DISCONNECTED };
-}
-
-export function popagateRedux(state, id) {
-  return { type: PROPAGATE_REDUX, state, id};
-}
