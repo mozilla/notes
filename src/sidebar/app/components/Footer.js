@@ -90,9 +90,6 @@ class Footer extends React.Component {
             content: eventData.data || INITIAL_CONTENT,
             isKintoLoaded: true
           });
-
-          // Force refresh on Material Design Lite library to activate mdl-menu
-
           this.getLastSyncedTime();
           break;
         case 'text-change':
