@@ -53,6 +53,7 @@
       "vendor/kinto.js",
       "vendor/fxa-crypto-relier/fxa-crypto-relier.js",
       "vendor/testpilot-ga.js",
+      "utils.js",
       "fxa-utils.js",
       "sync.js",
       "background.js"
