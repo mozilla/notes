@@ -161,11 +161,11 @@ class Footer extends React.Component {
           window.addEventListener('click', (e) => {
             this.menu.classList.replace('open', 'close');
           }, { once: true });
-        }, 30)
+        }, 30);
       } else {
         this.menu.classList.replace('open', 'close');
       }
-    }
+    };
 
     this.exportAsHTML = () => {
       const notesContent = this.state.content;
@@ -321,7 +321,7 @@ class Footer extends React.Component {
                     onClick={ this.disconnectFromSync }>
                     {browser.i18n.getMessage('disableSync')}
                   </button>
-                </li>: null }
+                </li> : null }
                 <li>
                   <button
                     role="menuitem"
