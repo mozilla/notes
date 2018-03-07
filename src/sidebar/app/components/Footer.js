@@ -311,12 +311,12 @@ class Footer extends React.Component {
                 </button>
             </li> : null
         }<li>
-                <a className="mdl-menu__item context-menu-item"
-                   title={browser.i18n.getMessage('feedback')}
-                   onClick={ this.giveFeedbackCallback }
-                   href={ this.surveyPath }>
+              <button className="mdl-menu__item context-menu-item"
+                 title={browser.i18n.getMessage('feedback')}
+                 style={{ width: '100%' }}
+                 onClick={ this.giveFeedbackCallback }>
                   { browser.i18n.getMessage('feedback') }
-                </a>
+                </button>
               </li>
             </ul>
           </div>
