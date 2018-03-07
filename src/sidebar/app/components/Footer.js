@@ -220,7 +220,6 @@ class Footer extends React.Component {
     };
 
     this.giveFeedbackCallback = (e) => {
-      e.preventDefault();
       browser.tabs.create({
         url: this.surveyPath
       });
@@ -313,6 +312,9 @@ class Footer extends React.Component {
         }<li>
                 <a className="mdl-menu__item context-menu-item"
                    title={browser.i18n.getMessage('feedback')}
+                   onDragStart={
+                     (e) => e.preventDefault()
+                   }
                    onClick={ this.giveFeedbackCallback }
                    href={ this.surveyPath }>
                   { browser.i18n.getMessage('feedback') }
