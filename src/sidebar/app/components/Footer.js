@@ -91,7 +91,6 @@ class Footer extends React.Component {
           });
 
           // Force refresh on Material Design Lite library to activate mdl-menu
-          componentHandler.upgradeAllRegistered(); // eslint-disable-line no-undef
 
           this.getLastSyncedTime();
           break;
@@ -154,6 +153,21 @@ class Footer extends React.Component {
         });
       }
     };
+
+    this.toggleMenu = (e) => {
+      e.preventDefault();
+      if (this.menu.classList.contains('close')) {
+        this.menu.classList.replace('close', 'open');
+        // On click we close this menu
+        setTimeout(() => {
+          window.addEventListener('click', (e) => {
+            this.menu.classList.replace('open', 'close');
+          }, { once: true });
+        }, 30)
+      } else {
+        this.menu.classList.replace('open', 'close');
+      }
+    }
 
     this.exportAsHTML = () => {
       const notesContent = this.state.content;
@@ -286,39 +300,38 @@ class Footer extends React.Component {
               {this.rightText}
             </button>
           </div>
-          <div className="wrapper">
-            <button id="context-menu-button"
-              className="mdl-js-button" />
-            <ul
-              className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
-              data-mdl-for="context-menu-button">
-              <li>
-                <button className="mdl-menu__item context-menu-item"
-                   title={browser.i18n.getMessage('exportAsHTML')}
-                   style={{ width: '100%' }}
-                   onClick={ this.exportAsHTML }>
-                  { browser.i18n.getMessage('exportAsHTML') }
-                </button>
-        </li> {
-          !this.state.state.savingLayout && !this.state.state.ignoreChange ?
-              <li>
-                <button className="mdl-menu__item context-menu-item"
-                  title={browser.i18n.getMessage('disableSync')}
-                  style={{ width: '100%' }}
-                  onClick={ this.disconnectFromSync }
-                >
-                  {browser.i18n.getMessage('disableSync')}
-                </button>
-            </li> : null
-        }<li>
-              <button className="mdl-menu__item context-menu-item"
-                 title={browser.i18n.getMessage('feedback')}
-                 style={{ width: '100%' }}
-                 onClick={ this.giveFeedbackCallback }>
-                  { browser.i18n.getMessage('feedback') }
-                </button>
-              </li>
-            </ul>
+
+          <div className="photon-menu open top left" ref={menu => this.menu = menu }>
+            <button id="context-menu-button" onClick={(e) => this.toggleMenu(e)} />
+            <div className="wrapper">
+              <ul role="menu" >
+                <li>
+                  <button
+                    role="menuitem"
+                     title={browser.i18n.getMessage('exportAsHTML')}
+                     onClick={ this.exportAsHTML }>
+                    { browser.i18n.getMessage('exportAsHTML') }
+                  </button>
+                </li>
+                { !this.state.state.savingLayout && !this.state.state.ignoreChange ?
+                <li>
+                  <button
+                    role="menuitem"
+                    title={browser.i18n.getMessage('disableSync')}
+                    onClick={ this.disconnectFromSync }>
+                    {browser.i18n.getMessage('disableSync')}
+                  </button>
+                </li>: null }
+                <li>
+                  <button
+                    role="menuitem"
+                    title={browser.i18n.getMessage('feedback')}
+                    onClick={ this.giveFeedbackCallback }>
+                    { browser.i18n.getMessage('feedback') }
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </footer>

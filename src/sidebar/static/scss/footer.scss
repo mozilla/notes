@@ -5,7 +5,6 @@ Footer Styles
 
 footer * {
   font-size: 14px;
-  min-height: 30px;
 }
 
 button {
@@ -222,37 +221,4 @@ footer {
   position: absolute;
   bottom: 10px;
   right: 10px;
-}
-
-/* Select menu from sync */
-#context-menu-button {
-  background-size: 3px;
-  background-image: url('../svg/three-dots.svg');
-  background-position: 50%;
-  background-repeat: no-repeat;
-  width: 22px;
-  text-align: left;
-  position: absolute;
-  right: 6px;
-  top: 5px;
-  bottom: 6px;
-
-}
-
-#context-menu-button:hover,
-#context-menu-button:focus,
-#context-menu-button:active {
-  background-color: rgba(128, 128, 128, 0.2) !important;
-}
-
-.context-menu {
-  font-family: inherit;
-  padding: 0;
-}
-
-.context-menu-item {
-  font-size: 12px;
-  padding: 0 0 0 15px;
-  height: 18px;
-  line-height: 30px;
 }
