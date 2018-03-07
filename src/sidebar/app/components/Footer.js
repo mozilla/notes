@@ -152,19 +152,39 @@ class Footer extends React.Component {
       }
     };
 
+    this.onCloseEvent = (event) => {
+      this.menu.classList.replace('open', 'close');
+    };
+
     this.toggleMenu = (e) => {
-      e.preventDefault();
       if (this.menu.classList.contains('close')) {
         this.menu.classList.replace('close', 'open');
         // On click we close this menu
         setTimeout(() => {
-          window.addEventListener('click', (e) => {
-            this.menu.classList.replace('open', 'close');
-          }, { once: true });
+          window.addEventListener('click', this.onCloseEvent, { once: true });
         }, 30);
+        e.target.focus();
       } else {
+        window.removeEventListener('click', this.onCloseEvent);
         this.menu.classList.replace('open', 'close');
       }
+    };
+
+    this.handleKeyPress = (event) => {
+      console.log(event.key);
+      switch (event.key) {
+        case 'ArrowUp':
+          console.log('UP');
+          break;
+        case 'ArrowDown':
+          console.log('DOWN');
+          break;
+        case 'Escape':
+          window.removeEventListener('click', this.onCloseEvent);
+          this.menu.classList.replace('open', 'close');
+          break;
+      }
+      // event.key = ArrowUp, ArrowDown, ArrowLeft, ArrowRight
     };
 
     this.exportAsHTML = () => {
@@ -287,7 +307,7 @@ class Footer extends React.Component {
             <button
               id="enable-sync"
               title={ this.tooltip }
-              onClick={() => this.enableSyncAction()}
+              onClick={(e) => this.enableSyncAction(e)}
               className="notsyncing">
               <SyncIcon />
             </button>
@@ -300,7 +320,10 @@ class Footer extends React.Component {
           </div>
 
           <div className="photon-menu close top left" ref={menu => this.menu = menu }>
-            <button id="context-menu-button" onClick={(e) => this.toggleMenu(e)}>
+            <button
+              id="context-menu-button"
+              onClick={(e) => this.toggleMenu(e)}
+              onKeyDown={this.handleKeyPress}>
               <MoreIcon />
             </button>
             <div className="wrapper">
@@ -308,8 +331,8 @@ class Footer extends React.Component {
                 <li>
                   <button
                     role="menuitem"
-                     title={browser.i18n.getMessage('exportAsHTML')}
-                     onClick={ this.exportAsHTML }>
+                    title={browser.i18n.getMessage('exportAsHTML')}
+                    onClick={ this.exportAsHTML }>
                     { browser.i18n.getMessage('exportAsHTML') }
                   </button>
                 </li>
