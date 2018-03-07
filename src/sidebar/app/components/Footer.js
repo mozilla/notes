@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import SyncIcon from './SyncIcon';
 
-import { formatFooterTime, getFirstNonEmptyElement } from '../utils/utils';
+import { formatFooterTime, getFirstNonEmptyElement, formatFilename } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
 
@@ -159,18 +159,16 @@ class Footer extends React.Component {
       // get Notes content
       const notesContent = this.state.content;
       // assign contents to container element for later parsing
-      let parentElement = document.createElement('div');
-      parentElement.innerHTML = notesContent;
+      const parentElement = document.createElement('div');
+      parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
 
-      let exportedFileName =  '';
+      let exportFileName =  'blank.html';
       // get the first child element with text
-      let nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
+      const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
 
       // if non-empty child element exists, set the filename to the element's `textContent`
       if (nonEmptyChildElement) {
-        exportedFileName = `${nonEmptyChildElement.textContent.trim()}.html`;
-      } else { // if child elements are empty (aka empty notepad), set filename to 'blank.html'
-        exportedFileName = 'blank.html';
+        exportFileName = formatFilename(nonEmptyChildElement.textContent);
       }
 
       const exportFileType = 'text/html';
@@ -178,7 +176,8 @@ class Footer extends React.Component {
       const exportFilePath = window.URL.createObjectURL(data);
       browser.downloads.download({
         url: exportFilePath,
-        filename: exportedFileName
+        filename: exportFileName,
+        saveAs: true // always open file chooser, fixes #733
       });
 
       chrome.runtime.sendMessage({
