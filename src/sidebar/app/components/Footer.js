@@ -152,39 +152,55 @@ class Footer extends React.Component {
       }
     };
 
-    this.onCloseEvent = (event) => {
+    // Event used on window.addEventListener
+    this.onCloseListener = (event) => {
+      this.indexFocusedButton = null;
       this.menu.classList.replace('open', 'close');
     };
 
+    // Open and close menu
     this.toggleMenu = (e) => {
       if (this.menu.classList.contains('close')) {
         this.menu.classList.replace('close', 'open');
-        // On click we close this menu
         setTimeout(() => {
-          window.addEventListener('click', this.onCloseEvent, { once: true });
-        }, 30);
-        e.target.focus();
+          window.addEventListener('click', this.onCloseListener, { once: true });
+        }, 10);
+        this.indexFocusedButton = null; // index of focused button in this.buttons
+        e.target.focus(); // Give focus on menu button to enable keyboard navigation
       } else {
-        window.removeEventListener('click', this.onCloseEvent);
+        window.removeEventListener('click', this.onCloseListener);
         this.menu.classList.replace('open', 'close');
       }
     };
 
+    // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
-      console.log(event.key);
       switch (event.key) {
         case 'ArrowUp':
-          console.log('UP');
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = this.buttons.length - 1;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton - 1) % this.buttons.length;
+            if (this.indexFocusedButton < 0) {
+              this.indexFocusedButton = this.buttons.length - 1;
+            }
+          }
+          this.buttons[this.indexFocusedButton].focus();
           break;
         case 'ArrowDown':
-          console.log('DOWN');
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = 0;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton + 1) % this.buttons.length;
+          }
+          this.buttons[this.indexFocusedButton].focus();
           break;
         case 'Escape':
-          window.removeEventListener('click', this.onCloseEvent);
-          this.menu.classList.replace('open', 'close');
+          if (this.menu.classList.contains('open')) {
+            this.toggleMenu(event);
+          }
           break;
       }
-      // event.key = ArrowUp, ArrowDown, ArrowLeft, ArrowRight
     };
 
     this.exportAsHTML = () => {
@@ -297,6 +313,9 @@ class Footer extends React.Component {
     }
     this.tooltip = this.state.state.tooltip ? this.state.state.tooltip() : '';
 
+    // List of menu used for keyboard navigation
+    this.buttons = [];
+
     return (
       <footer>
         <div id="footer-buttons"
@@ -331,6 +350,8 @@ class Footer extends React.Component {
                 <li>
                   <button
                     role="menuitem"
+                    onKeyDown={this.handleKeyPress}
+                    ref={btn => btn ? this.buttons.push(btn) : null }
                     title={browser.i18n.getMessage('exportAsHTML')}
                     onClick={ this.exportAsHTML }>
                     { browser.i18n.getMessage('exportAsHTML') }
@@ -340,6 +361,8 @@ class Footer extends React.Component {
                 <li>
                   <button
                     role="menuitem"
+                    onKeyDown={this.handleKeyPress}
+                    ref={btn => btn ? this.buttons.push(btn) : null }
                     title={browser.i18n.getMessage('disableSync')}
                     onClick={ this.disconnectFromSync }>
                     {browser.i18n.getMessage('disableSync')}
@@ -348,6 +371,8 @@ class Footer extends React.Component {
                 <li>
                   <button
                     role="menuitem"
+                    onKeyDown={this.handleKeyPress}
+                    ref={btn => btn ? this.buttons.push(btn) : null }
                     title={browser.i18n.getMessage('feedback')}
                     onClick={ this.giveFeedbackCallback }>
                     { browser.i18n.getMessage('feedback') }

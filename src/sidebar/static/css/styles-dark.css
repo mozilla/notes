@@ -60,11 +60,14 @@ body {
 .photon-menu .wrapper ul:after { border-color: #393f4c transparent !important; }
 .photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }
 
-
+.warning #context-menu-button:active,
+.warning #context-menu-button:hover,
+.warning #context-menu-button:focus {
+  background-color: rgba(0, 0, 0, .1) !important;
+}
 
 #footer-buttons.warning #context-menu-button {
   background-color: rgb(255, 236, 173);
-  background-image: url('../svg/three-dots.svg');
 }
 
 #syncing-indicator {

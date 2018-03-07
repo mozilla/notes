@@ -85,21 +85,12 @@
           width: 100%;
           line-height: 24px;
           font-size: 12px;
+          outline: 0;
+          &:hover, &:focus, &:active {
+            background-color: rgba(128, 128, 128, 0.2) !important;
+          }
         }
       }
     }
   }
-
-}
-
-
-#context-menu-button:hover,
-#context-menu-button:focus,
-#context-menu-button:active {
-  background-color: rgba(128, 128, 128, 0.2) !important;
-}
-
-.context-menu {
-  font-family: inherit;
-  padding: 0;
 }
