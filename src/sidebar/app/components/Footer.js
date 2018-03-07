@@ -299,7 +299,7 @@ class Footer extends React.Component {
             </button>
           </div>
 
-          <div className="photon-menu open top left" ref={menu => this.menu = menu }>
+          <div className="photon-menu close top left" ref={menu => this.menu = menu }>
             <button id="context-menu-button" onClick={(e) => this.toggleMenu(e)}>
               <MoreIcon />
             </button>
