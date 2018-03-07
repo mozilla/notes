@@ -22,6 +22,7 @@ globals:
   Kinto: false
   KintoClient: false
   TestPilotGA: false
+  checkIndexedDbHealth: false
   customizeEditor: false
   formatFooterTime: false
   fxaCryptoRelier: false
