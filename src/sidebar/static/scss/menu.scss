@@ -1,21 +1,20 @@
 .photon-menu {
   position: relative;
+  height: 41px;
+  width: 41px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & > button {
-    background-size: 3px;
-    background-image: url('../svg/three-dots.svg');
-    background-position: 50%;
-    background-repeat: no-repeat;
-    width: 22px;
-    text-align: left;
-    position: absolute;
-    right: 6px;
-    top: 5px;
-    bottom: 6px;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 4px;
   }
 
   &.open {
-    &.top .wrapper { bottom: 44px; }
+    &.top .wrapper { bottom: 37px; }
     .wrapper {
       visibility: visible;
       opacity: 1;
@@ -24,7 +23,7 @@
   }
 
   &.close {
-    &.top .wrapper { bottom: 41px; }
+    &.top .wrapper { bottom: 33px; }
     .wrapper {
       visibility: hidden;
       opacity: 0;
@@ -53,7 +52,7 @@
         content: "";
         position: absolute;
         bottom: -8px;
-        right: 16px;
+        right: 8px;
         border-style: solid;
         border-width: 9px 9px 0;
         border-color: white transparent;
@@ -66,7 +65,7 @@
         content: "";
         position: absolute;
         bottom: -9px;
-        right: 16px;
+        right: 8px;
         border-style: solid;
         border-width: 9px 9px 0;
         border-color: rgba(12, 12, 13, 0.2) transparent;

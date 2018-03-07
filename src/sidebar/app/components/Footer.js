@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import SyncIcon from './SyncIcon';
+import MoreIcon from './MoreIcon';
 
 import { formatFooterTime } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
@@ -302,7 +303,9 @@ class Footer extends React.Component {
           </div>
 
           <div className="photon-menu open top left" ref={menu => this.menu = menu }>
-            <button id="context-menu-button" onClick={(e) => this.toggleMenu(e)} />
+            <button id="context-menu-button" onClick={(e) => this.toggleMenu(e)}>
+              <MoreIcon />
+            </button>
             <div className="wrapper">
               <ul role="menu" >
                 <li>
