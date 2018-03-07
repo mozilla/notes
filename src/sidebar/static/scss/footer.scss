@@ -110,7 +110,6 @@ footer {
     transition: opacity .1s, visibility 0s .2s;
   }
   #enable-sync {
-    margin-right: 32px;
     transition: margin var(--sync-animation-duration)
         cubic-bezier(0.07, 0.95, 0, 1) 0.05s,
       border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
