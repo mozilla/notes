@@ -178,7 +178,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
 function connected(p) {
   checkIndexedDbHealth().then(() => {},
     (idbError) => {
-      console.warn('idbError', idbError);
+      console.warn('idbError', idbError); // eslint-disable-line no-console
       sendMetrics('idb-fail');
     }
   );
