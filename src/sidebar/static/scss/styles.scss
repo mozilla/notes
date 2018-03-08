@@ -1,5 +1,6 @@
 @import 'ckeditor';
 @import 'menu';
+@import 'header';
 @import 'footer';
 
 html {
@@ -43,7 +44,7 @@ ol ol ol ol {
 List indents end
  */
 
-button {
+button, a.btn {
   cursor: pointer;
   display: block;
   background: none;

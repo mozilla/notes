@@ -1,12 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import SyncIcon from './SyncIcon';
-import MoreIcon from './MoreIcon';
-import WarningIcon from './WarningIcon';
+import SyncIcon from './icons/SyncIcon';
+import MoreIcon from './icons/MoreIcon';
+import WarningIcon from './icons/WarningIcon';
 
 import { formatFooterTime } from '../utils/utils';
-import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
 
 class Footer extends React.Component {
@@ -20,10 +19,6 @@ class Footer extends React.Component {
       state: {}
     };
     this.loginTimeout = null;
-
-    browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
-    });
 
     this.STATES = {
       SIGNIN: {
@@ -194,23 +189,6 @@ class Footer extends React.Component {
       }
     };
 
-    this.exportAsHTML = () => {
-      const notesContent = this.state.content;
-      const exportedFileName = 'notes.html';
-      const exportFileType = 'text/html';
-
-      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
-      const exportFilePath = window.URL.createObjectURL(data);
-      browser.downloads.download({
-        url: exportFilePath,
-        filename: exportedFileName
-      });
-
-      chrome.runtime.sendMessage({
-        action: 'metrics-export-html'
-      });
-    };
-
     this.disconnectFromSync = () => {
       browser.runtime.sendMessage('notes@mozilla.com', {
         action: 'disconnected'
@@ -248,13 +226,6 @@ class Footer extends React.Component {
           action: 'authenticate'
         });
       }
-    };
-
-    this.giveFeedbackCallback = (e) => {
-      e.preventDefault();
-      browser.tabs.create({
-        url: this.surveyPath
-      });
     };
   }
 

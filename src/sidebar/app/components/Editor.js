@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CloseIcon from './CloseIcon';
+import CloseIcon from './icons/CloseIcon';
 
 import { getPadStats, customizeEditor, insertSelectedText } from '../utils/editor';
 

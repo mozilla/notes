@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-key */
 import React from 'react';
 
+import Header from './Header';
 import Editor from './Editor';
 import Footer from './Footer';
 
@@ -14,6 +15,7 @@ class Panel extends React.Component {
 
   render() {
     return [
+      <Header />,
       <Editor />,
       <Footer />
     ];
