@@ -19,9 +19,9 @@ class Header extends React.Component {
     });
 
     // Event used on window.addEventListener
-    this.onCloseListener = (event) => {
-      this.indexFocusedButton = null;
+    this.onCloseListener = () => {
       this.menu.classList.replace('open', 'close');
+      window.removeEventListener('keydown', this.handleKeyPress);
     };
 
     // Open and close menu
@@ -30,12 +30,12 @@ class Header extends React.Component {
         this.menu.classList.replace('close', 'open');
         setTimeout(() => {
           window.addEventListener('click', this.onCloseListener, { once: true });
+          window.addEventListener('keydown', this.handleKeyPress);
         }, 10);
         this.indexFocusedButton = null; // index of focused button in this.buttons
-        e.target.focus(); // Give focus on menu button to enable keyboard navigation
       } else {
+        this.onCloseListener();
         window.removeEventListener('click', this.onCloseListener);
-        this.menu.classList.replace('open', 'close');
       }
     };
 
