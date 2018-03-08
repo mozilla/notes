@@ -4,8 +4,6 @@ Footer Styles
  */
 
 footer {
-  position: relative;
-  display: flex;
   width: 100%;
   height: 40px;
   font-size: 13px;
@@ -53,6 +51,10 @@ footer {
     }
 
     &.isClickable {
+      button {
+        color: black;
+        cursor: pointer !important;
+      }
       button:hover + p {
         display: block;
       }
@@ -76,13 +78,6 @@ footer {
 
       &.alignLeft {
         text-align: left;
-      }
-    }
-
-    &.isClickable {
-      button {
-        color: black;
-        cursor: pointer !important;
       }
     }
   }
