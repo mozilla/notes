@@ -163,10 +163,38 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
+                  disabled
+                  title={ browser.i18n.getMessage('newNote') }
+                  onClick={ () => console.log('not available yet') }>
+                  { browser.i18n.getMessage('newNote') }
+                </button>
+              </li>
+              <hr/>
+              <li>
+                <button
+                  role="menuitem"
+                  disabled
+                  title={ browser.i18n.getMessage('makePlainText') }
+                  onClick={ () => console.log('not available yet') }>
+                  { browser.i18n.getMessage('makePlainText') }
+                </button>
+              </li>
+              <li>
+                <button
+                  role="menuitem"
                   ref={ btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('exportAsHTML') }
                   onClick={ this.exportAsHTML }>
                   { browser.i18n.getMessage('exportAsHTML') }
+                </button>
+              </li>
+              <li>
+                <button
+                  role="menuitem"
+                  disabled
+                  title={ browser.i18n.getMessage('deleteNote') }
+                  onClick={ () => console.log('not available yet') }>
+                  { browser.i18n.getMessage('deleteNote') }
                 </button>
               </li>
               <li>
