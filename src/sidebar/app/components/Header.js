@@ -155,8 +155,7 @@ class Header extends React.Component {
           <button
             id="context-menu-button"
             className="iconBtn"
-            onClick={(e) => this.toggleMenu(e)}
-            onKeyDown={this.handleKeyPress}>
+            onClick={(e) => this.toggleMenu(e)}>
             <MoreIcon />
           </button>
           <div className="wrapper">
@@ -164,7 +163,6 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  onKeyDown={ this.handleKeyPress }
                   ref={ btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('exportAsHTML') }
                   onClick={ this.exportAsHTML }>
@@ -174,7 +172,6 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  onKeyDown={ this.handleKeyPress }
                   ref={btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('feedback') }
                   onClick={ this.giveFeedbackCallback }>

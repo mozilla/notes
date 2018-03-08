@@ -294,8 +294,7 @@ class Footer extends React.Component {
           <button
             id="context-menu-button"
             className="iconBtn"
-            onClick={(e) => this.toggleMenu(e)}
-            onKeyDown={this.handleKeyPress}>
+            onClick={(e) => this.toggleMenu(e)}>
             <MoreIcon />
           </button>
           <div className="wrapper">
