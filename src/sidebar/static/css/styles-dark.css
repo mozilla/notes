@@ -22,10 +22,6 @@ body {
   fill: #e6e6e6 !important;
 }
 
-.photon-menu > button {
-  background-color: #323744;
-}
-
 .photon-menu > button svg path {
   fill: #e6e6e6 !important;
 }
@@ -34,20 +30,21 @@ body {
   fill: black !important;
 }
 
-.photon-menu button {
+.photon-menu #context-menu-button {
   color: #e6e6e6 !important;
 }
 
-.photon-menu button:focus {
+.photon-menu #context-menu-button:focus {
   background-color: #272b35;
 }
-.photon-menu button:hover {
+.photon-menu #context-menu-button:hover {
   background-color: #323744;
 }
-.photon-menu button:active {
+.photon-menu #context-menu-button:active {
   background-color: #3d4352;
 }
 
+/*
 .photon-menu .wrapper {
   border: solid 1px rgba(12, 12, 13, 0.2);
 }
@@ -58,7 +55,7 @@ body {
 }
 
 .photon-menu .wrapper ul:after { border-color: #393f4c transparent !important; }
-.photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }
+.photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }*/
 
 .warning #context-menu-button:active,
 .warning #context-menu-button:hover,
@@ -66,7 +63,7 @@ body {
   background-color: rgba(0, 0, 0, .1) !important;
 }
 
-#footer-buttons.warning #context-menu-button {
+.warning #context-menu-button {
   background-color: rgb(255, 236, 173);
 }
 
@@ -83,26 +80,6 @@ body {
 .warning #syncing-indicator,
 #footer-buttons.warning div:first-child.isClickable button {
   color: black !important;
-}
-
-#footer-buttons button,
-#footer-buttons a {
-  background-color: #393f4c;
-  transition: background 50ms;
-}
-
-#footer-buttons button:hover,
-#footer-buttons a:hover {
-  background-color: #323744;
-}
-
-#footer-buttons button:active,
-#footer-buttons a:active {
-  background-color: #3d4352;
-}
-
-#footer-buttons.warning button {
-  color: #e6e6e6;
 }
 
 ::-moz-selection {
