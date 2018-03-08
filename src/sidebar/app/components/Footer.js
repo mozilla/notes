@@ -45,6 +45,7 @@ class Footer extends React.Component {
       RECONNECTSYNC: {
         yellowBackground: true,
         isClickable: true,
+        isReconnectState: true,
         text: () => browser.i18n.getMessage('reconnectSync')
       },
       SYNCING: {
@@ -328,31 +329,18 @@ class Footer extends React.Component {
           </button>
           <div className="wrapper">
             <ul role="menu" >
-
-              { !this.state.isAuthenticated ?
               <li>
                 <button
                   role="menuitem"
                   onKeyDown={this.handleKeyPress}
                   ref={btn => btn ? this.buttons.push(btn) : null }
-                  title={browser.i18n.getMessage('cancelSetup')}
+                  title={browser.i18n.getMessage(this.state.isAuthenticated ? 'disableSync' : 'cancelSetup')}
                   onClick={ this.disconnectFromSync }>
-                  {browser.i18n.getMessage('cancelSetup')}
+                  { !this.state.isAuthenticated ? browser.i18n.getMessage('cancelSetup') : '' }
+                  { this.state.isAuthenticated && this.state.state.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
+                  { this.state.isAuthenticated && !this.state.state.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
                 </button>
-              </li> : null }
-
-              { this.state.isAuthenticated ?
-              <li>
-                <button
-                  role="menuitem"
-                  onKeyDown={this.handleKeyPress}
-                  ref={btn => btn ? this.buttons.push(btn) : null }
-                  title={browser.i18n.getMessage('disableSync')}
-                  onClick={ this.disconnectFromSync }>
-                  {browser.i18n.getMessage('disableSync')}
-                </button>
-              </li> : null }
-
+              </li>
             </ul>
           </div>
         </div> : null }
