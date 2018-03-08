@@ -18,7 +18,6 @@ body {
   background-color: #323744;
 }
 
-
 footer button {
   background: none !important;
   color: #e6e6e6 !important;
@@ -30,12 +29,6 @@ footer.warning button.fullWidth {
 }
 footer.warning button svg path { fill: black !important; }
 
-
-/* Dropdown menu */
-.photon-menu > button {
-  background-color: #323744;
-}
-
 .photon-menu > button svg path {
   fill: #e6e6e6 !important;
 }
@@ -44,31 +37,24 @@ footer.warning button svg path { fill: black !important; }
   fill: black !important;
 }
 
-.photon-menu button {
+.photon-menu ul button {
+  color: black !important;
+}
+
+.photon-menu #context-menu-button {
   color: #e6e6e6 !important;
 }
 
-.photon-menu button:focus {
+.photon-menu #context-menu-button:focus {
   background-color: #272b35;
 }
-.photon-menu button:hover {
+.photon-menu #context-menu-button:hover {
   background-color: #323744;
 }
-.photon-menu button:active {
+.photon-menu #context-menu-button:active {
   background-color: #3d4352;
 }
 
-.photon-menu .wrapper {
-  border: solid 1px rgba(12, 12, 13, 0.2);
-}
-
-.photon-menu .wrapper ul {
-  background-color: #393f4c;
-  border: solid 1px #393f4c;
-}
-
-.photon-menu .wrapper ul:after { border-color: #393f4c transparent !important; }
-.photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }
 
 /* End Dropdown menu */
 

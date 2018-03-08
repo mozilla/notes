@@ -139,9 +139,9 @@ class Footer extends React.Component {
     };
 
     // Event used on window.addEventListener
-    this.onCloseListener = (event) => {
-      this.indexFocusedButton = null;
+    this.onCloseListener = () => {
       this.menu.classList.replace('open', 'close');
+      window.removeEventListener('keydown', this.handleKeyPress);
     };
 
     // Open and close menu
@@ -150,12 +150,12 @@ class Footer extends React.Component {
         this.menu.classList.replace('close', 'open');
         setTimeout(() => {
           window.addEventListener('click', this.onCloseListener, { once: true });
+          window.addEventListener('keydown', this.handleKeyPress);
         }, 10);
         this.indexFocusedButton = null; // index of focused button in this.buttons
-        e.target.focus(); // Give focus on menu button to enable keyboard navigation
       } else {
+        this.onCloseListener();
         window.removeEventListener('click', this.onCloseListener);
-        this.menu.classList.replace('open', 'close');
       }
     };
 
@@ -319,27 +319,5 @@ class Footer extends React.Component {
     );
   }
 }
-
-// <li>
-//   <button
-//     role="menuitem"
-//     onKeyDown={this.handleKeyPress}
-//     ref={btn => btn ? this.buttons.push(btn) : null }
-//     title={browser.i18n.getMessage('exportAsHTML')}
-//     onClick={ this.exportAsHTML }>
-//     { browser.i18n.getMessage('exportAsHTML') }
-//   </button>
-// </li>
-
-// <li>
-//   <button
-//     role="menuitem"
-//     onKeyDown={this.handleKeyPress}
-//     ref={btn => btn ? this.buttons.push(btn) : null }
-//     title={browser.i18n.getMessage('feedback')}
-//     onClick={ this.giveFeedbackCallback }>
-//     { browser.i18n.getMessage('feedback') }
-//   </button>
-// </li>
 
 export default Footer;
