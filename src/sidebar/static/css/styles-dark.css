@@ -14,14 +14,24 @@ body {
   fill: #000000 !important;
 }
 
-.savingLayout #enable-sync:hover {
+#enable-sync:hover {
   background-color: #323744;
 }
 
-#give-feedback-button svg path {
-  fill: #e6e6e6 !important;
-}
 
+footer button {
+  background: none !important;
+  color: #e6e6e6 !important;
+}
+footer button svg path { fill: #e6e6e6 !important; }
+footer.warning button.fullWidth {
+  background-color: rgb(255, 236, 173);
+  color: black !important;
+}
+footer.warning button svg path { fill: black !important; }
+
+
+/* Dropdown menu */
 .photon-menu > button {
   background-color: #323744;
 }
@@ -60,51 +70,9 @@ body {
 .photon-menu .wrapper ul:after { border-color: #393f4c transparent !important; }
 .photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }
 
-.warning #context-menu-button:active,
-.warning #context-menu-button:hover,
-.warning #context-menu-button:focus {
-  background-color: rgba(0, 0, 0, .1) !important;
-}
+/* End Dropdown menu */
 
-#footer-buttons.warning #context-menu-button {
-  background-color: rgb(255, 236, 173);
-}
-
-#syncing-indicator {
-  background: none !important;
-  color: inherit !important;
-}
-
-#footer-buttons div:first-child.isClickable button {
-  background: none !important;
-  color: #e6e6e6 !important;
-}
-
-.warning #syncing-indicator,
-#footer-buttons.warning div:first-child.isClickable button {
-  color: black !important;
-}
-
-#footer-buttons button,
-#footer-buttons a {
-  background-color: #393f4c;
-  transition: background 50ms;
-}
-
-#footer-buttons button:hover,
-#footer-buttons a:hover {
-  background-color: #323744;
-}
-
-#footer-buttons button:active,
-#footer-buttons a:active {
-  background-color: #3d4352;
-}
-
-#footer-buttons.warning button {
-  color: #e6e6e6;
-}
-
+/* ck-editor */
 ::-moz-selection {
   background-color: #5675b9;
   color: #fff;

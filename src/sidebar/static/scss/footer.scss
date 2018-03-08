@@ -146,18 +146,18 @@ footer {
   fill: black !important;
 }
 
-#footer-buttons button,
-#footer-buttons a {
+footer button,
+footer a {
   transition: background 50ms;
 }
 
-#footer-buttons button:hover,
-#footer-buttons a:hover {
+footer button:hover,
+footer a:hover {
   background-color: #ebebee;
 }
 
-#footer-buttons button:active,
-#footer-buttons a:active {
+footer button:active,
+footer a:active {
   background-color: #d7d7db;
 }
 
