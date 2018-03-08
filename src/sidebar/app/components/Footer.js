@@ -112,7 +112,7 @@ class Footer extends React.Component {
           if (!this.state.state.ignoreChange && !this.state.isAuthenticated) {
             // persist reconnect warning, do not override with the 'saved at'
             this.setState({
-              state: this.STATES.SAVED
+              state: this.STATES.SIGNIN
             });
           }
           break;
