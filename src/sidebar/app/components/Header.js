@@ -151,7 +151,7 @@ class Header extends React.Component {
           <p>Notes</p>
         </div>
 
-        <div className="photon-menu close top left" ref={menu => this.menu = menu }>
+        <div className="photon-menu close bottom left" ref={menu => this.menu = menu }>
           <button
             id="context-menu-button"
             className="iconBtn"
@@ -164,11 +164,21 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  onKeyDown={this.handleKeyPress}
+                  onKeyDown={ this.handleKeyPress }
+                  ref={ btn => btn ? this.buttons.push(btn) : null }
+                  title={ browser.i18n.getMessage('exportAsHTML') }
+                  onClick={ this.exportAsHTML }>
+                  { browser.i18n.getMessage('exportAsHTML') }
+                </button>
+              </li>
+              <li>
+                <button
+                  role="menuitem"
+                  onKeyDown={ this.handleKeyPress }
                   ref={btn => btn ? this.buttons.push(btn) : null }
-                  title={browser.i18n.getMessage(this.state.isAuthenticated ? 'disableSync' : 'cancelSetup')}
-                  onClick={ this.disconnectFromSync }>
-                  {  browser.i18n.getMessage('cancelSetup') }
+                  title={ browser.i18n.getMessage('feedback') }
+                  onClick={ this.giveFeedbackCallback }>
+                  { browser.i18n.getMessage('feedback') }
                 </button>
               </li>
             </ul>
@@ -179,26 +189,5 @@ class Header extends React.Component {
   }
 }
 
-// <li>
-//   <button
-//     role="menuitem"
-//     onKeyDown={this.handleKeyPress}
-//     ref={btn => btn ? this.buttons.push(btn) : null }
-//     title={browser.i18n.getMessage('exportAsHTML')}
-//     onClick={ this.exportAsHTML }>
-//     { browser.i18n.getMessage('exportAsHTML') }
-//   </button>
-// </li>
-
-// <li>
-//   <button
-//     role="menuitem"
-//     onKeyDown={this.handleKeyPress}
-//     ref={btn => btn ? this.buttons.push(btn) : null }
-//     title={browser.i18n.getMessage('feedback')}
-//     onClick={ this.giveFeedbackCallback }>
-//     { browser.i18n.getMessage('feedback') }
-//   </button>
-// </li>
 
 export default Header;

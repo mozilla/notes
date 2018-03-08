@@ -8,6 +8,7 @@
 
   &.open {
     &.top .wrapper { bottom: 37px; }
+    &.bottom .wrapper { top: 37px; }
     .wrapper {
       visibility: visible;
       opacity: 1;
@@ -17,6 +18,7 @@
 
   &.close {
     &.top .wrapper { bottom: 33px; }
+    &.bottom .wrapper { top: 33px; }
     .wrapper {
       visibility: hidden;
       opacity: 0;
@@ -28,8 +30,33 @@
     right: 4px;
   }
 
+  &.top .wrapper ul {
+    &:after {
+      bottom: -8px;
+      border-width: 9px 9px 0;
+    }
+
+    &:before {
+      bottom: -9px;
+      border-width: 9px 9px 0;
+    }
+  }
+
+  &.bottom .wrapper ul {
+    &:after {
+      top: -8px;
+      border-width: 0 9px 9px;
+    }
+
+    &:before {
+      top: -9px;
+      border-width: 0 9px 9px;
+    }
+  }
+
   .wrapper {
     position: absolute;
+    z-index: 9999;
     ul {
       background: white;
       padding: 6px 0;
@@ -45,10 +72,8 @@
       &:after {
         content: "";
         position: absolute;
-        bottom: -8px;
         right: 8px;
         border-style: solid;
-        border-width: 9px 9px 0;
         border-color: white transparent;
         display: block;
         width: 0;
@@ -58,10 +83,8 @@
       &:before {
         content: "";
         position: absolute;
-        bottom: -9px;
         right: 8px;
         border-style: solid;
-        border-width: 9px 9px 0;
         border-color: rgba(12, 12, 13, 0.2) transparent;
         display: block;
         width: 0;
