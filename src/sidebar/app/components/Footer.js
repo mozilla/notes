@@ -162,7 +162,7 @@ class Footer extends React.Component {
       const parentElement = document.createElement('div');
       parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
 
-      let exportFileName =  'blank.html';
+      let exportFileName = 'blank.html';
       // get the first child element with text
       const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
 
@@ -221,7 +221,7 @@ class Footer extends React.Component {
         const that = this;
         this.loginTimeout = setTimeout(() => {
           that.setState({
-            state:  this.STATES.PLEASELOGIN
+            state: this.STATES.PLEASELOGIN
           });
         }, 5000);
 
