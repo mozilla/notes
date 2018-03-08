@@ -3,7 +3,10 @@ import React from 'react';
 import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import MoreIcon from './icons/MoreIcon';
 
+import { getFirstNonEmptyElement, formatFilename } from '../utils/utils';
+
 import { SURVEY_PATH } from '../utils/constants';
+import INITIAL_CONTENT from '../data/initialContent';
 
 class Header extends React.Component {
   constructor(props) {
@@ -36,6 +39,27 @@ class Header extends React.Component {
       }
     };
 
+    this.events = eventData => {
+      // let content;
+      switch (eventData.action) {
+        case 'kinto-loaded':
+          this.setState({
+            lastModified: Date.now(),
+            content: eventData.data || INITIAL_CONTENT
+          });
+          break;
+        case 'text-synced':
+          // Enable sync-action
+          this.setState({
+            lastModified: eventData.last_modified,
+            content: eventData.content || INITIAL_CONTENT
+          });
+          this.getLastSyncedTime();
+          break;
+      }
+    };
+
+
     // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
       switch (event.key) {
@@ -67,19 +91,28 @@ class Header extends React.Component {
     };
 
     this.exportAsHTML = () => {
+      // get Notes content
       const notesContent = this.state.content;
-      const exportedFileName = 'notes.html';
-      const exportFileType = 'text/html';
+      // assign contents to container element for later parsing
+      const parentElement = document.createElement('div');
+      parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
 
+      let exportFileName = 'blank.html';
+      // get the first child element with text
+      const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
+
+      // if non-empty child element exists, set the filename to the element's `textContent`
+      if (nonEmptyChildElement) {
+        exportFileName = formatFilename(nonEmptyChildElement.textContent);
+      }
+
+      const exportFileType = 'text/html';
       const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
       const exportFilePath = window.URL.createObjectURL(data);
       browser.downloads.download({
         url: exportFilePath,
-        filename: exportedFileName
-      });
-
-      chrome.runtime.sendMessage({
-        action: 'metrics-export-html'
+        filename: exportFileName,
+        saveAs: true // always open file chooser, fixes #733
       });
     };
 
@@ -92,9 +125,11 @@ class Header extends React.Component {
   }
 
   componentDidMount() {
+    chrome.runtime.onMessage.addListener(this.events);
   }
 
   componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.events);
   }
 
   render() {
