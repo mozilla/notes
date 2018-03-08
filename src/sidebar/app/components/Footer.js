@@ -49,13 +49,11 @@ class Footer extends React.Component {
       },
       SYNCING: {
         animateSyncIcon: true,
-        text: () => browser.i18n.getMessage('syncProgress'),
-        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
+        text: () => browser.i18n.getMessage('syncProgress')
       },
       SYNCED: {
         isClickable: true,
-        text: () => browser.i18n.getMessage('syncComplete2', formatFooterTime(this.state.lastModified)),
-        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
+        text: () => browser.i18n.getMessage('syncComplete2', formatFooterTime(this.state.lastModified))
       }
     };
 
@@ -285,8 +283,6 @@ class Footer extends React.Component {
        warning: this.state.state.yellowBackground,
        animateSyncIcon: this.state.state.animateSyncIcon
     });
-
-    this.tooltip = this.state.state.tooltip ? this.state.state.tooltip() : '';
 
     // List of menu used for keyboard navigation
     this.buttons = [];
