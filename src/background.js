@@ -13,6 +13,8 @@ const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
 let isEditorReady = false;
+let editorReadDeferred;
+let isEditorReadyPromise = new Promise(resolve => { editorReadDeferred = {resolve}; });
 
 // Kinto sync and encryption
 
@@ -164,6 +166,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'editor-ready':
       isEditorReady = true;
+      editorReadDeferred.resolve();
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
@@ -228,17 +231,12 @@ browser.contextMenus.onClicked.addListener((info) => {
   sendSelectionText(info.selectionText);
 });
 
-function sendSelectionText(selectionText) {
+async function sendSelectionText(selectionText) {
+  await isEditorReadyPromise;
   // if editor ready, go ahead and send selected text to be pasted in Notes,
   // otherwise wait half a second before trying again
-  if (isEditorReady) {
-    chrome.runtime.sendMessage({
-      action: 'send-to-notes',
-      text: selectionText
-    });
-  } else {
-    setTimeout(() => {
-      sendSelectionText(selectionText);
-    }, 500);
-  }
+  chrome.runtime.sendMessage({
+    action: 'send-to-notes',
+    text: selectionText
+  });
 }
