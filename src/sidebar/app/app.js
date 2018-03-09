@@ -1,11 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter, Route } from 'react-router-dom';
 
-import Panel from './components/Panel';
+import ListPanel from './components/ListPanel';
+import EditorPanel from './components/EditorPanel';
 
 import '../static/scss/styles.scss';
 
 // Initialize theming
 import './utils/theme.js';
 
-ReactDOM.render(<Panel />, document.getElementById('notes'));
+const styles = {
+  container: {
+    flex: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  }
+}
+
+const root = (
+  <HashRouter>
+    <div style={styles.container}>
+      <Route exact path="/" component={ListPanel} />
+      <Route path="/note" component={EditorPanel} />
+    </div>
+  </HashRouter>
+);
+
+ReactDOM.render(root
+, document.getElementById('notes'));

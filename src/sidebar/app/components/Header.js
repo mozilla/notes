@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import MoreIcon from './icons/MoreIcon';
@@ -11,8 +12,6 @@ import INITIAL_CONTENT from '../data/initialContent';
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
 
     browser.runtime.getBrowserInfo().then((info) => {
       this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
@@ -58,7 +57,6 @@ class Header extends React.Component {
           break;
       }
     };
-
 
     // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
@@ -141,13 +139,12 @@ class Header extends React.Component {
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
 
         <div className="btnWrapper">
-          <a
-            href="/"
+          <Link
+            to="/"
             id="enable-sync"
-            onClick={(e) => this.enableSyncAction(e)}
             className="btn iconBtn">
             <ArrowLeftIcon />
-          </a>
+          </Link>
           <p>Notes</p>
         </div>
 
