@@ -34,7 +34,7 @@ footer {
   div:first-child {
     position: relative;
     flex: 1 0;
-    padding: 10px 40px 10px 10px;
+    padding: 10px 10px 10px 10px;
     color: #969696;
     text-align: left;
     display: block;
@@ -148,7 +148,7 @@ footer {
 }
 
 #syncing-indicator {
-  width: calc(100% - 25px);
+  width: calc(100% - 6px);
   text-overflow: ellipsis;
   overflow: hidden;
   margin-top: 1px;
