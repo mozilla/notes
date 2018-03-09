@@ -1,199 +1,95 @@
-/**
- * Copyright 2015 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/* Typography */
-/* Shadows */
-/* Animations */
-/* Dialog */
-.mdl-menu__container {
-  display: block;
-  margin: 0;
-  padding: 0;
-  border: none;
-  position: absolute;
-  overflow: visible;
-  height: 0;
-  width: 0;
-  visibility: hidden;
-  z-index: -1;
-}
-.mdl-menu__container.is-visible,
-.mdl-menu__container.is-animating {
-  z-index: 999;
-  visibility: visible;
-}
-
-.mdl-menu__outline {
-  display: block;
-  background: rgb(255, 255, 255);
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 2px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  opacity: 0;
-  -webkit-transform: scale(0);
-  transform: scale(0);
-  -webkit-transform-origin: 0 0;
-  transform-origin: 0 0;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  will-change: transform;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: -1;
-}
-.mdl-menu__container.is-visible .mdl-menu__outline {
-  opacity: 1;
-  -webkit-transform: scale(1);
-  transform: scale(1);
-  z-index: 999;
-}
-.mdl-menu__outline.mdl-menu--bottom-right {
-  -webkit-transform-origin: 100% 0;
-  transform-origin: 100% 0;
-}
-.mdl-menu__outline.mdl-menu--top-left {
-  -webkit-transform-origin: 0 100%;
-  transform-origin: 0 100%;
-}
-.mdl-menu__outline.mdl-menu--top-right {
-  -webkit-transform-origin: 100% 100%;
-  transform-origin: 100% 100%;
-}
-
-.mdl-menu {
-  position: absolute;
-  list-style: none;
-  top: 0;
-  left: 0;
-  height: auto;
-  width: auto;
-  min-width: 124px;
-  padding: 8px 0;
-  margin: 0;
-  opacity: 0;
-  clip: rect(0 0 0 0);
-  z-index: -1;
-}
-.mdl-menu__container.is-visible .mdl-menu {
-  opacity: 1;
-  z-index: 999;
-}
-.mdl-menu.is-animating {
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    clip 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.mdl-menu.mdl-menu--bottom-right {
-  left: auto;
-  right: 0;
-}
-.mdl-menu.mdl-menu--top-left {
-  top: auto;
-  bottom: 0;
-}
-.mdl-menu.mdl-menu--top-right {
-  top: auto;
-  left: auto;
-  bottom: 0;
-  right: 0;
-}
-.mdl-menu.mdl-menu--unaligned {
-  top: auto;
-  left: auto;
-}
-
-.mdl-menu__item {
-  display: block;
-  border: none;
-  color: rgba(0, 0, 0, 0.87);
-  background-color: transparent;
-  text-align: left;
-  margin: 0;
-  padding: 0 16px;
-  outline-color: rgb(189, 189, 189);
+.photon-menu {
   position: relative;
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-decoration: none;
-  cursor: pointer;
-  height: 48px;
-  line-height: 48px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.mdl-menu__container.is-visible .mdl-menu__item {
-  opacity: 1;
-}
-.mdl-menu__item::-moz-focus-inner {
-  border: 0;
-}
-.mdl-menu__item--full-bleed-divider {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-.mdl-menu__item[disabled],
-.mdl-menu__item[data-mdl-disabled] {
-  color: rgb(189, 189, 189);
-  background-color: transparent;
-  cursor: auto;
-}
-.mdl-menu__item[disabled]:hover,
-.mdl-menu__item[data-mdl-disabled]:hover {
-  background-color: transparent;
-}
-.mdl-menu__item[disabled]:focus,
-.mdl-menu__item[data-mdl-disabled]:focus {
-  background-color: transparent;
-}
-.mdl-menu__item[disabled] .mdl-ripple,
-.mdl-menu__item[data-mdl-disabled] .mdl-ripple {
-  background: transparent;
-}
-.mdl-menu__item:hover {
-  background-color: rgb(238, 238, 238);
-}
-.mdl-menu__item:focus {
-  outline: none;
-  background-color: rgb(238, 238, 238);
-}
-.mdl-menu__item:active {
-  background-color: rgb(224, 224, 224);
-}
+  height: 41px;
+  width: 41px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.mdl-menu__item--ripple-container {
-  display: block;
-  height: 100%;
-  left: 0px;
-  position: absolute;
-  top: 0px;
-  width: 100%;
-  z-index: 0;
-  overflow: hidden;
+  & > button {
+    width: 41px;
+    height: 39px;
+    padding: 12px;
+    margin-bottom: 2px;
+  }
+
+  &.open {
+    &.top .wrapper { bottom: 37px; }
+    .wrapper {
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 0s, opacity .250s cubic-bezier(0.07, 0.95, 0, 1), bottom .250s cubic-bezier(0.07, 0.95, 0, 1);
+    }
+  }
+
+  &.close {
+    &.top .wrapper { bottom: 33px; }
+    .wrapper {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s .250s, opacity .250s cubic-bezier(0.07, 0.95, 0, 1), bottom 0s .250s;
+    }
+  }
+
+  &.left .wrapper {
+    right: 4px;
+  }
+
+  .wrapper {
+    position: absolute;
+    ul {
+      background: white;
+      padding: 6px 0;
+      margin: inherit;
+      border: solid 1px rgba(12, 12, 13, 0.2);
+      box-shadow: 0px 4px 16px rgba(12, 12, 13, 0.1);
+      border-radius: 2px;
+      max-width: 320px;
+      max-height: calc(320px * 0.9);
+      overflow: auto;
+
+      &:after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        right: 8px;
+        border-style: solid;
+        border-width: 9px 9px 0;
+        border-color: white transparent;
+        display: block;
+        width: 0;
+        z-index: 1;
+      }
+
+      &:before {
+        content: "";
+        position: absolute;
+        bottom: -9px;
+        right: 8px;
+        border-style: solid;
+        border-width: 9px 9px 0;
+        border-color: rgba(12, 12, 13, 0.2) transparent;
+        display: block;
+        width: 0;
+        z-index: 0;
+      }
+
+      li {
+        list-style: none;
+        button {
+          overflow: auto;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding-left: 16px;
+          width: 100%;
+          line-height: 24px;
+          font-size: 12px;
+          outline: 0;
+          &:hover, &:focus, &:active {
+            background-color: rgba(128, 128, 128, 0.2) !important;
+          }
+        }
+      }
+    }
+  }
 }
