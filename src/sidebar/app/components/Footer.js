@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import SyncIcon from './SyncIcon';
+import MoreIcon from './MoreIcon';
 
 import { formatFooterTime, getFirstNonEmptyElement, formatFilename } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
@@ -89,10 +90,6 @@ class Footer extends React.Component {
             content: eventData.data || INITIAL_CONTENT,
             isKintoLoaded: true
           });
-
-          // Force refresh on Material Design Lite library to activate mdl-menu
-          componentHandler.upgradeAllRegistered(); // eslint-disable-line no-undef
-
           this.getLastSyncedTime();
           break;
         case 'text-change':
@@ -152,6 +149,57 @@ class Footer extends React.Component {
         this.setState({
           state: this.state.isAuthenticated ? this.STATES.SYNCED : this.STATES.SAVED
         });
+      }
+    };
+
+    // Event used on window.addEventListener
+    this.onCloseListener = () => {
+      this.menu.classList.replace('open', 'close');
+      window.removeEventListener('keydown', this.handleKeyPress);
+    };
+
+    // Open and close menu
+    this.toggleMenu = (e) => {
+      if (this.menu.classList.contains('close')) {
+        this.menu.classList.replace('close', 'open');
+        setTimeout(() => {
+          window.addEventListener('click', this.onCloseListener, { once: true });
+          window.addEventListener('keydown', this.handleKeyPress);
+        }, 10);
+        this.indexFocusedButton = null; // index of focused button in this.buttons
+      } else {
+        this.onCloseListener();
+        window.removeEventListener('click', this.onCloseListener);
+      }
+    };
+
+    // Handle keyboard navigation on menu
+    this.handleKeyPress = (event) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = this.buttons.length - 1;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton - 1) % this.buttons.length;
+            if (this.indexFocusedButton < 0) {
+              this.indexFocusedButton = this.buttons.length - 1;
+            }
+          }
+          this.buttons[this.indexFocusedButton].focus();
+          break;
+        case 'ArrowDown':
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = 0;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton + 1) % this.buttons.length;
+          }
+          this.buttons[this.indexFocusedButton].focus();
+          break;
+        case 'Escape':
+          if (this.menu.classList.contains('open')) {
+            this.toggleMenu(event);
+          }
+          break;
       }
     };
 
@@ -278,6 +326,9 @@ class Footer extends React.Component {
     }
     this.tooltip = this.state.state.tooltip ? this.state.state.tooltip() : '';
 
+    // List of menu used for keyboard navigation
+    this.buttons = [];
+
     return (
       <footer>
         <div id="footer-buttons"
@@ -288,7 +339,7 @@ class Footer extends React.Component {
             <button
               id="enable-sync"
               title={ this.tooltip }
-              onClick={() => this.enableSyncAction()}
+              onClick={(e) => this.enableSyncAction(e)}
               className="notsyncing">
               <SyncIcon />
             </button>
@@ -299,39 +350,46 @@ class Footer extends React.Component {
               {this.rightText}
             </button>
           </div>
-          <div className="wrapper">
-            <button id="context-menu-button"
-              className="mdl-js-button" />
-            <ul
-              className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
-              data-mdl-for="context-menu-button">
-              <li>
-                <button className="mdl-menu__item context-menu-item"
-                   title={browser.i18n.getMessage('exportAsHTML')}
-                   style={{ width: '100%' }}
-                   onClick={ this.exportAsHTML }>
-                  { browser.i18n.getMessage('exportAsHTML') }
-                </button>
-        </li> {
-          !this.state.state.savingLayout && !this.state.state.ignoreChange ?
-              <li>
-                <button className="mdl-menu__item context-menu-item"
-                  title={browser.i18n.getMessage('disableSync')}
-                  style={{ width: '100%' }}
-                  onClick={ this.disconnectFromSync }
-                >
-                  {browser.i18n.getMessage('disableSync')}
-                </button>
-            </li> : null
-        }<li>
-              <button className="mdl-menu__item context-menu-item"
-                 title={browser.i18n.getMessage('feedback')}
-                 style={{ width: '100%' }}
-                 onClick={ this.giveFeedbackCallback }>
-                  { browser.i18n.getMessage('feedback') }
-                </button>
-              </li>
-            </ul>
+
+          <div className="photon-menu close top left" ref={menu => this.menu = menu }>
+            <button
+              id="context-menu-button"
+              onClick={(e) => this.toggleMenu(e)}
+              onKeyDown={this.handleKeyPress}>
+              <MoreIcon />
+            </button>
+            <div className="wrapper">
+              <ul role="menu" >
+                <li>
+                  <button
+                    role="menuitem"
+                    ref={btn => btn ? this.buttons.push(btn) : null }
+                    title={browser.i18n.getMessage('exportAsHTML')}
+                    onClick={ this.exportAsHTML }>
+                    { browser.i18n.getMessage('exportAsHTML') }
+                  </button>
+                </li>
+                { !this.state.state.savingLayout && !this.state.state.ignoreChange ?
+                <li>
+                  <button
+                    role="menuitem"
+                    ref={btn => btn ? this.buttons.push(btn) : null }
+                    title={browser.i18n.getMessage('disableSync')}
+                    onClick={ this.disconnectFromSync }>
+                    {browser.i18n.getMessage('disableSync')}
+                  </button>
+                </li> : null }
+                <li>
+                  <button
+                    role="menuitem"
+                    ref={btn => btn ? this.buttons.push(btn) : null }
+                    title={browser.i18n.getMessage('feedback')}
+                    onClick={ this.giveFeedbackCallback }>
+                    { browser.i18n.getMessage('feedback') }
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </footer>

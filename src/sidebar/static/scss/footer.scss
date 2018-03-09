@@ -5,7 +5,6 @@ Footer Styles
 
 footer * {
   font-size: 14px;
-  min-height: 30px;
 }
 
 button {
@@ -81,10 +80,6 @@ footer {
   transition: padding 0s 0.2s;
 }
 
-#footer-buttons.actionable div:first-child {
-  color: black;
-}
-
 /* Sync icon */
 #enable-sync {
   position: absolute;
@@ -111,7 +106,6 @@ footer {
     transition: opacity .1s, visibility 0s .2s;
   }
   #enable-sync {
-    margin-right: 32px;
     transition: margin var(--sync-animation-duration)
         cubic-bezier(0.07, 0.95, 0, 1) 0.05s,
       border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
@@ -180,6 +174,12 @@ footer {
   }
 }
 
+.warning #context-menu-button:active,
+.warning #context-menu-button:hover,
+.warning #context-menu-button:focus {
+  background-color: rgba(0, 0, 0, .2);
+}
+
 #enable-sync svg {
   animation-name: rotate;
   animation-duration: 1s;
@@ -222,37 +222,4 @@ footer {
   position: absolute;
   bottom: 10px;
   right: 10px;
-}
-
-/* Select menu from sync */
-#context-menu-button {
-  background-size: 3px;
-  background-image: url('../svg/three-dots.svg');
-  background-position: 50%;
-  background-repeat: no-repeat;
-  width: 22px;
-  text-align: left;
-  position: absolute;
-  right: 6px;
-  top: 5px;
-  bottom: 6px;
-
-}
-
-#context-menu-button:hover,
-#context-menu-button:focus,
-#context-menu-button:active {
-  background-color: rgba(128, 128, 128, 0.2) !important;
-}
-
-.context-menu {
-  font-family: inherit;
-  padding: 0;
-}
-
-.context-menu-item {
-  font-size: 12px;
-  padding: 0 0 0 15px;
-  height: 18px;
-  line-height: 30px;
 }
