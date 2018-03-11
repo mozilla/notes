@@ -238,7 +238,7 @@ class Footer extends React.Component {
         this.setState({
           isAuthenticated: true,
           email: localStorage.getItem('useremail'),
-          state: this.STATES.SYNCING
+          state: this.STATES.SYNCED
         });
       }
     });
