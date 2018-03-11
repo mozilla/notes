@@ -51,6 +51,7 @@ class Footer extends React.Component {
 
     this.currentState = this.STATES.SIGNIN; // contain current state from this.STATES
 
+
     this.disconnectFromSync = () => {
       props.dispatch(disconnect());
     };
@@ -167,6 +168,9 @@ class Footer extends React.Component {
     // List of menu used for keyboard navigation
     this.buttons = [];
 
+    // List of menu used for keyboard navigation
+    this.buttons = [];
+
     return (
       <footer
         id="footer-buttons"
@@ -220,6 +224,7 @@ class Footer extends React.Component {
                 </button>
               </li>
             </ul>
+
           </div>
         </div> : null }
       </footer>
