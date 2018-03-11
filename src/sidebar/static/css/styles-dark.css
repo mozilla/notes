@@ -14,85 +14,49 @@ body {
   fill: #000000 !important;
 }
 
-.savingLayout #enable-sync:hover {
+#enable-sync:hover {
   background-color: #323744;
 }
 
-#give-feedback-button svg path {
-  fill: #e6e6e6 !important;
-}
-
-/* material-design-lite (MDL) menu */
-#context-menu-button {
-  background-image: url('../svg/three-dots-dark.svg');
-  background-color: #323744;
-}
-
-#footer-buttons.warning #context-menu-button {
-  background-color: rgb(255, 236, 173);
-  background-image: url('../svg/three-dots.svg');
-}
-
-#syncing-indicator {
-  background: none !important;
-  color: inherit !important;
-}
-
-#footer-buttons div:first-child.isClickable button {
+footer button {
   background: none !important;
   color: #e6e6e6 !important;
 }
+footer button svg path { fill: #e6e6e6 !important; }
+footer.warning button.fullWidth {
+  background-color: rgb(255, 236, 173);
+  color: black !important;
+}
+footer.warning button svg path { fill: black !important; }
 
-.warning #syncing-indicator,
-#footer-buttons.warning div:first-child.isClickable button {
+.photon-menu > button svg path {
+  fill: #e6e6e6 !important;
+}
+
+.warning .photon-menu > button svg path {
+  fill: black !important;
+}
+
+.photon-menu ul button {
   color: black !important;
 }
 
-
-.mdl-menu__outline {
-  background: #272b35;
-  transition: none;
+.photon-menu #context-menu-button {
+  color: #e6e6e6 !important;
 }
 
-.context-menu-item {
-  color: #e6e6e6;
+.photon-menu #context-menu-button:focus {
   background-color: #272b35;
 }
-
-.context-menu-item:hover {
+.photon-menu #context-menu-button:hover {
   background-color: #323744;
 }
-
-.context-menu-item:active {
+.photon-menu #context-menu-button:active {
   background-color: #3d4352;
 }
-/* end MDL menu */
+/* End Dropdown menu */
 
-
-#footer-buttons button,
-#footer-buttons a {
-  background-color: #393f4c;
-  transition: background 50ms;
-}
-
-#footer-buttons button:hover,
-#footer-buttons a:hover {
-  background-color: #323744;
-}
-
-#footer-buttons button:active,
-#footer-buttons a:active {
-  background-color: #3d4352;
-}
-
-#footer-buttons.actionable div:first-child {
-  color: white;
-}
-
-#footer-buttons.warning button {
-  color: #e6e6e6;
-}
-
+/* ck-editor */
 ::-moz-selection {
   background-color: #5675b9;
   color: #fff;
@@ -173,16 +137,3 @@ body {
   background-color: #008080;
 }
 
-.mdl-menu__item:focus {
-  background-color: #272b35;
-}
-.mdl-menu__item:hover {
-  background-color: #323744;
-}
-.mdl-menu__item:active {
-  background-color: #3d4352;
-}
-
-.actionable {
-  color: white;
-}

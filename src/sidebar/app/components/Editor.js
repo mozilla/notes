@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import CloseIcon from './CloseIcon';
+import CloseIcon from './icons/CloseIcon';
 
 import { getPadStats, customizeEditor } from '../utils/editor';
 

@@ -183,6 +183,13 @@ browser.runtime.onMessage.addListener(function(eventData) {
 
 // Handle opening and closing the add-on.
 function connected(p) {
+  checkIndexedDbHealth().then(() => {},
+    (idbError) => {
+      console.warn('idbError', idbError); // eslint-disable-line no-console
+      sendMetrics('idb-fail');
+    }
+  );
+
   sendMetrics('open', {loaded: true});
   closeUI = 'closeButton';
 

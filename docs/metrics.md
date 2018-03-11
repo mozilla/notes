@@ -160,3 +160,10 @@ An event fired when user goes over the pad limit (15000 character)
 - `cd4`
 - `cd5`
 - `cd6`
+
+#### `idb-fail`
+
+An event fired when IndexedDB fails to load
+
+- `ec` - `notes`
+- `ea` - `idb-fail`

@@ -29,7 +29,16 @@ git clone https://github.com/[yourusername]/notes.git
 
 You can also open the `test/index.html` file in your browser to run the automated tests.
 
-## Release 
+## WebExtension Permissions
+
+| Permission      | Description                                                                    |
+|-----------------|--------------------------------------------------------------------------------|
+| `downloads`     | Used for the "Export Note to HTML" feature. Exports note into Downloads.       |
+| `contextMenus`  | Used for "Send to Note" feature, sends text from pages to the Notes sidebar.   |
+| `storage`       | Storage for Notes.                                                             |
+| `identity`      | OAuth login to Firefox Accounts to sync your notes.                            |
+
+## Release
 
 See [RELEASE.md](https://github.com/mozilla/notes/blob/master/RELEASE.md) for release steps.
 
@@ -40,9 +49,7 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 ## Licenses
 
 * [Mozilla Public License Version 2.0](LICENSE)
-
 * [CKEditor Text Editor License](https://github.com/ckeditor/ckeditor5/blob/master/LICENSE.md) used under MPL licence
-* [Material Design Components in HTML/CSS/JS License](https://github.com/google/material-design-lite/blob/mdl-1.x/LICENSE)
 
 ## Design
 

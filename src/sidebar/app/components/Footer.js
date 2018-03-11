@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import SyncIcon from './SyncIcon';
+import SyncIcon from './icons/SyncIcon';
+import MoreIcon from './icons/MoreIcon';
+import WarningIcon from './icons/WarningIcon';
 
 import { formatFooterTime } from '../utils/utils';
 import { SURVEY_PATH } from '../utils/constants';
@@ -15,65 +17,108 @@ class Footer extends React.Component {
     super(props);
     this.props = props;
 
-    this.currentState = {}; // contain current state from this.STATES
-
-    browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
-    });
-
     this.STATES = {
-      SAVING: {
-        savingLayout: true,
-        animateSyncIcon: false,
-        leftText: () => browser.i18n.getMessage('savingChanges')
-      },
-      SAVED: {
-        savingLayout: true,
+      SIGNIN: {
         isClickable: true,
-        leftText: () => browser.i18n.getMessage('changesSaved'),
+        isSignInState: true,
+        text: () => browser.i18n.getMessage('signInToSync'),
         tooltip: () => browser.i18n.getMessage('syncNotes')
       },
       OPENINGLOGIN: {
-        ignoreChange: true,
+        cancelSetup: true,
         animateSyncIcon: true,
-        rightText: () => browser.i18n.getMessage('openingLogin')
+        text: () => browser.i18n.getMessage('openingLoginWindow')
       },
-      PLEASELOGIN: {
+      VERIFYACCOUNT: {
         ignoreChange: true,
         yellowBackground: true,
-        rightText: () => browser.i18n.getMessage('pleaseLogin')
+        text: () => browser.i18n.getMessage('pleaseLogin')
       },
       RECONNECTSYNC: {
         yellowBackground: true,
         isClickable: true,
-        rightText: () => browser.i18n.getMessage('reconnectSync')
+        isReconnectState: true,
+        text: () => browser.i18n.getMessage('reconnectSync')
       },
       SYNCING: {
         animateSyncIcon: true,
-        rightText: () => browser.i18n.getMessage('syncProgress'),
-        tooltip: () => this.props.state.sync.email ? browser.i18n.getMessage('syncToMail', this.props.state.sync.email) : ''
+        text: () => browser.i18n.getMessage('syncProgress')
       },
       SYNCED: {
         isClickable: true,
-        rightText: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.props.state.note.lastSynced)),
-        tooltip: () => this.props.state.sync.email ? browser.i18n.getMessage('syncToMail', this.props.state.sync.email) : ''
-      },
-      DISCONNECTED: {
-        savingLayout: true,
-        rightText: () => browser.i18n.getMessage('disconnected')
+        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.state.lastModified))
       }
     };
+
+    this.currentState = this.STATES.SIGNIN; // contain current state from this.STATES
 
     this.exportAsHTML = () => props.dispatch(exportHTML(this.props.state.note.content));
 
     this.disconnectFromSync = () => {
-      this.setState({
-        state: this.STATES.DISCONNECTED
-      });
       props.dispatch(disconnect());
     };
 
+    this.getLastSyncedTime = () => {
+      if (!this.currentState.ignoreChange) {
+        this.currentState = this.props.state.sync.email ? this.STATES.SYNCED : this.STATES.SIGNIN;
+      }
+    };
+
+    // Event used on window.addEventListener
+    this.onCloseListener = () => {
+      if (this.menu) {
+        this.menu.classList.replace('open', 'close');
+      }
+      window.removeEventListener('keydown', this.handleKeyPress);
+    };
+
+    // Open and close menu
+    this.toggleMenu = (e) => {
+      if (this.menu.classList.contains('close')) {
+        this.menu.classList.replace('close', 'open');
+        setTimeout(() => {
+          window.addEventListener('click', this.onCloseListener, { once: true });
+          window.addEventListener('keydown', this.handleKeyPress);
+        }, 10);
+        this.indexFocusedButton = null; // index of focused button in this.buttons
+      } else {
+        this.onCloseListener();
+        window.removeEventListener('click', this.onCloseListener);
+      }
+    };
+
+    // Handle keyboard navigation on menu
+    this.handleKeyPress = (event) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = this.buttons.length - 1;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton - 1) % this.buttons.length;
+            if (this.indexFocusedButton < 0) {
+              this.indexFocusedButton = this.buttons.length - 1;
+            }
+          }
+          this.buttons[this.indexFocusedButton].focus();
+          break;
+        case 'ArrowDown':
+          if (this.indexFocusedButton === null) {
+            this.indexFocusedButton = 0;
+          } else {
+            this.indexFocusedButton = (this.indexFocusedButton + 1) % this.buttons.length;
+          }
+          this.buttons[this.indexFocusedButton].focus();
+          break;
+        case 'Escape':
+          if (this.menu.classList.contains('open')) {
+            this.toggleMenu(event);
+          }
+          break;
+      }
+    };
+
     this.enableSyncAction = () => {
+
       if (!this.currentState.isClickable) return;
       if (this.props.state.sync.email) {
         props.dispatch(authenticate(this.props.state.sync.email));
@@ -81,13 +126,6 @@ class Footer extends React.Component {
         setTimeout(() => props.dispatch(pleaseLogin()), 5000);
         props.dispatch(openLogin());
       }
-    };
-
-    this.giveFeedbackCallback = (e) => {
-      e.preventDefault();
-      browser.tabs.create({
-        url: this.surveyPath
-      });
     };
   }
 
@@ -112,101 +150,81 @@ class Footer extends React.Component {
       if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
         this.currentState = this.STATES.OPENINGLOGIN;
       } else if (state.sync.isPleaseLogin) {
-        this.currentState = this.STATES.PLEASELOGIN;
+        this.currentState = this.STATES.VERIFYACCOUNT;
       } else if (state.sync.isReconnectSync) {
         this.currentState = this.STATES.RECONNECTSYNC;
-      } else if (state.note.isSaving) {
-        this.currentState = this.STATES.SAVING;
       } else {
-        this.currentState = this.STATES.SAVED;
+        this.currentState = this.STATES.SIGNIN;
       }
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.footerbuttons) {
-      componentHandler.upgradeAllRegistered(); // eslint-disable-line no-undef
     }
   }
 
   render() {
 
-    if (!this.props.state.kinto.isLoaded) return '';
-
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
-       savingLayout: this.currentState.savingLayout,
-       syncingLayout: !this.currentState.savingLayout,
        warning: this.currentState.yellowBackground,
        animateSyncIcon: this.currentState.animateSyncIcon
     });
 
-    // We need to cache both text to allow opacity transition between state switch
-    // On every rendering it will update text based on state
-    if (this.currentState.rightText) {
-      this.rightText = this.currentState.rightText();
-    } else if (this.currentState.leftText) {
-      this.leftText = this.currentState.leftText();
-    }
-    this.tooltip = this.currentState.tooltip ? this.currentState.tooltip() : '';
+    // List of menu used for keyboard navigation
+    this.buttons = [];
 
     return (
-      <footer>
-        <div id="footer-buttons"
-          ref={footerbuttons => this.footerbuttons = footerbuttons}
-          className={footerClass}>
-          <div className={this.currentState.isClickable ? 'isClickable' : ''}>
-            <p id="saving-indicator">{this.leftText}</p>
-            <button
-              id="enable-sync"
-              title={ this.tooltip }
-              onClick={() => this.enableSyncAction()}
-              className="notsyncing">
-              <SyncIcon />
-            </button>
-            <button
-              id="syncing-indicator"
-              title={ this.tooltip }
-              onClick={() => this.enableSyncAction()}>
-              {this.rightText}
-            </button>
-          </div>
+      <footer
+        id="footer-buttons"
+        ref={footerbuttons => this.footerbuttons = footerbuttons}
+        className={footerClass}>
+
+        { this.currentState.isSignInState || this.currentState.yellowBackground ?
+        <button
+          className="fullWidth"
+          title={ this.currentState.tooltip ? this.currentState.tooltip() : '' }
+          onClick={(e) => this.enableSyncAction(e)}>
+          { this.currentState.yellowBackground ?
+          <WarningIcon /> : <SyncIcon />} <span>{ this.currentState.text() }</span>
+        </button>
+        : null }
+
+        { !this.currentState.isSignInState && !this.currentState.yellowBackground ?
+        <div className={this.currentState.isClickable ? 'isClickable btnWrapper' : 'btnWrapper'}>
+          <button
+            id="enable-sync"
+            disabled={!this.currentState.isClickable}
+            onClick={(e) => this.enableSyncAction(e)}
+            className="iconBtn">
+            <SyncIcon />
+          </button>
+          <p>{ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }</p>
+          <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
+        </div>
+        : null }
+
+        { !this.currentState.isSignInState ?
+        <div className="photon-menu close top left" ref={menu => this.menu = menu }>
+          <button
+            id="context-menu-button"
+            className="iconBtn"
+            onClick={(e) => this.toggleMenu(e)}>
+            <MoreIcon />
+          </button>
           <div className="wrapper">
-            <button id="context-menu-button"
-              className="mdl-js-button" />
-            <ul
-              className="mdl-menu mdl-menu--top-right mdl-js-menu context-menu"
-              data-mdl-for="context-menu-button">
+            <ul role="menu" >
               <li>
-                <button className="mdl-menu__item context-menu-item"
-                   title={browser.i18n.getMessage('exportAsHTML')}
-                   style={{ width: '100%' }}
-                   onClick={ () => this.exportAsHTML() }>
-                  { browser.i18n.getMessage('exportAsHTML') }
+                <button
+                  role="menuitem"
+                  onKeyDown={this.handleKeyPress}
+                  ref={btn => btn ? this.buttons.push(btn) : null }
+                  title={browser.i18n.getMessage(this.props.state.sync.email ? 'disableSync' : 'cancelSetup')}
+                  onClick={ this.disconnectFromSync }>
+                  { !this.props.state.sync.email ? browser.i18n.getMessage('cancelSetup') : '' }
+                  { this.props.state.sync.email && this.currentState.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
+                  { this.props.state.sync.email && !this.currentState.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
                 </button>
-              </li>
-              { !this.currentState.savingLayout && !this.currentState.ignoreChange ?
-              <li>
-                <button className="mdl-menu__item context-menu-item"
-                  title={browser.i18n.getMessage('disableSync')}
-                  style={{ width: '100%' }}
-                  onClick={ this.disconnectFromSync }
-                >
-                  {browser.i18n.getMessage('disableSync')}
-                </button>
-              </li> : null
-              }
-              <li>
-                <a className="mdl-menu__item context-menu-item"
-                   title={browser.i18n.getMessage('feedback')}
-                   onClick={ this.giveFeedbackCallback }
-                   href={ this.surveyPath }>
-                  { browser.i18n.getMessage('feedback') }
-                </a>
               </li>
             </ul>
           </div>
-        </div>
+        </div> : null }
       </footer>
     );
   }
