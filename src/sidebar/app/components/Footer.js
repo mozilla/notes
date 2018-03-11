@@ -248,7 +248,7 @@ class Footer extends React.Component {
 
   render() {
 
-    if (!this.state.isKintoLoaded) return '';
+    if (!this.state.state.text) return '';
 
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({

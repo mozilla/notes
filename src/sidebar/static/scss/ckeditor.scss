@@ -3,15 +3,13 @@
 */
 
 .editorWrapper {
-  display: flex;
-  flex: calc(100% - 40px);
   flex-direction: column;
   flex-grow: 1;
   margin: 0;
   padding: 0;
   overflow: hidden;
   position: relative;
-
+  flex: 100px;
 }
 
 .ck-editor {

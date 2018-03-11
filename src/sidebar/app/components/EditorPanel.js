@@ -16,8 +16,7 @@ class EditorPanel extends React.Component {
   render() {
     return [
       <Header />,
-      <Editor />,
-      <Footer />
+      <Editor />
     ];
   }
 }
