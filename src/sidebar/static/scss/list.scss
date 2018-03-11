@@ -1,0 +1,54 @@
+.listView {
+    font-size: 0.9rem;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+
+    & + a {
+        flex: 40px;
+    }
+
+    ul {
+        flex-grow: 1;
+        flex: 50px;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        li {
+            list-style: none;
+            a {
+                display: block !important;
+                color: rgb(132, 132, 132);
+                font-size: 0.9rem !important;
+                flex-direction: column;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                padding-right: 17px;
+                p {
+
+                    strong {
+                        font-size: 1rem;
+                        font-weight: 500;
+                        color: black;
+                    }
+                    line-height: 18px;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    font-weight: 100;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    color: rgb(140, 140, 140);
+
+                    span {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        padding-right: 2px !important;
+                        font-weight: 400;
+                        color: rgb(140, 140, 140);
+                    }
+                }
+            }
+        }
+    }
+}
