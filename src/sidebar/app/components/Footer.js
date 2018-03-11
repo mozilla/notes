@@ -11,14 +11,6 @@ import INITIAL_CONTENT from '../data/initialContent';
 class Footer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isAuthenticated: false,
-      lastModified: Date.now(),
-      content: INITIAL_CONTENT,
-      isKintoLoaded: false,
-      state: {}
-    };
-    this.loginTimeout = null;
 
     this.STATES = {
       SIGNIN: {
@@ -53,12 +45,23 @@ class Footer extends React.Component {
       }
     };
 
+    this.state = {
+      isAuthenticated: false,
+      lastModified: Date.now(),
+      content: INITIAL_CONTENT,
+      isKintoLoaded: false,
+      state: this.STATES.SIGNIN
+    };
+    this.loginTimeout = null;
+
+
+
     this.events = eventData => {
       // let content;
       switch (eventData.action) {
         case 'sync-authenticated':
           clearTimeout(this.loginTimeout);
-
+          localStorage.setItem('useremail', eventData.profile.email);
           this.setState({
             state: this.STATES.SYNCING,
             isAuthenticated: true,
@@ -233,7 +236,9 @@ class Footer extends React.Component {
     browser.storage.local.get('credentials').then(data => {
       if (data.hasOwnProperty('credentials')) {
         this.setState({
-          isAuthenticated: true
+          isAuthenticated: true,
+          email: localStorage.getItem('useremail'),
+          state: this.STATES.SYNCING
         });
       }
     });
@@ -248,16 +253,11 @@ class Footer extends React.Component {
 
   render() {
 
-    if (!this.state.state.text) return '';
-
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
        warning: this.state.state.yellowBackground,
        animateSyncIcon: this.state.state.animateSyncIcon
     });
-
-    // List of menu used for keyboard navigation
-    this.buttons = [];
 
     // List of menu used for keyboard navigation
     this.buttons = [];
