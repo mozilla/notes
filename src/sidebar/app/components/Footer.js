@@ -45,7 +45,7 @@ class Footer extends React.Component {
       },
       SYNCED: {
         isClickable: true,
-        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.state.lastModified))
+        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.props.state.note.lastSynced))
       }
     };
 

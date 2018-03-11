@@ -40,26 +40,6 @@ class Header extends React.Component {
       }
     };
 
-    this.events = eventData => {
-      // let content;
-      switch (eventData.action) {
-        case 'kinto-loaded':
-          this.setState({
-            lastModified: Date.now(),
-            content: eventData.data || INITIAL_CONTENT
-          });
-          break;
-        case 'text-synced':
-          // Enable sync-action
-          this.setState({
-            lastModified: eventData.last_modified,
-            content: eventData.content || INITIAL_CONTENT
-          });
-          this.getLastSyncedTime();
-          break;
-      }
-    };
-
     // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
       switch (event.key) {
@@ -98,14 +78,6 @@ class Header extends React.Component {
         url: this.surveyPath
       });
     };
-  }
-
-  componentDidMount() {
-    chrome.runtime.onMessage.addListener(this.events);
-  }
-
-  componentWillUnmount() {
-    chrome.runtime.onMessage.removeListener(this.events);
   }
 
   render() {
