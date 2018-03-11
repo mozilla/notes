@@ -15,6 +15,7 @@ import { MAXIMUM_PAD_SIZE,
 
 import INITIAL_CONTENT from './data/initialContent';
 
+import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
 /*
  * action creators
  */
@@ -97,7 +98,21 @@ export function reconnectSync() {
 // EXPORT HTML
 export function exportHTML(content) {
 
-  const exportedFileName = 'notes.html';
+  // get Notes content
+  const notesContent = content;
+  // assign contents to container element for later parsing
+  const parentElement = document.createElement('div');
+  parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
+
+  let exportFileName = 'blank.html';
+  // get the first child element with text
+  const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
+
+  // if non-empty child element exists, set the filename to the element's `textContent`
+  if (nonEmptyChildElement) {
+    exportFileName = formatFilename(nonEmptyChildElement.textContent);
+  }
+
   const exportFileType = 'text/html';
   const data = new Blob([`
     <!DOCTYPE html>
@@ -106,14 +121,14 @@ export function exportHTML(content) {
           <meta charset="utf-8">
           <title>Notes</title>
         </head>
-        <body>${content}</body>
+      <body>${notesContent}</body>
     </html>`.trim()], {'type': exportFileType});
 
   const exportFilePath = window.URL.createObjectURL(data);
-
   browser.downloads.download({
     url: exportFilePath,
-    filename: exportedFileName
+    filename: exportFileName,
+    saveAs: true // always open file chooser, fixes #733
   });
 
   chrome.runtime.sendMessage({

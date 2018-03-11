@@ -8,9 +8,8 @@ import MoreIcon from './icons/MoreIcon';
 import WarningIcon from './icons/WarningIcon';
 
 import { formatFooterTime } from '../utils/utils';
-import { SURVEY_PATH } from '../utils/constants';
 
-import { disconnect, exportHTML, openLogin, pleaseLogin, authenticate } from '../actions';
+import { disconnect, openLogin, pleaseLogin, authenticate } from '../actions';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -51,8 +50,6 @@ class Footer extends React.Component {
     };
 
     this.currentState = this.STATES.SIGNIN; // contain current state from this.STATES
-
-    this.exportAsHTML = () => props.dispatch(exportHTML(this.props.state.note.content));
 
     this.disconnectFromSync = () => {
       props.dispatch(disconnect());

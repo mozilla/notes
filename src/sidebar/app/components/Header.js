@@ -1,13 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import MoreIcon from './icons/MoreIcon';
 
-import { getFirstNonEmptyElement, formatFilename } from '../utils/utils';
-
 import { SURVEY_PATH } from '../utils/constants';
 import INITIAL_CONTENT from '../data/initialContent';
+
+import { exportHTML} from '../actions';
 
 class Header extends React.Component {
   constructor(props) {
@@ -88,31 +90,7 @@ class Header extends React.Component {
       }
     };
 
-    this.exportAsHTML = () => {
-      // get Notes content
-      const notesContent = this.state.content;
-      // assign contents to container element for later parsing
-      const parentElement = document.createElement('div');
-      parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
-
-      let exportFileName = 'blank.html';
-      // get the first child element with text
-      const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
-
-      // if non-empty child element exists, set the filename to the element's `textContent`
-      if (nonEmptyChildElement) {
-        exportFileName = formatFilename(nonEmptyChildElement.textContent);
-      }
-
-      const exportFileType = 'text/html';
-      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
-      const exportFilePath = window.URL.createObjectURL(data);
-      browser.downloads.download({
-        url: exportFilePath,
-        filename: exportFileName,
-        saveAs: true // always open file chooser, fixes #733
-      });
-    };
+    this.exportAsHTML = () => props.dispatch(exportHTML(this.props.state.note.content));
 
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
@@ -211,5 +189,15 @@ class Header extends React.Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
 
-export default Header;
+Header.propTypes = {
+    state: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(Header);
