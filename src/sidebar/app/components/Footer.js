@@ -259,6 +259,9 @@ class Footer extends React.Component {
     // List of menu used for keyboard navigation
     this.buttons = [];
 
+    // List of menu used for keyboard navigation
+    this.buttons = [];
+
     return (
       <footer
         id="footer-buttons"
