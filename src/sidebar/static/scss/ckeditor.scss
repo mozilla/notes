@@ -3,13 +3,13 @@
 */
 
 .editorWrapper {
+  flex: 100px;
   flex-direction: column;
   flex-grow: 1;
   margin: 0;
   padding: 0;
   overflow: hidden;
   position: relative;
-  flex: 100px;
 }
 
 .ck-editor {

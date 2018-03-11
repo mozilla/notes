@@ -21,7 +21,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column'
   }
-}
+};
 
 const root = (
   <Provider store={store}>
