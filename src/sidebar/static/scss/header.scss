@@ -20,25 +20,6 @@ header {
     background: rgb(235, 235, 236);
   }
 
-  // Signin button fill width
-  button.fullWidth {
-    width: 100%;
-    padding-left: 12px;
-    font-size: inherit;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    span {
-      position: relative;
-      top: 1px;
-      left: 5px;
-    }
-    svg {
-      vertical-align: middle;
-      width: 16px;
-    }
-  }
-
   // sync icon + text layout in header
   div.btnWrapper {
     color: black;
