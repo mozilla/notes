@@ -44,6 +44,9 @@ ol ol ol ol {
 /**
 List indents end
  */
+a {
+  user-select: none !important;
+}
 
 button, a.btn {
   cursor: pointer;
@@ -68,7 +71,8 @@ button, a.btn {
   }
 
   &:disabled {
-    opacity: .3;
+    color: rgb(200, 200, 200);
+    font-weight: 300;
   }
 
   &:disabled:hover {
