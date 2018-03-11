@@ -7,7 +7,6 @@ import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import MoreIcon from './icons/MoreIcon';
 
 import { SURVEY_PATH } from '../utils/constants';
-import INITIAL_CONTENT from '../data/initialContent';
 
 import { exportHTML} from '../actions';
 
