@@ -18,7 +18,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column'
   }
-}
+};
 
 const root = (
   <div style={styles.container}>

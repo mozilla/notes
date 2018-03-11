@@ -4,9 +4,6 @@ import { Link } from 'react-router-dom';
 
 import NewIcon from './icons/NewIcon';
 
-const styles = {
-
-};
 
 class ListPanel extends React.Component {
 
