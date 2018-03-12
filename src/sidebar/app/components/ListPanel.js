@@ -19,7 +19,7 @@ class ListPanel extends React.Component {
     this.refreshTime = () => {
       clearTimeout(this.timer);
       this.setState({});
-      this.timer = setTimeout(this.refreshTime, 45000);
+      this.timer = setTimeout(this.refreshTime, 60000);
     };
   }
 
