@@ -16,16 +16,53 @@ function formatFooterTime(date) {
  * @param {HTMLElement Object} parentElement
  * @returns {HTMLElement Object}
  */
-function getFirstNonEmptyElement(parentElement) {
+function getFirstNonEmptyElement(parentElement, index = 0) {
   // create an Array from parentElement's `children` (limited to 20 child elements)
   const parentElementChildrenArray = Array.prototype.filter.call(parentElement.children, (el, index) => {
     return el && index < 20;
   });
+
+  let counter = 0;
   // search for first child element that is not empty and return it
   const nonEmptyChild = parentElementChildrenArray.find(el => {
-    return el.textContent.trim() !== '';
+
+    if (el.textContent.trim() !== '') {
+      if (counter === index) {
+        return el.textContent.trim();
+      }
+      counter = counter + 1;
+    }
+
   });
   return nonEmptyChild;
+}
+
+function getFirstLineFromContent(content) {
+  // assign contents to container element for later parsing
+  const parentElement = document.createElement('div');
+  parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
+
+  const element = getFirstNonEmptyElement(parentElement);
+
+  if (!element) {
+    return null;
+  }
+
+  return element.textContent.trim().replace(/[~#%{}[\]\\<>/+|\n\r\t]/g, '').substring(0, 250) || null;
+}
+
+function getSecondLineFromContent(content) {
+  // assign contents to container element for later parsing
+  const parentElement = document.createElement('div');
+  parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
+
+  const element = getFirstNonEmptyElement(parentElement, 1);
+
+  if (!element) {
+    return null;
+  }
+
+  return element.textContent.trim().replace(/[~#%{}[\]\\<>/+|\n\r\t]/g, '').substring(0, 250) || null;
 }
 
 /**
@@ -47,4 +84,4 @@ function formatFilename(filename) {
   return `${formattedFilename}.html`;
 }
 
-export { formatFooterTime, getFirstNonEmptyElement, formatFilename };
+export { formatFooterTime, getFirstNonEmptyElement, formatFilename, getFirstLineFromContent, getSecondLineFromContent };

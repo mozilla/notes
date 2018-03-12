@@ -14,6 +14,9 @@ import {
   PLEASE_LOGIN
 } from './utils/constants';
 
+
+import { getFirstLineFromContent, getSecondLineFromContent } from './utils/utils';
+
 function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
@@ -69,6 +72,8 @@ function note(note = {content: ''}, action) {
     case TEXT_CHANGE:
       return Object.assign({}, note, {
         content: action.content,
+        firstLine: getFirstLineFromContent(action.content),
+        secondLine: getSecondLineFromContent(action.content),
         lastModified: new Date(),
         isSaving: !action.isInitialContent,
         isSyncing: !action.isInitialContent

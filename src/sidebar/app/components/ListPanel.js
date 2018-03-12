@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
@@ -9,6 +11,7 @@ class ListPanel extends React.Component {
 
   constructor(props) {
     super(props);
+    this.props = props;
   }
 
   render() {
@@ -17,9 +20,18 @@ class ListPanel extends React.Component {
         <Link to="/note"
           className="btn fullWidth borderBottom"
           title="New note">
-          <NewIcon /> <span>New Note</span>
+          <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </Link>
         <ul>
+          { this.props.state.note.firstLine ?
+          <li>
+            <Link to="/note"
+              className="btn fullWidth borderBottom"
+              title="New note">
+              <p><strong>{ this.props.state.note.firstLine }</strong><br/>
+              <span>20 sec ago</span> { this.props.state.note.secondLine }</p>
+            </Link>
+          </li> : null }
           <li>
             <Link to="/note"
               className="btn fullWidth borderBottom"
@@ -50,5 +62,16 @@ class ListPanel extends React.Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
 
-export default ListPanel;
+
+ListPanel.propTypes = {
+    state: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(ListPanel);
