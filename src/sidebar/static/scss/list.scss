@@ -20,7 +20,6 @@
         display: block !important;
         color: rgb(132, 132, 132);
         font-size: 0.9rem !important;
-        flex-direction: column;
         padding-top: 8px;
         padding-bottom: 8px;
         padding-right: 17px;
@@ -39,11 +38,15 @@
           text-overflow: ellipsis;
           color: rgb(140, 140, 140);
 
+          &:first-letter {
+            text-transform: uppercase;
+          }
+
           span {
             margin: 0 !important;
             padding: 0 !important;
-            padding-right: 2px !important;
-            font-weight: 400;
+            padding-right: 4px !important;
+            font-weight: 500;
             color: rgb(140, 140, 140);
           }
         }

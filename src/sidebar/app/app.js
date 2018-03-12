@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { HashRouter, Route } from 'react-router-dom';
 
+import * as moment from 'moment';
+moment.locale(browser.i18n.getUILanguage());
+
 import store from './store';
 
 import ListPanel from './components/ListPanel';
