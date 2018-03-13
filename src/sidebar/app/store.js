@@ -34,11 +34,13 @@ import notesApp from './reducers';
 // };
 
 const propagate = store => next => action => {
+  localStorage.setItem('redux-state', JSON.stringify(store.getState()));
   return next(action);
 };
 
 const store = createStore(
     notesApp,
+    JSON.parse(localStorage.getItem('redux-state')),
     applyMiddleware(propagate)
 );
 
