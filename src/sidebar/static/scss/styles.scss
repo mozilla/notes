@@ -4,6 +4,10 @@
 @import 'header';
 @import 'footer';
 
+*:active, *:focus, *:hover {
+  outline: none;
+}
+
 html {
   height: 100%;
   font-family: sans-serif;
@@ -49,7 +53,7 @@ a {
 }
 
 button, a.btn {
-  cursor: pointer;
+  cursor: default;
   display: block;
   text-decoration: none;
   background: none;

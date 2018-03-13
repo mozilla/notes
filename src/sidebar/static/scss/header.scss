@@ -16,10 +16,6 @@ header {
   border-bottom: 1px solid #d7d7db;
   justify-content: space-between;
 
-  &:hover {
-    background: rgb(235, 235, 236);
-  }
-
   // sync icon + text layout in header
   div.btnWrapper {
     color: black;
@@ -29,6 +25,7 @@ header {
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding-top: 2px;
 
     p { // Text between sync button and text menu
       margin-top: 1px;
@@ -36,11 +33,12 @@ header {
       flex-grow: 1;
       flex-shrink: 1;
       display: block;
+      font-weight: 500;
 
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      padding: 8px 6px 0 2px;
+      padding: 10px 6px 0 2px;
       text-align: center;
     }
 
