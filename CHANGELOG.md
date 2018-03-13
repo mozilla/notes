@@ -1,8 +1,13 @@
 # Changelog
 
-## 3.1.0dev
+## 3.1.0
 
-* TODO
+* New menu design
+* New metrics for DB failures
+* Use Notes content to name "Export as" filenames
+* Add Permission explanation to docs
+* Always ask "Save As" on Note export
+* Stability fixes
 
 ## 3.0.0 (2018-02-21)
 
