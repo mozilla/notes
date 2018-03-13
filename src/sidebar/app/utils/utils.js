@@ -16,23 +16,17 @@ function formatFooterTime(date) {
  * @param {HTMLElement Object} parentElement
  * @returns {HTMLElement Object}
  */
-function getFirstNonEmptyElement(parentElement, index = 0) {
+function getFirstNonEmptyElement(parentElement) {
   // create an Array from parentElement's `children` (limited to 20 child elements)
   const parentElementChildrenArray = Array.prototype.filter.call(parentElement.children, (el, index) => {
     return el && index < 20;
   });
 
-  let counter = 0;
   // search for first child element that is not empty and return it
   const nonEmptyChild = parentElementChildrenArray.find(el => {
-
     if (el.textContent.trim() !== '') {
-      if (counter === index) {
-        return el.textContent.trim();
-      }
-      counter = counter + 1;
+      return el.textContent.trim();
     }
-
   });
   return nonEmptyChild;
 }
@@ -57,13 +51,13 @@ function stripHtmlWithoutFirstLine(content) {
   parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
 
   let res = null;
-  const firstLine = getFirstLineFromContent(content);
+  const firstLine = getFirstLineFromContent(content).trim();
 
-  if (parentElement.textContent.startsWith(firstLine)) {
-    res = parentElement.textContent.substr(firstLine.length);
+  if (parentElement.textContent.trim().startsWith(firstLine)) {
+    res = parentElement.textContent.trim().substr(firstLine.length);
   }
 
-  return res.trim().substring(0, 250);
+  return res ? res.trim().substring(0, 250) : res;
 }
 
 /**
