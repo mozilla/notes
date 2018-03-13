@@ -15,7 +15,7 @@ import {
 } from './utils/constants';
 
 
-import { getFirstLineFromContent, getSecondLineFromContent } from './utils/utils';
+import { getFirstLineFromContent, stripHtmlWithoutFirstLine } from './utils/utils';
 
 function sync(sync = {}, action) {
   switch (action.type) {
@@ -73,7 +73,7 @@ function note(note = {content: ''}, action) {
       return Object.assign({}, note, {
         content: action.content,
         firstLine: getFirstLineFromContent(action.content),
-        secondLine: getSecondLineFromContent(action.content),
+        secondLine: stripHtmlWithoutFirstLine(action.content),
         lastModified: new Date(),
         isSaving: !action.isInitialContent,
         isSyncing: !action.isInitialContent

@@ -48,21 +48,22 @@ function getFirstLineFromContent(content) {
     return null;
   }
 
-  return element.textContent.trim().replace(/[~#%{}[\]\\<>/+|\n\r\t]/g, '').substring(0, 250) || null;
+  return element.textContent.trim().substring(0, 250) || null;
 }
 
-function getSecondLineFromContent(content) {
+function stripHtmlWithoutFirstLine(content) {
   // assign contents to container element for later parsing
   const parentElement = document.createElement('div');
   parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
 
-  const element = getFirstNonEmptyElement(parentElement, 1);
+  let res = null;
+  const firstLine = getFirstLineFromContent(content);
 
-  if (!element) {
-    return null;
+  if (parentElement.textContent.startsWith(firstLine)) {
+    res = parentElement.textContent.substr(firstLine.length);
   }
 
-  return element.textContent.trim().replace(/[~#%{}[\]\\<>/+|\n\r\t]/g, '').substring(0, 250) || null;
+  return res.trim().substring(0, 250);
 }
 
 /**
@@ -84,4 +85,4 @@ function formatFilename(filename) {
   return `${formattedFilename}.html`;
 }
 
-export { formatFooterTime, getFirstNonEmptyElement, formatFilename, getFirstLineFromContent, getSecondLineFromContent };
+export { formatFooterTime, getFirstNonEmptyElement, formatFilename, getFirstLineFromContent, stripHtmlWithoutFirstLine };
