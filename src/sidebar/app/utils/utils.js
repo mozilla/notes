@@ -51,10 +51,11 @@ function stripHtmlWithoutFirstLine(content) {
   parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
 
   let res = null;
-  const firstLine = getFirstLineFromContent(content).trim();
+  const firstLine = getFirstLineFromContent(content);
 
-  if (parentElement.textContent.trim().startsWith(firstLine)) {
-    res = parentElement.textContent.trim().substr(firstLine.length);
+  if (parentElement.textContent && firstLine &&
+      parentElement.textContent.trim().startsWith(firstLine.trim())) {
+    res = parentElement.textContent.trim().substr(firstLine.trim().length);
   }
 
   return res ? res.trim().substring(0, 250) : res;
