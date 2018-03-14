@@ -31,19 +31,21 @@ function getFirstNonEmptyElement(parentElement) {
 /**
  * Formats the filename for the "Export as HTML..." menu option.
  * Whitespace and illegal filename characters are removed, and
- * the length is shortened if longer than 250 characters.
+ * the length is shortened if longer than `MAX_CHAR` characters.
  * @param {string} filename
  * @returns {string}
  */
 function formatFilename(filename) {
+  // maximum length of filename before ".html" extension - fixes #766
+  const MAX_CHARS = 215;
   let formattedFilename = filename;
-  // remove surrounding whitespace
-  formattedFilename = formattedFilename.trim();
   // remove illegal filename characters
   formattedFilename = formattedFilename.replace(/[~#%{}[\]:\\<>/!@&?"*.+|\n\r\t]/g, '');
-  if (formattedFilename.length > 250) { // 255 bytes (filesystem max) - 5 for ".html" extension
-    formattedFilename = formattedFilename.substring(0, 250);
+  if (formattedFilename.length > MAX_CHARS) {
+    formattedFilename = formattedFilename.substring(0, MAX_CHARS);
   }
+  // remove surrounding whitespace before appending extension
+  formattedFilename = formattedFilename.trim();
   return `${formattedFilename}.html`;
 }
 
