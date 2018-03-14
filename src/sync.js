@@ -286,7 +286,6 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
   // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
-      console.log('loadFromKinto', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         notes: result.data
@@ -294,7 +293,7 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
     });
 }
 
-function saveToKinto(client, credentials, content) { // eslint-disable-line no-unused-vars
+function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
   let resolve;
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
@@ -308,8 +307,8 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
   const later = function() {
     syncDebounce = null;
     const notes = client.collection('notes');
-    return notes.upsert({ id: 'singleNote', content })
-      .then(() => {
+    return notes.upsert(note)
+      .then((res) => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
@@ -321,9 +320,7 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
-          id: result.data.id,
-          content: result.data.content,
-          last_modified: result.data.last_modified,
+          notes: result.data,
           conflict: client.conflict
         });
       })

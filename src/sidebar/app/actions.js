@@ -22,16 +22,17 @@ import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
  */
 export function textChange(id, content) {
   let isInitialContent = false;
+  const lastModified = new Date();
   if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
     chrome.runtime.sendMessage({
       action: 'kinto-save',
       note: {
-        id, content
+        id, content, lastModified
       }
     });
     if (content.length > MAXIMUM_PAD_SIZE) {
       console.error( // eslint-disable-line no-console
-        'Maximum notepad size reached:', note.content.length
+        'Maximum notepad size reached:', content.length
       );
       browser.runtime.sendMessage({
         action: 'metrics-limit-reached'
@@ -40,7 +41,7 @@ export function textChange(id, content) {
   } else {
     isInitialContent = true;
   }
-  return { type: TEXT_CHANGE, id, content, isInitialContent };
+  return { type: TEXT_CHANGE, id, content, lastModified, isInitialContent };
 }
 
 export function authenticate(email) {

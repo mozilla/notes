@@ -41,27 +41,26 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case KINTO_LOADED:
-        console.log(eventData);
         if (!eventData.notes) {
-          browser.storage.local.get('notes2').then(data => {
-            if (!data.hasOwnProperty('notes2')) {
-              store.dispatch(textChange(INITIAL_CONTENT));
-            } else {
-              store.dispatch(textChange(data.notes2));
-              chrome.runtime
-                .sendMessage({
-                  action: 'kinto-save',
-                  content: data.notes2
-                })
-                .then(() => {
-                  // Clean-up
-                  browser.storage.local.remove('notes2');
-                });
-            }
-          });
+          console.error('Loading SHOULD always return notes');
+          // browser.storage.local.get('notes2').then(data => {
+          //   if (!data.hasOwnProperty('notes2')) {
+          //     store.dispatch(textChange(INITIAL_CONTENT));
+          //   } else {
+          //     store.dispatch(textChange(data.notes2));
+          //     chrome.runtime
+          //       .sendMessage({
+          //         action: 'kinto-save',
+          //         content: data.notes2
+          //       })
+          //       .then(() => {
+          //         // Clean-up
+          //         browser.storage.local.remove('notes2');
+          //       });
+          //   }
+          // });
         } else {
           store.dispatch(kintoLoad(eventData.notes));
-          // store.dispatch(textChange(eventData.id, eventData.data, eventData.last_modified));
         }
         break;
       case TEXT_CHANGE:

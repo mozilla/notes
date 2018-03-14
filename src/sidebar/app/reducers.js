@@ -106,7 +106,7 @@ function notes(notes = [], action) {
         note.content = action.content;
         note.firstLine = getFirstLineFromContent(action.content);
         note.secondLine = stripHtmlWithoutFirstLine(action.content);
-        note.lastModified = new Date();
+        note.lastModified = action.lastModified;
       }
       return list;
     }

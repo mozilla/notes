@@ -129,7 +129,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'kinto-load':
       retrieveNote(client).then((result) => {
-        console.log(result);
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
           notes: result.notes

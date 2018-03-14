@@ -44,8 +44,8 @@ class EditorPanel extends React.Component {
 
   render() {
     return [
-      <Header note={this.note} />,
-      <Editor note={this.note} />
+      <Header key="header" note={this.note} />,
+      <Editor key="editor" note={this.note} />
     ];
   }
 }

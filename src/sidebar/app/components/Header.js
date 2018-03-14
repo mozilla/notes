@@ -111,7 +111,6 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  disabled
                   title={ browser.i18n.getMessage('newNote') }
                   onClick={ () => console.log('not available yet') }>
                   { browser.i18n.getMessage('newNote') }

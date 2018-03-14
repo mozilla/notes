@@ -19,7 +19,7 @@ class ListPanel extends React.Component {
     this.refreshTime = () => {
       clearTimeout(this.timer);
       this.setState({});
-      this.timer = setTimeout(this.refreshTime, 60000);
+      this.timer = setTimeout(this.refreshTime, 1000);
     };
   }
 
@@ -40,9 +40,14 @@ class ListPanel extends React.Component {
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </Link>
         <ul>
-          { this.props.state.notes.map((note) => {
+          { this.props.state.notes.sort((a, b) => {
+            if (a.lastModified.getTime() != b.lastModified.getTime()) {
+              return a.lastModified.getTime() < b.lastModified.getTime() ? 1 : -1;
+            }
+            return a.firstLine < b.firstLine ? 1 : -1;
+          }).map((note) => {
             return (
-              <li>
+              <li key={note.id}>
                 <Link to={`/note/${note.id}`}
                   className="btn fullWidth borderBottom"
                   title="New note">
