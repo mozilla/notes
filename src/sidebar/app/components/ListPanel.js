@@ -34,45 +34,24 @@ class ListPanel extends React.Component {
   render() {
     return (
       <div className="listView">
-        <Link to="/note"
+        <Link to="/note/new"
           className="btn fullWidth borderBottom"
           title="New note">
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </Link>
         <ul>
-          { this.props.state.note.firstLine && this.props.state.note.lastModified ?
-          <li>
-            <Link to="/note"
-              className="btn fullWidth borderBottom"
-              title="New note">
-              <p><strong>{ this.props.state.note.firstLine }</strong></p>
-              <p><span>{ moment(this.props.state.note.lastModified).fromNow() }</span> { this.props.state.note.secondLine }</p>
-            </Link>
-          </li> : null }
-          <li>
-            <Link to="/note"
-              className="btn fullWidth borderBottom"
-              title="New note">
-              <p><strong>Mattress Shopping</strong></p>
-              <p><span>1 min ago</span> Casper $899 Endy $999 Casper $899 Endy $999 Casper $899 Endy $999</p>
-            </Link>
-          </li>
-          <li>
-            <Link to="/note"
-              className="btn fullWidth borderBottom"
-              title="New note">
-              <p><strong>Paris Sightseeing</strong></p>
-              <p><span>5 min ago</span> Crêpe Donaire Pâtisserie and other friend ...</p>
-            </Link>
-          </li>
-          <li>
-            <Link to="/note"
-              className="btn fullWidth borderBottom"
-              title="New note">
-              <p><strong>Final</strong></p>
-              <p><span>30 d ago</span> Lecture Notes</p>
-            </Link>
-          </li>
+          { this.props.state.notes.map((note) => {
+            return (
+              <li>
+                <Link to={`/note/${note.id}`}
+                  className="btn fullWidth borderBottom"
+                  title="New note">
+                  <p><strong>{ note.firstLine }</strong></p>
+                  <p><span>{ moment(note.lastModified).fromNow() }</span> { note.secondLine }</p>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     );

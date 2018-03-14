@@ -32,7 +32,7 @@ const root = (
       <HashRouter>
         <div style={styles.container}>
           <Route exact path="/" component={ListPanel} />
-          <Route path="/note" component={EditorPanel} />
+          <Route exact path="/note/:id" component={EditorPanel} />
         </div>
       </HashRouter>
       <Footer />

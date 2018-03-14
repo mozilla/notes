@@ -8,11 +8,13 @@ import { SYNC_AUTHENTICATED,
          RECONNECT_SYNC,
          DISCONNECTED,
          SEND_TO_NOTES,
+         CREATE_NOTE,
          PROPAGATE_REDUX } from './utils/constants';
          // Actions
 import { authenticate,
          disconnect,
          saved,
+         createNote,
          synced,
          syncing,
          saving,
@@ -20,7 +22,7 @@ import { authenticate,
          textChange,
          sendToNote,
          popagateRedux,
-         loaded } from './actions';
+         kintoLoad } from './actions';
 import INITIAL_CONTENT from './data/initialContent';
 import store from './store';
 /**
@@ -39,8 +41,8 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case KINTO_LOADED:
-        store.dispatch(loaded());
-        if (!eventData.data) {
+        console.log(eventData);
+        if (!eventData.notes) {
           browser.storage.local.get('notes2').then(data => {
             if (!data.hasOwnProperty('notes2')) {
               store.dispatch(textChange(INITIAL_CONTENT));
@@ -58,7 +60,8 @@ chrome.runtime.onMessage.addListener(eventData => {
             }
           });
         } else {
-          store.dispatch(textChange(eventData.data));
+          store.dispatch(kintoLoad(eventData.notes));
+          // store.dispatch(textChange(eventData.id, eventData.data, eventData.last_modified));
         }
         break;
       case TEXT_CHANGE:
@@ -79,6 +82,9 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case TEXT_SAVED:
         store.dispatch(saved());
+        break;
+      case CREATE_NOTE:
+        store.dispatch(createNote(eventData.id));
         break;
       case RECONNECT_SYNC:
         store.dispatch(reconnectSync());

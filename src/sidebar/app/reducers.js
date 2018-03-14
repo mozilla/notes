@@ -11,9 +11,9 @@ import {
   SEND_TO_NOTES,
   OPENING_LOGIN,
   RECONNECT_SYNC,
+  CREATE_NOTE,
   PLEASE_LOGIN
 } from './utils/constants';
-
 
 import { getFirstLineFromContent, stripHtmlWithoutFirstLine } from './utils/utils';
 
@@ -67,52 +67,58 @@ function kinto(kinto = {}, action) {
   }
 }
 
-function note(note = {content: ''}, action) {
+function notes(notes = [], action) {
   switch (action.type) {
-    case TEXT_CHANGE:
-      return Object.assign({}, note, {
-        content: action.content,
-        firstLine: getFirstLineFromContent(action.content),
-        secondLine: stripHtmlWithoutFirstLine(action.content),
-        lastModified: new Date(),
-        isSaving: !action.isInitialContent,
-        isSyncing: !action.isInitialContent
+    case KINTO_LOADED: {
+      const list = Array.from(action.notes);
+      list.map((note) => {
+        note.firstLine = getFirstLineFromContent(note.content);
+        note.secondLine = stripHtmlWithoutFirstLine(note.content);
+        if (!note.lastModified) {
+          note.lastModified = new Date();
+        }
       });
-    case TEXT_SYNCED:
-      return Object.assign({}, note, {
-        lastSynced: action.date,
-        isSyncing: false
+      return list;
+    }
+    case CREATE_NOTE: {
+      const list = Array.from(notes);
+      if (action.id) {
+        list.forEach((note) => {
+          if (!note.id) {
+            note.id = action.id;
+          }
+        });
+        return list;
+      }
+      list.push({
+        id: null,
+        content: '',
+        lastModified: new Date()
       });
-    case TEXT_SAVED:
-      return Object.assign({}, note, {
-        lastSaved: new Date(),
-        isSaving: false
+      return list;
+    }
+    case TEXT_CHANGE: {
+      const list = Array.from(notes);
+      let note = list.find((note) => {
+        return note.id === action.id;
       });
-    case TEXT_SYNCING:
-      return Object.assign({}, note, {
-        isSyncing: true
-      });
-    case TEXT_EDITING:
-      return Object.assign({}, note, {
-        isSaving: true
-      });
-    case SEND_TO_NOTES:
-      return Object.assign({}, note, {
-        content: note.content + '<p>' + action.content.replace(/\n\n/g, '</p><p>') + '</p>'
-      });
-    case SYNC_AUTHENTICATED:
-      return Object.assign({}, note, {
-        isSyncing: true
-      });
+      if (note) {
+        note.content = action.content;
+        note.firstLine = getFirstLineFromContent(action.content);
+        note.secondLine = stripHtmlWithoutFirstLine(action.content);
+        note.lastModified = new Date();
+      }
+      return list;
+    }
     default:
-      return note;
+      return notes;
   }
 }
 
 const noteApp = combineReducers({
   sync,
   kinto,
-  note
+  notes
 });
 
 export default noteApp;

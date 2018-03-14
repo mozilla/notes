@@ -8,11 +8,13 @@ import MoreIcon from './icons/MoreIcon';
 
 import { SURVEY_PATH } from '../utils/constants';
 
-import { exportHTML} from '../actions';
+import { exportHTML } from '../actions';
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
+
+    this.props = props;
 
     browser.runtime.getBrowserInfo().then((info) => {
       this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
@@ -94,7 +96,7 @@ class Header extends React.Component {
             className="btn iconBtn">
             <ArrowLeftIcon />
           </Link>
-          <p>{ this.props.state.note.firstLine || browser.i18n.getMessage('newNote') }</p>
+          <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p>
         </div>
 
         <div className="photon-menu close bottom left" ref={menu => this.menu = menu }>
@@ -168,6 +170,7 @@ function mapStateToProps(state) {
 
 Header.propTypes = {
     state: PropTypes.object.isRequired,
+    note: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 

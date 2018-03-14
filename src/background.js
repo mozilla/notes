@@ -129,10 +129,10 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'kinto-load':
       retrieveNote(client).then((result) => {
+        console.log(result);
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
-          data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-          last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+          notes: result.notes
         });
       }).catch(() => {
         sendMetrics('open', {loaded: false});
@@ -142,7 +142,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       loadFromKinto(client, credentials);
       break;
     case 'kinto-save':
-      saveToKinto(client, credentials, eventData.content);
+      saveToKinto(client, credentials, eventData.note);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
@@ -164,6 +164,15 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'editor-ready':
       isEditorReady = true;
+      break;
+    case 'create-note':
+      // We create a note, and send id with note-created nessage
+      createNote(client).then((result) => {
+        browser.runtime.sendMessage({
+          action: 'create-note',
+          id: result.data.id
+        });
+      });
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);

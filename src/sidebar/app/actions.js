@@ -10,6 +10,7 @@ import { MAXIMUM_PAD_SIZE,
          DISCONNECTED,
          SEND_TO_NOTES,
          EXPORT_HTML,
+         CREATE_NOTE,
          PLEASE_LOGIN,
          OPENING_LOGIN } from './utils/constants';
 
@@ -19,16 +20,18 @@ import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
 /*
  * action creators
  */
-export function textChange(content) {
+export function textChange(id, content) {
   let isInitialContent = false;
   if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
     chrome.runtime.sendMessage({
       action: 'kinto-save',
-      content
+      note: {
+        id, content
+      }
     });
     if (content.length > MAXIMUM_PAD_SIZE) {
       console.error( // eslint-disable-line no-console
-        'Maximum notepad size reached:', content.length
+        'Maximum notepad size reached:', note.content.length
       );
       browser.runtime.sendMessage({
         action: 'metrics-limit-reached'
@@ -37,7 +40,7 @@ export function textChange(content) {
   } else {
     isInitialContent = true;
   }
-  return { type: TEXT_CHANGE, content, isInitialContent };
+  return { type: TEXT_CHANGE, id, content, isInitialContent };
 }
 
 export function authenticate(email) {
@@ -64,8 +67,8 @@ export function saved() {
   return { type: TEXT_SAVED };
 }
 
-export function loaded(content) {
-  return { type: KINTO_LOADED, content };
+export function kintoLoad(notes) {
+  return { type: KINTO_LOADED, notes };
 }
 
 export function disconnect() {
@@ -93,6 +96,17 @@ export function reconnectSync() {
     action: 'metrics-reconnect-sync'
   });
   return { type: RECONNECT_SYNC };
+}
+
+export function createNote(id) {
+  if (!id) {
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        action: 'create-note'
+      });
+    }, 300);
+  }
+  return { type: CREATE_NOTE, id };
 }
 
 // EXPORT HTML

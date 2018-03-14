@@ -17,7 +17,6 @@ class Editor extends React.Component {
     super(props);
     this.props = props;
     this.editor = null; // Editor object
-
     this.state = {
       hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
     };
@@ -46,7 +45,7 @@ class Editor extends React.Component {
                 content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
 
               this.setState({ hideNotification: false });
-              this.props.dispatch(textChange(content));
+              this.props.dispatch(textChange(this.props.note.id, content));
 
               chrome.runtime.sendMessage({
                 action: 'metrics-changed',
@@ -64,8 +63,8 @@ class Editor extends React.Component {
 
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
-    if (this.editor && this.editor.getData() !== nextProps.state.note.content) {
-      this.editor.setData(nextProps.state.note.content);
+    if (this.editor && nextProps.note.content && this.editor.getData() !== nextProps.note.content) {
+      this.editor.setData(nextProps.note.content);
     }
   }
 
@@ -77,10 +76,10 @@ class Editor extends React.Component {
           ref={node => {
             this.node = node;
           }}
-          dangerouslySetInnerHTML={{ __html: this.props.state.note.content }}
+          dangerouslySetInnerHTML={{ __html: this.props.note.content }}
         >
         </div>
-        { !this.state.hideNotification && this.props.state.note.content.length > MAXIMUM_PAD_SIZE ?
+        { !this.state.hideNotification && this.props.note.content && this.props.note.content.length > MAXIMUM_PAD_SIZE ?
         <div id="sync-note" style={{display: 'block'}}>
           <button onClick={this.closeNotification}><CloseIcon /></button>
           <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
@@ -98,6 +97,7 @@ function mapStateToProps(state) {
 
 Editor.propTypes = {
     state: PropTypes.object.isRequired,
+    note: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 

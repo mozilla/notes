@@ -27,17 +27,17 @@ function decrypt(key, encrypted) {
 }
 
 // An "id schema" used to validate Kinto IDs and generate new ones.
-const notesIdSchema = {
-  // FIXME: Maybe this should generate IDs?
-  generate() {
-    throw new Error('cannot generate IDs');
-  },
+// const notesIdSchema = {
+//   // FIXME: Maybe this should generate IDs?
+//   generate() {
+//     throw new Error('cannot generate IDs');
+//   },
 
-  validate() {
-    // FIXME: verify that at least this matches Kinto server ID format
-    return true;
-  },
-};
+//   validate() {
+//     // FIXME: verify that at least this matches Kinto server ID format
+//     return true;
+//   },
+// };
 
 class ServerKeyNewerError extends Error {
   constructor() {
@@ -179,7 +179,6 @@ function syncKinto(client, credentials) {
           // Query Kinto with the Bearer Token
           collection = client
             .collection('notes', {
-              idSchema: notesIdSchema,
               remoteTransformers: [new JWETransformer(credential.key)],
             });
           return collection
@@ -264,9 +263,7 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes', {
-    idSchema: notesIdSchema,
-  }).getAny('singleNote');
+  return client.collection('notes').list({order: 'last_modified'});
 }
 
 /**
@@ -289,10 +286,10 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
   // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
+      console.log('loadFromKinto', result);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
-        data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-        last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+        notes: result.data
       });
     });
 }
@@ -310,9 +307,7 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
 
   const later = function() {
     syncDebounce = null;
-    const notes = client.collection('notes', {
-      idSchema: notesIdSchema,
-    });
+    const notes = client.collection('notes');
     return notes.upsert({ id: 'singleNote', content })
       .then(() => {
         browser.runtime.sendMessage('notes@mozilla.com', {
@@ -326,6 +321,7 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
+          id: result.data.id,
           content: result.data.content,
           last_modified: result.data.last_modified,
           conflict: client.conflict
@@ -341,10 +337,13 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
   return promise;
 }
 
+function createNote(client) { // eslint-disable-line no-unused-vars
+  const notes = client.collection('notes');
+  return notes.create({});
+}
+
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
-  const notes = client.collection('notes', {
-    idSchema: notesIdSchema,
-  });
+  const notes = client.collection('notes');
   return notes.resetSyncStatus();
 }
 
