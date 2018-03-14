@@ -7,7 +7,12 @@ body {
 }
 
 #enable-sync svg path {
-  fill: #e6e6e6 !important;
+  fill: #e6e6e6;
+}
+
+.animateSyncIcon #enable-sync svg path,
+.syncingLayout>div:hover #enable-sync svg path {
+  fill: #4e92dd;
 }
 
 #footer-buttons.warning #enable-sync svg path {
@@ -34,12 +39,20 @@ body {
   color: #e6e6e6 !important;
 }
 
+#footer-buttons div:first-child.isClickable button {
+  background: none;
+  color: #e6e6e6 !important;
+}
+
+#footer-buttons.savingLayout div:first-child.isClickable button:focus,
 .photon-menu #context-menu-button:focus {
   background-color: #272b35;
 }
+#footer-buttons.savingLayout div:first-child.isClickable button:hover,
 .photon-menu #context-menu-button:hover {
   background-color: #323744;
 }
+#footer-buttons.savingLayout div:first-child.isClickable button:active,
 .photon-menu #context-menu-button:active {
   background-color: #3d4352;
 }
@@ -70,11 +83,6 @@ body {
 #syncing-indicator {
   background: none !important;
   color: inherit !important;
-}
-
-#footer-buttons div:first-child.isClickable button {
-  background: none !important;
-  color: #e6e6e6 !important;
 }
 
 .warning #syncing-indicator,
