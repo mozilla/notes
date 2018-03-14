@@ -27,6 +27,7 @@ class Footer extends React.Component {
     this.STATES = {
       SAVING: {
         savingLayout: true,
+        isClickable: true,
         animateSyncIcon: false,
         leftText: () => browser.i18n.getMessage('savingChanges')
       },
