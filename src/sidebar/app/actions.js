@@ -11,6 +11,7 @@ import { MAXIMUM_PAD_SIZE,
          SEND_TO_NOTES,
          EXPORT_HTML,
          CREATE_NOTE,
+         DELETE_NOTE,
          PLEASE_LOGIN,
          OPENING_LOGIN } from './utils/constants';
 
@@ -108,6 +109,14 @@ export function createNote(id) {
     }, 300);
   }
   return { type: CREATE_NOTE, id };
+}
+
+export function deleteNote(id) {
+  chrome.runtime.sendMessage({
+    action: 'delete-note',
+    id
+  });
+  return { type: DELETE_NOTE, id };
 }
 
 // EXPORT HTML

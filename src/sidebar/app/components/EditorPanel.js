@@ -14,17 +14,15 @@ class EditorPanel extends React.Component {
     super(props);
     this.props = props;
 
-    this.note = null; // Note hsould be reference to state.
-    if (props.match.params.id != 'new') {
+    this.note = {}; // Note hsould be reference to state.
+    if (props.match.params.id !== 'new') {
       this.note = props.state.notes.find((note) => {
         return note.id === props.match.params.id;
       });
     } else {
       // We initialize our note and request to kinto an ID.
       props.dispatch(createNote());
-      this.note = {};
     }
-
   }
 
   componentDidMount() {
@@ -44,7 +42,7 @@ class EditorPanel extends React.Component {
 
   render() {
     return [
-      <Header key="header" note={this.note} />,
+      <Header key="header" history={this.props.history} note={this.note} />,
       <Editor key="editor" note={this.note} />
     ];
   }
@@ -58,6 +56,8 @@ function mapStateToProps(state) {
 
 EditorPanel.propTypes = {
     state: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 

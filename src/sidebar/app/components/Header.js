@@ -8,7 +8,7 @@ import MoreIcon from './icons/MoreIcon';
 
 import { SURVEY_PATH } from '../utils/constants';
 
-import { exportHTML } from '../actions';
+import { exportHTML, deleteNote } from '../actions';
 
 class Header extends React.Component {
   constructor(props) {
@@ -71,13 +71,18 @@ class Header extends React.Component {
       }
     };
 
-    this.exportAsHTML = () => props.dispatch(exportHTML(this.props.state.note.content));
+    this.exportAsHTML = () => props.dispatch(exportHTML(this.props.note.content));
 
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
       browser.tabs.create({
         url: this.surveyPath
       });
+    };
+
+    this.onDelete = () => {
+      props.dispatch(deleteNote(this.props.note.id));
+      this.props.history.push('/');
     };
   }
 
@@ -111,8 +116,9 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
+                  disabled
                   title={ browser.i18n.getMessage('newNote') }
-                  onClick={ () => console.log('not available yet') }>
+                  onClick={ () => this.props.history.push('/note/new') }>
                   { browser.i18n.getMessage('newNote') }
                 </button>
               </li>
@@ -138,9 +144,8 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  disabled
                   title={ browser.i18n.getMessage('deleteNote') }
-                  onClick={ () => console.log('not available yet') }>
+                  onClick={ this.onDelete }>
                   { browser.i18n.getMessage('deleteNote') }
                 </button>
               </li>
@@ -169,6 +174,7 @@ function mapStateToProps(state) {
 
 Header.propTypes = {
     state: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     note: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };

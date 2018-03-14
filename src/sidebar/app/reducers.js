@@ -12,6 +12,7 @@ import {
   OPENING_LOGIN,
   RECONNECT_SYNC,
   CREATE_NOTE,
+  DELETE_NOTE,
   PLEASE_LOGIN
 } from './utils/constants';
 
@@ -97,6 +98,8 @@ function notes(notes = [], action) {
       });
       return list;
     }
+    case DELETE_NOTE:
+      return Array.from(notes).filter((note) => note.id !== action.id);
     case TEXT_CHANGE: {
       const list = Array.from(notes);
       let note = list.find((note) => {
