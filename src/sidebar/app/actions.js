@@ -16,7 +16,6 @@ import { MAXIMUM_PAD_SIZE,
          OPENING_LOGIN } from './utils/constants';
 
 import INITIAL_CONTENT from './data/initialContent';
-
 import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
 /*
  * action creators

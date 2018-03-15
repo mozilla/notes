@@ -94,15 +94,7 @@ class JWETransformer {
       }
     }
 
-    let decoded = await decrypt(this.key, record.content);
-    if (!decoded.hasOwnProperty('id')) {
-      // Old-style encrypted notes aren't true Kinto records --
-      // they're just the content field.
-      decoded = {
-        content: decoded,
-        id: 'singleNote',
-      };
-    }
+    const decoded = await decrypt(this.key, record.content);
     if (record.hasOwnProperty('last_modified')) {
       decoded.last_modified = record.last_modified;
     }
