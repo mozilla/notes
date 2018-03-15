@@ -27,17 +27,17 @@ function decrypt(key, encrypted) {
 }
 
 // An "id schema" used to validate Kinto IDs and generate new ones.
-// const notesIdSchema = {
-//   // FIXME: Maybe this should generate IDs?
-//   generate() {
-//     throw new Error('cannot generate IDs');
-//   },
+const notesIdSchema = { // eslint-disable-line no-unused-vars
+  // FIXME: Maybe this should generate IDs?
+  generate() {
+    throw new Error('cannot generate IDs');
+  },
 
-//   validate() {
-//     // FIXME: verify that at least this matches Kinto server ID format
-//     return true;
-//   },
-// };
+  validate() {
+    // FIXME: verify that at least this matches Kinto server ID format
+    return true;
+  },
+};
 
 class ServerKeyNewerError extends Error {
   constructor() {
@@ -255,7 +255,7 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes').list({order: 'last_modified'});
+  return client.collection('notes').list({});
 }
 
 /**
@@ -280,13 +280,23 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
     .then(result => {
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
-        notes: result.data
+        notes: result.data,
+        last_modified: null
       });
+    })
+    .catch((e) => {
+      browser.runtime.sendMessage({
+        action: 'kinto-loaded',
+        notes: null,
+        last_modified: null
+      });
+      return new Promise((resolve) => resolve());
     });
 }
 
 function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
   let resolve;
+
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
   });
@@ -301,6 +311,7 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
     const notes = client.collection('notes');
     return notes.upsert(note)
       .then((res) => {
+
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
@@ -309,6 +320,7 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
       .then(result => {
+
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
@@ -317,6 +329,14 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
         });
       })
       .then(() => {
+        resolve();
+      })
+      .catch(result => {
+        browser.runtime.sendMessage('notes@mozilla.com', {
+          action: 'text-synced',
+          notes: result.data,
+          conflict: client.conflict
+        });
         resolve();
       });
   };

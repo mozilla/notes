@@ -309,7 +309,7 @@ describe('Authorization', function() {
           chai.assert(browser.runtime.sendMessage.calledOnce);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
             action: 'kinto-loaded',
-            data: null,
+            notes: null,
             last_modified: null,
           });
         });
@@ -323,8 +323,8 @@ describe('Authorization', function() {
           chai.assert(browser.runtime.sendMessage.calledOnce);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
             action: 'kinto-loaded',
-            data: 'def',
-            last_modified: 'abc',
+            last_modified: null,
+            notes: null
           });
         });
     });
@@ -345,7 +345,7 @@ describe('Authorization', function() {
     it('should not fail if syncKinto rejects', () => {
       const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
-      return saveToKinto(client, undefined, 'imaginary content')
+      return saveToKinto(client, undefined, { content: 'imaginary content' })
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledThrice);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql('notes@mozilla.com');
@@ -359,10 +359,15 @@ describe('Authorization', function() {
           chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
             action: 'text-synced',
-            content: "def",
-            last_modified: "abc",
+            notes: [{
+              content: "def",
+              last_modified: "abc"
+            }],
             conflict: false
           });
+        })
+        .catch((exception) => {
+          console.log(exception);
         });
     });
   });

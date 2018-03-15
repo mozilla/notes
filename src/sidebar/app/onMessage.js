@@ -40,6 +40,8 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case KINTO_LOADED:
         if (!eventData.notes) {
+          // As seen in units, kinto_laoded should return empty list if no entries
+          //
           // browser.storage.local.get('notes2').then(data => {
           //   if (!data.hasOwnProperty('notes2')) {
           //     store.dispatch(textChange(INITIAL_CONTENT));
