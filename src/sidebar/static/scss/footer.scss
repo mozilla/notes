@@ -108,6 +108,11 @@ footer {
   animation-play-state: paused;
 }
 
+#enable-sync:active {
+  outline: none;
+  padding: 0;
+}
+
 .animateSyncIcon #enable-sync svg {
   animation-play-state: running;
 }

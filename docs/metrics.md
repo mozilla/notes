@@ -84,19 +84,14 @@ An event fired when the user tries to drag or drop a content into the notepad.
 - `cd5`
 - `cd6`
 
-#### `sync-started`
+#### `sync-started` (deprecated)
+
+> Replaced with `webext-button-authenticate`, `login-sucess`, `login-failed`
+
 An event fired whenever the user attempts to login to sync. Includes:
 
 - `ec` - `notes`
 - `ea` - `sync-started`
-- `cm1`
-- `cm2`
-- `cd1`
-- `cd2`
-- `cd3`
-- `cd4`
-- `cd5`
-- `cd6`
 
 #### `login-success`
 An event fired whenever the user enables sync successfully. Includes:

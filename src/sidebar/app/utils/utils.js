@@ -64,7 +64,7 @@ function stripHtmlWithoutFirstLine(content) {
 /**
  * Formats the filename for the "Export as HTML..." menu option.
  * Whitespace and illegal filename characters are removed, and
- * the length is shortened if longer than 250 characters.
+ * the length is shortened if longer than 200 characters.
  * @param {string} filename
  * @returns {string}
  */
@@ -74,8 +74,8 @@ function formatFilename(filename) {
   formattedFilename = formattedFilename.trim();
   // remove illegal filename characters
   formattedFilename = formattedFilename.replace(/[~#%{}[\]:\\<>/!@&?"*.+|\n\r\t]/g, '');
-  if (formattedFilename.length > 250) { // 255 bytes (filesystem max) - 5 for ".html" extension
-    formattedFilename = formattedFilename.substring(0, 250);
+  if (formattedFilename.length > 200) { // 200 bytes (close to filesystem max) - 5 for ".html" extension
+    formattedFilename = formattedFilename.substring(0, 200);
   }
   return `${formattedFilename}.html`;
 }
