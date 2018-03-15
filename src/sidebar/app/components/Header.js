@@ -115,6 +115,7 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
+                  ref={btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('newNote') }
                   onClick={ () => this.props.onNewNoteEvent() }>
                   { browser.i18n.getMessage('newNote') }
@@ -142,6 +143,7 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
+                  ref={btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('deleteNote') }
                   onClick={ this.onDelete }>
                   { browser.i18n.getMessage('deleteNote') }
