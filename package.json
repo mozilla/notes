@@ -19,7 +19,7 @@
     "@ckeditor/ckeditor5-editor-classic": "^1.0.0-beta.1",
     "@ckeditor/ckeditor5-engine": "^1.0.0-beta.1",
     "@ckeditor/ckeditor5-essentials": "^1.0.0-beta.1",
-    "@ckeditor/ckeditor5-heading": "^1.0.0-beta.1",
+    "@ckeditor/ckeditor5-heading": "vladikoff/ckeditor5-heading#short-heading-beta-1",
     "@ckeditor/ckeditor5-list": "^1.0.0-beta.1",
     "@ckeditor/ckeditor5-paragraph": "^1.0.0-beta.1",
     "@ckeditor/ckeditor5-theme-lark": "^1.0.0-beta.1",
