@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import NewIcon from './icons/NewIcon';
+import { deleteNote } from '../actions';
 
 
 class ListPanel extends React.Component {
@@ -25,6 +26,10 @@ class ListPanel extends React.Component {
 
   componentDidMount() {
     this.refreshTime();
+
+    // We delete notes with no content
+    const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
+    listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
   }
 
   componentWillUnmount() {
@@ -40,7 +45,7 @@ class ListPanel extends React.Component {
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </Link>
         <ul>
-          { this.props.state.notes.sort((a, b) => {
+          { this.props.state.notes.filter((note) => note.firstLine ).sort((a, b) => {
             if (a.lastModified.getTime() !== b.lastModified.getTime()) {
               return a.lastModified.getTime() < b.lastModified.getTime() ? 1 : -1;
             }

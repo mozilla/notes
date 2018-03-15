@@ -97,7 +97,6 @@ class Header extends React.Component {
         <div className="btnWrapper">
           <Link
             to="/"
-            id="enable-sync"
             className="btn iconBtn">
             <ArrowLeftIcon />
           </Link>
