@@ -17,6 +17,7 @@ class Editor extends React.Component {
     super(props);
     this.props = props;
     this.editor = null; // Editor object
+    this.ignoreChange = false;
     this.state = {
       hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
     };
@@ -45,7 +46,11 @@ class Editor extends React.Component {
                 content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
 
               this.setState({ hideNotification: false });
-              this.props.dispatch(textChange(this.props.note.id, content));
+
+              if (!this.ignoreChange) {
+                this.props.dispatch(textChange(this.props.note.id, content));
+              }
+              this.ignoreChange = false;
 
               chrome.runtime.sendMessage({
                 action: 'metrics-changed',
@@ -63,8 +68,12 @@ class Editor extends React.Component {
 
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
-    if (this.editor && nextProps.note.content && this.editor.getData() !== nextProps.note.content) {
-      this.editor.setData(nextProps.note.content);
+    if (this.editor && nextProps.note &&
+        this.editor.getData() !== nextProps.note.content) {
+      if (this.props.note.id !== nextProps.note.id) {
+        this.ignoreChange = true;
+      }
+      this.editor.setData(nextProps.note.content || '<p></p>');
     }
   }
 
@@ -76,7 +85,7 @@ class Editor extends React.Component {
           ref={node => {
             this.node = node;
           }}
-          dangerouslySetInnerHTML={{ __html: this.props.note.content }}
+          dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}
         >
         </div>
         { !this.state.hideNotification && this.props.note.content && this.props.note.content.length > MAXIMUM_PAD_SIZE ?

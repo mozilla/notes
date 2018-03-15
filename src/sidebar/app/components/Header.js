@@ -116,9 +116,8 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
-                  disabled
                   title={ browser.i18n.getMessage('newNote') }
-                  onClick={ () => this.props.history.push('/note/new') }>
+                  onClick={ () => this.props.onNewNoteEvent() }>
                   { browser.i18n.getMessage('newNote') }
                 </button>
               </li>
@@ -176,6 +175,7 @@ Header.propTypes = {
     state: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     note: PropTypes.object.isRequired,
+    onNewNoteEvent: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 

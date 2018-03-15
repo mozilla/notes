@@ -335,8 +335,11 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
 }
 
 function createNote(client) { // eslint-disable-line no-unused-vars
-  const notes = client.collection('notes');
-  return notes.create({});
+  return client.collection('notes').create({});
+}
+
+function deleteNote(client, id) { // eslint-disable-line no-unused-vars
+  return client.collection('notes').deleteAny(id);
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars

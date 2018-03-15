@@ -41,7 +41,7 @@ class ListPanel extends React.Component {
         </Link>
         <ul>
           { this.props.state.notes.sort((a, b) => {
-            if (a.lastModified.getTime() != b.lastModified.getTime()) {
+            if (a.lastModified.getTime() !== b.lastModified.getTime()) {
               return a.lastModified.getTime() < b.lastModified.getTime() ? 1 : -1;
             }
             return a.firstLine < b.firstLine ? 1 : -1;

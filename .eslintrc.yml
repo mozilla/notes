@@ -39,6 +39,8 @@ globals:
   loadFromKinto: false
   disconnectFromKinto: false
   saveToKinto: false
+  createNote: false
+  deleteNote: false
 
 plugins:
   - mozilla

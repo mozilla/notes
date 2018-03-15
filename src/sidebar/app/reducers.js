@@ -3,12 +3,12 @@ import {
   TEXT_CHANGE,
   SYNC_AUTHENTICATED,
   DISCONNECTED,
-  TEXT_SYNCED,
-  TEXT_SAVED,
-  TEXT_SYNCING,
-  TEXT_EDITING,
+  // TEXT_SYNCED,
+  // TEXT_SAVED,
+  // TEXT_SYNCING,
+  // TEXT_EDITING,
   KINTO_LOADED,
-  SEND_TO_NOTES,
+  // SEND_TO_NOTES,
   OPENING_LOGIN,
   RECONNECT_SYNC,
   CREATE_NOTE,
@@ -102,7 +102,7 @@ function notes(notes = [], action) {
       return Array.from(notes).filter((note) => note.id !== action.id);
     case TEXT_CHANGE: {
       const list = Array.from(notes);
-      let note = list.find((note) => {
+      const note = list.find((note) => {
         return note.id === action.id;
       });
       if (note) {

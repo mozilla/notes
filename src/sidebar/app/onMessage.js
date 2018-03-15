@@ -19,11 +19,9 @@ import { authenticate,
          syncing,
          saving,
          reconnectSync,
-         textChange,
          sendToNote,
          popagateRedux,
          kintoLoad } from './actions';
-import INITIAL_CONTENT from './data/initialContent';
 import store from './store';
 /**
  * For each event, action on redux to update UI. No longer any event from chrome in components
