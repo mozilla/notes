@@ -6,7 +6,7 @@ import {
   TEXT_SYNCED,
   // TEXT_SAVED,
   TEXT_SYNCING,
-  // TEXT_EDITING,
+  TEXT_EDITING,
   KINTO_LOADED,
   // SEND_TO_NOTES,
   OPENING_LOGIN,
@@ -53,6 +53,10 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
+      });
+    case TEXT_EDITING:
+      return Object.assign({}, sync, {
+        isSyncing: true
       });
     case TEXT_SYNCING:
       return Object.assign({}, sync, {
