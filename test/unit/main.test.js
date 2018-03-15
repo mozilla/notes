@@ -359,15 +359,9 @@ describe('Authorization', function() {
           chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
             action: 'text-synced',
-            notes: [{
-              content: "def",
-              last_modified: "abc"
-            }],
+            notes: undefined,
             conflict: false
           });
-        })
-        .catch((exception) => {
-          console.log(exception);
         });
     });
   });
