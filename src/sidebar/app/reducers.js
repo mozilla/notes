@@ -3,9 +3,9 @@ import {
   TEXT_CHANGE,
   SYNC_AUTHENTICATED,
   DISCONNECTED,
-  // TEXT_SYNCED,
+  TEXT_SYNCED,
   // TEXT_SAVED,
-  // TEXT_SYNCING,
+  TEXT_SYNCING,
   // TEXT_EDITING,
   KINTO_LOADED,
   // SEND_TO_NOTES,
@@ -25,7 +25,9 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
-        email: action.email
+        email: action.email,
+        lastSynced: new Date(),
+        isSyncing: true
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
@@ -52,6 +54,15 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: true,
       });
+    case TEXT_SYNCING:
+      return Object.assign({}, sync, {
+        isSyncing: true
+      });
+    case TEXT_SYNCED:
+      return Object.assign({}, sync, {
+        isSyncing: false,
+        lastSynced: new Date()
+      });
     default:
       return sync;
   }
@@ -75,8 +86,8 @@ function notes(notes = [], action) {
       list.map((note) => {
         note.firstLine = getFirstLineFromContent(note.content);
         note.secondLine = stripHtmlWithoutFirstLine(note.content);
-        if (!note.lastModified) {
-          note.lastModified = new Date();
+        if (!(note.lastModified instanceof Date)) {
+          note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
         }
       });
       return list;
@@ -109,7 +120,7 @@ function notes(notes = [], action) {
         note.content = action.content;
         note.firstLine = getFirstLineFromContent(action.content);
         note.secondLine = stripHtmlWithoutFirstLine(action.content);
-        note.lastModified = action.lastModified;
+        note.lastModified = new Date(action.lastModified);
       }
       return list;
     }

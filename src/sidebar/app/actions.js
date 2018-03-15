@@ -61,8 +61,8 @@ export function saving() {
   return { type: TEXT_EDITING };
 }
 
-export function synced(last_modified) {
-  return { type: TEXT_SYNCED, last_modified };
+export function synced() {
+  return { type: TEXT_SYNCED };
 }
 
 export function saved() {

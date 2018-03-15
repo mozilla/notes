@@ -40,7 +40,6 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case KINTO_LOADED:
         if (!eventData.notes) {
-          console.error('Loading SHOULD always return notes');
           // browser.storage.local.get('notes2').then(data => {
           //   if (!data.hasOwnProperty('notes2')) {
           //     store.dispatch(textChange(INITIAL_CONTENT));
@@ -59,6 +58,7 @@ chrome.runtime.onMessage.addListener(eventData => {
           // });
         } else {
           store.dispatch(kintoLoad(eventData.notes));
+          store.dispatch(synced());
         }
         break;
       case TEXT_CHANGE:
@@ -73,9 +73,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         store.dispatch(saving());
         break;
       case TEXT_SYNCED:
-        if (store.getState().sync.email) {
-          store.dispatch(synced(eventData.last_modified));
-        }
+        store.dispatch(synced());
         break;
       case TEXT_SAVED:
         store.dispatch(saved());

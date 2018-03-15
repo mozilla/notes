@@ -45,7 +45,7 @@ class Footer extends React.Component {
       },
       SYNCED: {
         isClickable: true,
-        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.props.state.note.lastSynced))
+        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.props.state.sync.lastSynced))
       }
     };
 
@@ -139,7 +139,7 @@ class Footer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const state = nextProps.state;
     if (state.sync.email) { // If user is authenticated
-        if (state.note.isSyncing) {
+        if (state.sync.isSyncing) {
           this.currentState = this.STATES.SYNCING;
         } else {
           this.currentState = this.STATES.SYNCED;
