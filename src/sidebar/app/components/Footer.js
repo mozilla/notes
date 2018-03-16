@@ -105,6 +105,7 @@ class Footer extends React.Component {
           // Disable sync-action
           break;
         case 'text-editing':
+          document.getElementById('export-button').setAttribute('disabled', true);
           this.setState({
             state: this.state.isAuthenticated ? this.STATES.SYNCING : this.STATES.SAVING
           });
@@ -116,6 +117,7 @@ class Footer extends React.Component {
             content: eventData.content || INITIAL_CONTENT
           });
           this.getLastSyncedTime();
+          document.getElementById('export-button').removeAttribute('disabled');
           break;
         case 'text-saved':
           if (!this.state.state.ignoreChange && !this.state.isAuthenticated) {
@@ -363,6 +365,7 @@ class Footer extends React.Component {
               <ul role="menu" >
                 <li>
                   <button
+                    id="export-button"
                     role="menuitem"
                     ref={btn => btn ? this.buttons.push(btn) : null }
                     title={browser.i18n.getMessage('exportAsHTML')}
