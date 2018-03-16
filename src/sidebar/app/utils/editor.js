@@ -42,6 +42,14 @@ function customizeEditor(editor) {
     });
   });
 
+  // prevent adding a '„' character and instead close the editor
+  // when using the Notes keyboard shortcut within the editor
+  // Refs: https://github.com/mozilla/notes/issues/780
+  editor.keystrokes.set('Alt+Shift+W', (e) => {
+    e.preventDefault();
+    browser.sidebarAction.close();
+  });
+
   localizeEditorButtons();
 }
 
