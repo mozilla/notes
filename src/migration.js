@@ -1,7 +1,7 @@
 // Migrate from singleNote to multiNotes
 
 // Load notes collection with NOP id generator to access 'singleNote'
-const notes = client.collection('notes', {
+const notes = client.collection('notes', { // eslint-disable-line no-undef
   idSchema: {
     generate: _ => { throw new Error('cannot generate IDs'); },
     validate: _ => true
@@ -17,7 +17,9 @@ function migrateSingleNote() {
       if (res.data && res.data.id === 'singleNote' && res.data._status !== 'deleted') {
         // We send metrucs during sync
         notes.deleteAny('singleNote');
-        createNote(client, { content: res.data.content, wasSingleNote: true });
+        createNote(client, { // eslint-disable-line no-undef
+          content: res.data.content, wasSingleNote: true
+        });
       }
       resolve();
     }).catch((exception) => {
