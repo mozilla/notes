@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case KINTO_LOADED:
+        console.log('kinto-loaded', eventData);
         if (!eventData.notes) {
           // As seen in units, kinto_laoded should return empty list if no entries
           //

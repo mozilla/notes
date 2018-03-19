@@ -162,3 +162,10 @@ An event fired when IndexedDB fails to load
 
 - `ec` - `notes`
 - `ea` - `idb-fail`
+
+
+#### `migrate-single-note`
+An event fired when migrating singleNote to multiNote
+
+- `ec` - `notes`
+- `ea` - `migrate-single-note`

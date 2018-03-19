@@ -186,29 +186,44 @@ function syncKinto(client, credentials) {
       if (syncResult && syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
           let resolution;
+          // If we receive conflict with singleNote, we update
           if (conflict.remote === null) {
             resolution = {
               id: conflict.local.id,
               content: conflict.local.content,
             };
           } else {
+
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
             totalOps += `<p>${mergeWarning}</p>`;
-            totalOps += conflict.local.content;
 
+            // We handle conflict regarding migration fron singleNote to multiNote
+            if (conflict.remote.id === 'singleNote') {
+              // We look for previous singleNote and merge remote singleNote with it.
+              const wasSingleNote = syncResult.published.find(note => note.wasSingleNote);
+              totalOps += wasSingleNote.content;
+              wasSingleNote.content = totalOps;
+              collection.upsert(wasSingleNote); // We override new singleNote with merged conflict
+              resolution = conflict.local; // local singleNote with deleted status.
+
+              // We send metrics to record migration status.
+              sendMetric('migrate-single-note'); // eslint-disable-line no-undef
+            } else {
+              totalOps += conflict.local.content;
+              resolution = {
+                id: conflict.remote.id,
+                content: totalOps,
+              };
+            }
             client.conflict = true;
-            resolution = {
-              id: conflict.remote.id,
-              content: totalOps,
-            };
             sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
-          .then(() => {
-            return syncKinto(client, credentials);
-          });
+        .then(() => {
+          return syncKinto(client, credentials);
+        });
       }
     })
     .catch(error => {
@@ -346,8 +361,8 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
   return promise;
 }
 
-function createNote(client) { // eslint-disable-line no-unused-vars
-  return client.collection('notes').create({});
+function createNote(client, note = {}) { // eslint-disable-line no-unused-vars
+  return client.collection('notes').create(note);
 }
 
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars

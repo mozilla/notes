@@ -175,7 +175,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'delete-note':
       // We create a note, and send id with note-created nessage
-      deleteNote(client, eventData.id);
+      deleteNote(client, eventData.id).then((note) => {
+        loadFromKinto(client, credentials);
+      });
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
