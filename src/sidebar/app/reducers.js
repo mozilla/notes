@@ -13,7 +13,9 @@ import {
   RECONNECT_SYNC,
   CREATE_NOTE,
   DELETE_NOTE,
-  PLEASE_LOGIN
+  PLEASE_LOGIN,
+  FOCUS_NOTE,
+  SEND_TO_NOTES
 } from './utils/constants';
 
 import { getFirstLineFromContent, stripHtmlWithoutFirstLine } from './utils/utils';
@@ -67,6 +69,10 @@ function sync(sync = {}, action) {
         isSyncing: false,
         lastSynced: new Date()
       });
+    case FOCUS_NOTE:
+      return Object.assign({}, sync, {
+        focusedNoteId: action.id
+      });
     default:
       return sync;
   }
@@ -106,9 +112,12 @@ function notes(notes = [], action) {
         });
         return list;
       }
+
       list.push({
         id: null,
-        content: '',
+        content: action.content,
+        firstLine: getFirstLineFromContent(action.content),
+        secondLine: stripHtmlWithoutFirstLine(action.content),
         lastModified: new Date()
       });
       return list;
@@ -125,6 +134,16 @@ function notes(notes = [], action) {
         note.firstLine = getFirstLineFromContent(action.content);
         note.secondLine = stripHtmlWithoutFirstLine(action.content);
         note.lastModified = new Date(action.lastModified);
+      }
+      return list;
+    }
+    case SEND_TO_NOTES: {
+      const list = Array.from(notes);
+      const note = list.find((note) => {
+        return note.id === action.id;
+      });
+      if (note) {
+        note.content = note.content + `<p>${action.content}</p>`;
       }
       return list;
     }

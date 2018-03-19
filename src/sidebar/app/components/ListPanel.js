@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import NewIcon from './icons/NewIcon';
-import { deleteNote } from '../actions';
+import { deleteNote, setFocusedNote } from '../actions';
 
 
 class ListPanel extends React.Component {
@@ -30,6 +30,9 @@ class ListPanel extends React.Component {
     // We delete notes with no content
     const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
     listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
+
+    // Set no focused Note to create new note on send note event.
+    this.props.dispatch(setFocusedNote());
   }
 
   componentWillUnmount() {

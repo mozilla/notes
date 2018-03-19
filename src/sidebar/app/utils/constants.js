@@ -20,6 +20,7 @@ export const SEND_TO_NOTES = 'send-to-notes';
 export const EXPORT_HTML = 'export-html';
 export const CREATE_NOTE = 'create-note';
 export const DELETE_NOTE = 'delete-note';
+export const FOCUS_NOTE = 'focus-note';
 
 // Internal action to sync redux state between all instances
 export const PROPAGATE_REDUX = 'propagate-redux';

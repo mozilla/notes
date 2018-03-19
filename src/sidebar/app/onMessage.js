@@ -39,7 +39,6 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case KINTO_LOADED:
-        console.log('kinto-loaded', eventData);
         if (!eventData.notes) {
           // As seen in units, kinto_laoded should return empty list if no entries
           //
@@ -92,8 +91,14 @@ chrome.runtime.onMessage.addListener(eventData => {
           store.dispatch(disconnect());
         }
         break;
-      case SEND_TO_NOTES:
-        store.dispatch(sendToNote(eventData.text));
+      case SEND_TO_NOTES: {
+          const focusedNoteId = store.getState().sync.focusedNoteId;
+          if (focusedNoteId) {
+            store.dispatch(sendToNote(focusedNoteId, eventData.text));
+          } else {
+            store.dispatch(createNote(null, `<p>${eventData.text}</p>`));
+          }
+        }
         break;
       case PROPAGATE_REDUX:
         store.dispatch(popagateRedux(eventData.state, eventData.id));

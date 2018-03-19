@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Header from './Header';
 import Editor from './Editor';
 
-import { createNote } from '../actions';
+import { createNote, setFocusedNote } from '../actions';
 
 class EditorPanel extends React.Component {
 
@@ -19,6 +19,7 @@ class EditorPanel extends React.Component {
       this.note = props.state.notes.find((note) => {
         return note.id === props.match.params.id;
       });
+      this.props.dispatch(setFocusedNote(props.match.params.id));
     } else {
       // We initialize our note and request to kinto an ID.
       props.dispatch(createNote());
@@ -42,6 +43,8 @@ class EditorPanel extends React.Component {
       this.note = nextProps.state.notes.find((note) => {
         return !note.id;
       });
+    } else if (this.note.id && nextProps.state.sync.focusedNoteId !== this.note.id) {
+      this.props.dispatch(setFocusedNote(this.note.id));
     }
   }
 

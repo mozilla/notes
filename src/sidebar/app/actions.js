@@ -13,7 +13,8 @@ import { MAXIMUM_PAD_SIZE,
          CREATE_NOTE,
          DELETE_NOTE,
          PLEASE_LOGIN,
-         OPENING_LOGIN } from './utils/constants';
+         OPENING_LOGIN,
+         FOCUS_NOTE } from './utils/constants';
 
 import INITIAL_CONTENT from './data/initialContent';
 import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
@@ -99,7 +100,7 @@ export function reconnectSync() {
   return { type: RECONNECT_SYNC };
 }
 
-export function createNote(id) {
+export function createNote(id, content = '') {
   if (!id) {
     setTimeout(() => {
       chrome.runtime.sendMessage({
@@ -107,7 +108,7 @@ export function createNote(id) {
       });
     }, 300);
   }
-  return { type: CREATE_NOTE, id };
+  return { type: CREATE_NOTE, id, content };
 }
 
 export function deleteNote(id) {
@@ -160,10 +161,13 @@ export function exportHTML(content) {
   return { type: EXPORT_HTML, content };
 }
 
-export function sendToNote(content) {
+export function sendToNote(id, content) {
   browser.runtime.sendMessage({
     action: 'metrics-context-menu'
   });
-  return { type: SEND_TO_NOTES, content };
+  return { type: SEND_TO_NOTES, id, content };
 }
 
+export function setFocusedNote(id) {
+  return { type: FOCUS_NOTE, id };
+}
