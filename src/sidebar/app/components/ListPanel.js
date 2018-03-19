@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import NewIcon from './icons/NewIcon';
-import { deleteNote, setFocusedNote } from '../actions';
+import { deleteNote, setFocusedNote, createNote } from '../actions';
 
 
 class ListPanel extends React.Component {
@@ -21,6 +21,13 @@ class ListPanel extends React.Component {
       clearTimeout(this.timer);
       this.setState({});
       this.timer = setTimeout(this.refreshTime, 1000);
+    };
+
+    this.requestNewNote = () => {
+      // Request not id from background.
+      this.props.dispatch(createNote()).then(id => {
+        props.history.push(`/note/${id}`);
+      });
     };
   }
 
@@ -42,11 +49,12 @@ class ListPanel extends React.Component {
   render() {
     return (
       <div className="listView">
-        <Link to="/note/new"
+        <button
           className="btn fullWidth borderBottom"
+          onClick={this.requestNewNote}
           title="New note">
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
-        </Link>
+        </button>
         <ul>
           { this.props.state.notes.filter((note) => note.firstLine ).sort((a, b) => {
             if (a.lastModified.getTime() !== b.lastModified.getTime()) {
@@ -80,6 +88,7 @@ function mapStateToProps(state) {
 
 ListPanel.propTypes = {
     state: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 

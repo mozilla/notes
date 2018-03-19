@@ -15,19 +15,16 @@ class EditorPanel extends React.Component {
     this.props = props;
 
     this.note = {}; // Note should be reference to state.
-    if (props.match.params.id !== 'new') {
-      this.note = props.state.notes.find((note) => {
-        return note.id === props.match.params.id;
-      });
-      this.props.dispatch(setFocusedNote(props.match.params.id));
-    } else {
-      // We initialize our note and request to kinto an ID.
-      props.dispatch(createNote());
-    }
+    this.note = props.state.notes.find((note) => {
+      return note.id === props.match.params.id;
+    });
+    this.props.dispatch(setFocusedNote(props.match.params.id));
 
     this.onNewNoteEvent = () => {
-      this.note = {};
-      this.props.dispatch(createNote());
+      // Request new id and redirec to new note
+      this.props.dispatch(createNote()).then(id => {
+        props.history.push(`/note/${id}`);
+      });
     };
   }
 
@@ -39,12 +36,11 @@ class EditorPanel extends React.Component {
 
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
-    if (nextProps.state && !this.note.id) {
+    if (nextProps.match.params.id !== this.note.id) {
       this.note = nextProps.state.notes.find((note) => {
-        return !note.id;
+        return note.id === nextProps.match.params.id;
       });
-    } else if (this.note.id && nextProps.state.sync.focusedNoteId !== this.note.id) {
-      this.props.dispatch(setFocusedNote(this.note.id));
+      this.props.dispatch(setFocusedNote(nextProps.match.params.id));
     }
   }
 

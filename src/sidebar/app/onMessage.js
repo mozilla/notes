@@ -8,7 +8,6 @@ import { SYNC_AUTHENTICATED,
          RECONNECT_SYNC,
          DISCONNECTED,
          SEND_TO_NOTES,
-         CREATE_NOTE,
          PROPAGATE_REDUX } from './utils/constants';
          // Actions
 import { authenticate,
@@ -41,23 +40,7 @@ chrome.runtime.onMessage.addListener(eventData => {
       case KINTO_LOADED:
         if (!eventData.notes) {
           // As seen in units, kinto_laoded should return empty list if no entries
-          //
-          // browser.storage.local.get('notes2').then(data => {
-          //   if (!data.hasOwnProperty('notes2')) {
-          //     store.dispatch(textChange(INITIAL_CONTENT));
-          //   } else {
-          //     store.dispatch(textChange(data.notes2));
-          //     chrome.runtime
-          //       .sendMessage({
-          //         action: 'kinto-save',
-          //         content: data.notes2
-          //       })
-          //       .then(() => {
-          //         // Clean-up
-          //         browser.storage.local.remove('notes2');
-          //       });
-          //   }
-          // });
+          console.error('eventData.notes is empty');
         } else {
           store.dispatch(kintoLoad(eventData.notes));
           store.dispatch(synced());
@@ -80,9 +63,6 @@ chrome.runtime.onMessage.addListener(eventData => {
       case TEXT_SAVED:
         store.dispatch(saved());
         break;
-      case CREATE_NOTE:
-        store.dispatch(createNote(eventData.id));
-        break;
       case RECONNECT_SYNC:
         store.dispatch(reconnectSync());
         break;
@@ -96,7 +76,7 @@ chrome.runtime.onMessage.addListener(eventData => {
           if (focusedNoteId) {
             store.dispatch(sendToNote(focusedNoteId, eventData.text));
           } else {
-            store.dispatch(createNote(null, `<p>${eventData.text}</p>`));
+            store.dispatch(createNote(`<p>${ eventData.text }</p>`));
           }
         }
         break;

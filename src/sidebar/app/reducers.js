@@ -104,17 +104,8 @@ function notes(notes = [], action) {
     }
     case CREATE_NOTE: {
       const list = Array.from(notes);
-      if (action.id) {
-        list.forEach((note) => {
-          if (!note.id) {
-            note.id = action.id;
-          }
-        });
-        return list;
-      }
-
       list.push({
-        id: null,
+        id: action.id,
         content: action.content,
         firstLine: getFirstLineFromContent(action.content),
         secondLine: stripHtmlWithoutFirstLine(action.content),

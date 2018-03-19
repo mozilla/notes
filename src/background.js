@@ -166,10 +166,11 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'create-note':
       // We create a note, and send id with note-created nessage
-      createNote(client).then((result) => {
+      createNote(client, { content: eventData.content }).then((result) => {
         browser.runtime.sendMessage({
           action: 'create-note',
-          id: result.data.id
+          id: result.data.id,
+          content: result.data.content
         });
       });
       break;

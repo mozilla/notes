@@ -100,15 +100,31 @@ export function reconnectSync() {
   return { type: RECONNECT_SYNC };
 }
 
-export function createNote(id, content = '') {
-  if (!id) {
-    setTimeout(() => {
-      chrome.runtime.sendMessage({
-        action: 'create-note'
-      });
-    }, 300);
-  }
-  return { type: CREATE_NOTE, id, content };
+export function createNote(content = '') {
+
+  const fct = (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      // We listen to creation
+      function listenner(eventData) {
+        switch (eventData.action) {
+          case CREATE_NOTE: {
+            chrome.runtime.onMessage.removeListener(listenner);
+            dispatch({ type: CREATE_NOTE, id: eventData.id, content: eventData.content });
+            resolve(eventData.id);
+            break;
+          }
+        }
+      }
+      chrome.runtime.onMessage.addListener(listenner);
+    });
+  };
+
+  chrome.runtime.sendMessage({
+    action: 'create-note',
+    content
+  });
+
+  return fct;
 }
 
 export function deleteNote(id) {
