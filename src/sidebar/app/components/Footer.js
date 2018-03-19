@@ -51,7 +51,6 @@ class Footer extends React.Component {
 
     this.currentState = this.STATES.SIGNIN; // contain current state from this.STATES
 
-
     this.disconnectFromSync = () => {
       props.dispatch(disconnect());
     };
@@ -224,7 +223,6 @@ class Footer extends React.Component {
                 </button>
               </li>
             </ul>
-
           </div>
         </div> : null }
       </footer>
