@@ -12,6 +12,14 @@ import INITIAL_CONTENT from '../data/initialContent';
 import { MAXIMUM_PAD_SIZE } from '../utils/constants';
 import { textChange } from '../actions';
 
+const styles = {
+  container: {
+    flex: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  }
+};
+
 class Editor extends React.Component {
   constructor(props, context) {
     super(props);
@@ -79,17 +87,19 @@ class Editor extends React.Component {
 
   render() {
     return (
-      <div className="editorWrapper">
-        <div
-          id="editor"
-          ref={node => {
-            this.node = node;
-          }}
-          dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}
-        >
+      <div style={styles.container}>
+        <div className="editorWrapper">
+          <div
+            id="editor"
+            ref={node => {
+              this.node = node;
+            }}
+            dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}
+          >
+          </div>
         </div>
         { !this.state.hideNotification && this.props.note.content && this.props.note.content.length > MAXIMUM_PAD_SIZE ?
-        <div id="sync-note" style={{display: 'block'}}>
+        <div id="sync-note">
           <button onClick={this.closeNotification}><CloseIcon /></button>
           <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
         </div> : null }

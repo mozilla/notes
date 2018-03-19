@@ -14,8 +14,10 @@
 
 .ck-editor {
   display: flex;
-  flex-direction: column;
+  flex: 100px;
   height: 100%;
+  flex-grow: 1;
+  flex-direction: column;
   margin: 0;
   overflow: hidden;
   padding: 0;

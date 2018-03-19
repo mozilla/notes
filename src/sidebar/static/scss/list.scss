@@ -8,7 +8,7 @@
   }
 
   ul {
-    font-size: 0.9rem;
+    font-size: 1rem;
     flex: 50px;
     flex-grow: 1;
     margin: 0;
@@ -19,17 +19,15 @@
       a {
         display: block !important;
         color: rgb(132, 132, 132);
-        font-size: 0.9rem !important;
         padding-top: 8px;
         padding-bottom: 8px;
         padding-right: 17px;
         p {
           strong {
-            font-size: 1rem;
             font-weight: 500;
             color: black;
           }
-          line-height: 18px;
+          line-height: 20px;
           margin: 0 !important;
           padding: 0 !important;
           font-weight: 100;
