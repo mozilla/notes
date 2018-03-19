@@ -100,7 +100,9 @@ class Header extends React.Component {
             className="btn iconBtn">
             <ArrowLeftIcon />
           </Link>
-          <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p>
+          { this.props.note ?
+          <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p> :
+          '' }
         </div>
 
         <div className="photon-menu close bottom left" ref={menu => this.menu = menu }>

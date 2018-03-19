@@ -312,6 +312,10 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
 function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
   let resolve;
 
+  // We do not store empty notes on server side.
+  // They will be auotmatically deleted by listPanel component
+  if (note.content === '') { return Promise.resolve(); }
+
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
   });
