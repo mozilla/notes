@@ -126,14 +126,6 @@ class Footer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    browser.storage.local.get('credentials').then(data => {
-      if (data.hasOwnProperty('credentials')) {
-        this.props.dispatch(authenticate(localStorage.getItem('userEmail')));
-      }
-    });
-  }
-
   // Not a big fan of all those if.
   componentWillReceiveProps(nextProps) {
     const state = nextProps.state;
@@ -158,14 +150,13 @@ class Footer extends React.Component {
 
   render() {
 
+    if (!this.props.state.kinto.isLoaded) return '';
+
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
        warning: this.currentState.yellowBackground,
        animateSyncIcon: this.currentState.animateSyncIcon
     });
-
-    // List of menu used for keyboard navigation
-    this.buttons = [];
 
     // List of menu used for keyboard navigation
     this.buttons = [];
