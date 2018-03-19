@@ -108,7 +108,7 @@ describe('Authorization', function() {
       fetchMock.once(new RegExp(recordsPath + '\\?_sort=-last_modified$'), {
         body: {
           data: [{
-            id: "singleNote",
+            id: "singleNote2",
             content: "encrypted content",
             kid: staticCredential.key.kid,
             last_modified: 1234,
@@ -139,7 +139,7 @@ describe('Authorization', function() {
 
       decryptMock = sandbox.stub(global, 'decrypt');
       decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
-        id: "singleNote",
+        id: "singleNote2",
         content: "<p>Hi there</p>",
       });
 
@@ -182,7 +182,7 @@ describe('Authorization', function() {
           status: 201,
           body: {
             data: {
-              id: "singleNote",
+              id: "singleNote2",
               content: "encrypted resolution",
               kid: staticCredential.key.kid,
               last_modified: 1238
@@ -192,22 +192,22 @@ describe('Authorization', function() {
       });
       // Then it will try to pull changes that happened while it was
       // pushing -- see e.g. https://github.com/Kinto/kinto.js/issues/555
-      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified&_since=1234$'), {
+      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote2&_sort=-last_modified&_since=1234$'), {
         data: []
       });
       decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
-        id: "singleNote",
+        id: "singleNote2",
         content: "<p>Resolution</p>",
       });
 
-      return collection.upsert({id: "singleNote", content: "<p>Local</p>"})
+      return collection.upsert({id: "singleNote2", content: "<p>Local</p>"})
         .then(() => syncKinto(client, credentials))
-        .then(() => collection.getAny('singleNote'))
+        .then(() => collection.getAny('singleNote2'))
         .then(result => {
           chai.expect(result.data.content).eql("<p>Resolution</p>");
           const expectedContent = "<p>Hi there</p><p>localized string</p><p>Local</p>";
           const expectedResolution = {
-            id: "singleNote",
+            id: "singleNote2",
             content: expectedContent,
             last_modified: 1234,
             _status: "updated"
@@ -223,7 +223,7 @@ describe('Authorization', function() {
       // first successful sync.
       fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=1234$'), {
         data: [{
-          id: "singleNote",
+          id: "singleNote2",
           content: "encrypted content",
           kid: "20171001",
           last_modified: 1236,
@@ -242,7 +242,7 @@ describe('Authorization', function() {
           status: 201,
           body: {
             data: {
-              id: 'singleNote',
+              id: 'singleNote2',
               content: "encrypted content",
               kid: staticCredential.key.kid,
               last_modified: 1239,
@@ -251,7 +251,7 @@ describe('Authorization', function() {
         }]
       });
       // And again, try to fetch stuff apart from what we just pushed.
-      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified$'), {
+      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote2&_sort=-last_modified$'), {
         body: {
           data: []
         },
@@ -269,7 +269,7 @@ describe('Authorization', function() {
 
       // Get the "Hi there" note from the server
       return syncKinto(client, credentials)
-        .then(() => collection.getAny('singleNote'))
+        .then(() => collection.getAny('singleNote2'))
         .then(result => {
           chai.expect(result.data._status).eql("synced");
           chai.expect(result.data.content).eql("<p>Hi there</p>");
@@ -282,7 +282,7 @@ describe('Authorization', function() {
           // Verify that the notes collection was deleted.
           console.log(JSON.stringify(fetchMock.calls()));
           chai.assert(deleted);
-          return collection.getAny('singleNote');
+          return collection.getAny('singleNote2');
         }).then(result => {
           // Record now needs to be synced again.
           chai.expect(result.data._status).eql("synced");
