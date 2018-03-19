@@ -35,7 +35,6 @@ footer {
     &.isClickable {
       button {
         color: black;
-        cursor: pointer !important;
       }
       button:hover + p {
         display: block;
@@ -110,7 +109,6 @@ footer {
 
 #enable-sync:active {
   outline: none;
-  padding: 0;
 }
 
 .animateSyncIcon #enable-sync svg {

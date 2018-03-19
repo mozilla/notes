@@ -362,7 +362,6 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
 }
 
 function createNote(client, note = { content: ''}) { // eslint-disable-line no-unused-vars
-  console.log('CREATE NOTE');
   return client.collection('notes').create(note);
 }
 

@@ -112,10 +112,12 @@ export function createNote(id, content = '') {
 }
 
 export function deleteNote(id) {
-  chrome.runtime.sendMessage({
-    action: 'delete-note',
-    id
-  });
+  if (id) {
+    chrome.runtime.sendMessage({
+      action: 'delete-note',
+      id
+    });
+  }
   return { type: DELETE_NOTE, id };
 }
 
