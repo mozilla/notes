@@ -56,8 +56,7 @@
       "utils.js",
       "fxa-utils.js",
       "sync.js",
-      "background.js",
-      "migration.js"
+      "background.js"
     ]
   },
   "options_ui": {

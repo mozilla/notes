@@ -171,6 +171,7 @@ function syncKinto(client, credentials) {
           // Query Kinto with the Bearer Token
           collection = client
             .collection('notes', {
+              idSchema: notesIdSchema,
               remoteTransformers: [new JWETransformer(credential.key)],
             });
           return collection
@@ -197,25 +198,11 @@ function syncKinto(client, credentials) {
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
             totalOps += `<p>${mergeWarning}</p>`;
-
-            // We handle conflict regarding migration fron singleNote to multiNote
-            if (conflict.remote.id === 'singleNote') {
-              // We look for previous singleNote and merge remote singleNote with it.
-              const wasSingleNote = syncResult.published.find(note => note.wasSingleNote);
-              totalOps += wasSingleNote.content;
-              wasSingleNote.content = totalOps;
-              collection.upsert(wasSingleNote); // We override new singleNote with merged conflict
-              resolution = conflict.local; // local singleNote with deleted status.
-
-              // We send metrics to record migration status.
-              sendMetric('migrate-single-note'); // eslint-disable-line no-undef
-            } else {
-              totalOps += conflict.local.content;
-              resolution = {
-                id: conflict.remote.id,
-                content: totalOps,
-              };
-            }
+            totalOps += conflict.local.content;
+            resolution = {
+              id: conflict.remote.id,
+              content: totalOps,
+            };
             client.conflict = true;
             sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
@@ -270,7 +257,7 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes').list({});
+  return client.collection('notes', { idSchema: notesIdSchema }).list({});
 }
 
 /**
@@ -327,7 +314,7 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
 
   const later = function() {
     syncDebounce = null;
-    const notes = client.collection('notes');
+    const notes = client.collection('notes', { idSchema: notesIdSchema });
     return notes.upsert(note)
       .then((res) => {
 
@@ -365,16 +352,16 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
   return promise;
 }
 
-function createNote(client, note = { content: ''}) { // eslint-disable-line no-unused-vars
-  return client.collection('notes').create(note);
+function createNote(client, note) { // eslint-disable-line no-unused-vars
+  return client.collection('notes', { idSchema: notesIdSchema }).create(note, { useRecordId: true });
 }
 
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes').deleteAny(id);
+  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
-  const notes = client.collection('notes');
+  const notes = client.collection('notes', { idSchema: notesIdSchema });
   return notes.resetSyncStatus();
 }
 

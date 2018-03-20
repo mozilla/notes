@@ -18,6 +18,8 @@ import { MAXIMUM_PAD_SIZE,
 
 import INITIAL_CONTENT from './data/initialContent';
 import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
+import { v4 as uuid4 } from 'uuid';
+
 /*
  * action creators
  */
@@ -102,27 +104,22 @@ export function reconnectSync() {
 
 export function createNote(content = '') {
 
-  const fct = (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      // We listen to creation
-      function listenner(eventData) {
-        switch (eventData.action) {
-          case CREATE_NOTE: {
-            chrome.runtime.onMessage.removeListener(listenner);
-            dispatch({ type: CREATE_NOTE, id: eventData.id, content: eventData.content });
-            resolve(eventData.id);
-            break;
-          }
-        }
-      }
-      chrome.runtime.onMessage.addListener(listenner);
-    });
-  };
+  const id = uuid4();
 
+  // Send create request to kinto with uuid4 id
   chrome.runtime.sendMessage({
     action: 'create-note',
+    id,
     content
   });
+
+  // Return id to callback using promises
+  const fct = (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: CREATE_NOTE, id, content });
+      resolve(id);
+    });
+  };
 
   return fct;
 }
