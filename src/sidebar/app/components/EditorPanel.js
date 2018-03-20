@@ -36,7 +36,7 @@ class EditorPanel extends React.Component {
 
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
-    if (nextProps.match.params.id !== this.note.id) {
+    if (nextProps.match.params.id !== this.props.match.params.id) {
       this.note = nextProps.state.notes.find((note) => {
         return note.id === nextProps.match.params.id;
       });

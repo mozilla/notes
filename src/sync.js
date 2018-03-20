@@ -194,7 +194,7 @@ function syncKinto(client, credentials) {
               content: conflict.local.content,
             };
           } else {
-
+            // console.log('CONFLICTS', conflict.remote, conflict.local);
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
             totalOps += `<p>${mergeWarning}</p>`;
@@ -202,6 +202,7 @@ function syncKinto(client, credentials) {
             resolution = {
               id: conflict.remote.id,
               content: totalOps,
+              deleted: conflict.remote.deleted && conflict.local.deleted
             };
             client.conflict = true;
             sendMetrics('handle-conflict'); // eslint-disable-line no-undef

@@ -22,13 +22,15 @@ class Header extends React.Component {
 
     // Event used on window.addEventListener
     this.onCloseListener = () => {
-      this.menu.classList.replace('open', 'close');
+      if (this.menu) {
+        this.menu.classList.replace('open', 'close');
+      }
       window.removeEventListener('keydown', this.handleKeyPress);
     };
 
     // Open and close menu
     this.toggleMenu = (e) => {
-      if (this.menu.classList.contains('close')) {
+      if (this.menu && this.menu.classList.contains('close')) {
         this.menu.classList.replace('close', 'open');
         setTimeout(() => {
           window.addEventListener('click', this.onCloseListener, { once: true });
@@ -64,7 +66,7 @@ class Header extends React.Component {
           this.buttons[this.indexFocusedButton].focus();
           break;
         case 'Escape':
-          if (this.menu.classList.contains('open')) {
+          if (this.menu && this.menu.classList.contains('open')) {
             this.toggleMenu(event);
           }
           break;

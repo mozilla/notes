@@ -31,15 +31,17 @@ class ListPanel extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.refreshTime();
-
+  componentWillMount() {
     // We delete notes with no content
     const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
     listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
 
     // Set no focused Note to create new note on send note event.
     this.props.dispatch(setFocusedNote());
+  }
+
+  componentDidMount() {
+    this.refreshTime();
   }
 
   componentWillUnmount() {

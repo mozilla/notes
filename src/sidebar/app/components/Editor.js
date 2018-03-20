@@ -29,7 +29,6 @@ class Editor extends React.Component {
     this.state = {
       hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
     };
-
     // Function to manually remove MAXIMUM_PAD_SIZE notification
     this.closeNotification = () => this.setState({ hideNotification: true });
   }
@@ -76,11 +75,10 @@ class Editor extends React.Component {
 
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
-    if (this.editor && nextProps.note &&
+    if (this.editor && this.props.note &&
+        nextProps.note.id !== this.props.note.id &&
         this.editor.getData() !== nextProps.note.content) {
-      if (this.props.note.id !== nextProps.note.id) {
-        this.ignoreChange = true;
-      }
+      this.ignoreChange = true;
       this.editor.setData(nextProps.note.content || '<p></p>');
     }
   }
