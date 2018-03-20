@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
 import ArrowLeftIcon from './icons/ArrowLeftIcon';
 import MoreIcon from './icons/MoreIcon';
@@ -97,11 +96,11 @@ class Header extends React.Component {
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
 
         <div className="btnWrapper">
-          <Link
-            to="/"
+          <button
+          onClick={() => this.props.history.push('/')}
             className="btn iconBtn">
             <ArrowLeftIcon />
-          </Link>
+          </button>
           { this.props.note ?
           <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p> :
           '' }

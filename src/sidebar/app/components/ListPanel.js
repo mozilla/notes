@@ -1,14 +1,10 @@
+import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import moment from 'moment';
-
-import { Link } from 'react-router-dom';
-
 import NewIcon from './icons/NewIcon';
 import { deleteNote, setFocusedNote, createNote } from '../actions';
-
 
 class ListPanel extends React.Component {
 
@@ -66,12 +62,13 @@ class ListPanel extends React.Component {
           }).map((note) => {
             return (
               <li key={note.id}>
-                <Link to={`/note/${note.id}`}
+                <button
+                  onClick={ () => this.props.history.push(`/note/${note.id}`) }
                   className="btn fullWidth borderBottom"
                   title="New note">
                   <p><strong>{ note.firstLine }</strong></p>
                   <p><span>{ moment(note.lastModified).fromNow() }</span> { note.secondLine }</p>
-                </Link>
+                </button>
               </li>
             );
           })}
