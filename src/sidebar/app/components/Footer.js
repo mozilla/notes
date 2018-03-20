@@ -49,7 +49,29 @@ class Footer extends React.Component {
       }
     };
 
-    this.currentState = this.STATES.SIGNIN; // contain current state from this.STATES
+    this.getFooterState = (state) => {
+      let res;
+      if (state.sync.email) { // If user is authenticated
+          if (state.sync.isSyncing) {
+            res = this.STATES.SYNCING;
+          } else {
+            res = this.STATES.SYNCED;
+          }
+      } else {
+        if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
+          res = this.STATES.OPENINGLOGIN;
+        } else if (state.sync.isPleaseLogin) {
+          res = this.STATES.VERIFYACCOUNT;
+        } else if (state.sync.isReconnectSync) {
+          res = this.STATES.RECONNECTSYNC;
+        } else {
+          res = this.STATES.SIGNIN;
+        }
+      }
+      return res;
+    };
+
+    this.currentState = this.getFooterState(props.state); // contain current state from this.STATES
 
     this.disconnectFromSync = () => {
       props.dispatch(disconnect());
@@ -128,24 +150,7 @@ class Footer extends React.Component {
 
   // Not a big fan of all those if.
   componentWillReceiveProps(nextProps) {
-    const state = nextProps.state;
-    if (state.sync.email) { // If user is authenticated
-        if (state.sync.isSyncing) {
-          this.currentState = this.STATES.SYNCING;
-        } else {
-          this.currentState = this.STATES.SYNCED;
-        }
-    } else {
-      if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
-        this.currentState = this.STATES.OPENINGLOGIN;
-      } else if (state.sync.isPleaseLogin) {
-        this.currentState = this.STATES.VERIFYACCOUNT;
-      } else if (state.sync.isReconnectSync) {
-        this.currentState = this.STATES.RECONNECTSYNC;
-      } else {
-        this.currentState = this.STATES.SIGNIN;
-      }
-    }
+    this.currentState = this.getFooterState(nextProps.state);
   }
 
   render() {
