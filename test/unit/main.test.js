@@ -110,6 +110,7 @@ describe('Authorization', function() {
           data: [{
             id: "singleNote",
             content: "encrypted content",
+            lastModified: "1234567890",
             kid: staticCredential.key.kid,
             last_modified: 1234,
           }]
@@ -141,6 +142,7 @@ describe('Authorization', function() {
       decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
         id: "singleNote",
         content: "<p>Hi there</p>",
+        lastModified: "1234567890"
       });
 
       // sync() tries to gather local changes, even when a conflict
@@ -184,6 +186,7 @@ describe('Authorization', function() {
             data: {
               id: "singleNote",
               content: "encrypted resolution",
+              lastModified: "1234567890",
               kid: staticCredential.key.kid,
               last_modified: 1238
             }
@@ -198,9 +201,10 @@ describe('Authorization', function() {
       decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
         id: "singleNote",
         content: "<p>Resolution</p>",
+        lastModified: "1234567890"
       });
 
-      return collection.upsert({id: "singleNote", content: "<p>Local</p>"})
+      return collection.upsert({id: "singleNote", content: "<p>Local</p>", lastModified: "1234567890"})
         .then(() => syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
@@ -209,6 +213,7 @@ describe('Authorization', function() {
           const expectedResolution = {
             id: "singleNote",
             content: expectedContent,
+            lastModified: "1234567890",
             last_modified: 1234,
             _status: "updated"
           };

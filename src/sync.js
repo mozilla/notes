@@ -192,17 +192,32 @@ function syncKinto(client, credentials) {
             resolution = {
               id: conflict.local.id,
               content: conflict.local.content,
+              lastModified: conflict.local.lastModified
             };
           } else {
             // console.log('CONFLICTS', conflict.remote, conflict.local);
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
-            totalOps += `<p>${mergeWarning}</p>`;
-            totalOps += conflict.local.content;
-            resolution = {
-              id: conflict.remote.id,
-              content: totalOps
-            };
+
+            // If content is different we merge both.
+            // Could be difference on lastModified Date.
+            if (conflict.remote.content !== conflict.local.content) {
+              totalOps += `<p>${mergeWarning}</p>`;
+              totalOps += conflict.local.content;
+              resolution = {
+                id: conflict.remote.id,
+                content: totalOps,
+              };
+            }
+
+            // We get earlier date for resolved conflict.
+            if (conflict.local.lastModified > conflict.remote.lastModified) {
+              resolution.lastModified = conflict.local.lastModified;
+            } else {
+              resolution.lastModified = conflict.remote.lastModified;
+            }
+
+            // If they both got deleted we remove them.
             if (conflict.remote.deleted && conflict.local.deleted) {
               resolution.deleted = true;
             }
