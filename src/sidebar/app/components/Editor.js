@@ -76,9 +76,10 @@ class Editor extends React.Component {
   // This is triggered when redux update state.
   componentWillReceiveProps(nextProps) {
     if (this.editor && this.props.note &&
-        nextProps.note.id !== this.props.note.id &&
         this.editor.getData() !== nextProps.note.content) {
-      this.ignoreChange = true;
+      if (nextProps.note.id !== this.props.note.id) {
+        this.ignoreChange = true;
+      }
       this.editor.setData(nextProps.note.content || '<p></p>');
     }
   }
