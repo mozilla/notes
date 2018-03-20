@@ -38,9 +38,6 @@ class Editor extends React.Component {
       .then(editor => {
         this.editor = editor;
         customizeEditor(editor);
-        // Send message to background.js stating editor has been initialized
-        // and is ready to receive content
-        chrome.runtime.sendMessage({action: 'editor-ready'});
 
         editor.document.on('change', (eventInfo, name) => {
           const isFocused = document

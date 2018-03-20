@@ -48,6 +48,11 @@ class ListPanel extends React.Component {
   }
 
   componentDidMount() {
+
+    // Send message to background.js stating editor has been initialized
+    // and is ready to receive content
+    chrome.runtime.sendMessage({action: 'editor-ready'});
+
     this.refreshTime();
   }
 
