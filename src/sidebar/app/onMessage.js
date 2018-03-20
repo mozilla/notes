@@ -1,8 +1,6 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
          TEXT_CHANGE,
-         TEXT_SYNCING,
-         TEXT_EDITING,
          TEXT_SYNCED,
          TEXT_SAVED,
          RECONNECT_SYNC,
