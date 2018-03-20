@@ -201,9 +201,11 @@ function syncKinto(client, credentials) {
             totalOps += conflict.local.content;
             resolution = {
               id: conflict.remote.id,
-              content: totalOps,
-              deleted: conflict.remote.deleted && conflict.local.deleted
+              content: totalOps
             };
+            if (conflict.remote.deleted && conflict.local.deleted) {
+              resolution.deleted = true;
+            }
             client.conflict = true;
             sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
