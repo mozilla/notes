@@ -110,7 +110,8 @@ export function createNote(content = '') {
   chrome.runtime.sendMessage({
     action: 'create-note',
     id,
-    content
+    content,
+    lastModified: new Date()
   });
 
   // Return id to callback using promises

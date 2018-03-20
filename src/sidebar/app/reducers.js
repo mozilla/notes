@@ -135,6 +135,7 @@ function notes(notes = [], action) {
       });
       if (note) {
         note.content = note.content + `<p>${action.content}</p>`;
+        note.lastModified = new Date();
       }
       return list;
     }
