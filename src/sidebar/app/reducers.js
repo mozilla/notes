@@ -57,6 +57,10 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: true,
       });
+    case TEXT_CHANGE:
+      return Object.assign({}, sync, {
+        isSyncing: true
+      });
     case TEXT_EDITING:
       return Object.assign({}, sync, {
         isSyncing: true
@@ -66,6 +70,11 @@ function sync(sync = {}, action) {
         isSyncing: true
       });
     case TEXT_SYNCED:
+      return Object.assign({}, sync, {
+        isSyncing: false,
+        lastSynced: new Date()
+      });
+    case KINTO_LOADED:
       return Object.assign({}, sync, {
         isSyncing: false,
         lastSynced: new Date()
@@ -110,6 +119,24 @@ function notes(notes = [], action) {
         }
       });
       return list;
+    }
+    case TEXT_SYNCED: {
+
+      if (!action.notes) return notes;
+
+      const res = [];
+
+      action.notes.forEach((note) => {
+        res.push({
+          id: note.id,
+          content: note.content,
+          firstLine: getFirstLineFromContent(note.content),
+          secondLine: stripHtmlWithoutFirstLine(note.content),
+          lastModified: note.lastModified instanceof Date ? note.lastModified : new Date(note.lastModified)
+        });
+      });
+
+      return res;
     }
     case CREATE_NOTE: {
       const list = Array.from(notes);

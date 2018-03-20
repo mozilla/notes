@@ -15,8 +15,6 @@ import { authenticate,
          saved,
          createNote,
          synced,
-         syncing,
-         saving,
          reconnectSync,
          sendToNote,
          popagateRedux,
@@ -43,7 +41,6 @@ chrome.runtime.onMessage.addListener(eventData => {
           console.error('eventData.notes is empty');
         } else {
           store.dispatch(kintoLoad(eventData.notes));
-          store.dispatch(synced());
         }
         break;
       case TEXT_CHANGE:
@@ -51,14 +48,14 @@ chrome.runtime.onMessage.addListener(eventData => {
           action: 'kinto-load'
         });
         break;
-      case TEXT_SYNCING:
-        store.dispatch(syncing());
-        break;
-      case TEXT_EDITING:
-        store.dispatch(saving());
-        break;
       case TEXT_SYNCED:
-        store.dispatch(synced());
+        // sync.isSyncing being true means this instance triggered syncing
+        // so content should be up to date.
+        if (!store.getState().sync.isSyncing) {
+          store.dispatch(synced(eventData.notes));
+        } else {
+          store.dispatch(synced());
+        }
         break;
       case TEXT_SAVED:
         store.dispatch(saved());
