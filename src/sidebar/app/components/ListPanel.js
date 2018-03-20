@@ -3,6 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import INITIAL_CONTENT from '../data/initialContent';
+
 import NewIcon from './icons/NewIcon';
 import { deleteNote, setFocusedNote, createNote } from '../actions';
 
@@ -28,12 +30,21 @@ class ListPanel extends React.Component {
   }
 
   componentWillMount() {
-    // We delete notes with no content
-    const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
-    listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
 
-    // Set no focused Note to create new note on send note event.
-    this.props.dispatch(setFocusedNote());
+    // If user is not logged, and has no notes, we create initial content for him
+    // and redirect to it.
+    if (this.props.state.sync.welcomePage) {
+      this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
+        this.props.history.push(`/note/${id}`);
+      });
+    } else {
+      // We delete notes with no content
+      const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
+      listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
+
+      // Set no focused Note to create new note on send note event.
+      this.props.dispatch(setFocusedNote());
+    }
   }
 
   componentDidMount() {

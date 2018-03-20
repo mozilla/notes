@@ -15,7 +15,8 @@ import {
   DELETE_NOTE,
   PLEASE_LOGIN,
   FOCUS_NOTE,
-  SEND_TO_NOTES
+  SEND_TO_NOTES,
+  REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
 import { getFirstLineFromContent, stripHtmlWithoutFirstLine } from './utils/utils';
@@ -72,6 +73,14 @@ function sync(sync = {}, action) {
     case FOCUS_NOTE:
       return Object.assign({}, sync, {
         focusedNoteId: action.id
+      });
+    case REQUEST_WELCOME_PAGE:
+      return Object.assign({}, sync, {
+        welcomePage: true
+      });
+    case CREATE_NOTE:
+      return Object.assign({}, sync, {
+        welcomePage: false
       });
     default:
       return sync;

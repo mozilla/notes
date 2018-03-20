@@ -14,7 +14,8 @@ import { MAXIMUM_PAD_SIZE,
          DELETE_NOTE,
          PLEASE_LOGIN,
          OPENING_LOGIN,
-         FOCUS_NOTE } from './utils/constants';
+         FOCUS_NOTE,
+         REQUEST_WELCOME_PAGE } from './utils/constants';
 
 import INITIAL_CONTENT from './data/initialContent';
 import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
@@ -186,4 +187,8 @@ export function sendToNote(id, content) {
 
 export function setFocusedNote(id) {
   return { type: FOCUS_NOTE, id };
+}
+
+export function requestWelcomeNote() {
+  return { type: REQUEST_WELCOME_PAGE };
 }

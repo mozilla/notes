@@ -21,6 +21,7 @@ export const EXPORT_HTML = 'export-html';
 export const CREATE_NOTE = 'create-note';
 export const DELETE_NOTE = 'delete-note';
 export const FOCUS_NOTE = 'focus-note';
+export const REQUEST_WELCOME_PAGE = 'request-welcome-page';
 
 // Internal action to sync redux state between all instances
 export const PROPAGATE_REDUX = 'propagate-redux';

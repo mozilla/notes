@@ -7,7 +7,7 @@ import * as moment from 'moment';
 moment.locale(browser.i18n.getUILanguage());
 
 import store from './store';
-import { authenticate, kintoLoad } from './actions';
+import { authenticate, kintoLoad, requestWelcomeNote } from './actions';
 
 import ListPanel from './components/ListPanel';
 import EditorPanel from './components/EditorPanel';
@@ -43,12 +43,21 @@ const root = (
 
 // We load store saved by store.js on all events
 browser.storage.local.get().then(result => {
+
+  // If no redux, we display initial content to introduce Note
+  if (!result.redux) {
+    store.dispatch(requestWelcomeNote());
+  }
+
   const state = JSON.parse(result.redux || '{}');
   // We use stored state to propagate actions and avoid keeping
-  result.hasOwnProperty('credentials') && state.sync.email ? store.dispatch(authenticate(state.sync.email)) : null;
+  if (result.hasOwnProperty('credentials') && state.sync.email) {
+    store.dispatch(authenticate(state.sync.email));
+  }
+
   store.dispatch(kintoLoad(state.notes ? state.notes : []));
 
-  // ONlny when store is populated we render our app
+  // Only when store is populated we render our app
   ReactDOM.render(root, document.getElementById('notes'));
 });
 
