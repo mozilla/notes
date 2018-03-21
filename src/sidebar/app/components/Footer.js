@@ -159,6 +159,8 @@ class Footer extends React.Component {
     this.onCloseListener = () => {
       this.menu.classList.replace('open', 'close');
       window.removeEventListener('keydown', this.handleKeyPress);
+      // Blur `this.contextMenuBtn` when context menu closes - fixes #770
+      this.contextMenuBtn.blur();
     };
 
     // Open and close menu
@@ -356,6 +358,7 @@ class Footer extends React.Component {
 
           <div className="photon-menu close top left" ref={menu => this.menu = menu }>
             <button
+              ref={contextMenuBtn => this.contextMenuBtn = contextMenuBtn}
               id="context-menu-button"
               onClick={(e) => this.toggleMenu(e)}
               onKeyDown={this.handleKeyPress}>
