@@ -2,15 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import CloseIcon from './icons/CloseIcon';
-
 import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
 import INITIAL_CONTENT from '../data/initialContent';
 
-import { MAXIMUM_PAD_SIZE } from '../utils/constants';
-import { textChange } from '../actions';
+import { updateNote } from '../actions';
 
 const styles = {
   container: {
@@ -26,11 +23,6 @@ class Editor extends React.Component {
     this.props = props;
     this.editor = null; // Editor object
     this.ignoreChange = false;
-    this.state = {
-      hideNotification: false // Notification when reaching MAXIMUM_PAD_SIZE
-    };
-    // Function to manually remove MAXIMUM_PAD_SIZE notification
-    this.closeNotification = () => this.setState({ hideNotification: true });
   }
 
   componentDidMount() {
@@ -49,10 +41,8 @@ class Editor extends React.Component {
             if (content !== undefined &&
                 content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
 
-              this.setState({ hideNotification: false });
-
               if (!this.ignoreChange) {
-                this.props.dispatch(textChange(this.props.note.id, content));
+                this.props.dispatch(updateNote(this.props.note.id, content));
               }
               this.ignoreChange = false;
 
@@ -94,19 +84,20 @@ class Editor extends React.Component {
             ref={node => {
               this.node = node;
             }}
-            dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}
-          >
+            dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}>
           </div>
         </div>
-        { !this.state.hideNotification && this.props.note.content && this.props.note.content.length > MAXIMUM_PAD_SIZE ?
-        <div id="sync-note">
-          <button onClick={this.closeNotification}><CloseIcon /></button>
-          <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
-        </div> : null }
+
       </div>
     );
   }
 }
+
+// We can reuse notification in editorWrapper using the following :
+// <div id="sync-note">
+//   <button onClick={this.closeNotification}><CloseIcon /></button>
+//   <p>{ browser.i18n.getMessage('maximumPadSizeExceeded') }</p>
+// </div>
 
 function mapStateToProps(state) {
   return {

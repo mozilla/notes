@@ -1,21 +1,17 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
-         TEXT_CHANGE,
+         UPDATE_NOTE,
          TEXT_SYNCED,
-         TEXT_SAVED,
          RECONNECT_SYNC,
          DISCONNECTED,
-         SEND_TO_NOTES,
-         PROPAGATE_REDUX } from './utils/constants';
+         SEND_TO_NOTES } from './utils/constants';
          // Actions
 import { authenticate,
          disconnect,
-         saved,
          createNote,
          synced,
          reconnectSync,
          sendToNote,
-         popagateRedux,
          kintoLoad } from './actions';
 import store from './store';
 /**
@@ -41,7 +37,7 @@ chrome.runtime.onMessage.addListener(eventData => {
           store.dispatch(kintoLoad(eventData.notes));
         }
         break;
-      case TEXT_CHANGE:
+      case UPDATE_NOTE:
         browser.runtime.sendMessage({
           action: 'kinto-load'
         });
@@ -54,9 +50,6 @@ chrome.runtime.onMessage.addListener(eventData => {
         } else {
           store.dispatch(synced());
         }
-        break;
-      case TEXT_SAVED:
-        store.dispatch(saved());
         break;
       case RECONNECT_SYNC:
         store.dispatch(reconnectSync());
@@ -74,9 +67,6 @@ chrome.runtime.onMessage.addListener(eventData => {
             store.dispatch(createNote(`<p>${ eventData.text }</p>`));
           }
         }
-        break;
-      case PROPAGATE_REDUX:
-        store.dispatch(popagateRedux(eventData.state, eventData.id));
         break;
     }
 });

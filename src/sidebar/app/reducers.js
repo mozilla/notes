@@ -1,17 +1,13 @@
 import { combineReducers } from 'redux';
 import {
-  TEXT_CHANGE,
   SYNC_AUTHENTICATED,
   DISCONNECTED,
   TEXT_SYNCED,
-  // TEXT_SAVED,
-  TEXT_SYNCING,
-  TEXT_EDITING,
   KINTO_LOADED,
-  // SEND_TO_NOTES,
   OPENING_LOGIN,
   RECONNECT_SYNC,
   CREATE_NOTE,
+  UPDATE_NOTE,
   DELETE_NOTE,
   PLEASE_LOGIN,
   FOCUS_NOTE,
@@ -57,15 +53,7 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: true,
       });
-    case TEXT_CHANGE:
-      return Object.assign({}, sync, {
-        isSyncing: true
-      });
-    case TEXT_EDITING:
-      return Object.assign({}, sync, {
-        isSyncing: true
-      });
-    case TEXT_SYNCING:
+    case UPDATE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true
       });
@@ -83,6 +71,7 @@ function sync(sync = {}, action) {
       return Object.assign({}, sync, {
         focusedNoteId: action.id
       });
+    // REQUEST_WELCOME_PAGE is triggered on start if redux has never been init.
     case REQUEST_WELCOME_PAGE:
       return Object.assign({}, sync, {
         welcomePage: true
@@ -151,7 +140,7 @@ function notes(notes = [], action) {
     }
     case DELETE_NOTE:
       return Array.from(notes).filter((note) => note.id !== action.id);
-    case TEXT_CHANGE: {
+    case UPDATE_NOTE: {
       const list = Array.from(notes);
       const note = list.find((note) => {
         return note.id === action.id;

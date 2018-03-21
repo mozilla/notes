@@ -12,12 +12,7 @@ import { exportHTML, deleteNote } from '../actions';
 class Header extends React.Component {
   constructor(props) {
     super(props);
-
     this.props = props;
-
-    browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
-    });
 
     // Event used on window.addEventListener
     this.onCloseListener = () => {
@@ -76,8 +71,10 @@ class Header extends React.Component {
 
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
-      browser.tabs.create({
-        url: this.surveyPath
+      browser.runtime.getBrowserInfo().then((info) => {
+        browser.tabs.create({
+          url: `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`
+        });
       });
     };
 
@@ -125,15 +122,6 @@ class Header extends React.Component {
                 </button>
               </li>
               <hr/>
-              <li>
-                <button
-                  role="menuitem"
-                  disabled
-                  title={ browser.i18n.getMessage('makePlainText') }
-                  onClick={ () => console.log('not available yet') }>
-                  { browser.i18n.getMessage('makePlainText') }
-                </button>
-              </li>
               <li>
                 <button
                   role="menuitem"

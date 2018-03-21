@@ -1,16 +1,12 @@
-import { MAXIMUM_PAD_SIZE,
-         SYNC_AUTHENTICATED,
+import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
-         TEXT_CHANGE,
-         TEXT_SYNCING,
-         TEXT_EDITING,
          TEXT_SYNCED,
-         TEXT_SAVED,
          RECONNECT_SYNC,
          DISCONNECTED,
          SEND_TO_NOTES,
          EXPORT_HTML,
          CREATE_NOTE,
+         UPDATE_NOTE,
          DELETE_NOTE,
          PLEASE_LOGIN,
          OPENING_LOGIN,
@@ -24,7 +20,7 @@ import { v4 as uuid4 } from 'uuid';
 /*
  * action creators
  */
-export function textChange(id, content) {
+export function updateNote(id, content) {
   let isInitialContent = false;
   const lastModified = new Date();
   if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
@@ -34,18 +30,10 @@ export function textChange(id, content) {
         id, content, lastModified
       }
     });
-    if (content.length > MAXIMUM_PAD_SIZE) {
-      console.error( // eslint-disable-line no-console
-        'Maximum notepad size reached:', content.length
-      );
-      browser.runtime.sendMessage({
-        action: 'metrics-limit-reached'
-      });
-    }
   } else {
     isInitialContent = true;
   }
-  return { type: TEXT_CHANGE, id, content, lastModified, isInitialContent };
+  return { type: UPDATE_NOTE, id, content, lastModified, isInitialContent };
 }
 
 export function authenticate(email) {
@@ -56,20 +44,8 @@ export function authenticate(email) {
   return { type: SYNC_AUTHENTICATED, email };
 }
 
-export function syncing() {
-  return { type: TEXT_SYNCING };
-}
-
-export function saving() {
-  return { type: TEXT_EDITING };
-}
-
 export function synced(notes) {
   return { type: TEXT_SYNCED, notes };
-}
-
-export function saved() {
-  return { type: TEXT_SAVED };
 }
 
 export function kintoLoad(notes) {
@@ -127,12 +103,7 @@ export function createNote(content = '') {
 }
 
 export function deleteNote(id) {
-  if (id) {
-    chrome.runtime.sendMessage({
-      action: 'delete-note',
-      id
-    });
-  }
+  id ? chrome.runtime.sendMessage({ action: 'delete-note', id }) : null;
   return { type: DELETE_NOTE, id };
 }
 

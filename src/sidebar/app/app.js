@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { HashRouter, Route } from 'react-router-dom';
 
 import * as moment from 'moment';
 moment.locale(browser.i18n.getUILanguage());
@@ -9,8 +8,7 @@ moment.locale(browser.i18n.getUILanguage());
 import store from './store';
 import { authenticate, kintoLoad, requestWelcomeNote } from './actions';
 
-import ListPanel from './components/ListPanel';
-import EditorPanel from './components/EditorPanel';
+import Router from './router';
 import Footer from './components/Footer';
 
 import './utils/theme.js'; // addListener theming
@@ -27,24 +25,11 @@ const styles = {
   }
 };
 
-const root = (
-  <Provider store={store}>
-    <div style={styles.container}>
-      <HashRouter>
-        <div style={styles.container}>
-          <Route exact path="/" component={ListPanel} />
-          <Route exact path="/note/:id" component={EditorPanel} />
-        </div>
-      </HashRouter>
-      <Footer />
-    </div>
-  </Provider>
-);
-
 // We load store saved by store.js on all events
 browser.storage.local.get().then(result => {
 
-  // If no redux, we display initial content to introduce Note
+  // If no redux, it means user never used the app before.
+  // we display initial content to introduce Note
   if (!result.redux) {
     store.dispatch(requestWelcomeNote());
   }
@@ -57,8 +42,15 @@ browser.storage.local.get().then(result => {
 
   store.dispatch(kintoLoad(state.notes ? state.notes : []));
 
-  // Only when store is populated we render our app
-  ReactDOM.render(root, document.getElementById('notes'));
+  // Render root DOM element
+  ReactDOM.render((
+    <Provider store={store}>
+      <div style={styles.container}>
+        <Router />
+        <Footer />
+      </div>
+    </Provider>
+  ), document.getElementById('notes'));
 });
 
 // Request sync kinto

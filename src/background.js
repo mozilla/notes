@@ -190,13 +190,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
         action: 'theme-changed'
       });
       break;
-    case 'propagate-redux':
-      browser.runtime.sendMessage({
-        action: 'propagate-redux',
-        id: eventData.id,
-        state: eventData.state
-      });
-      break;
   }
 });
 
