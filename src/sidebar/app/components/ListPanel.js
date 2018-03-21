@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -7,19 +6,14 @@ import INITIAL_CONTENT from '../data/initialContent';
 
 import NewIcon from './icons/NewIcon';
 import { deleteNote, setFocusedNote, createNote } from '../actions';
+import { formatLastModified } from '../utils/utils';
+
 
 class ListPanel extends React.Component {
 
   constructor(props) {
     super(props);
     this.props = props;
-    this.timer = null;
-
-    this.refreshTime = () => {
-      clearTimeout(this.timer);
-      this.setState({});
-      this.timer = setTimeout(this.refreshTime, 1000);
-    };
 
     this.requestNewNote = () => {
       // Request not id from background.
@@ -52,8 +46,6 @@ class ListPanel extends React.Component {
     // Send message to background.js stating editor has been initialized
     // and is ready to receive content
     chrome.runtime.sendMessage({action: 'editor-ready'});
-
-    this.refreshTime();
   }
 
   componentWillUnmount() {
@@ -83,7 +75,7 @@ class ListPanel extends React.Component {
                   className="btn fullWidth borderBottom"
                   title="New note">
                   <p><strong>{ note.firstLine }</strong></p>
-                  <p><span>{ moment(note.lastModified).fromNow() }</span> { note.secondLine }</p>
+                  <p><span>{ formatLastModified(note.lastModified) }</span> { note.secondLine }</p>
                 </button>
               </li>
             );

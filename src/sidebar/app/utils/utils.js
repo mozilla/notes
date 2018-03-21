@@ -11,6 +11,22 @@ function formatFooterTime(date) {
   });
 }
 
+function formatLastModified(date) {
+
+  if (new Date().getDate() === date.getDate()) {
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  return date.toLocaleDateString([], {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
 /**
  *
  * @param {HTMLElement Object} parentElement
@@ -62,7 +78,7 @@ function stripHtmlWithoutFirstLine(content) {
 }
 
 /**
- * Formats the filename for the "Export as HTML..." menu option.
+ * Formats the filename for the 'Export as HTML...' menu option.
  * Whitespace and illegal filename characters are removed, and
  * the length is shortened if longer than 200 characters.
  * @param {string} filename
@@ -73,11 +89,11 @@ function formatFilename(filename) {
   // remove surrounding whitespace
   formattedFilename = formattedFilename.trim();
   // remove illegal filename characters
-  formattedFilename = formattedFilename.replace(/[~#%{}[\]:\\<>/!@&?"*.+|\n\r\t]/g, '');
-  if (formattedFilename.length > 200) { // 200 bytes (close to filesystem max) - 5 for ".html" extension
+  formattedFilename = formattedFilename.replace(/[~#%{}[\]:\\<>/!@&?'*.+|\n\r\t]/g, '');
+  if (formattedFilename.length > 200) { // 200 bytes (close to filesystem max) - 5 for '.html' extension
     formattedFilename = formattedFilename.substring(0, 200);
   }
   return `${formattedFilename}.html`;
 }
 
-export { formatFooterTime, getFirstNonEmptyElement, formatFilename, getFirstLineFromContent, stripHtmlWithoutFirstLine };
+export { formatFooterTime, getFirstNonEmptyElement, formatFilename, getFirstLineFromContent, stripHtmlWithoutFirstLine, formatLastModified };

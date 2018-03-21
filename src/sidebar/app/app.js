@@ -2,9 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import * as moment from 'moment';
-moment.locale(browser.i18n.getUILanguage());
-
 import store from './store';
 import { authenticate, kintoLoad, requestWelcomeNote } from './actions';
 
