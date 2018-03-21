@@ -81,6 +81,10 @@ class Editor extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.editor.destroy();
+  }
+
   render() {
     return (
       <div style={styles.container}>
