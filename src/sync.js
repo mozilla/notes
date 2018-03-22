@@ -229,6 +229,8 @@ function syncKinto(client, credentials) {
         .then(() => {
           return syncKinto(client, credentials);
         });
+      } else if (syncResult === undefined) {
+        throw new Error('SyncResult is undefined.');
       }
     })
     .catch(error => {
