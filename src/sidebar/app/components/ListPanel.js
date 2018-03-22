@@ -57,8 +57,7 @@ class ListPanel extends React.Component {
       <div className="listView">
         <button
           className="btn fullWidth borderBottom"
-          onClick={this.requestNewNote}
-          title="New note">
+          onClick={this.requestNewNote}>
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </button>
         <ul>
@@ -72,8 +71,7 @@ class ListPanel extends React.Component {
               <li key={note.id}>
                 <button
                   onClick={ () => this.props.history.push(`/note/${note.id}`) }
-                  className="btn fullWidth borderBottom"
-                  title="New note">
+                  className="btn fullWidth borderBottom">
                   <p><strong>{ note.firstLine }</strong></p>
                   <p><span>{ formatLastModified(note.lastModified) }</span> { note.secondLine }</p>
                 </button>
