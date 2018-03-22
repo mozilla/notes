@@ -131,8 +131,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       retrieveNote(client).then((result) => {
         browser.runtime.sendMessage({
           action: 'kinto-loaded',
-          data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-          last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+          notes: result.notes
         });
       }).catch(() => {
         sendMetrics('open', {loaded: false});
@@ -142,7 +141,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       loadFromKinto(client, credentials);
       break;
     case 'kinto-save':
-      saveToKinto(client, credentials, eventData.content);
+      saveToKinto(client, credentials, eventData.note);
       break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
@@ -164,6 +163,26 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'editor-ready':
       isEditorReady = true;
+      break;
+    case 'create-note':
+      // We create a note, and send id with note-created nessage
+      createNote(client, {
+        id: eventData.id,
+        content: eventData.content,
+        lastModified: eventData.lastModified
+      }).then((result) => {
+        browser.runtime.sendMessage({
+          action: 'create-note',
+          id: result.data.id,
+          content: result.data.content
+        });
+      });
+      break;
+    case 'delete-note':
+      // We create a note, and send id with note-created nessage
+      deleteNote(client, eventData.id).then((note) => {
+        loadFromKinto(client, credentials);
+      });
       break;
     case 'theme-changed':
       sendMetrics('theme-changed', eventData.content);
@@ -193,7 +212,6 @@ function connected(p) {
   });
 }
 browser.runtime.onConnect.addListener(connected);
-
 
 const defaultTheme = {
   theme: 'default'

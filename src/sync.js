@@ -27,7 +27,7 @@ function decrypt(key, encrypted) {
 }
 
 // An "id schema" used to validate Kinto IDs and generate new ones.
-const notesIdSchema = {
+const notesIdSchema = { // eslint-disable-line no-unused-vars
   // FIXME: Maybe this should generate IDs?
   generate() {
     throw new Error('cannot generate IDs');
@@ -94,15 +94,7 @@ class JWETransformer {
       }
     }
 
-    let decoded = await decrypt(this.key, record.content);
-    if (!decoded.hasOwnProperty('id')) {
-      // Old-style encrypted notes aren't true Kinto records --
-      // they're just the content field.
-      decoded = {
-        content: decoded,
-        id: 'singleNote',
-      };
-    }
+    const decoded = await decrypt(this.key, record.content);
     if (record.hasOwnProperty('last_modified')) {
       decoded.last_modified = record.last_modified;
     }
@@ -195,29 +187,50 @@ function syncKinto(client, credentials) {
       if (syncResult && syncResult.conflicts.length > 0) {
         return Promise.all(syncResult.conflicts.map(conflict => {
           let resolution;
+          // If we receive conflict with singleNote, we update
           if (conflict.remote === null) {
             resolution = {
               id: conflict.local.id,
               content: conflict.local.content,
+              lastModified: conflict.local.lastModified
             };
           } else {
+            // console.log('CONFLICTS', conflict.remote, conflict.local);
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
-            totalOps += `<p>${mergeWarning}</p>`;
-            totalOps += conflict.local.content;
 
+            // If content is different we merge both.
+            // Could be difference on lastModified Date.
+            if (conflict.remote.content !== conflict.local.content) {
+              totalOps += `<p>${mergeWarning}</p>`;
+              totalOps += conflict.local.content;
+              resolution = {
+                id: conflict.remote.id,
+                content: totalOps,
+              };
+            }
+
+            // We get earlier date for resolved conflict.
+            if (conflict.local.lastModified > conflict.remote.lastModified) {
+              resolution.lastModified = conflict.local.lastModified;
+            } else {
+              resolution.lastModified = conflict.remote.lastModified;
+            }
+
+            // If they both got deleted we remove them.
+            if (conflict.remote.deleted && conflict.local.deleted) {
+              resolution.deleted = true;
+            }
             client.conflict = true;
-            resolution = {
-              id: conflict.remote.id,
-              content: totalOps,
-            };
             sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
-          .then(() => {
-            return syncKinto(client, credentials);
-          });
+        .then(() => {
+          return syncKinto(client, credentials);
+        });
+      } else if (syncResult === undefined) {
+        throw new Error('syncResult is undefined.');
       }
     })
     .catch(error => {
@@ -264,9 +277,7 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes', {
-    idSchema: notesIdSchema,
-  }).getAny('singleNote');
+  return client.collection('notes', { idSchema: notesIdSchema }).list({});
 }
 
 /**
@@ -286,19 +297,32 @@ function retrieveNote(client) {
  */
 function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-vars
   return syncKinto(client, credentials)
-  // Ignore failure of syncKinto by retrieving note even when promise rejected
+    // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
-        data: result && typeof result.data !== 'undefined' ? result.data.content : null,
-        last_modified: result && typeof result.data !== 'undefined' && typeof result.data.last_modified !== 'undefined' ? result.data.last_modified : null,
+        notes: result.data,
+        last_modified: null
       });
+    })
+    .catch((e) => {
+      browser.runtime.sendMessage({
+        action: 'kinto-loaded',
+        notes: null,
+        last_modified: null
+      });
+      return new Promise((resolve) => resolve());
     });
 }
 
-function saveToKinto(client, credentials, content) { // eslint-disable-line no-unused-vars
+function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
   let resolve;
+
+  // We do not store empty notes on server side.
+  // They will be auotmatically deleted by listPanel component
+  if (note.content === '') { return Promise.resolve(); }
+
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
   });
@@ -310,11 +334,10 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
 
   const later = function() {
     syncDebounce = null;
-    const notes = client.collection('notes', {
-      idSchema: notesIdSchema,
-    });
-    return notes.upsert({ id: 'singleNote', content })
-      .then(() => {
+    const notes = client.collection('notes', { idSchema: notesIdSchema });
+    return notes.upsert(note)
+      .then((res) => {
+
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved'
         });
@@ -323,15 +346,23 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
       .then(result => {
+
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
-          content: result.data.content,
-          last_modified: result.data.last_modified,
+          notes: result.data,
           conflict: client.conflict
         });
       })
       .then(() => {
+        resolve();
+      })
+      .catch(result => {
+        browser.runtime.sendMessage('notes@mozilla.com', {
+          action: 'text-synced',
+          notes: result.data,
+          conflict: client.conflict
+        });
         resolve();
       });
   };
@@ -341,10 +372,16 @@ function saveToKinto(client, credentials, content) { // eslint-disable-line no-u
   return promise;
 }
 
+function createNote(client, note) { // eslint-disable-line no-unused-vars
+  return client.collection('notes', { idSchema: notesIdSchema }).create(note, { useRecordId: true });
+}
+
+function deleteNote(client, id) { // eslint-disable-line no-unused-vars
+  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+}
+
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
-  const notes = client.collection('notes', {
-    idSchema: notesIdSchema,
-  });
+  const notes = client.collection('notes', { idSchema: notesIdSchema });
   return notes.resetSyncStatus();
 }
 

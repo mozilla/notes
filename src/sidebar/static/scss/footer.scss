@@ -3,164 +3,82 @@
 Footer Styles
  */
 
-footer * {
-  font-size: 14px;
-}
-
-button {
-  cursor: pointer;
-  display: block;
-  background: none;
-  border: none;
-}
-
 footer {
-  position: relative;
-  flex: 40px;
-}
+  width: 100%;
+  height: 40px;
+  font-size: 13px;
 
-#footer-buttons {
   align-items: stretch;
   position: relative;
   border-top: 1px solid #d7d7db;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  height: 40px;
   background-color: transparent;
   transition: background var(--sync-animation-duration)
     cubic-bezier(0.07, 0.95, 0, 1);
 
-  div:first-child {
-    position: relative;
-    flex: 1 0;
-    padding: 10px 10px 10px 10px;
+  // sync icon + text layout in footer
+  div.btnWrapper {
+
     color: #969696;
-    text-align: left;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: padding 0s 0.2s;
+    height: 40px;
+    width: calc(100% - 40px);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    p {
-      width: calc(100% - 35px);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      padding-right: 6px;
-      margin-top: 1px;
-    }
-
-    button {
-      cursor: default;
+    button + p {
+      display: none;
     }
 
     &.isClickable {
       button {
         color: black;
-        cursor: pointer !important;
+      }
+      button:hover + p {
+        display: block;
+      }
+      button:hover + p + p {
+        display: none;
+      }
+    }
+
+    p { // Text between sync button and text menu
+      margin-top: 1px;
+      flex: 100%;
+      flex-grow: 1;
+      flex-shrink: 1;
+      display: block;
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding: 8px 6px 0 2px;
+      text-align: center;
+
+      &.alignLeft {
+        text-align: left;
       }
     }
   }
-}
 
-/* warning style */
-#footer-buttons.warning {
-  background-color: rgb(255, 236, 173);
-  transition: background var(--sync-animation-duration)
-						 cubic-bezier(0.07, 0.95, 0, 1);
+  &.warning {
+    background-color: rgb(255, 236, 173);
+    color: black;
+    transition: background var(--sync-animation-duration)
+               cubic-bezier(0.07, 0.95, 0, 1);
 
-  button {
+    button {
       color: black;
-  }
-}
-
-#footer-buttons.syncingLayout div:first-child {
-  padding: 10px 10px 10px 40px;
-  transition: padding 0s 0.2s;
-}
-
-/* Sync icon */
-#enable-sync {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  width: 40px;
-  border-left: 1px solid #d7d7db;
-  border-right: 1px solid #d7d7db;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.savingLayout {
-  #saving-indicator{
-    opacity: 1;
-    visibility: visible;
-    transition: opacity .2s .2s;
-  }
-  #syncing-indicator{
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .1s, visibility 0s .2s;
-  }
-  #enable-sync {
-    transition: margin var(--sync-animation-duration)
-        cubic-bezier(0.07, 0.95, 0, 1) 0.05s,
-      border 0s cubic-bezier(0.07, 0.95, 0, 1) var(--sync-animation-duration);
-
-    &:hover {
-      background-color: #ebebee;
+      &.fullWidth:hover {
+        background: transparent !important;
+      }
     }
-  }
-}
-
-.syncingLayout {
-  #saving-indicator{
-    transition: opacity .1s, visibility 0s .1s;
-    opacity: 0;
-    visibility: hidden;
-  }
-  #syncing-indicator{
-    opacity: 1;
-    visibility: visible;
-    transition: opacity .2s .2s;
-    cursor: default;
-  }
-  #enable-sync {
-    margin-right: calc(100% - 40px);
-    background: none;
-    border: none;
-    transition: margin var(--sync-animation-duration)
-      cubic-bezier(0.07, 0.95, 0, 1) 0.05s;
-
-    &:hover {
-      background: transparent;
+    div.btnWrapper {
+      color: black;
     }
-  }
-}
 
-#saving-indicator {
-  background: none;
-  padding-bottom: 12px;
-  color: inherit;
-}
-
-#syncing-indicator {
-  width: calc(100% - 6px);
-  text-overflow: ellipsis;
-  overflow: hidden;
-  margin-top: 1px;
-  position: absolute;
-  top: 8px;
-  padding-right: 40px;
-  background: none;
-  padding-bottom: 12px;
-  color: inherit;
-
-  &:hover {
-    background: none !important;
   }
 }
 
@@ -191,7 +109,6 @@ footer {
 
 #enable-sync:active {
   outline: none;
-  padding: 0;
 }
 
 .animateSyncIcon #enable-sync svg {
@@ -208,23 +125,17 @@ footer {
   fill: black !important;
 }
 
-#footer-buttons button,
-#footer-buttons a {
+footer button,
+footer a {
   transition: background 50ms;
 }
 
-#footer-buttons button:hover,
-#footer-buttons a:hover {
+footer button:hover,
+footer a:hover {
   background-color: #ebebee;
 }
 
-#footer-buttons button:active,
-#footer-buttons a:active {
+footer button:active,
+footer a:active {
   background-color: #d7d7db;
-}
-
-#menu {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
 }

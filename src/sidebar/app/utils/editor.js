@@ -53,16 +53,6 @@ function customizeEditor(editor) {
   localizeEditorButtons();
 }
 
-function insertSelectedText(editor, selectedText) {
-  const currentNotesContent = editor.getData();
-  const updatedNotesContent = currentNotesContent + `<p>${selectedText.replace(/\n\n/g, '</p><p>')}</p>`;
-  editor.setData(updatedNotesContent);
-  browser.runtime.sendMessage({
-    action: 'metrics-context-menu'
-  });
-}
-
-
 function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
   document.querySelectorAll('.ck-toolbar .ck-tooltip__text').forEach(sel => {
@@ -153,4 +143,4 @@ function getPadStats(editor) {
   };
 }
 
-export { customizeEditor, getPadStats, insertSelectedText };
+export { customizeEditor, getPadStats };
