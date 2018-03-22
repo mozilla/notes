@@ -52,11 +52,11 @@ class Footer extends React.Component {
     this.getFooterState = (state) => {
       let res;
       if (state.sync.email) { // If user is authenticated
-          if (state.sync.isSyncing) {
-            res = this.STATES.SYNCING;
-          } else {
-            res = this.STATES.SYNCED;
-          }
+        if (state.sync.isSyncing) {
+          res = this.STATES.SYNCING;
+        } else {
+          res = this.STATES.SYNCED;
+        }
       } else {
         if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
           res = this.STATES.OPENINGLOGIN;
@@ -161,8 +161,8 @@ class Footer extends React.Component {
 
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
-       warning: this.currentState.yellowBackground,
-       animateSyncIcon: this.currentState.animateSyncIcon
+      warning: this.currentState.yellowBackground,
+      animateSyncIcon: this.currentState.animateSyncIcon
     });
 
     // List of menu used for keyboard navigation
@@ -201,6 +201,7 @@ class Footer extends React.Component {
         { !this.currentState.isSignInState ?
           <div className="photon-menu close top left" ref={menu => this.menu = menu }>
             <button
+              ref={contextMenuBtn => this.contextMenuBtn = contextMenuBtn}
               id="context-menu-button"
               className="iconBtn"
               onClick={(e) => this.toggleMenu(e)}>
