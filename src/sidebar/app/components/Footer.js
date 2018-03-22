@@ -89,6 +89,8 @@ class Footer extends React.Component {
         this.menu.classList.replace('open', 'close');
       }
       window.removeEventListener('keydown', this.handleKeyPress);
+      // Blur `this.contextMenuBtn` when context menu closes - fixes #770
+      this.contextMenuBtn.blur();
     };
 
     // Open and close menu
@@ -173,54 +175,54 @@ class Footer extends React.Component {
         className={footerClass}>
 
         { this.currentState.isSignInState || this.currentState.yellowBackground ?
-        <button
-          className="fullWidth"
-          title={ this.currentState.tooltip ? this.currentState.tooltip() : '' }
-          onClick={(e) => this.enableSyncAction(e)}>
-          { this.currentState.yellowBackground ?
-          <WarningIcon /> : <SyncIcon />} <span>{ this.currentState.text() }</span>
-        </button>
-        : null }
+          <button
+            className="fullWidth"
+            title={ this.currentState.tooltip ? this.currentState.tooltip() : '' }
+            onClick={(e) => this.enableSyncAction(e)}>
+            { this.currentState.yellowBackground ?
+              <WarningIcon /> : <SyncIcon />} <span>{ this.currentState.text() }</span>
+          </button>
+          : null }
 
         { !this.currentState.isSignInState && !this.currentState.yellowBackground ?
-        <div className={this.currentState.isClickable ? 'isClickable btnWrapper' : 'btnWrapper'}>
-          <button
-            id="enable-sync"
-            disabled={!this.currentState.isClickable}
-            onClick={(e) => this.enableSyncAction(e)}
-            className="iconBtn">
-            <SyncIcon />
-          </button>
-          <p>{ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }</p>
-          <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
-        </div>
-        : null }
+          <div className={this.currentState.isClickable ? 'isClickable btnWrapper' : 'btnWrapper'}>
+            <button
+              id="enable-sync"
+              disabled={!this.currentState.isClickable}
+              onClick={(e) => this.enableSyncAction(e)}
+              className="iconBtn">
+              <SyncIcon />
+            </button>
+            <p>{ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }</p>
+            <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
+          </div>
+          : null }
 
         { !this.currentState.isSignInState ?
-        <div className="photon-menu close top left" ref={menu => this.menu = menu }>
-          <button
-            id="context-menu-button"
-            className="iconBtn"
-            onClick={(e) => this.toggleMenu(e)}>
-            <MoreIcon />
-          </button>
-          <div className="wrapper">
-            <ul role="menu" >
-              <li>
-                <button
-                  role="menuitem"
-                  onKeyDown={this.handleKeyPress}
-                  ref={btn => btn ? this.buttons.push(btn) : null }
-                  title={browser.i18n.getMessage(this.props.state.sync.email ? 'disableSync' : 'cancelSetup')}
-                  onClick={ this.disconnectFromSync }>
-                  { !this.props.state.sync.email ? browser.i18n.getMessage('cancelSetup') : '' }
-                  { this.props.state.sync.email && this.currentState.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
-                  { this.props.state.sync.email && !this.currentState.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div> : null }
+          <div className="photon-menu close top left" ref={menu => this.menu = menu }>
+            <button
+              id="context-menu-button"
+              className="iconBtn"
+              onClick={(e) => this.toggleMenu(e)}>
+              <MoreIcon />
+            </button>
+            <div className="wrapper">
+              <ul role="menu" >
+                <li>
+                  <button
+                    role="menuitem"
+                    onKeyDown={this.handleKeyPress}
+                    ref={btn => btn ? this.buttons.push(btn) : null }
+                    title={browser.i18n.getMessage(this.props.state.sync.email ? 'disableSync' : 'cancelSetup')}
+                    onClick={ this.disconnectFromSync }>
+                    { !this.props.state.sync.email ? browser.i18n.getMessage('cancelSetup') : '' }
+                    { this.props.state.sync.email && this.currentState.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
+                    { this.props.state.sync.email && !this.currentState.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div> : null }
       </footer>
     );
   }
@@ -233,8 +235,8 @@ function mapStateToProps(state) {
 }
 
 Footer.propTypes = {
-    state: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps)(Footer);
