@@ -230,7 +230,7 @@ function syncKinto(client, credentials) {
           return syncKinto(client, credentials);
         });
       } else if (syncResult === undefined) {
-        throw new Error('SyncResult is undefined.');
+        throw new Error('syncResult is undefined.');
       }
     })
     .catch(error => {
