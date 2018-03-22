@@ -195,7 +195,6 @@ function syncKinto(client, credentials) {
               lastModified: conflict.local.lastModified
             };
           } else {
-            // console.log('CONFLICTS', conflict.remote, conflict.local);
             const mergeWarning = browser.i18n.getMessage('mergeWarning');
             let totalOps = conflict.remote.content;
 
