@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.0
+
+* Adds the multi-note feature
+
 ## 3.1.0 (2018-03-16)
 
 * New menu design
