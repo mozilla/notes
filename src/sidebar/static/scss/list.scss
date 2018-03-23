@@ -3,9 +3,6 @@
   flex-grow: 1;
   flex-direction: column;
 
-  & + a {
-      flex: 40px;
-  }
 
   ul {
     font-size: 1rem;
@@ -15,19 +12,21 @@
     padding: 0;
     overflow: auto;
     li {
+      box-sizing: border-box;
       list-style: none;
       button {
         display: block !important;
         color: rgb(132, 132, 132);
-        padding-top: 8px;
-        padding-bottom: 8px;
         padding-right: 17px;
+        height: 48px;
+        font-size: 13px;
+        line-height: 17px;
+        letter-spacing: .1px;
         p {
           strong {
             font-weight: 500;
             color: black;
           }
-          line-height: 18px;
           margin: 0 !important;
           padding: 0 !important;
           font-weight: 100;
