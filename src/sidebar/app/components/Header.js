@@ -92,7 +92,8 @@ class Header extends React.Component {
     return (
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
         <button
-        onClick={() => this.props.history.push('/')}
+          onClick={() => this.props.history.push('/')}
+          title={ browser.i18n.getMessage('backToAllNotes') }
           className="btn iconBtn">
           <ArrowLeftIcon />
         </button>
