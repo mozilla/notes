@@ -5,7 +5,7 @@
   justify-content: center;
 
   &.open {
-    &.top .wrapper { bottom: 29px; }
+    &.top .wrapper { bottom: 35px; }
     &.bottom .wrapper { top: 29px; }
     .wrapper {
       visibility: visible;
@@ -15,7 +15,7 @@
   }
 
   &.close {
-    &.top .wrapper { bottom: 33px; }
+    &.top .wrapper { bottom: 39px; }
     &.bottom .wrapper { top: 33px; }
     .wrapper {
       visibility: hidden;

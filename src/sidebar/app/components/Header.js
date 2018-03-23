@@ -101,7 +101,6 @@ class Header extends React.Component {
         '' }
         <div className="photon-menu close bottom left" ref={menu => this.menu = menu }>
           <button
-            id="context-menu-button"
             className="iconBtn"
             onClick={(e) => this.toggleMenu(e)}>
             <MoreIcon />

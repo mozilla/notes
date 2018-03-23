@@ -99,15 +99,18 @@ function kinto(kinto = {}, action) {
 function notes(notes = [], action) {
   switch (action.type) {
     case KINTO_LOADED: {
-      const list = Array.from(action.notes);
-      list.map((note) => {
-        note.firstLine = getFirstLineFromContent(note.content);
-        note.secondLine = stripHtmlWithoutFirstLine(note.content);
-        if (!(note.lastModified instanceof Date)) {
-          note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
-        }
-      });
-      return list;
+      if (action.notes) {
+        const list = Array.from(action.notes);
+        list.map((note) => {
+          note.firstLine = getFirstLineFromContent(note.content);
+          note.secondLine = stripHtmlWithoutFirstLine(note.content);
+          if (!(note.lastModified instanceof Date)) {
+            note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
+          }
+        });
+        return list;
+      }
+      return notes;
     }
     case TEXT_SYNCED: {
 
