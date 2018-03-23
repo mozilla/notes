@@ -64,19 +64,9 @@ footer {
 
     }
 
-    button + p {
-      display: none;
-    }
-
     &.isClickable {
       button {
         color: black;
-      }
-      button:hover + p {
-        display: block;
-      }
-      button:hover + p + p {
-        display: none;
       }
     }
 

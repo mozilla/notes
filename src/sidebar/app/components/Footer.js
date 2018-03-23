@@ -190,10 +190,10 @@ class Footer extends React.Component {
               id="enable-sync"
               disabled={!this.currentState.isClickable}
               onClick={(e) => this.enableSyncAction(e)}
+              title={ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }
               className="iconBtn">
               <SyncIcon />
             </button>
-            <p>{ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }</p>
             <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
           </div>
           : null }
