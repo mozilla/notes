@@ -64,7 +64,7 @@ function getFirstLineFromContent(content) {
 function stripHtmlWithoutFirstLine(content) {
   // assign contents to container element for later parsing
   const parentElement = document.createElement('div');
-  parentElement.innerHTML = content; // eslint-disable-line no-unsanitized/property
+  parentElement.innerHTML = content.replace(/<\/p>|<\/li>/gi, '&nbsp;'); // eslint-disable-line no-unsanitized/property
 
   let res = null;
   const firstLine = getFirstLineFromContent(content);
