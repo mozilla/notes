@@ -1,14 +1,12 @@
 .photon-menu {
   position: relative;
-  height: 41px;
-  width: 41px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &.open {
-    &.top .wrapper { bottom: 37px; }
-    &.bottom .wrapper { top: 37px; }
+    &.top .wrapper { bottom: 29px; }
+    &.bottom .wrapper { top: 29px; }
     .wrapper {
       visibility: visible;
       opacity: 1;
@@ -27,7 +25,7 @@
   }
 
   &.left .wrapper {
-    right: 4px;
+    right: -4px;
   }
 
   &.top .wrapper ul {

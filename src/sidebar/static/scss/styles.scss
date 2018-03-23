@@ -4,6 +4,10 @@
 @import 'header';
 @import 'footer';
 
+* {
+  box-sizing: border-box;
+}
+
 *:active, *:focus, *:hover {
   outline: none;
 }
@@ -68,9 +72,6 @@ button, a.btn {
     height: 24px;
     padding: 4px;
     border-radius: 4px;
-    margin-bottom: 2px;
-    margin-left: 8px;
-    margin-right: 8px;
     svg {
       max-width: 16px;
       max-height: 16px;
