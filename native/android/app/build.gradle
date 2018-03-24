@@ -94,8 +94,8 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "com.notes"
@@ -106,6 +106,9 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        manifestPlaceholders = [
+          appAuthRedirectScheme: 'testpilot-notes'
+        ]
     }
     splits {
         abi {
@@ -137,8 +140,10 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-app-auth')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    // compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:25.3.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 
