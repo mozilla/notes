@@ -1,10 +1,11 @@
 //const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1/buckets/default/collections/notes';
+//const KINTO_SERVER = 'http://192.168.1.41:8888/v1/buckets/default/collections/notes';
+const KINTO_SERVER = 'http://kinto-notes5.lcip.org/v1/buckets/default/collections/notes';
 
-const fxaCryptoRelier = require('../fxa-crypto-relier');
-// TODO WARNING: `jose` is not in the official release
+const fxaCryptoRelier = require('./fxa-crypto-relier');
+// TODO WARNING: `jose` is not in the official release in the crypto-relier
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
-const KINTO_SERVER = 'http://192.168.1.41:8888/v1/buckets/default/collections/notes';
 function fetchRecords(token) { // eslint-disable-line no-unused-vars
   const headers = new Headers({
     'Authorization': `Bearer ${token}`

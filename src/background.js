@@ -5,7 +5,8 @@
 const TRACKING_ID = 'UA-35433268-79';
 
 //const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
-const KINTO_SERVER = 'http://localhost:8888/v1';
+//const KINTO_SERVER = 'http://localhost:8888/v1';
+const KINTO_SERVER = 'http://kinto-notes5.lcip.org/v1';
 // XXX: Read this from Kinto fxa-params
 //const FXA_CLIENT_ID = 'b7d74070a481bc11';
 const FXA_CLIENT_ID = 'c6d74070a481bc10';

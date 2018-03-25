@@ -15,7 +15,7 @@ class LoadingPanel extends React.Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Image
           style={{width: 150, height: 150 }}
-          source={require('../../assets/notes-1024.png')}
+          source={require('../assets/notes-1024.png')}
         />
         <ProgressBarAndroid styleAttr="Inverse" />
         <Text style={{ fontWeight: 'bold', fontSize: 22, padding: 20 }}>Decrypting your notes...</Text>
