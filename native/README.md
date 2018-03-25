@@ -8,6 +8,8 @@
 
 ## Useful commands
 
+`npm run dm` - when the app is open this opens the debug menu'
+
 Use `npx` (from npm 5) to run commands for `react-native`
 
 `npx react-native upgrade` - regenerates Android files from React Native
