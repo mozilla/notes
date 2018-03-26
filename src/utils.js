@@ -1,7 +1,4 @@
-/**
- * Module that provides utils for background work of Notes
- */
-
+import TestPilotGA from 'testpilot-ga';
 /**
  * Check IndexedDB Health
  */

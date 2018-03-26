@@ -3,7 +3,6 @@
 const { copySync } = require('fs-extra');
 
 const files = [
-  copySync('node_modules/testpilot-ga/dist/index.js', 'src/vendor/testpilot-ga.js'),
   copySync('node_modules/jose-jwe-jws/dist/jose.min.js', 'src/vendor/jose.js'),
   copySync('node_modules/jose-jwe-jws/LICENSE', 'src/vendor/jose.LICENCE'),
   copySync('node_modules/fxa-crypto-relier/dist/fxa-crypto-relier/fxa-crypto-relier.js', 'src/vendor/fxa-crypto-relier/fxa-crypto-relier.js'),
