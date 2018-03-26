@@ -9,15 +9,23 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   devtool: 'source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
-  ],
+  entry: {
+    sidebar: path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
+    background: path.resolve(__dirname, 'src', 'background.js')
+  },
+  // [
+  //   path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
+  // ],
 
   output: {
     // build to the extension src vendor directory
     path: path.resolve(__dirname, 'build'),
-    filename: path.join('sidebar', 'app.js'),
+    filename: '[name].js',
   },
+  // output: {
+  //   path: __dirname + '/dist'
+  //   filename: '[name].js',
+  // }
 
   plugins: [
     // cleanup build folder
@@ -29,6 +37,11 @@ module.exports = {
       { from: path.join('src') }
     ], {
       ignore: [
+          path.join('background.js'),
+          path.join('sync.js'),
+          path.join('fxa-utils.js'),
+          path.join('utils.js'),
+          path.join('sidebar', 'src', '**', '*'),
           path.join('sidebar', 'app', '**', '*'),
           path.join('sidebar', 'static', 'scss', '**', '*')
       ],

@@ -1,3 +1,7 @@
+import { checkIndexedDbHealth } from '../../src/utils';
+import { fxaFetchProfile } from '../../src/fxa-utils';
+import * as syncModule from '../../src/sync';
+
 'use strict';
 var chai = require('chai');
 var sinon = require('sinon');
@@ -36,7 +40,7 @@ describe('Authorization', function() {
   });
 
   it('should define syncKinto', function() {
-    chai.expect(syncKinto).not.eql(undefined);
+    chai.expect(syncModule.syncKinto).not.eql(undefined);
   });
 
   describe('401s', function() {
@@ -58,13 +62,13 @@ describe('Authorization', function() {
     afterEach(fetchMock.restore);
 
     it('should respond to 401s by deleting the token', function() {
-      return syncKinto(client, credentials).then(() => {
+      return syncModule.syncKinto(client, credentials).then(() => {
         chai.assert(credentials.clear.calledOnce);
       });
     });
 
     it('should not reject the promise', function() {
-      return chai.expect(syncKinto(client, credentials)).fulfilled;
+      return chai.expect(syncModule.syncKinto(client, credentials)).fulfilled;
     });
   });
 
@@ -73,24 +77,24 @@ describe('Authorization', function() {
     const key = {kid: kid, kty: "kty"};
     it("should return whatever decrypt returns", function() {
       const decryptedResult = { content: [{ insert: "Test message" }] };
-      const decryptMock = sandbox.stub(global, 'decrypt');
+      const decryptMock = sandbox.stub(syncModule, 'decrypt');
       decryptMock.returns(decryptedResult);
-      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: kid})).eventually.eql({
+      chai.expect(new syncModule.JWETransformer(key).decode({content: "encrypted content", kid: kid})).eventually.eql({
         content: [{insert: "Test message"}],
       });
     });
 
     it("should throw if kid is different", function() {
-      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: "20171001"})).rejectedWith(ServerKeyOlderError);
+      chai.expect(new syncModule.JWETransformer(key).decode({content: "encrypted content", kid: "20171001"})).rejectedWith(syncModule.ServerKeyOlderError);
     });
 
     it("should be backwards compatible with the old style of Kinto record", function() {
       const oldRecordStyle = [
         { insert: "Test message" },
       ];
-      const decryptMock = sandbox.stub(global, 'decrypt');
+      const decryptMock = sandbox.stub(syncModule, 'decrypt');
       decryptMock.returns(oldRecordStyle);
-      chai.expect(new JWETransformer(key).decode({content: "encrypted content", kid: kid})).eventually.eql({
+      chai.expect(new syncModule.JWETransformer(key).decode({content: "encrypted content", kid: kid})).eventually.eql({
         content: [{insert: "Test message"}],
       });
     });
@@ -138,7 +142,7 @@ describe('Authorization', function() {
 
       installEncryptedRecord();
 
-      decryptMock = sandbox.stub(global, 'decrypt');
+      decryptMock = sandbox.stub(syncModule, 'decrypt');
       decryptMock.withArgs(staticCredential.key, "encrypted content").resolves({
         id: "singleNote",
         content: "<p>Hi there</p>",
@@ -147,7 +151,7 @@ describe('Authorization', function() {
 
       // sync() tries to gather local changes, even when a conflict
       // has already been detected.
-      encryptMock = sandbox.stub(global, 'encrypt');
+      encryptMock = sandbox.stub(syncModule, 'encrypt');
       encryptMock.resolves("encrypted local");
 
       credentials = {
@@ -155,10 +159,9 @@ describe('Authorization', function() {
         set: sinon.stub().resolves(staticCredential),
         clear: sinon.stub()
       };
-
       client = new Kinto({remote: 'https://example.com/v1', bucket: 'default'});
       collection = client.collection('notes', {
-        idSchema: notesIdSchema
+        idSchema: syncModule.notesIdSchema
       });
     });
 
@@ -205,7 +208,7 @@ describe('Authorization', function() {
       });
 
       return collection.upsert({id: "singleNote", content: "<p>Local</p>", lastModified: "1234567890"})
-        .then(() => syncKinto(client, credentials))
+        .then(() => syncModule.syncKinto(client, credentials))
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data.content).eql("<p>Resolution</p>");
@@ -273,7 +276,7 @@ describe('Authorization', function() {
       };
 
       // Get the "Hi there" note from the server
-      return syncKinto(client, credentials)
+      return syncModule.syncKinto(client, credentials)
         .then(() => collection.getAny('singleNote'))
         .then(result => {
           chai.expect(result.data._status).eql("synced");
@@ -281,7 +284,7 @@ describe('Authorization', function() {
 
           // This sync will try to retrieve the record after 1234,
           // which has an older kid.
-          return syncKinto(client, credentials);
+          return syncModule.syncKinto(client, credentials);
         })
         .then(() => {
           // Verify that the notes collection was deleted.
@@ -307,9 +310,9 @@ describe('Authorization', function() {
     });
 
     it('should fire a kinto-loaded message even if nothing in kinto', () => {
-      const syncKinto = sandbox.stub(global, 'syncKinto').resolves(undefined);
+      const syncKinto = sandbox.stub(syncModule, 'syncKinto').resolves(undefined);
       collection.getAny.resolves(undefined);
-      return loadFromKinto(client, undefined)
+      return syncModule.loadFromKinto(client, undefined)
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledOnce);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
@@ -321,9 +324,9 @@ describe('Authorization', function() {
     });
 
     it('should not fail if syncKinto rejects', () => {
-      const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
+      const syncKinto = sandbox.stub(syncModule, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
-      return loadFromKinto(client, undefined)
+      return syncModule.loadFromKinto(client, undefined)
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledOnce);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
@@ -348,9 +351,9 @@ describe('Authorization', function() {
     });
 
     it('should not fail if syncKinto rejects', () => {
-      const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
+      sandbox.stub(syncModule, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
-      return saveToKinto(client, undefined, { content: 'imaginary content' })
+      return syncModule.saveToKinto(client, undefined, { content: 'imaginary content' })
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledThrice);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql('notes@mozilla.com');

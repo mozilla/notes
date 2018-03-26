@@ -1,8 +1,10 @@
-/**
- * Google Analytics / TestPilot Metrics
- */
 
-const TRACKING_ID = 'UA-35433268-79';
+import { checkIndexedDbHealth } from './utils';
+import { fxaFetchProfile } from './fxa-utils';
+import { retrieveNote, loadFromKinto, saveToKinto, createNote, deleteNote, disconnectFromKinto,
+ServerKeyNewerError ,ServerKeyOlderError ,JWETransformer ,Credentials ,BrowserStorageCredentials } from './sync';
+
+const TRACKING_ID = 'UA-35433268-79'; // Google Analytics / TestPilot Metrics
 
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params

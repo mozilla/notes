@@ -26,3 +26,5 @@ function checkIndexedDbHealth() { // eslint-disable-line no-unused-vars
     }
   });
 }
+
+export { checkIndexedDbHealth };

@@ -1,3 +1,6 @@
+
+import { fxaRenewCredential } from './fxa-utils';
+
 let syncDebounce = null;
 
 const cryptographer = new Jose.WebCryptographer();
@@ -384,3 +387,6 @@ function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
   return notes.resetSyncStatus();
 }
 
+export { notesIdSchema, shared_key, encrypt, decrypt, syncKinto, reconnectSync, retrieveNote,
+  loadFromKinto, saveToKinto, createNote, deleteNote, disconnectFromKinto, ServerKeyNewerError,
+  ServerKeyOlderError, JWETransformer, Credentials, BrowserStorageCredentials };

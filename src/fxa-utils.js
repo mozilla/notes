@@ -85,3 +85,5 @@ function fxaRenewCredential(credential) {
       return credential;
     });
 }
+
+export { fxaFetchProfile, fxaRenewCredential };
