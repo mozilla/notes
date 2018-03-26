@@ -1,5 +1,6 @@
 
 import { fxaRenewCredential } from './fxa-utils';
+import { sendMetrics } from './utils';
 
 let syncDebounce = null;
 
