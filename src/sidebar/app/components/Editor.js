@@ -43,9 +43,6 @@ class Editor extends React.Component {
             // Only use the focused editor or handle 'rename' events to set the data into storage.
             if (isFocused || name === 'rename' || name === 'insert') {
                 const content = editor.getData();
-                if (content !== undefined &&
-                    content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-                }
 
                 if (!this.ignoreChange) {
                   this.props.dispatch(updateNote(this.props.note.id, content));
