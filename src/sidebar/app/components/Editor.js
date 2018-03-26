@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
-import INITIAL_CONTENT from '../data/initialContent';
 
 import { updateNote } from '../actions';
 
