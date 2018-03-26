@@ -53,6 +53,10 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: true,
       });
+    case DELETE_NOTE:
+      return Object.assign({}, sync, {
+        isSyncing: true
+      });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true
