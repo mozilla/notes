@@ -166,6 +166,7 @@ function notes(notes = [], action) {
         return note.id === action.id;
       });
       if (note) {
+        if (note.content === '<p>&nbsp;</p>') note.content = '';
         note.content = note.content + `<p>${action.content}</p>`;
         note.lastModified = new Date();
       }
