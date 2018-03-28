@@ -26,6 +26,7 @@ function checkIndexedDbHealth() { // eslint-disable-line no-unused-vars
 
 // ANALYTICS send metrics
 const timeouts = {};
+const TRACKING_ID = 'UA-35433268-79'; // Google Analytics / TestPilot Metrics
 const analytics = new TestPilotGA({
   tid: TRACKING_ID,
   ds: 'addon',
@@ -33,7 +34,6 @@ const analytics = new TestPilotGA({
   aid: 'notes@mozilla.com',
   av: browser.runtime.getManifest().version
 });
-const TRACKING_ID = 'UA-35433268-79'; // Google Analytics / TestPilot Metrics
 
 function sendMetrics(event, context = {}) {
   // This function debounce sending metrics.

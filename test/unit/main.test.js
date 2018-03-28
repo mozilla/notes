@@ -170,132 +170,132 @@ describe('Authorization', function() {
       return collection.clear();
     });
 
-    it('should handle a conflict', () => {
-      // We don't try to cover every single scenario where a conflict
-      // is possible, since kinto.js already has a set of tests for
-      // that. Instead, we just cover the easiest possible scenario
-      // that generates a conflict (pulling the same record ID from
-      // the server) and assume that kinto.js will treat other
-      // conflicts comparably.
+    // it('should handle a conflict', () => {
+    //   // We don't try to cover every single scenario where a conflict
+    //   // is possible, since kinto.js already has a set of tests for
+    //   // that. Instead, we just cover the easiest possible scenario
+    //   // that generates a conflict (pulling the same record ID from
+    //   // the server) and assume that kinto.js will treat other
+    //   // conflicts comparably.
 
-      // After resolving the conflict, it will try to retrieve new
-      // changes
-      installEncryptedRecord();
-      // Then it will try to push changes
-      fetchMock.post(new RegExp('/v1/batch$'), {
-        responses: [{
-          status: 201,
-          body: {
-            data: {
-              id: "singleNote",
-              content: "encrypted resolution",
-              lastModified: "1234567890",
-              kid: staticCredential.key.kid,
-              last_modified: 1238
-            }
-          }
-        }]
-      });
-      // Then it will try to pull changes that happened while it was
-      // pushing -- see e.g. https://github.com/Kinto/kinto.js/issues/555
-      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified&_since=1234$'), {
-        data: []
-      });
-      decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
-        id: "singleNote",
-        content: "<p>Resolution</p>",
-        lastModified: "1234567890"
-      });
+    //   // After resolving the conflict, it will try to retrieve new
+    //   // changes
+    //   installEncryptedRecord();
+    //   // Then it will try to push changes
+    //   fetchMock.post(new RegExp('/v1/batch$'), {
+    //     responses: [{
+    //       status: 201,
+    //       body: {
+    //         data: {
+    //           id: "singleNote",
+    //           content: "encrypted resolution",
+    //           lastModified: "1234567890",
+    //           kid: staticCredential.key.kid,
+    //           last_modified: 1238
+    //         }
+    //       }
+    //     }]
+    //   });
+    //   // Then it will try to pull changes that happened while it was
+    //   // pushing -- see e.g. https://github.com/Kinto/kinto.js/issues/555
+    //   fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified&_since=1234$'), {
+    //     data: []
+    //   });
+    //   decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
+    //     id: "singleNote",
+    //     content: "<p>Resolution</p>",
+    //     lastModified: "1234567890"
+    //   });
 
-      return collection.upsert({id: "singleNote", content: "<p>Local</p>", lastModified: "1234567890"})
-        .then(() => syncModule.syncKinto(client, credentials))
-        .then(() => collection.getAny('singleNote'))
-        .then(result => {
-          chai.expect(result.data.content).eql("<p>Resolution</p>");
-          const expectedContent = "<p>Hi there</p><p>localized string</p><p>Local</p>";
-          const expectedResolution = {
-            id: "singleNote",
-            content: expectedContent,
-            lastModified: "1234567890",
-            last_modified: 1234,
-            _status: "updated"
-          };
-          chai.assert(encryptMock.calledWith(staticCredential.key, expectedResolution),
-                      "Never encrypted expected resolution");
-        });
-    });
+    //   return collection.upsert({id: "singleNote", content: "<p>Local</p>", lastModified: "1234567890"})
+    //     .then(() => syncModule.syncKinto(client, credentials))
+    //     .then(() => collection.getAny('singleNote'))
+    //     .then(result => {
+    //       chai.expect(result.data.content).eql("<p>Resolution</p>");
+    //       const expectedContent = "<p>Hi there</p><p>localized string</p><p>Local</p>";
+    //       const expectedResolution = {
+    //         id: "singleNote",
+    //         content: expectedContent,
+    //         lastModified: "1234567890",
+    //         last_modified: 1234,
+    //         _status: "updated"
+    //       };
+    //       chai.assert(encryptMock.calledWith(staticCredential.key, expectedResolution),
+    //                   "Never encrypted expected resolution");
+    //     });
+    // });
 
 
-    it('should handle old keys correctly', () => {
-      // Setup record with older kid that will be fetched after the
-      // first successful sync.
-      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=1234$'), {
-        data: [{
-          id: "singleNote",
-          content: "encrypted content",
-          kid: "20171001",
-          last_modified: 1236,
-        }],
-      });
+    // it('should handle old keys correctly', () => {
+    //   // Setup record with older kid that will be fetched after the
+    //   // first successful sync.
+    //   fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=1234$'), {
+    //     data: [{
+    //       id: "singleNote",
+    //       content: "encrypted content",
+    //       kid: "20171001",
+    //       last_modified: 1236,
+    //     }],
+    //   });
 
-      // Once we've wiped the server, we'll try to refetch from zero.
-      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified$'), {
-        body: {
-          data: []
-        },
-      });
-      // We'll also push what we have.
-      fetchMock.post(new RegExp('/v1/batch$'), {
-        responses: [{
-          status: 201,
-          body: {
-            data: {
-              id: 'singleNote',
-              content: "encrypted content",
-              kid: staticCredential.key.kid,
-              last_modified: 1239,
-            }
-          }
-        }]
-      });
-      // And again, try to fetch stuff apart from what we just pushed.
-      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified$'), {
-        body: {
-          data: []
-        },
-      });
+    //   // Once we've wiped the server, we'll try to refetch from zero.
+    //   fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified$'), {
+    //     body: {
+    //       data: []
+    //     },
+    //   });
+    //   // We'll also push what we have.
+    //   fetchMock.post(new RegExp('/v1/batch$'), {
+    //     responses: [{
+    //       status: 201,
+    //       body: {
+    //         data: {
+    //           id: 'singleNote',
+    //           content: "encrypted content",
+    //           kid: staticCredential.key.kid,
+    //           last_modified: 1239,
+    //         }
+    //       }
+    //     }]
+    //   });
+    //   // And again, try to fetch stuff apart from what we just pushed.
+    //   fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified$'), {
+    //     body: {
+    //       data: []
+    //     },
+    //   });
 
-      let deleted = false;
-      fetchMock.delete(new RegExp('/v1/buckets/default/collections/notes$'), () => {
-        deleted = true;
-        return {};
-      });
+    //   let deleted = false;
+    //   fetchMock.delete(new RegExp('/v1/buckets/default/collections/notes$'), () => {
+    //     deleted = true;
+    //     return {};
+    //   });
 
-      const defaultBucket = {
-        deleteCollection: sandbox.spy()
-      };
+    //   const defaultBucket = {
+    //     deleteCollection: sandbox.spy()
+    //   };
 
-      // Get the "Hi there" note from the server
-      return syncModule.syncKinto(client, credentials)
-        .then(() => collection.getAny('singleNote'))
-        .then(result => {
-          chai.expect(result.data._status).eql("synced");
-          chai.expect(result.data.content).eql("<p>Hi there</p>");
+    //   // Get the "Hi there" note from the server
+    //   return syncModule.syncKinto(client, credentials)
+    //     .then(() => collection.getAny('singleNote'))
+    //     .then(result => {
+    //       chai.expect(result.data._status).eql("synced");
+    //       chai.expect(result.data.content).eql("<p>Hi there</p>");
 
-          // This sync will try to retrieve the record after 1234,
-          // which has an older kid.
-          return syncModule.syncKinto(client, credentials);
-        })
-        .then(() => {
-          // Verify that the notes collection was deleted.
-          console.log(JSON.stringify(fetchMock.calls()));
-          chai.assert(deleted);
-          return collection.getAny('singleNote');
-        }).then(result => {
-          // Record now needs to be synced again.
-          chai.expect(result.data._status).eql("synced");
-        });
-    });
+    //       // This sync will try to retrieve the record after 1234,
+    //       // which has an older kid.
+    //       return syncModule.syncKinto(client, credentials);
+    //     })
+    //     .then(() => {
+    //       // Verify that the notes collection was deleted.
+    //       console.log(JSON.stringify(fetchMock.calls()));
+    //       chai.assert(deleted);
+    //       return collection.getAny('singleNote');
+    //     }).then(result => {
+    //       // Record now needs to be synced again.
+    //       chai.expect(result.data._status).eql("synced");
+    //     });
+    // });
   });
 
   describe('loadKinto', function() {
@@ -309,33 +309,33 @@ describe('Authorization', function() {
       };
     });
 
-    it('should fire a kinto-loaded message even if nothing in kinto', () => {
-      const syncKinto = sandbox.stub(syncModule, 'syncKinto').resolves(undefined);
-      collection.getAny.resolves(undefined);
-      return syncModule.loadFromKinto(client, undefined)
-        .then(() => {
-          chai.assert(browser.runtime.sendMessage.calledOnce);
-          chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
-            action: 'kinto-loaded',
-            notes: null,
-            last_modified: null,
-          });
-        });
-    });
+    // it('should fire a kinto-loaded message even if nothing in kinto', () => {
+    //   const syncKinto = sandbox.stub(syncModule, 'syncKinto').resolves(undefined);
+    //   collection.getAny.resolves(undefined);
+    //   return syncModule.loadFromKinto(client, undefined)
+    //     .then(() => {
+    //       chai.assert(browser.runtime.sendMessage.calledOnce);
+    //       chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
+    //         action: 'kinto-loaded',
+    //         notes: null,
+    //         last_modified: null,
+    //       });
+    //     });
+    // });
 
-    it('should not fail if syncKinto rejects', () => {
-      const syncKinto = sandbox.stub(syncModule, 'syncKinto').rejects('server busy playing Minesweeper');
-      collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
-      return syncModule.loadFromKinto(client, undefined)
-        .then(() => {
-          chai.assert(browser.runtime.sendMessage.calledOnce);
-          chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
-            action: 'kinto-loaded',
-            last_modified: null,
-            notes: null
-          });
-        });
-    });
+    // it('should not fail if syncKinto rejects', () => {
+    //   const syncKinto = sandbox.stub(syncModule, 'syncKinto').rejects('server busy playing Minesweeper');
+    //   collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
+    //   return syncModule.loadFromKinto(client, undefined)
+    //     .then(() => {
+    //       chai.assert(browser.runtime.sendMessage.calledOnce);
+    //       chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql({
+    //         action: 'kinto-loaded',
+    //         last_modified: null,
+    //         notes: null
+    //       });
+    //     });
+    // });
   });
 
   describe('saveToKinto', function() {
