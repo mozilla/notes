@@ -39,6 +39,10 @@ class Footer extends React.Component {
         isReconnectState: true,
         text: () => browser.i18n.getMessage('reconnectSync')
       },
+      ERROR: {
+        yellowBackground: true,
+        isClickable: true
+      },
       SYNCING: {
         animateSyncIcon: true,
         text: () => browser.i18n.getMessage('syncProgress')
@@ -52,7 +56,10 @@ class Footer extends React.Component {
     this.getFooterState = (state) => {
       let res;
       if (state.sync.email) { // If user is authenticated
-        if (state.sync.isSyncing) {
+        if (state.sync.error) {
+          res = this.STATES.ERROR;
+          res.text = () => state.sync.error;
+        } else if (state.sync.isSyncing) {
           res = this.STATES.SYNCING;
         } else {
           res = this.STATES.SYNCED;

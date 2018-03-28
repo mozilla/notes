@@ -28,13 +28,12 @@ function decrypt(key, encrypted) {
 
 // An "id schema" used to validate Kinto IDs and generate new ones.
 const notesIdSchema = { // eslint-disable-line no-unused-vars
-  // FIXME: Maybe this should generate IDs?
-  generate(o) {
+  // We do not generate ID to keep retrocompatibility with single note version.
+  generate() {
     throw new Error('cannot generate IDs');
   },
 
-  validate(o) {
-    // FIXME: verify that at least this matches Kinto server ID format
+  validate() {
     return true;
   },
 };
@@ -51,7 +50,7 @@ class ServerKeyOlderError extends Error {
   }
 }
 
-const deletedNotes = {};
+const deletedNotesStillOnServer = {};
 
 class JWETransformer {
   constructor(key) {
@@ -63,9 +62,6 @@ class JWETransformer {
     const ciphertext = await encrypt(this.key, record);
     // Copy over the _status field, so that we handle concurrency
     // headers (If-Match, If-None-Match) correctly.
-    // DON'T copy over "deleted" status, because then we'd leak
-    // plaintext deletes.
-    // const status = record._status && (record._status === 'deleted' ? 'updated' : record._status);
     const encryptedResult = {
       content: ciphertext,
       id: record.id,
@@ -105,9 +101,13 @@ class JWETransformer {
     // uploaded as an encrypted blob so we don't leak deletions.
     // If we get such a record, flag it as deleted.
     if (decoded._status === 'deleted') {
-      decoded._status === 'deleted';
       decoded.deleted = true;
-      deletedNotes[decoded.id] = decoded;
+      // On decode, we flag notes with _status deleted but still on server.
+      // We automatically will request deletion for those.
+      // (This is due to singleNote overriding deleted state with udpated to server)
+      // Should be deleted when every user who tryed beta runned it once.
+      // (see meetrics deleteDeleted)
+      deletedNotesStillOnServer[decoded.id] = decoded;
     }
     return decoded;
   }
@@ -186,7 +186,6 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
-      console.log('syncKinto syncResult', syncResult);
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
@@ -266,6 +265,16 @@ function syncKinto(client, credentials) {
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
         return reconnectSync(credentials);
+      } else if (error.response
+                && error.response.status === 507
+                && error.message.includes('Insufficient Storage')) {
+
+        // cannot refresh the access token, log the user out.
+        browser.runtime.sendMessage('notes@mozilla.com', {
+          action: 'error',
+          message: 'Insufficient Storage',
+        });
+        return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
       reconnectSync(credentials);
@@ -281,10 +290,18 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes', { idSchema: notesIdSchema }).list({}).then((list) => {
-    console.log(list);
-    return list;
-  });
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .list({})
+    .then((list) => {
+      // We delete all notes retrieved from server and not properly deleted
+      Object.keys(deletedNotesStillOnServer).forEach((id) => {
+        sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
+        client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+      });
+
+      return list;
+    });
 }
 
 /**
@@ -307,12 +324,6 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
     // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
-
-      console.log('deletedNotes', Object.keys(deletedNotes));
-      // Object.keys(deletedNotes).forEach((id) => {
-      //   client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
-      // });
-
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         notes: result.data,
@@ -320,7 +331,6 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
       });
     })
     .catch((e) => {
-      console.log(e);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         notes: null,
