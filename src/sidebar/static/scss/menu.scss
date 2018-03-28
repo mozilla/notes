@@ -95,6 +95,7 @@
       }
 
       hr {
+        margin: 6px 0;
         border: none;
         border-bottom: solid 1px rgba(12, 12, 13, 0.2);
       }
@@ -106,7 +107,7 @@
           white-space: nowrap;
           padding-left: 16px;
           width: 100%;
-          line-height: 26px;
+          line-height: 24px;
           font-size: 13px;
           outline: 0;
           &:hover, &:focus, &:active {
