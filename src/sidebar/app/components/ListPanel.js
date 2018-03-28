@@ -42,6 +42,13 @@ class ListPanel extends React.Component {
   }
 
   componentDidMount() {
+    // Disable right clicks
+    // Refs: https://stackoverflow.com/a/737043/186202
+    document.querySelectorAll('.listView').forEach(sel => {
+      sel.addEventListener('contextmenu', e => {
+        e.preventDefault();
+      });
+    });
 
     // Send message to background.js stating editor has been initialized
     // and is ready to receive content
