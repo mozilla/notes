@@ -1,3 +1,5 @@
+import KintoClient from 'kinto';
+
 import { checkIndexedDbHealth } from '../../src/utils';
 import { fxaFetchProfile } from '../../src/fxa-utils';
 import * as syncModule from '../../src/sync';
@@ -44,7 +46,7 @@ describe('Authorization', function() {
   });
 
   describe('401s', function() {
-    const client = new Kinto();
+    const client = new KintoClient();
 
     let credentials;
     beforeEach(function() {
