@@ -53,7 +53,7 @@ class Editor extends React.Component {
                   context: getPadStats(editor)
                 });
             }
-          }, 200);
+          }, 50);
         });
       })
       .catch(error => {
