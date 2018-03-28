@@ -49,6 +49,7 @@ function sync(sync = {}, action) {
       });
     case RECONNECT_SYNC:
       return Object.assign({}, sync, {
+        email: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
