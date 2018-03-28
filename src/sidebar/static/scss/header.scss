@@ -5,56 +5,48 @@ header Styles
 
 header {
   display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: space-between;
+  // align-items: stretch;
+
   width: 100%;
   flex: 40px;
+
   flex-grow: 0;
+  flex-shrink: 0;
+
+  color: black;
   font-size: 13px;
   background: rgb(247, 247, 247);
 
-  align-items: stretch;
+  box-sizing: border-box;
+
   position: relative;
   border-bottom: 1px solid #d7d7db;
-  justify-content: space-between;
 
-  // sync icon + text layout in header
-  div.btnWrapper {
-    color: black;
-    height: 40px;
-    width: calc(100% - 40px);
+  padding-left: 8px;
+  padding-right: 8px;
+
+  p { // Text between sync button and text menu
+    flex: 100%;
+    margin: 0px;
     flex-grow: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding-top: 2px;
-
-    p { // Text between sync button and text menu
-      margin-top: 1px;
-      flex: 100%;
-      flex-grow: 1;
-      flex-shrink: 1;
-      display: block;
-      font-weight: 500;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      padding: 10px 6px 0 2px;
-      text-align: center;
-    }
+    flex-shrink: 1;
+    display: block;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0px 6px 0 6px;
+    text-align: center;
   }
-}
 
-header button,
-header a {
-  transition: background 50ms;
-}
-
-header button:hover,
-header a:hover {
-  background-color: #d7d7db;
-}
-
-header button:active,
-header a:active {
-  background-color: rgb(195, 195, 195);
+  button, a {
+    transition: background 50ms;
+    &:hover { background-color: #d7d7db; }
+    &:active { background-color: rgb(195, 195, 195); }
+  }
 }
 

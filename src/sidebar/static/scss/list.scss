@@ -3,9 +3,6 @@
   flex-grow: 1;
   flex-direction: column;
 
-  & + a {
-      flex: 40px;
-  }
 
   ul {
     font-size: 1rem;
@@ -14,20 +11,23 @@
     margin: 0;
     padding: 0;
     overflow: auto;
+    margin-bottom: -1px;
     li {
+      box-sizing: border-box;
       list-style: none;
       button {
         display: block !important;
         color: rgb(132, 132, 132);
-        padding-top: 8px;
-        padding-bottom: 8px;
         padding-right: 17px;
+        height: 48px;
+        font-size: 13px;
+        line-height: 17px;
+        letter-spacing: .1px;
         p {
           strong {
-            font-weight: 500;
+            font-weight: 600;
             color: black;
           }
-          line-height: 20px;
           margin: 0 !important;
           padding: 0 !important;
           font-weight: 100;
@@ -36,15 +36,11 @@
           text-overflow: ellipsis;
           color: rgb(140, 140, 140);
 
-          &:first-letter {
-            text-transform: uppercase;
-          }
-
           span {
             margin: 0 !important;
             padding: 0 !important;
             padding-right: 4px !important;
-            font-weight: 500;
+            font-weight: 600;
             color: rgb(140, 140, 140);
           }
         }

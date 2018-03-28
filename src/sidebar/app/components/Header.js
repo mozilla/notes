@@ -91,21 +91,17 @@ class Header extends React.Component {
 
     return (
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
-
-        <div className="btnWrapper">
-          <button
+        <button
           onClick={() => this.props.history.push('/')}
-            className="btn iconBtn">
-            <ArrowLeftIcon />
-          </button>
-          { this.props.note ?
-          <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p> :
-          '' }
-        </div>
-
+          title={ browser.i18n.getMessage('backToAllNotes') }
+          className="btn iconBtn">
+          <ArrowLeftIcon />
+        </button>
+        { this.props.note ?
+        <p>{ this.props.note.firstLine || browser.i18n.getMessage('newNote') }</p> :
+        '' }
         <div className="photon-menu close bottom left" ref={menu => this.menu = menu }>
           <button
-            id="context-menu-button"
             className="iconBtn"
             onClick={(e) => this.toggleMenu(e)}>
             <MoreIcon />
