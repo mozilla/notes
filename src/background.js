@@ -6,7 +6,6 @@ import { fxaFetchProfile } from './fxa-utils';
 import { retrieveNote, loadFromKinto, saveToKinto, createNote, deleteNote, disconnectFromKinto,
 Credentials, BrowserStorageCredentials } from './sync';
 
-
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
@@ -20,6 +19,21 @@ let isEditorReady = false;
 // Kinto sync and encryption
 
 const client = new KintoClient({remote: KINTO_SERVER, bucket: 'default'});
+
+// Create webworker to improve performances
+//
+// const worker = new Worker('worker.js');
+//
+// worker.onmessage = function(event) {
+//   switch (event.data.type) {
+//     default:
+//       return;
+//   }
+// }
+//
+// worker.onError = function(event) {
+//     console.log(event);
+// };
 
 function authenticate() {
   const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
@@ -62,6 +76,8 @@ function authenticate() {
 }
 
 browser.runtime.onMessage.addListener(function(eventData) {
+
+  // Send eventData to worker.
   const credentials = new BrowserStorageCredentials(browser.storage.local);
 
   switch (eventData.action) {

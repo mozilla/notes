@@ -11,21 +11,15 @@ module.exports = {
 
   entry: {
     sidebar: path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
-    background: path.resolve(__dirname, 'src', 'background.js')
+    background: path.resolve(__dirname, 'src', 'background.js'),
+    worker: path.resolve(__dirname, 'src', 'worker.js')
   },
-  // [
-  //   path.resolve(__dirname, 'src', 'sidebar', 'app', 'app.js'),
-  // ],
 
   output: {
     // build to the extension src vendor directory
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
   },
-  // output: {
-  //   path: __dirname + '/dist'
-  //   filename: '[name].js',
-  // }
 
   plugins: [
     // cleanup build folder
