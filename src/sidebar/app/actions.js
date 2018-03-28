@@ -103,7 +103,13 @@ export function createNote(content = '') {
 }
 
 export function deleteNote(id) {
+
   id ? chrome.runtime.sendMessage({ action: 'delete-note', id }) : null;
+
+  browser.runtime.sendMessage({
+    action: 'kinto-sync'
+  });
+
   return { type: DELETE_NOTE, id };
 }
 

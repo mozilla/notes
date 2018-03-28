@@ -7,45 +7,65 @@ footer {
   width: 100%;
   height: 40px;
   font-size: 13px;
+    color: #969696;
 
   align-items: stretch;
   position: relative;
   border-top: 1px solid #d7d7db;
   display: flex;
   justify-content: space-between;
-  background-color: transparent;
+  background-color: #f7f7f7;
   transition: background var(--sync-animation-duration)
     cubic-bezier(0.07, 0.95, 0, 1);
 
-  // sync icon + text layout in footer
+  &.warning {
+    padding-right: 8px;
+    background-color: rgb(255, 236, 173);
+    color: black;
+    transition: background var(--sync-animation-duration)
+               cubic-bezier(0.07, 0.95, 0, 1);
+    button {
+      color: black;
+
+      &.fullWidth:hover {
+        background: transparent !important;
+      }
+    }
+
+  }
+
+  // This is full with button, used with Sign in to sync and warning
+  button.fullWidth {
+    padding-left: 16px;
+    padding-right: 16px;
+    display: block;
+    span {
+      position: relative;
+      top: 1px;
+    }
+  }
+
+  // This is iconBtn + p used to display
   div.btnWrapper {
 
-    color: #969696;
+    color: inherit;
     height: 40px;
-    width: calc(100% - 40px);
+    width: calc(100% - 48px);
     flex-grow: 1;
+
     display: flex;
     flex-direction: row;
     align-items: center;
 
-    button + p {
-      display: none;
-    }
+    padding-left: 12px;
 
     &.isClickable {
       button {
         color: black;
       }
-      button:hover + p {
-        display: block;
-      }
-      button:hover + p + p {
-        display: none;
-      }
     }
 
     p { // Text between sync button and text menu
-      margin-top: 1px;
       flex: 100%;
       flex-grow: 1;
       flex-shrink: 1;
@@ -54,7 +74,7 @@ footer {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      padding: 8px 6px 0 2px;
+      padding: 0px 16px 1px 8px;
       text-align: center;
 
       &.alignLeft {
@@ -63,23 +83,17 @@ footer {
     }
   }
 
-  &.warning {
-    background-color: rgb(255, 236, 173);
-    color: black;
-    transition: background var(--sync-animation-duration)
-               cubic-bezier(0.07, 0.95, 0, 1);
-
-    button {
-      color: black;
-      &.fullWidth:hover {
-        background: transparent !important;
-      }
-    }
-    div.btnWrapper {
-      color: black;
-    }
-
+  a, button {
+    transition: background 50ms;
+    &:hover { background-color: #ebebee; }
+    &:active { background-color: #d7d7db; }
   }
+
+  .btnWrapper + .photon-menu {
+    position: relative;
+    right: 8px;
+  }
+
 }
 
 /* Animate sync icon */
@@ -92,9 +106,9 @@ footer {
   }
 }
 
-.warning #context-menu-button:active,
-.warning #context-menu-button:hover,
-.warning #context-menu-button:focus {
+.warning .photon-menu .iconBtn:active,
+.warning .photon-menu .iconBtn:hover,
+.warning .photon-menu .iconBtn:focus {
   background-color: rgba(0, 0, 0, .2);
 }
 
@@ -117,25 +131,10 @@ footer {
 
 .animateSyncIcon #enable-sync svg path,
 .syncingLayout>div:hover #enable-sync svg path {
-  fill: #4e92dd;
+  fill: rgb(140, 140, 140);
 }
 
 // Always black on warning/yellow background
 .warning>div:hover #enable-sync svg path {
   fill: black !important;
-}
-
-footer button,
-footer a {
-  transition: background 50ms;
-}
-
-footer button:hover,
-footer a:hover {
-  background-color: #ebebee;
-}
-
-footer button:active,
-footer a:active {
-  background-color: #d7d7db;
 }

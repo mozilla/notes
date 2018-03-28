@@ -34,6 +34,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         if (!eventData.notes) {
           // As seen in units, kinto_laoded should return empty list if no entries
           console.error('eventData.notes is empty');
+          store.dispatch(kintoLoad());
         } else {
           store.dispatch(kintoLoad(eventData.notes));
         }
