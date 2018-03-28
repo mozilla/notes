@@ -31,9 +31,11 @@
   }
 
    .ck-editor__top {
-    flex: 36px;
-    flex-direction: column;
     border-bottom: 1px solid #ccc;
+    flex-direction: column;
+    flex: 40px;
+    height: 40px;
+    overflow: hidden;
   }
 
   .ck-editor__main {
