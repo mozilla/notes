@@ -1,8 +1,10 @@
-/**
- * Google Analytics / TestPilot Metrics
- */
 
-const TRACKING_ID = 'UA-35433268-79';
+import KintoClient from 'kinto';
+
+import { checkIndexedDbHealth, sendMetrics } from './utils';
+import { fxaFetchProfile } from './fxa-utils';
+import { retrieveNote, loadFromKinto, saveToKinto, createNote, deleteNote, disconnectFromKinto,
+Credentials, BrowserStorageCredentials } from './sync';
 
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params
@@ -10,55 +12,28 @@ const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
 const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
 const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
-const timeouts = {};
+
 let closeUI = null;
 let isEditorReady = false;
 
 // Kinto sync and encryption
 
-const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
+const client = new KintoClient({remote: KINTO_SERVER, bucket: 'default'});
 
-// Analytics
-
-const analytics = new TestPilotGA({
-  tid: TRACKING_ID,
-  ds: 'addon',
-  an: 'Notes Experiment',
-  aid: 'notes@mozilla.com',
-  av: browser.runtime.getManifest().version
-});
-
-function sendMetrics(event, context = {}) {
-  // This function debounce sending metrics.
-  const later = function() {
-    timeouts[event] = null;
-
-    let metrics = {};
-
-    if (event === 'open') {
-      metrics.cd9 = context.loaded !== false;
-    } else if (event === 'close') {
-      metrics.cd7 = context.closeUI;
-      metrics.cd8 = null; // reason editing session ended
-    } else if (event === 'changed' || event === 'drag-n-drop') { // Editing
-      metrics = {
-        cm1: context.characters,
-        cm2: context.lineBreaks,
-        cm3: null,  // Size of the change
-        cd1: context.syncEnabled,
-        cd2: context.usesSize,
-        cd3: context.usesBold,
-        cd4: context.usesItalics,
-        cd5: context.usesStrikethrough,
-        cd6: context.usesList,
-      };
-    }
-
-    return analytics.sendEvent('notes', event, metrics);
-  };
-  clearTimeout(timeouts[event]);
-  timeouts[event] = setTimeout(later, 20000);
-}
+// Create webworker to improve performances
+//
+// const worker = new Worker('worker.js');
+//
+// worker.onmessage = function(event) {
+//   switch (event.data.type) {
+//     default:
+//       return;
+//   }
+// }
+//
+// worker.onError = function(event) {
+//     console.log(event);
+// };
 
 function authenticate() {
   const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
@@ -101,6 +76,8 @@ function authenticate() {
 }
 
 browser.runtime.onMessage.addListener(function(eventData) {
+
+  // Send eventData to worker.
   const credentials = new BrowserStorageCredentials(browser.storage.local);
 
   switch (eventData.action) {

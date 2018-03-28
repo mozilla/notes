@@ -1,3 +1,7 @@
+
+import { fxaRenewCredential } from './fxa-utils';
+import { sendMetrics } from './utils';
+
 let syncDebounce = null;
 
 const cryptographer = new Jose.WebCryptographer();
@@ -317,7 +321,6 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
 
 function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
   let resolve;
-
   // We do not store empty notes on server side.
   // They will be auotmatically deleted by listPanel component
   if (note.content === '') { return Promise.resolve(); }
@@ -332,6 +335,7 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
   });
 
   const later = function() {
+
     syncDebounce = null;
     const notes = client.collection('notes', { idSchema: notesIdSchema });
     return notes.upsert(note)
@@ -384,3 +388,6 @@ function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
   return notes.resetSyncStatus();
 }
 
+export { notesIdSchema, shared_key, encrypt, decrypt, syncKinto, reconnectSync, retrieveNote,
+  loadFromKinto, saveToKinto, createNote, deleteNote, disconnectFromKinto, ServerKeyNewerError,
+  ServerKeyOlderError, JWETransformer, Credentials, BrowserStorageCredentials };

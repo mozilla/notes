@@ -30,7 +30,6 @@ module.exports = function(config) {
     files: [
       "src/vendor/*.js",
       "test/dist/unit-bundle.js",
-      "src/*.js",
     ],
     // coverage preprocessor doesn't cope with ES2017
     //preprocessors: {"src/*.js": ["coverage"]},

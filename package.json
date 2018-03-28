@@ -26,7 +26,7 @@
     "fxa-crypto-relier": "2.1.0",
     "jose-jwe-jws": "^0.1.5",
     "kinto": "^10.0.0",
-    "kinto-http": "4.3.4",
+    "kinto-http": "^4.3.4",
     "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
