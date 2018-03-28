@@ -2,6 +2,7 @@ node_modules/
 signed-addon.xpi
 src/vendor/*
 src/sidebar/vendor/*
+!src/sidebar/vendor/ckeditor.js
 src/_locales
 web-ext-artifacts/
 test/dist/*
