@@ -29,11 +29,11 @@ function decrypt(key, encrypted) {
 // An "id schema" used to validate Kinto IDs and generate new ones.
 const notesIdSchema = { // eslint-disable-line no-unused-vars
   // FIXME: Maybe this should generate IDs?
-  generate() {
+  generate(o) {
     throw new Error('cannot generate IDs');
   },
 
-  validate() {
+  validate(o) {
     // FIXME: verify that at least this matches Kinto server ID format
     return true;
   },
@@ -51,6 +51,8 @@ class ServerKeyOlderError extends Error {
   }
 }
 
+const deletedNotes = {};
+
 class JWETransformer {
   constructor(key) {
     this.key = key;
@@ -63,11 +65,11 @@ class JWETransformer {
     // headers (If-Match, If-None-Match) correctly.
     // DON'T copy over "deleted" status, because then we'd leak
     // plaintext deletes.
-    const status = record._status && (record._status === 'deleted' ? 'updated' : record._status);
+    // const status = record._status && (record._status === 'deleted' ? 'updated' : record._status);
     const encryptedResult = {
       content: ciphertext,
       id: record.id,
-      _status: status,
+      _status: record._status,
       kid: this.key.kid,
     };
     if (record.hasOwnProperty('last_modified')) {
@@ -103,7 +105,9 @@ class JWETransformer {
     // uploaded as an encrypted blob so we don't leak deletions.
     // If we get such a record, flag it as deleted.
     if (decoded._status === 'deleted') {
+      decoded._status === 'deleted';
       decoded.deleted = true;
+      deletedNotes[decoded.id] = decoded;
     }
     return decoded;
   }
@@ -182,6 +186,7 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
+      console.log('syncKinto syncResult', syncResult);
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
@@ -276,7 +281,10 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes', { idSchema: notesIdSchema }).list({});
+  return client.collection('notes', { idSchema: notesIdSchema }).list({}).then((list) => {
+    console.log(list);
+    return list;
+  });
 }
 
 /**
@@ -299,6 +307,12 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
     // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
+
+      console.log('deletedNotes', Object.keys(deletedNotes));
+      // Object.keys(deletedNotes).forEach((id) => {
+      //   client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+      // });
+
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         notes: result.data,
@@ -306,6 +320,7 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
       });
     })
     .catch((e) => {
+      console.log(e);
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
         notes: null,
