@@ -27,13 +27,15 @@
   .ck-toolbar {
     border: 0;
     border-radius: 0;
+    padding: .2em .4em;
   }
 
    .ck-editor__top {
-    flex: 40px;
-    flex-direction: column;
-    height: 40px;
     border-bottom: 1px solid #ccc;
+    flex-direction: column;
+    flex: 40px;
+    height: 40px;
+    overflow: hidden;
   }
 
   .ck-editor__main {

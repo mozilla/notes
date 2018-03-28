@@ -9,7 +9,7 @@ function customizeEditor(editor) {
 
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
-  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach(sel => {
+  document.querySelectorAll('.ck-toolbar, #footer-buttons, header').forEach(sel => {
     sel.addEventListener('contextmenu', e => {
       e.preventDefault();
     });

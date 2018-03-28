@@ -19,6 +19,7 @@ import store from './store';
  * Share state between instances ... update-redux?
  * No idea if this is a good idea or not.
  */
+
 chrome.runtime.onMessage.addListener(eventData => {
     switch (eventData.action) {
       //
@@ -33,6 +34,7 @@ chrome.runtime.onMessage.addListener(eventData => {
         if (!eventData.notes) {
           // As seen in units, kinto_laoded should return empty list if no entries
           console.error('eventData.notes is empty');
+          store.dispatch(kintoLoad());
         } else {
           store.dispatch(kintoLoad(eventData.notes));
         }
@@ -60,13 +62,21 @@ chrome.runtime.onMessage.addListener(eventData => {
         }
         break;
       case SEND_TO_NOTES: {
-          const focusedNoteId = store.getState().sync.focusedNoteId;
-          if (focusedNoteId) {
-            store.dispatch(sendToNote(focusedNoteId, eventData.text));
-          } else {
-            store.dispatch(createNote(`<p>${ eventData.text }</p>`));
+        browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+          if (windowInfo.id === eventData.windowId) {
+            const focusedNoteId = store.getState().sync.focusedNoteId;
+            if (focusedNoteId) {
+              store.dispatch(sendToNote(focusedNoteId, eventData.text));
+            } else {
+              store.dispatch(createNote(`<p>${ eventData.text }</p>`));
+            }
+            browser.runtime.sendMessage({
+              action: 'kinto-sync'
+            });
           }
-        }
+        });
         break;
+      }
     }
 });
+

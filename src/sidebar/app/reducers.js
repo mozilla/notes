@@ -53,6 +53,10 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: true,
       });
+    case DELETE_NOTE:
+      return Object.assign({}, sync, {
+        isSyncing: true
+      });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true
@@ -99,15 +103,18 @@ function kinto(kinto = {}, action) {
 function notes(notes = [], action) {
   switch (action.type) {
     case KINTO_LOADED: {
-      const list = Array.from(action.notes);
-      list.map((note) => {
-        note.firstLine = getFirstLineFromContent(note.content);
-        note.secondLine = stripHtmlWithoutFirstLine(note.content);
-        if (!(note.lastModified instanceof Date)) {
-          note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
-        }
-      });
-      return list;
+      if (action.notes) {
+        const list = Array.from(action.notes);
+        list.map((note) => {
+          note.firstLine = getFirstLineFromContent(note.content);
+          note.secondLine = stripHtmlWithoutFirstLine(note.content);
+          if (!(note.lastModified instanceof Date)) {
+            note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
+          }
+        });
+        return list;
+      }
+      return notes;
     }
     case TEXT_SYNCED: {
 
@@ -159,6 +166,7 @@ function notes(notes = [], action) {
         return note.id === action.id;
       });
       if (note) {
+        if (note.content === '<p>&nbsp;</p>') note.content = '';
         note.content = note.content + `<p>${action.content}</p>`;
         note.lastModified = new Date();
       }

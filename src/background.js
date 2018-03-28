@@ -200,24 +200,26 @@ browser.contextMenus.create({
   documentUrlPatterns: ['<all_urls>']
 });
 
-browser.contextMenus.onClicked.addListener((info) => {
+browser.contextMenus.onClicked.addListener((info, tab) => {
   // open sidebar which will trigger `isEditorReady`...
   browser.sidebarAction.open();
   // then send selection text to Editor.js once editor instance is initialized and ready
-  sendSelectionText(info.selectionText);
+  sendSelectionText(info.selectionText, tab.windowId);
 });
 
-function sendSelectionText(selectionText) {
+// We receive this ... GREAT
+function sendSelectionText(selectionText, windowId) {
   // if editor ready, go ahead and send selected text to be pasted in Notes,
   // otherwise wait half a second before trying again
   if (isEditorReady) {
     chrome.runtime.sendMessage({
       action: 'send-to-notes',
+      windowId,
       text: selectionText
     });
   } else {
     setTimeout(() => {
-      sendSelectionText(selectionText);
+      sendSelectionText(selectionText, windowId);
     }, 500);
   }
 }

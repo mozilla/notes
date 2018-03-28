@@ -46,7 +46,7 @@ footer.warning button svg path { fill: black !important; }
   color: black !important;
 }
 
-.photon-menu #context-menu-button {
+.photon-menu .iconBtn {
   color: #e6e6e6 !important;
 }
 
@@ -56,15 +56,15 @@ footer.warning button svg path { fill: black !important; }
 }
 
 #footer-buttons.savingLayout div:first-child.isClickable button:focus,
-.photon-menu #context-menu-button:focus {
+.photon-menu .iconBtn:focus {
   background-color: #272b35;
 }
 #footer-buttons.savingLayout div:first-child.isClickable button:hover,
-.photon-menu #context-menu-button:hover {
+.photon-menu .iconBtn:hover {
   background-color: #323744;
 }
 #footer-buttons.savingLayout div:first-child.isClickable button:active,
-.photon-menu #context-menu-button:active {
+.photon-menu .iconBtn:active {
   background-color: #3d4352;
 
 }
