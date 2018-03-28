@@ -24,8 +24,8 @@
   "browser_action": {
     "browser_style": true,
     "default_icon": {
-      "16": "icons/notes.svg",
-      "32": "icons/notes.svg"
+      "16": "icons/notes-fill.svg",
+      "32": "icons/notes-fill.svg"
     },
     "default_area": "navbar",
     "default_title": "Firefox Notes"
