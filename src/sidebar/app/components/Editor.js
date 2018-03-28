@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
-import INITIAL_CONTENT from '../data/initialContent';
 
 import { updateNote } from '../actions';
 
@@ -23,6 +22,7 @@ class Editor extends React.Component {
     this.props = props;
     this.editor = null; // Editor object
     this.ignoreChange = false;
+    this.delayUpdateNote = null;
   }
 
   componentDidMount() {
@@ -32,27 +32,28 @@ class Editor extends React.Component {
         customizeEditor(editor);
 
         editor.document.on('change', (eventInfo, name) => {
-          const isFocused = document
-            .querySelector('.ck-editor__editable')
-            .classList.contains('ck-focused');
-          // Only use the focused editor or handle 'rename' events to set the data into storage.
-          if (isFocused || name === 'rename' || name === 'insert') {
-            const content = editor.getData();
-            if (content !== undefined &&
-                content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
+          // Cache update event in case of multi-change event (copy pasting trigger many).
+          clearTimeout(this.delayUpdateNote);
+          this.delayUpdateNote = setTimeout(() => {
 
-              if (!this.ignoreChange) {
-                this.props.dispatch(updateNote(this.props.note.id, content));
-              }
-              this.ignoreChange = false;
+            const isFocused = document
+              .querySelector('.ck-editor__editable')
+              .classList.contains('ck-focused');
+            // Only use the focused editor or handle 'rename' events to set the data into storage.
+            if (isFocused || name === 'rename' || name === 'insert') {
+                const content = editor.getData();
 
-              chrome.runtime.sendMessage({
-                action: 'metrics-changed',
-                context: getPadStats(editor)
-              });
+                if (!this.ignoreChange) {
+                  this.props.dispatch(updateNote(this.props.note.id, content));
+                }
+                this.ignoreChange = false;
+
+                chrome.runtime.sendMessage({
+                  action: 'metrics-changed',
+                  context: getPadStats(editor)
+                });
             }
-          }
-
+          }, 50);
         });
       })
       .catch(error => {
@@ -67,7 +68,9 @@ class Editor extends React.Component {
       if (nextProps.note.id !== this.props.note.id) {
         this.ignoreChange = true;
       }
-      this.editor.setData(nextProps.note.content || '<p></p>');
+      if (!this.delayUpdateNote) { // If no delay waiting, we apply modification
+        this.editor.setData(nextProps.note.content || '<p></p>');
+      }
     }
   }
 
