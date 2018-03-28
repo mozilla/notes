@@ -27,14 +27,13 @@
   .ck-toolbar {
     border: 0;
     border-radius: 0;
-    padding: .2em .4em;
   }
 
    .ck-editor__top {
     border-bottom: 1px solid #ccc;
     flex-direction: column;
-    flex: 40px;
-    height: 40px;
+    flex: 36px;
+    height: 36px;
     width: 40em; // max-width of Firefox sidebar is 36em
   }
 
