@@ -17,6 +17,7 @@ import { SYNC_AUTHENTICATED,
 import INITIAL_CONTENT from './data/initialContent';
 import { getFirstNonEmptyElement, formatFilename } from './utils/utils';
 import { v4 as uuid4 } from 'uuid';
+import * as FileSaver from 'file-saver';
 
 /*
  * action creators
@@ -143,12 +144,7 @@ export function exportHTML(content) {
       <body>${notesContent}</body>
     </html>`.trim()], {'type': exportFileType});
 
-  const exportFilePath = window.URL.createObjectURL(data);
-  browser.downloads.download({
-    url: exportFilePath,
-    filename: exportFileName,
-    saveAs: true // always open file chooser, fixes #733
-  });
+  FileSaver.saveAs(data, exportFileName);
 
   chrome.runtime.sendMessage({
     action: 'metrics-export-html'

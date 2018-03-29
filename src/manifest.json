@@ -31,7 +31,6 @@
     "default_title": "Firefox Notes"
   },
   "permissions": [
-    "downloads",
     "contextMenus",
     "storage",
     "identity",
