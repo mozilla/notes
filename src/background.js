@@ -27,8 +27,8 @@ const analytics = new TestPilotGA({
   av: browser.runtime.getManifest().version
 });
 
-// This object is updated onMessage 'redux', sended by sidebar store.js on evry change.
-// We need to keep it to generate cd10
+// This object is updated onMessage 'redux', sended by sidebar store.js on every change.
+// We need to keep it to generate `cd10`
 let reduxSync = {};
 
 function sendMetrics(event, context = {}, sync = reduxSync) {
