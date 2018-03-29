@@ -85,8 +85,8 @@ footer {
 
   a, button {
     transition: background 50ms;
-    &:hover { background-color: #ebebee; }
-    &:active { background-color: #d7d7db; }
+    &:hover { background-color: rgba(12, 12, 13, 0.1); }
+    &:active { background-color: rgba(12, 12, 13, 0.2); }
   }
 
   .btnWrapper + .photon-menu {
@@ -104,12 +104,6 @@ footer {
   to {
     transform: rotate(360deg);
   }
-}
-
-.warning .photon-menu .iconBtn:active,
-.warning .photon-menu .iconBtn:hover,
-.warning .photon-menu .iconBtn:focus {
-  background-color: rgba(0, 0, 0, .2);
 }
 
 #enable-sync svg {
