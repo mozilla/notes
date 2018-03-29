@@ -35,6 +35,8 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 - `cd7` - the UI element used to open or close the notepad. Possible values TBD, but may include `closeButton`, `sidebarButton`, and `sidebarSwitcher`.
 - `cd8` - the reason an editing session ended. One of `timeout` or `closed`.
 - `cd9` - whether the user was able to load the note panel or not. One of `true` or `false`.
+- `cd10` - provide current user state. Possible values are: 'error', 'isSyncing', 'synced', 'openLogin', 'verifyAccount', 'reconnectSync', and 'signIn'.
+
 
 ### Events
 
@@ -44,6 +46,7 @@ An event fired when the user actively navigates to the Notes sidebar. Includes:
 - `ec` - `notes`
 - `ea` - `open`
 - `cd9`
+- `cd10`
 
 #### `close`
 An event fired when the user actively navigates away from the Notes sidebar. Includes:
@@ -52,6 +55,7 @@ An event fired when the user actively navigates away from the Notes sidebar. Inc
 - `ea` - `close`
 - `cd7`
 - `cd8`
+- `cd10`
 
 #### `changed`
 An event fired when the user completes a change of the content of the notepad. It prospectively begins when a user focuses on the notepad's editable area, and ends when the user either 1) closes the sidebar, or 2) does not make any changes in 20 seconds. Includes:
@@ -67,6 +71,7 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd4`
 - `cd5`
 - `cd6`
+- `cd10`
 
 #### `drag-n-drop`
 An event fired when the user tries to drag or drop a content into the notepad.
@@ -82,6 +87,7 @@ An event fired when the user tries to drag or drop a content into the notepad.
 - `cd4`
 - `cd5`
 - `cd6`
+- `cd10`
 
 #### `sync-started` (deprecated)
 
@@ -153,6 +159,7 @@ An event fired when user goes over the pad limit (15000 character)
 - `cd4`
 - `cd5`
 - `cd6`
+- `cd10`
 
 #### `idb-fail`
 An event fired when IndexedDB fails to load
