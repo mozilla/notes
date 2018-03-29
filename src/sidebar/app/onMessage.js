@@ -4,6 +4,7 @@ import { SYNC_AUTHENTICATED,
          TEXT_SYNCED,
          RECONNECT_SYNC,
          DISCONNECTED,
+         ERROR,
          SEND_TO_NOTES } from './utils/constants';
          // Actions
 import { authenticate,
@@ -12,7 +13,8 @@ import { authenticate,
          synced,
          reconnectSync,
          sendToNote,
-         kintoLoad } from './actions';
+         kintoLoad,
+         error } from './actions';
 import store from './store';
 /**
  * For each event, action on redux to update UI. No longer any event from chrome in components
@@ -55,6 +57,9 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case RECONNECT_SYNC:
         store.dispatch(reconnectSync());
+        break;
+      case ERROR:
+        store.dispatch(error(eventData.message));
         break;
       case DISCONNECTED:
         if (store.getState().sync.email) {

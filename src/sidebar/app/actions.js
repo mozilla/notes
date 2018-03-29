@@ -11,6 +11,7 @@ import { SYNC_AUTHENTICATED,
          PLEASE_LOGIN,
          OPENING_LOGIN,
          FOCUS_NOTE,
+         ERROR,
          REQUEST_WELCOME_PAGE } from './utils/constants';
 
 import INITIAL_CONTENT from './data/initialContent';
@@ -168,4 +169,8 @@ export function setFocusedNote(id) {
 
 export function requestWelcomeNote() {
   return { type: REQUEST_WELCOME_PAGE };
+}
+
+export function error(message) {
+  return { type: ERROR, message};
 }

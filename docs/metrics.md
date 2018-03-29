@@ -69,7 +69,6 @@ An event fired when the user completes a change of the content of the notepad. I
 - `cd6`
 
 #### `drag-n-drop`
-
 An event fired when the user tries to drag or drop a content into the notepad.
 
 - `ec` - `notes`
@@ -142,7 +141,6 @@ An event fired when the "Send to Notes" context menu is used
 - `ea` - `metrics-context-menu`
 
 #### `limit-reached`
-
 An event fired when user goes over the pad limit (15000 character)
 
 - `ec` - `notes`
@@ -157,15 +155,15 @@ An event fired when user goes over the pad limit (15000 character)
 - `cd6`
 
 #### `idb-fail`
-
 An event fired when IndexedDB fails to load
 
 - `ec` - `notes`
 - `ea` - `idb-fail`
 
-
-#### `migrate-single-note`
-An event fired when migrating singleNote to multiNote
+### `delete-deleted-notes`
+A client retrieved notes which have been deleted on client side but not proparly
+deleted on server side. Those were deleted before v4.0.0-beta.4 (during multi-note implementation).
 
 - `ec` - `notes`
-- `ea` - `migrate-single-note`
+- `ea` - `delete-deleted-notes`
+

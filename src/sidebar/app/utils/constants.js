@@ -19,4 +19,5 @@ export const UPDATE_NOTE = 'text-change';
 export const DELETE_NOTE = 'delete-note';
 
 export const FOCUS_NOTE = 'focus-note';
+export const ERROR = 'error';
 export const REQUEST_WELCOME_PAGE = 'request-welcome-page';
