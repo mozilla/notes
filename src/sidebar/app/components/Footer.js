@@ -41,7 +41,7 @@ class Footer extends React.Component {
       },
       ERROR: {
         yellowBackground: true,
-        isClickable: true
+        isClickable: false
       },
       SYNCING: {
         animateSyncIcon: true,
