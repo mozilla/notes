@@ -11,6 +11,13 @@ const storeState = store => next => action => {
   browser.storage.local.set({
     redux: JSON.stringify(store.getState())
   });
+
+  // We send to background.js our current sync status used for metrics cd10
+  chrome.runtime.sendMessage({
+    action: 'redux',
+    sync: store.getState().sync
+  });
+
   return next(action);
 };
 
