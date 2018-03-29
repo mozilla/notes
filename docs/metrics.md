@@ -97,63 +97,54 @@ An event fired whenever the user attempts to login to sync. Includes:
 
 - `ec` - `notes`
 - `ea` - `sync-started`
-- `cd10`
 
 #### `login-success`
 An event fired whenever the user enables sync successfully. Includes:
 
 - `ec` - `notes`
 - `ea` - `login-success`
-- `cd10`
 
 #### `login-failed`
 An event fired whenever the user enables sync but the FxA login fails. Includes:
 
 - `ec` - `notes`
 - `ea` - `login-failed`
-- `cd10`
 
 #### `theme-changed`
 An event fired whenever the user changes the theme. Includes:
 
 - `ec` - `notes`
 - `ea` - `theme-changed`
-- `cd10`
 
 #### `webext-button-authenticate`
 An event fired when user presses the sync button
 
 - `ec` - `notes`
 - `ea` - `webext-button-authenticate`
-- `cd10`
 
 #### `webext-button-disconnect`
 An event fired when user logs out of sync
 
 - `ec` - `notes`
 - `ea` - `webext-button-disconnect`
-- `cd10`
 
 #### `handle-conflict`
 An event fired when sync resolved a sync conflict
 
 - `ec` - `notes`
 - `ea` - `handle-conflict`
-- `cd10`
 
 #### `reconnect-sync`
 An event fired when user closes sync due to a password reset or change
 
 - `ec` - `notes`
 - `ea` - `reconnect-sync`
-- `cd10`
 
 #### `context-menu`
 An event fired when the "Send to Notes" context menu is used
 
 - `ec` - `notes`
 - `ea` - `metrics-context-menu`
-- `cd10`
 
 #### `limit-reached`
 An event fired when user goes over the pad limit (15000 character)
@@ -175,7 +166,6 @@ An event fired when IndexedDB fails to load
 
 - `ec` - `notes`
 - `ea` - `idb-fail`
-- `cd10`
 
 ### `delete-deleted-notes`
 A client retrieved notes which have been deleted on client side but not proparly
@@ -183,5 +173,4 @@ deleted on server side. Those were deleted before v4.0.0-beta.4 (during multi-no
 
 - `ec` - `notes`
 - `ea` - `delete-deleted-notes`
-- `cd10`
 
