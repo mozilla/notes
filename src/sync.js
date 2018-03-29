@@ -185,6 +185,11 @@ function syncKinto(client, credentials) {
             });
       });
     })
+    .catch((error) => {
+      if (error.response && error.response.status === 500) { // issue #827
+        return Promise.resolve();
+      }
+    })
     .then(syncResult => {
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
