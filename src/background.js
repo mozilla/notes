@@ -82,7 +82,7 @@ function sendMetrics(event, context = {}, sync = reduxSync) {
     return analytics.sendEvent('notes', event, metrics);
   };
   clearTimeout(timeouts[event]);
-  timeouts[event] = setTimeout(later, 4000);
+  timeouts[event] = setTimeout(later, 20000);
 }
 
 function authenticate() {
