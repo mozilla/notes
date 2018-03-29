@@ -104,9 +104,9 @@ class JWETransformer {
       decoded.deleted = true;
       // On decode, we flag notes with _status deleted but still on server.
       // We automatically will request deletion for those.
-      // (This is due to singleNote overriding deleted state with udpated to server)
-      // Should be deleted when every user who tryed beta runned it once.
-      // (see meetrics deleteDeleted)
+      // (This is due to singleNote replacing 'deleted' state by 'updated')
+      // Should be deleted when every user who tried beta runned it once.
+      // (see metrics deleteDeleted)
       deletedNotesStillOnServer[decoded.id] = decoded;
     }
     return decoded;
