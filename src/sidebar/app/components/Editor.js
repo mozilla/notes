@@ -53,6 +53,7 @@ class Editor extends React.Component {
                   context: getPadStats(editor)
                 });
             }
+            this.delayUpdateNote = null;
           }, 50);
         });
       })
@@ -69,6 +70,7 @@ class Editor extends React.Component {
         this.ignoreChange = true;
       }
       if (!this.delayUpdateNote) { // If no delay waiting, we apply modification
+        this.ignoreChange = true;
         this.editor.setData(nextProps.note.content || '<p></p>');
       }
     }
