@@ -1,5 +1,19 @@
+:root {
+  --main-bg-color: hsla(221deg, 14%, 25%, 1);
+  --main-offset-bg-color: hsla(221deg, 14%, 24%, 1);
+  --main-bg-hover-color: hsla(221deg, 14%, 22%, 1);
+  --main-bg-focus-color: hsla(221deg, 14%, 19%, 1);
+  --main-bg-active-color: hsla(221deg, 14%, 19%, 1);
+
+  --primary-font-color: hsla(221deg, 14%, 90%, 1);
+  --secondary-font-color: hsla(221deg, 14%, 60%, 1);
+  --border-color: hsla(221deg, 14%, 45%, 1);
+
+  --firefox-blue-highlight: hsla(210, 100%, 64%, 1);
+}
+
 body {
-  background-color: #393f4c;
+  background-color: var(--main-bg-color);
 }
 
 #notes .ck-toolbar {
@@ -80,8 +94,12 @@ footer.warning button svg path { fill: black !important; }
 }
 
 .ck-editor__editable {
-  background-color: #393f4c;
-  color: #e6e6e6;
+  background-color: var(--main-bg-color);
+  color: var(--primary-font-color);
+}
+
+#notes .ck-editor__top {
+  border-color: var(--border-color);
 }
 
 #notes .ck-toolbar * {
@@ -154,30 +172,24 @@ footer.warning button svg path { fill: black !important; }
   background-color: #008080;
 }
 
-
-:root {
-  --main-bg-color: hsla(221deg, 14%, 25%, 1);
-  --main-bg-hover-color: hsla(221deg, 14%, 22%, 1);
-  --main-bg-focus-color: hsla(221deg, 14%, 19%, 1);
-  --main-bg-active-color: hsla(221deg, 14%, 19%, 1);
-
-  --primary-font-color: hsla(221deg, 14%, 90%, 1);
-  --secondary-font-color: hsla(221deg, 14%, 60%, 1);
-  --border-color: hsla(221deg, 14%, 45%, 1);
-
-  --firefox-blue-highlight: hsla(210, 100%, 64%, 1);
-}
-
 .listView ul li button p,
 .listView ul li button p span { color: var(--secondary-font-color); }
 
 .listView ul li button p strong { color: var(--primary-font-color); }
 
-.btn.fullWidth.borderBottom,
-footer#footer-buttons button.fullWidth {
+header,
+footer,
+.btn.fullWidth.borderBottom {
   background: var(--main-bg-color) !important;
   color: var(--primary-font-color);
   border-color: var(--border-color);
+}
+
+footer { background: none !important; }
+
+header button.iconBtn svg path,
+footer button.iconBtn svg path {
+  fill: var(--primary-font-color) !important;
 }
 
 .btn.fullWidth.borderBottom svg path { fill: var(--primary-font-color); }
@@ -191,19 +203,22 @@ footer#footer-buttons button.fullWidth:focus { background: var(--main-bg-focus-c
 .btn.fullWidth.borderBottom:active,
 footer#footer-buttons button.fullWidth:active { background: var(--main-bg-active-color) !important; }
 
-/* Change syncing footer text to secondary color when syncing  */
-footer#footer-buttons.animateSyncIcon div.btnWrapper { color: var(--secondary-font-color); }
+/* Change syncing footer text to secondary color during and post syncing  */
+footer#footer-buttons.animateSyncIcon div.btnWrapper,
+footer#footer-buttons div.btnWrapper p { color: var(--secondary-font-color); }
 /* Change syncing footer icon color to blue when syncing */
-footer#footer-buttons.animateSyncIcon button#enable-sync svg path { fill: var(--firefox-blue-highlight) !important; }
+footer#footer-buttons.animateSyncIcon button#enable-sync svg path { fill: var(--secondary-font-color) !important; }
 
-/* Disable above footer background color when yellow warning is being displayed */
-footer#footer-buttons.warning button.fullWidth { background: none !important; }
+footer#footer-buttons.warning {
+  background-color: rgb(255, 236, 173) !important;
+  color: black;
+}
 
-header button#context-menu-button.iconBtn svg path { fill: black !important; }
+footer#footer-buttons.warning button.fullWidth:hover,
+footer#footer-buttons.warning button.fullWidth:active {
+  background: none !important;
+}
 
-button#context-menu-button.iconBtn:hover { background: rgba(0, 0, 0, 0.1) !important; }
-button#context-menu-button.iconBtn:focus { background: none; }
-button#context-menu-button.iconBtn:active { background: rgba(0, 0, 0, 0.2) !important; }
-
-footer#footer-buttons.warning button#context-menu-button.iconBtn:hover,
-footer#footer-buttons.warning button#context-menu-button.iconBtn:active { background: rgba(0, 0, 0, 0.2) !important; }
+button.iconBtn:hover { background: rgba(12, 12, 13, 0.1) !important; }
+button.iconBtn:focus { background: none !important; }
+button.iconBtn:active { background: rgba(12, 12, 13, 0.2) !important; }
