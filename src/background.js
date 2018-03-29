@@ -19,7 +19,6 @@ let isEditorReady = false;
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 
 // Analytics
-
 const analytics = new TestPilotGA({
   tid: TRACKING_ID,
   ds: 'addon',
@@ -28,7 +27,12 @@ const analytics = new TestPilotGA({
   av: browser.runtime.getManifest().version
 });
 
-function sendMetrics(event, context = {}) {
+// This object is updated onMessage 'redux', sended by sidebar store.js on every change.
+// We need to keep it to generate `cd10`
+let reduxSync = {};
+
+function sendMetrics(event, context = {}, sync = reduxSync) {
+
   // This function debounce sending metrics.
   const later = function() {
     timeouts[event] = null;
@@ -52,6 +56,27 @@ function sendMetrics(event, context = {}) {
         cd5: context.usesStrikethrough,
         cd6: context.usesList,
       };
+    }
+
+    // Generate cd10 based on footer.js rules
+    if (sync.email) { // If user is authenticated
+      if (sync.error) {
+        metrics.cd10 = 'error';
+      } else if (sync.isSyncing) {
+        metrics.cd10 = 'isSyncing';
+      } else {
+        metrics.cd10 = 'synced';
+      }
+    } else {
+      if (sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
+        metrics.cd10 = 'openLogin';
+      } else if (sync.isPleaseLogin) {
+        metrics.cd10 = 'verifyAccount';
+      } else if (sync.isReconnectSync) {
+        metrics.cd10 = 'reconnectSync';
+      } else {
+        metrics.cd10 = 'signIn';
+      }
     }
 
     return analytics.sendEvent('notes', event, metrics);
@@ -189,6 +214,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
       browser.runtime.sendMessage({
         action: 'theme-changed'
       });
+      break;
+    case 'redux':
+      reduxSync = eventData.sync;
       break;
   }
 });
