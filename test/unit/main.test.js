@@ -286,7 +286,7 @@ describe('Authorization', function() {
         .then(() => {
           // Verify that the notes collection was deleted.
           console.log(JSON.stringify(fetchMock.calls()));
-          chai.assert(deleted);
+          chai.assert(deleted, 'was deleted');
           return collection.getAny('singleNote');
         }).then(result => {
           // Record now needs to be synced again.

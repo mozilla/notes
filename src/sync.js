@@ -182,13 +182,18 @@ function syncKinto(client, credentials) {
             .sync({
               headers: {Authorization: `Bearer ${credential.access_token}`},
               strategy: 'manual',
+            })
+            .catch((error) => {
+              if (error.response && error.response.status === 500) {
+                // issue #827
+                return Promise.resolve({
+                  conflicts: []
+                });
+              }
+
+              throw error;
             });
       });
-    })
-    .catch((error) => {
-      if (error.response && error.response.status === 500) { // issue #827
-        return Promise.resolve();
-      }
     })
     .then(syncResult => {
       // FIXME: Do we need to do anything with errors, published,
