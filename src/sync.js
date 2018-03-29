@@ -272,7 +272,7 @@ function syncKinto(client, credentials) {
         // cannot refresh the access token, log the user out.
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'error',
-          message: 'Insufficient Storage',
+          message: browser.i18n.getMessage('insufficientStorage')
         });
         return Promise.reject(error);
       }
