@@ -94,17 +94,18 @@ footer.warning button svg path { fill: black !important; }
 }
 
 .ck-editor__editable {
-  background-color: var(--main-bg-color);
+  background-color: #272b35;
   color: var(--primary-font-color);
 }
 
 #notes .ck-editor__top {
   border-color: var(--border-color);
+  background: var(--main-bg-color);
 }
 
-#notes .ck-toolbar * {
+#notes .ck-toolbar *, #notes .ck-toolbar {
   color: #e6e6e6;
-  background: #272b35;
+  background: var(--main-bg-color);
 }
 
 #notes .ck-toolbar button.ck-on *,
