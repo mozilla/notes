@@ -208,9 +208,8 @@ function syncKinto(client, credentials) {
             // Could be difference on lastModified Date.
             if (conflict.remote.content !== conflict.local.content) {
               const mergeWarning = browser.i18n.getMessage('mergeWarning');
-              resolution = {
-                content: `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`,
-              };
+              resolution.content =
+                `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
             }
 
             // We get earlier date for resolved conflict.
