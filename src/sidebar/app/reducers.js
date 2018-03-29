@@ -12,6 +12,7 @@ import {
   PLEASE_LOGIN,
   FOCUS_NOTE,
   SEND_TO_NOTES,
+  ERROR,
   REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
@@ -26,7 +27,8 @@ function sync(sync = {}, action) {
         isReconnectSync: false,
         email: action.email,
         lastSynced: new Date(),
-        isSyncing: true
+        isSyncing: true,
+        error: null
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
@@ -34,6 +36,7 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
+        error: null
       });
     case OPENING_LOGIN:
       return Object.assign({}, sync, {
@@ -46,20 +49,25 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: true,
         isReconnectSync: false,
+        error: null
       });
     case RECONNECT_SYNC:
       return Object.assign({}, sync, {
+        email: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
+        error: null
       });
     case DELETE_NOTE:
       return Object.assign({}, sync, {
-        isSyncing: true
+        isSyncing: true,
+        error: null
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
-        isSyncing: true
+        isSyncing: true,
+        error: null
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
@@ -83,6 +91,10 @@ function sync(sync = {}, action) {
     case CREATE_NOTE:
       return Object.assign({}, sync, {
         welcomePage: false
+      });
+    case ERROR:
+      return Object.assign({}, sync, {
+        error: action.message
       });
     default:
       return sync;

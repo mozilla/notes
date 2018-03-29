@@ -28,13 +28,12 @@ function decrypt(key, encrypted) {
 
 // An "id schema" used to validate Kinto IDs and generate new ones.
 const notesIdSchema = { // eslint-disable-line no-unused-vars
-  // FIXME: Maybe this should generate IDs?
+  // We do not generate ID to keep retrocompatibility with single note version.
   generate() {
     throw new Error('cannot generate IDs');
   },
 
   validate() {
-    // FIXME: verify that at least this matches Kinto server ID format
     return true;
   },
 };
@@ -51,6 +50,8 @@ class ServerKeyOlderError extends Error {
   }
 }
 
+const deletedNotesStillOnServer = {};
+
 class JWETransformer {
   constructor(key) {
     this.key = key;
@@ -61,13 +62,10 @@ class JWETransformer {
     const ciphertext = await encrypt(this.key, record);
     // Copy over the _status field, so that we handle concurrency
     // headers (If-Match, If-None-Match) correctly.
-    // DON'T copy over "deleted" status, because then we'd leak
-    // plaintext deletes.
-    const status = record._status && (record._status === 'deleted' ? 'updated' : record._status);
     const encryptedResult = {
       content: ciphertext,
       id: record.id,
-      _status: status,
+      _status: record._status,
       kid: this.key.kid,
     };
     if (record.hasOwnProperty('last_modified')) {
@@ -104,6 +102,12 @@ class JWETransformer {
     // If we get such a record, flag it as deleted.
     if (decoded._status === 'deleted') {
       decoded.deleted = true;
+      // On decode, we flag notes with _status deleted but still on server.
+      // We automatically will request deletion for those.
+      // (This is due to singleNote replacing 'deleted' state by 'updated')
+      // Should be deleted when every user who tried beta runned it once.
+      // (see metrics deleteDeleted)
+      deletedNotesStillOnServer[decoded.id] = decoded;
     }
     return decoded;
   }
@@ -261,6 +265,16 @@ function syncKinto(client, credentials) {
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
         return reconnectSync(credentials);
+      } else if (error.response
+                && error.response.status === 507
+                && error.message.includes('Insufficient Storage')) {
+
+        // cannot refresh the access token, log the user out.
+        browser.runtime.sendMessage('notes@mozilla.com', {
+          action: 'error',
+          message: browser.i18n.getMessage('insufficientStorage')
+        });
+        return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
       reconnectSync(credentials);
@@ -276,7 +290,18 @@ function reconnectSync(credentials) {
 }
 
 function retrieveNote(client) {
-  return client.collection('notes', { idSchema: notesIdSchema }).list({});
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .list({})
+    .then((list) => {
+      // We delete all notes retrieved from server and not properly deleted
+      Object.keys(deletedNotesStillOnServer).forEach((id) => {
+        sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
+        client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+      });
+
+      return list;
+    });
 }
 
 /**
