@@ -199,18 +199,17 @@ function syncKinto(client, credentials) {
               lastModified: conflict.local.lastModified
             };
           } else {
-            const mergeWarning = browser.i18n.getMessage('mergeWarning');
-            let totalOps = conflict.remote.content;
+            resolution = {
+              id: conflict.remote.id,
+              content: conflict.remote.content
+            };
 
             // If content is different we merge both.
             // Could be difference on lastModified Date.
             if (conflict.remote.content !== conflict.local.content) {
-              totalOps += `<p>${mergeWarning}</p>`;
-              totalOps += conflict.local.content;
-              resolution = {
-                id: conflict.remote.id,
-                content: totalOps,
-              };
+              const mergeWarning = browser.i18n.getMessage('mergeWarning');
+              resolution.content =
+                `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
             }
 
             // We get earlier date for resolved conflict.
