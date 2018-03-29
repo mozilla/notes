@@ -31,7 +31,6 @@ You can also open the `test/index.html` file in your browser to run the automate
 
 | Permission      | Description                                                                    |
 |-----------------|--------------------------------------------------------------------------------|
-| `downloads`     | Used for the "Export Note to HTML" feature. Exports note into Downloads.       |
 | `contextMenus`  | Used for "Send to Note" feature, sends text from pages to the Notes sidebar.   |
 | `storage`       | Storage for Notes.                                                             |
 | `identity`      | OAuth login to Firefox Accounts to sync your notes.                            |
