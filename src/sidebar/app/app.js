@@ -14,6 +14,10 @@ import '../static/scss/styles.scss';
 // AddListener on chrome.runtime.onMessage
 import './onMessage.js';
 
+// Create a connection with the background script to handle open and
+// close events.
+browser.runtime.connect();
+
 const styles = {
   container: {
     flex: '100%',
