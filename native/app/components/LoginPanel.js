@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import store from '../store';
 
+import { authorize, refresh } from 'react-native-app-auth';
+import { createNote } from '../actions';
+
 const base64url = require('../vendor/base64url');
 const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 const fxaUtils = require('../vendor/fxa-utils');
@@ -15,11 +18,19 @@ const OAUTH_CLIENT_ID = 'b7d74070a481bc11';
 const OAUTH_REDIRECT = 'testpilot-notes://redirect.android';
 const OAUTH_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 
+const refreshConfig = {
+  serviceConfiguration: {
+    //authorizationEndpoint: 'https://oauth.accounts.firefox.com/v1/authorization',
+    authorizationEndpoint: `${FXA_OAUTH_SERVER}/authorization`,
+    //tokenEndpoint: 'https://oauth.accounts.firefox.com/v1/token',
+    tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
+  },
+  clientId: OAUTH_CLIENT_ID,
+  redirectUrl: OAUTH_REDIRECT,
+  scopes: OAUTH_SCOPES
+};
 
 const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
-
-import { authorize } from 'react-native-app-auth';
-import { createNote } from '../actions';
 
 function onAuth () {
   this.props.navigation.navigate('LoadingPanel');
@@ -35,7 +46,8 @@ function onAuth () {
         tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
       },
       additionalParameters: {
-        keys_jwk: base64JwkPublicKey
+        keys_jwk: base64JwkPublicKey,
+        access_type: 'offline'
       },
       clientId: OAUTH_CLIENT_ID,
       redirectUrl: OAUTH_REDIRECT,
@@ -46,6 +58,7 @@ function onAuth () {
   }).then((response) => {
     oauthResponse = response;
     const bundle = oauthResponse.additionalParameters.keys_jwe;
+    console.log('oauthResponse', oauthResponse);
     console.log('keys_jwe', bundle);
 
     return fxaKeyUtils.decryptBundle(bundle);
@@ -68,10 +81,17 @@ function onAuth () {
       newNotes.push(store.dispatch(createNote(note.content)));
     });
 
-    return Promise.all(newNotes)
+    return Promise.all(newNotes);
   }).then(() => {
     this.props.navigation.navigate('ListPanel');
+
+    return refresh(refreshConfig, {
+      refreshToken: oauthResponse.refreshToken
+    });
+  }).then((refreshResult) => {
+    console.log('refreshResult', refreshResult);
   }).catch((err) => {
+    this.props.navigation.navigate('LoginPanel');
     console.log('onAuth', err);
     ToastAndroid.show('Something went wrong: ' + err, ToastAndroid.SHORT);
   })
