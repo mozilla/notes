@@ -15,7 +15,7 @@ const kintoUtils = require('../vendor/kinto-utils');
 const FXA_PROFILE_SERVER = 'https://featurebox.dev.lcip.org/profile/v1';
 const FXA_OAUTH_SERVER = 'https://oauth-featurebox.dev.lcip.org/v1';
 const OAUTH_CLIENT_ID = 'b7d74070a481bc11';
-const OAUTH_REDIRECT = 'testpilot-notes://redirect.android';
+const OAUTH_REDIRECT = 'https://mozilla-lockbox.github.io/fxa/ios-redirect.html';
 const OAUTH_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 
 const refreshConfig = {
