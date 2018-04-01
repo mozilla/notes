@@ -38,6 +38,8 @@ class ListPanel extends React.Component {
   }
 
   renderList() {
+    const { navigate } = this.props.navigation;
+
     if (! this.props.state.notes || this.props.state.notes.length <= 0) {
       return (
         <View>
@@ -50,11 +52,13 @@ class ListPanel extends React.Component {
       return (
           <ListView
             dataSource={dataSource}
-            renderRow={(note, sectionID, rowID) => {
+            renderRow={(note, sectionId, rowId) => {
               return (
                 <ListItem
                   content={note.content}
                   id={note.id}
+                  rowId={rowId}
+                  navigate={navigate}
                 />
               )
             }}

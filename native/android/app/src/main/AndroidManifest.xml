@@ -40,7 +40,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
                       android:host="mozilla-lockbox.github.io"
-                      android:path="/fxa/ios-redirect.html/"/>
+                      android:path="/fxa/ios-redirect.html"/>
             </intent-filter>
         </activity>
     </application>

@@ -2,7 +2,7 @@
 import './shim.js'
 
 import React from 'react';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
 import store from './app/store';
@@ -10,11 +10,24 @@ import store from './app/store';
 import LoginPanel from './app/components/LoginPanel';
 import ListPanel from './app/components/ListPanel';
 import LoadingPanel from './app/components/LoadingPanel';
+import EditorPanel from './app/components/EditorPanel';
+
+
+const editorPanelNavOptions = ({ navigation }) => {
+  const { params = {} } = navigation.state;
+
+  return {
+    headerRight: (<Button handleSubmit={params.handleSubmit} title="Save"/>)
+  };
+};
 
 const AppNavigator = StackNavigator(
   {
-    Login: {
+    LoginPanel: {
       screen: LoginPanel,
+      navigationOptions: {
+        title: 'Sign in to Notes'
+      }
     },
     LoadingPanel: {
       screen: LoadingPanel,
@@ -22,9 +35,13 @@ const AppNavigator = StackNavigator(
     ListPanel: {
       screen: ListPanel,
     },
+    EditorPanel: {
+      screen: EditorPanel,
+      navigationOptions: editorPanelNavOptions
+    },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'LoginPanel',
   }
 );
 
