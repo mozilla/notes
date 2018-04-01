@@ -3,6 +3,7 @@ package com.notes;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.reactlibrary.RNAppAuthPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new KeychainPackage(),
             new RandomBytesPackage(),
             new RNAppAuthPackage()
       );

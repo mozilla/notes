@@ -16,3 +16,10 @@ Use `npx` (from npm 5) to run commands for `react-native`
 `npx react-native start --reset-cache` - resets app cache
 
 `adb logcat *:S ReactNative:V ReactNativeJS:V` - Logger from Android LogCat
+
+
+## Release
+
+> Read [Generating Signed APK](https://facebook.github.io/react-native/docs/signed-apk-android.html)
+
+Creating a release: `cd android && ./gradlew assembleRelease`

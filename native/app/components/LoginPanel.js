@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import store from '../store';
 
 import { authorize, refresh } from 'react-native-app-auth';
+import * as Keychain from 'react-native-keychain';
+
 import { createNote } from '../actions';
 
 const base64url = require('../vendor/base64url');
@@ -31,6 +33,24 @@ const refreshConfig = {
 };
 
 const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
+
+async function checkKeychain () {
+  try {
+    // Retreive the credentials
+    const credentials = await Keychain.getGenericPassword();
+    if (credentials) {
+      console.log('Credentials successfully loaded for user ' + credentials.username);
+      console.log(credentials);
+    } else {
+      console.log('No credentials stored')
+    }
+  } catch (error) {
+    console.log('Keychain cannot be accessed!', error);
+  }
+}
+
+
+checkKeychain();
 
 function onAuth () {
   this.props.navigation.navigate('LoadingPanel');
@@ -67,6 +87,10 @@ function onAuth () {
     return fxaUtils.fxaFetchProfile(FXA_PROFILE_SERVER, oauthResponse.accessToken);
   }).then((profile) => {
     console.log('profile', profile);
+    Keychain.setGenericPassword(profile.uid, JSON.stringify({
+      profile: profile,
+      oauthResponse: oauthResponse
+    }));
     ToastAndroid.show('Logged in as ' + profile.email, ToastAndroid.SHORT);
 
     return kintoUtils.fetchRecords(oauthResponse.accessToken)

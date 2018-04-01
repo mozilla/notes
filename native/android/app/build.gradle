@@ -151,6 +151,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-keychain')
     compile project(':react-native-randombytes')
     compile project(':react-native-app-auth')
     compile fileTree(dir: "libs", include: ["*.jar"])
