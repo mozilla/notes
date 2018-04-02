@@ -81,6 +81,9 @@ export function reconnectSync() {
   return { type: RECONNECT_SYNC };
 }
 
+export function createdNote(id, content, lastModified) {
+  return { type: CREATE_NOTE, id, content, lastModified };
+}
 export function createNote(content = '') {
 
   const id = uuid4();
@@ -104,16 +107,15 @@ export function createNote(content = '') {
   return fct;
 }
 
-export function deleteNote(id) {
-
-  id ? chrome.runtime.sendMessage({ action: 'delete-note', id }) : null;
-
-  browser.runtime.sendMessage({
-    action: 'kinto-sync'
-  });
-
+export function deletedNote(id) {
   return { type: DELETE_NOTE, id };
 }
+export function deleteNote(id) {
+
+  chrome.runtime.sendMessage({ action: 'delete-note', id });
+  return { type: DELETE_NOTE, id };
+}
+
 
 // EXPORT HTML
 export function exportHTML(content) {

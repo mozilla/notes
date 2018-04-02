@@ -148,13 +148,13 @@ function notes(notes = [], action) {
       return res;
     }
     case CREATE_NOTE: {
-      const list = Array.from(notes);
+      const list = Array.from(notes).filter((note) => note.id !== action.id);
       list.push({
         id: action.id,
         content: action.content,
         firstLine: getFirstLineFromContent(action.content),
         secondLine: stripHtmlWithoutFirstLine(action.content),
-        lastModified: new Date()
+        lastModified: action.lastModified || new Date()
       });
       return list;
     }

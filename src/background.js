@@ -198,14 +198,19 @@ browser.runtime.onMessage.addListener(function(eventData) {
         browser.runtime.sendMessage({
           action: 'create-note',
           id: result.data.id,
-          content: result.data.content
+          content: result.data.content,
+          lastModified: result.data.lastModified
         });
       });
       break;
     case 'delete-note':
       // We create a note, and send id with note-created nessage
-      deleteNote(client, eventData.id).then((note) => {
-        loadFromKinto(client, credentials);
+      deleteNote(client, eventData.id).then(() => {
+        // loadFromKinto(client, credentials);
+        browser.runtime.sendMessage({
+          action: 'delete-note',
+          id: eventData.id
+        });
       });
       break;
     case 'theme-changed':

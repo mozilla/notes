@@ -406,7 +406,9 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
 }
 
 function createNote(client, note) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).create(note, { useRecordId: true });
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .create(note, { useRecordId: true });
 }
 
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars

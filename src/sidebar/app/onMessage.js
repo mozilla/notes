@@ -2,6 +2,8 @@ import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
          UPDATE_NOTE,
          TEXT_SYNCED,
+         CREATE_NOTE,
+         DELETE_NOTE,
          RECONNECT_SYNC,
          DISCONNECTED,
          ERROR,
@@ -10,6 +12,8 @@ import { SYNC_AUTHENTICATED,
 import { authenticate,
          disconnect,
          createNote,
+         createdNote,
+         deletedNote,
          synced,
          reconnectSync,
          sendToNote,
@@ -54,6 +58,12 @@ chrome.runtime.onMessage.addListener(eventData => {
         } else {
           store.dispatch(synced());
         }
+        break;
+      case CREATE_NOTE:
+        store.dispatch(createdNote(eventData.id, eventData.content, eventData.lastModified));
+        break;
+      case DELETE_NOTE:
+        store.dispatch(deletedNote(eventData.id));
         break;
       case RECONNECT_SYNC:
         store.dispatch(reconnectSync());
