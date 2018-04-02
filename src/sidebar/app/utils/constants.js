@@ -5,6 +5,7 @@ export const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
 // FOR LEGACY, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
 export const SYNC_AUTHENTICATED = 'sync-authenticated';
 export const KINTO_LOADED = 'kinto-loaded';
+export const TEXT_SAVED = 'text-saved';
 export const TEXT_SYNCED = 'text-synced';
 export const OPENING_LOGIN = 'opening-login';
 export const PLEASE_LOGIN = 'please-login';
@@ -15,7 +16,7 @@ export const EXPORT_HTML = 'export-html';
 
 // CRUD actions on note
 export const CREATE_NOTE = 'create-note';
-export const UPDATE_NOTE = 'text-change';
+export const UPDATE_NOTE = 'update-note';
 export const DELETE_NOTE = 'delete-note';
 
 export const FOCUS_NOTE = 'focus-note';

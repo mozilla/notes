@@ -349,20 +349,13 @@ function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-v
     });
 }
 
-function saveToKinto(client, credentials, note) { // eslint-disable-line no-unused-vars
+function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disable-line no-unused-vars
   let resolve;
-
   // We do not store empty notes on server side.
-  // They will be auotmatically deleted by listPanel component
   if (note.content === '') { return Promise.resolve(); }
 
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
-  });
-
-  // XXX: Debounce the call and set the status to Editing
-  browser.runtime.sendMessage('notes@mozilla.com', {
-    action: 'text-editing'
   });
 
   const later = function() {
@@ -370,21 +363,22 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
     const notes = client.collection('notes', { idSchema: notesIdSchema });
     return notes.upsert(note)
       .then((res) => {
-
         browser.runtime.sendMessage('notes@mozilla.com', {
-          action: 'text-saved'
+          action: 'text-saved',
+          note: res.data,
+          from: fromWindowId
         });
         client.conflict = false;
         return syncKinto(client, credentials);
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
       .then(result => {
-
         // Set the status to synced
         return browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
-          notes: result.data,
-          conflict: client.conflict
+          note: result.data.find((n) => n.id === note.id),
+          conflict: client.conflict,
+          from: fromWindowId
         });
       })
       .then(() => {
@@ -393,15 +387,16 @@ function saveToKinto(client, credentials, note) { // eslint-disable-line no-unus
       .catch(result => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
-          notes: result.data,
-          conflict: client.conflict
+          note: result.data.find((n) => n.id === note.id),
+          conflict: client.conflict,
+          from: fromWindowId
         });
         resolve();
       });
   };
 
   clearTimeout(syncDebounce);
-  syncDebounce = setTimeout(later, 1000);
+  syncDebounce = setTimeout(later, 400);
   return promise;
 }
 

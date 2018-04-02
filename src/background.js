@@ -164,9 +164,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'kinto-sync':
       loadFromKinto(client, credentials);
       break;
-    case 'kinto-save':
-      saveToKinto(client, credentials, eventData.note);
-      break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
       break;
@@ -202,6 +199,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
           lastModified: result.data.lastModified
         });
       });
+      break;
+    case 'update-note':
+      saveToKinto(client, credentials, eventData.note, eventData.from);
       break;
     case 'delete-note':
       // We create a note, and send id with note-created nessage

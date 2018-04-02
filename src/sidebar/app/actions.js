@@ -1,5 +1,6 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
+         TEXT_SAVED,
          TEXT_SYNCED,
          RECONNECT_SYNC,
          DISCONNECTED,
@@ -22,20 +23,23 @@ import * as FileSaver from 'file-saver';
 /*
  * action creators
  */
+export function updatedNote(id, content, lastModified) {
+  return { type: UPDATE_NOTE, id, content, lastModified };
+}
 export function updateNote(id, content) {
-  let isInitialContent = false;
   const lastModified = new Date();
   if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-    chrome.runtime.sendMessage({
-      action: 'kinto-save',
-      note: {
-        id, content, lastModified
-      }
+    browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+      chrome.runtime.sendMessage({
+        action: UPDATE_NOTE,
+        from: windowInfo.id,
+        note: {
+          id, content, lastModified
+        }
+      });
     });
-  } else {
-    isInitialContent = true;
   }
-  return { type: UPDATE_NOTE, id, content, lastModified, isInitialContent };
+  return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
 export function authenticate(email) {
@@ -44,6 +48,10 @@ export function authenticate(email) {
     action: 'kinto-sync'
   });
   return { type: SYNC_AUTHENTICATED, email };
+}
+
+export function saved(id, content, lastModified) {
+  return { type: TEXT_SAVED, id, content, lastModified };
 }
 
 export function synced(notes) {
