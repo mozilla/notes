@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import INITIAL_CONTENT from '../data/initialContent';
 
 import NewIcon from './icons/NewIcon';
-import { deleteNote, setFocusedNote, createNote } from '../actions';
+import { setFocusedNote, createNote } from '../actions';
 import { formatLastModified } from '../utils/utils';
 
 
