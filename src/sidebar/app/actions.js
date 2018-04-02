@@ -3,7 +3,6 @@ import { SYNC_AUTHENTICATED,
          TEXT_SYNCED,
          RECONNECT_SYNC,
          DISCONNECTED,
-         SEND_TO_NOTES,
          EXPORT_HTML,
          CREATE_NOTE,
          UPDATE_NOTE,
@@ -150,13 +149,6 @@ export function exportHTML(content) {
     action: 'metrics-export-html'
   });
   return { type: EXPORT_HTML, content };
-}
-
-export function sendToNote(id, content) {
-  browser.runtime.sendMessage({
-    action: 'metrics-context-menu'
-  });
-  return { type: SEND_TO_NOTES, id, content };
 }
 
 export function setFocusedNote(id) {

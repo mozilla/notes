@@ -182,9 +182,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-limit-reached':
       sendMetrics('limit-reached', eventData.context);
       break;
-    case 'metrics-context-menu':
-      sendMetrics('context-menu', eventData.context);
-      break;
     case 'metrics-export-html':
       sendMetrics('export-html');
       break;
@@ -272,6 +269,9 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
+
+  sendMetrics('metrics-context-menu');
+
   // open sidebar which will trigger `isEditorReady`...
   if (!isEditorReady) {
     browser.sidebarAction.open();
