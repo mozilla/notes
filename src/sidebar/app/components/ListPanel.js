@@ -16,10 +16,8 @@ class ListPanel extends React.Component {
     this.props = props;
 
     this.requestNewNote = () => {
-      // Request not id from background.
-      this.props.dispatch(createNote()).then(id => {
-        props.history.push(`/note/${id}`);
-      });
+      props.dispatch(setFocusedNote());
+      props.history.push('/note');
     };
   }
 

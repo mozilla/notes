@@ -62,6 +62,7 @@ function sync(sync = {}, action) {
     case DELETE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true,
+        focusedNoteId: sync.focusedNoteId === action.id ? null : sync.focusedNoteId,
         error: null
       });
     case UPDATE_NOTE:
