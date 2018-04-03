@@ -42,6 +42,7 @@ class ListPanel extends React.Component {
   }
 
   componentDidMount() {
+    browser.runtime.connect();
     // Disable right clicks
     // Refs: https://stackoverflow.com/a/737043/186202
     document.querySelectorAll('.listView').forEach(sel => {
