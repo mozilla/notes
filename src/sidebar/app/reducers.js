@@ -11,7 +11,6 @@ import {
   DELETE_NOTE,
   PLEASE_LOGIN,
   FOCUS_NOTE,
-  SEND_TO_NOTES,
   ERROR,
   REQUEST_WELCOME_PAGE
 } from './utils/constants';
@@ -169,18 +168,6 @@ function notes(notes = [], action) {
         note.firstLine = getFirstLineFromContent(action.content);
         note.secondLine = stripHtmlWithoutFirstLine(action.content);
         note.lastModified = new Date(action.lastModified);
-      }
-      return list;
-    }
-    case SEND_TO_NOTES: {
-      const list = Array.from(notes);
-      const note = list.find((note) => {
-        return note.id === action.id;
-      });
-      if (note) {
-        if (note.content === '<p>&nbsp;</p>') note.content = '';
-        note.content = note.content + `<p>${action.content}</p>`;
-        note.lastModified = new Date();
       }
       return list;
     }
