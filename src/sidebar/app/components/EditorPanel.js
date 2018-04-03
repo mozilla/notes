@@ -49,7 +49,6 @@ class EditorPanel extends React.Component {
 
     if (!this.note) {
       this.note = {};
-      // this.props.history.push('/');
     }
   }
 

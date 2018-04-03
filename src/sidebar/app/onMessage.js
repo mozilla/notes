@@ -110,11 +110,10 @@ chrome.runtime.onMessage.addListener(eventData => {
                 console.error('FocusedNote not in redux state.'); // eslint-disable-line no-console
               }
             } else {
-              store.dispatch(createNote(`<p>${ eventData.text }</p>`));
+              store.dispatch(createNote(`<p>${ eventData.text }</p>`)).then(() => {
+                store.dispatch(synced());
+              });
             }
-            browser.runtime.sendMessage({
-              action: 'kinto-sync'
-            });
           }
         });
         break;
