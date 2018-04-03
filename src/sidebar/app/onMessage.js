@@ -18,8 +18,8 @@ import { authenticate,
          saved,
          synced,
          reconnectSync,
-         sendToNote,
          kintoLoad,
+         updateNote,
          error } from './actions';
 import store from './store';
 /**
@@ -97,8 +97,18 @@ chrome.runtime.onMessage.addListener(eventData => {
         browser.windows.getCurrent({populate: true}).then((windowInfo) => {
           if (windowInfo.id === eventData.windowId) {
             const focusedNoteId = store.getState().sync.focusedNoteId;
+            // If a note is focused/open, we add content at the end.
             if (focusedNoteId) {
-              store.dispatch(sendToNote(focusedNoteId, eventData.text));
+              const note = store.getState().notes.find((note) => {
+                return note.id === focusedNoteId;
+              });
+              if (note) {
+                if (note.content === '<p>&nbsp;</p>') note.content = '';
+                note.content = note.content + `<p>${eventData.text}</p>`;
+                store.dispatch(updateNote(note.id, note.content));
+              } else {
+                console.error('FocusedNote not in redux state.'); // eslint-disable-line no-console
+              }
             } else {
               store.dispatch(createNote(`<p>${ eventData.text }</p>`));
             }

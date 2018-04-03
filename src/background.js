@@ -13,6 +13,8 @@ const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
 let isEditorReady = false;
+let editorConnectedDeferred;
+let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
 
 // Kinto sync and encryption
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
@@ -176,9 +178,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-limit-reached':
       sendMetrics('limit-reached', eventData.context);
       break;
-    case 'metrics-context-menu':
-      sendMetrics('context-menu', eventData.context);
-      break;
     case 'metrics-export-html':
       sendMetrics('export-html');
       break;
@@ -236,9 +235,11 @@ function connected(p) {
 
   sendMetrics('open', {loaded: true});
   closeUI = 'closeButton';
+  editorConnectedDeferred.resolve();
 
   p.onDisconnect.addListener(() => {
     // sidebar closed, therefore editor is not ready to receive any content
+    isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
     isEditorReady = false;
     sendMetrics('close', {'closeUI': closeUI});
   });
@@ -272,25 +273,25 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
+
+  sendMetrics('metrics-context-menu');
+
   // open sidebar which will trigger `isEditorReady`...
-  browser.sidebarAction.open();
+  if (!isEditorReady) {
+    browser.sidebarAction.open();
+  }
   // then send selection text to Editor.js once editor instance is initialized and ready
   sendSelectionText(info.selectionText, tab.windowId);
 });
 
 // We receive this ... GREAT
-function sendSelectionText(selectionText, windowId) {
+async function sendSelectionText(selectionText, windowId) {
   // if editor ready, go ahead and send selected text to be pasted in Notes,
   // otherwise wait half a second before trying again
-  if (isEditorReady) {
-    chrome.runtime.sendMessage({
-      action: 'send-to-notes',
-      windowId,
-      text: selectionText
-    });
-  } else {
-    setTimeout(() => {
-      sendSelectionText(selectionText, windowId);
-    }, 500);
-  }
+  await isEditorConnected;
+  chrome.runtime.sendMessage({
+    action: 'send-to-notes',
+    windowId,
+    text: selectionText
+  });
 }
