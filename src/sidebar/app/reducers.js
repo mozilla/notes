@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import {
   SYNC_AUTHENTICATED,
   DISCONNECTED,
+  TEXT_SAVED,
   TEXT_SYNCED,
   KINTO_LOADED,
   OPENING_LOGIN,
@@ -61,12 +62,17 @@ function sync(sync = {}, action) {
     case DELETE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true,
+        focusedNoteId: sync.focusedNoteId === action.id ? null : sync.focusedNoteId,
         error: null
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true,
         error: null
+      });
+    case TEXT_SAVED:
+      return Object.assign({}, sync, {
+        isSyncing: sync.email ? sync.isSyncing : false
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
@@ -146,13 +152,13 @@ function notes(notes = [], action) {
       return res;
     }
     case CREATE_NOTE: {
-      const list = Array.from(notes);
+      const list = Array.from(notes).filter((note) => note.id !== action.id);
       list.push({
         id: action.id,
         content: action.content,
         firstLine: getFirstLineFromContent(action.content),
         secondLine: stripHtmlWithoutFirstLine(action.content),
-        lastModified: new Date()
+        lastModified: action.lastModified || new Date()
       });
       return list;
     }
@@ -160,14 +166,20 @@ function notes(notes = [], action) {
       return Array.from(notes).filter((note) => note.id !== action.id);
     case UPDATE_NOTE: {
       const list = Array.from(notes);
-      const note = list.find((note) => {
-        return note.id === action.id;
-      });
+      const note = list.find((note) => note.id === action.id);
       if (note) {
         note.content = action.content;
         note.firstLine = getFirstLineFromContent(action.content);
         note.secondLine = stripHtmlWithoutFirstLine(action.content);
         note.lastModified = new Date(action.lastModified);
+      } else {
+        list.push({
+          id: action.id,
+          content: action.content,
+          firstLine: getFirstLineFromContent(action.content),
+          secondLine: stripHtmlWithoutFirstLine(action.content),
+          lastModified: new Date(action.lastModified)
+        });
       }
       return list;
     }

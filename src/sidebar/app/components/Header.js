@@ -162,7 +162,7 @@ function mapStateToProps(state) {
 Header.propTypes = {
     state: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    note: PropTypes.object.isRequired,
+    note: PropTypes.object,
     onNewNoteEvent: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired
 };
