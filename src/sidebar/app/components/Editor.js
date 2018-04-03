@@ -31,6 +31,9 @@ class Editor extends React.Component {
         this.editor = editor;
         customizeEditor(editor);
 
+        // Focus the text editor
+        document.querySelector('.ck-editor__editable').focus();
+
         editor.document.on('change', (eventInfo, name) => {
           // Cache update event in case of multi-change event (copy pasting trigger many).
           clearTimeout(this.delayUpdateNote);
