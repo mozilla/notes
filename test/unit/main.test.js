@@ -350,7 +350,7 @@ describe('Authorization', function() {
     it('should not fail if syncKinto rejects', () => {
       const syncKinto = sandbox.stub(global, 'syncKinto').rejects('server busy playing Minesweeper');
       collection.getAny.resolves({data: {last_modified: 'abc', content: 'def'}});
-      return saveToKinto(client, undefined, { content: 'imaginary content' })
+      return saveToKinto(client, undefined, { content: 'imaginary content' }, 1)
         .then(() => {
           chai.assert(browser.runtime.sendMessage.calledThrice);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql('notes@mozilla.com');
@@ -360,12 +360,15 @@ describe('Authorization', function() {
           chai.expect(browser.runtime.sendMessage.getCall(1).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(1).args[1]).eql({
             action: 'text-saved',
+            note: undefined,
+            from:1
           });
           chai.expect(browser.runtime.sendMessage.getCall(2).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(2).args[1]).eql({
-            action: 'text-synced',
-            notes: undefined,
-            conflict: false
+            action:'text-synced',
+            note: undefined,
+            conflict:false,
+            from:1
           });
         });
     });

@@ -1,5 +1,6 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
+         TEXT_SAVED,
          TEXT_SYNCED,
          RECONNECT_SYNC,
          DISCONNECTED,
@@ -21,20 +22,23 @@ import * as FileSaver from 'file-saver';
 /*
  * action creators
  */
+export function updatedNote(id, content, lastModified) {
+  return { type: UPDATE_NOTE, id, content, lastModified };
+}
 export function updateNote(id, content) {
-  let isInitialContent = false;
   const lastModified = new Date();
   if (content.replace(/&nbsp;/g, '\xa0') !== INITIAL_CONTENT.replace(/\s\s+/g, ' ')) {
-    chrome.runtime.sendMessage({
-      action: 'kinto-save',
-      note: {
-        id, content, lastModified
-      }
+    browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+      chrome.runtime.sendMessage({
+        action: UPDATE_NOTE,
+        from: windowInfo.id,
+        note: {
+          id, content, lastModified
+        }
+      });
     });
-  } else {
-    isInitialContent = true;
   }
-  return { type: UPDATE_NOTE, id, content, lastModified, isInitialContent };
+  return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
 export function authenticate(email) {
@@ -43,6 +47,10 @@ export function authenticate(email) {
     action: 'kinto-sync'
   });
   return { type: SYNC_AUTHENTICATED, email };
+}
+
+export function saved(id, content, lastModified) {
+  return { type: TEXT_SAVED, id, content, lastModified };
 }
 
 export function synced(notes) {
@@ -80,6 +88,9 @@ export function reconnectSync() {
   return { type: RECONNECT_SYNC };
 }
 
+export function createdNote(id, content, lastModified) {
+  return { type: CREATE_NOTE, id, content, lastModified };
+}
 export function createNote(content = '') {
 
   const id = uuid4();
@@ -103,16 +114,15 @@ export function createNote(content = '') {
   return fct;
 }
 
-export function deleteNote(id) {
-
-  id ? chrome.runtime.sendMessage({ action: 'delete-note', id }) : null;
-
-  browser.runtime.sendMessage({
-    action: 'kinto-sync'
-  });
-
+export function deletedNote(id) {
   return { type: DELETE_NOTE, id };
 }
+export function deleteNote(id) {
+
+  chrome.runtime.sendMessage({ action: 'delete-note', id });
+  return { type: DELETE_NOTE, id };
+}
+
 
 // EXPORT HTML
 export function exportHTML(content) {

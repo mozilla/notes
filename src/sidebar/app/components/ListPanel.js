@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import INITIAL_CONTENT from '../data/initialContent';
 
 import NewIcon from './icons/NewIcon';
-import { deleteNote, setFocusedNote, createNote } from '../actions';
+import { setFocusedNote, createNote } from '../actions';
 import { formatLastModified } from '../utils/utils';
 
 
@@ -16,10 +16,8 @@ class ListPanel extends React.Component {
     this.props = props;
 
     this.requestNewNote = () => {
-      // Request not id from background.
-      this.props.dispatch(createNote()).then(id => {
-        props.history.push(`/note/${id}`);
-      });
+      props.dispatch(setFocusedNote());
+      props.history.push('/note');
     };
   }
 
@@ -32,10 +30,6 @@ class ListPanel extends React.Component {
         this.props.history.push(`/note/${id}`);
       });
     } else {
-      // We delete notes with no content
-      const listOfEmptyNote = this.props.state.notes.filter((n) => !n.firstLine ).map((n) => n.id);
-      listOfEmptyNote.forEach((id) => this.props.dispatch(deleteNote(id)));
-
       // Set no focused Note to create new note on send note event.
       this.props.dispatch(setFocusedNote());
     }
@@ -69,7 +63,7 @@ class ListPanel extends React.Component {
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </button>
         <ul>
-          { this.props.state.notes.filter((note) => note.firstLine ).sort((a, b) => {
+          { this.props.state.notes.sort((a, b) => {
             if (a.lastModified.getTime() !== b.lastModified.getTime()) {
               return a.lastModified.getTime() < b.lastModified.getTime() ? 1 : -1;
             }
@@ -80,8 +74,17 @@ class ListPanel extends React.Component {
                 <button
                   onClick={ () => this.props.history.push(`/note/${note.id}`) }
                   className="btn fullWidth borderBottom">
-                  <p><strong>{ note.firstLine }</strong></p>
-                  <p><span>{ formatLastModified(note.lastModified) }</span> { note.secondLine }</p>
+                  { note.firstLine ?
+                  <div>
+                    <p><strong>{ note.firstLine }</strong></p>
+                    <p><span>{ formatLastModified(note.lastModified) }</span> { note.secondLine }</p>
+                  </div>
+                  :
+                  <div style={{ opacity: '0.4' }}>
+                    <p><strong>{ browser.i18n.getMessage('emptyPlaceHolder') }</strong></p>
+                    <p><span>{ formatLastModified(note.lastModified) }</span></p>
+                  </div>
+                  }
                 </button>
               </li>
             );

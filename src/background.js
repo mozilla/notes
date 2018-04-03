@@ -17,7 +17,6 @@ let editorConnectedDeferred;
 let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
 
 // Kinto sync and encryption
-
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 
 // Analytics
@@ -167,9 +166,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'kinto-sync':
       loadFromKinto(client, credentials);
       break;
-    case 'kinto-save':
-      saveToKinto(client, credentials, eventData.note);
-      break;
     case 'metrics-changed':
       sendMetrics('changed', eventData.context);
       break;
@@ -198,14 +194,22 @@ browser.runtime.onMessage.addListener(function(eventData) {
         browser.runtime.sendMessage({
           action: 'create-note',
           id: result.data.id,
-          content: result.data.content
+          content: result.data.content,
+          lastModified: result.data.lastModified
         });
       });
       break;
+    case 'update-note':
+      saveToKinto(client, credentials, eventData.note, eventData.from);
+      break;
     case 'delete-note':
       // We create a note, and send id with note-created nessage
-      deleteNote(client, eventData.id).then((note) => {
-        loadFromKinto(client, credentials);
+      deleteNote(client, eventData.id).then(() => {
+        // loadFromKinto(client, credentials);
+        browser.runtime.sendMessage({
+          action: 'delete-note',
+          id: eventData.id
+        });
       });
       break;
     case 'theme-changed':

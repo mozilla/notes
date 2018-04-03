@@ -6,7 +6,7 @@ import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
 
-import { updateNote } from '../actions';
+import { updateNote, createNote, deleteNote, setFocusedNote } from '../actions';
 
 const styles = {
   container: {
@@ -47,7 +47,15 @@ class Editor extends React.Component {
                 const content = editor.getData();
 
                 if (!this.ignoreChange) {
-                  this.props.dispatch(updateNote(this.props.note.id, content));
+                  if (!this.props.note.id) {
+                    this.props.dispatch(createNote(content)).then(id => {
+                      this.props.dispatch(setFocusedNote(id));
+                    });
+                  } else if (this.props.note.id && (content === '' || content === '<p>&nbsp;</p>')) {
+                    this.props.dispatch(deleteNote(this.props.note.id));
+                  } else {
+                    this.props.dispatch(updateNote(this.props.note.id, content));
+                  }
                 }
                 this.ignoreChange = false;
 
@@ -81,7 +89,9 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
-    this.editor.destroy();
+    if (this.editor) {
+      this.editor.destroy();
+    }
   }
 
   render() {
@@ -93,7 +103,7 @@ class Editor extends React.Component {
             ref={node => {
               this.node = node;
             }}
-            dangerouslySetInnerHTML={{ __html: this.props.note.content || '' }}>
+            dangerouslySetInnerHTML={{ __html: this.props.note ? this.props.note.content : '' }}>
           </div>
         </div>
 
@@ -116,7 +126,8 @@ function mapStateToProps(state) {
 
 Editor.propTypes = {
     state: PropTypes.object.isRequired,
-    note: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    note: PropTypes.object,
     dispatch: PropTypes.func.isRequired
 };
 
