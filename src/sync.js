@@ -358,6 +358,10 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
     resolve = thisResolve;
   });
 
+  browser.runtime.sendMessage('notes@mozilla.com', {
+    action: 'text-editing'
+  });
+
   const later = function() {
     syncDebounce = null;
     const notes = client.collection('notes', { idSchema: notesIdSchema });
@@ -365,7 +369,7 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
       .then((res) => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-saved',
-          note: res.data,
+          note: res ? res.data : undefined,
           from: fromWindowId
         });
         client.conflict = false;
@@ -387,7 +391,7 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
       .catch(result => {
         browser.runtime.sendMessage('notes@mozilla.com', {
           action: 'text-synced',
-          note: result.data.find((n) => n.id === note.id),
+          note: undefined,
           conflict: client.conflict,
           from: fromWindowId
         });
