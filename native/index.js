@@ -12,7 +12,9 @@ import ListPanel from './app/components/ListPanel';
 import LoadingPanel from './app/components/LoadingPanel';
 import EditorPanel from './app/components/EditorPanel';
 
-
+const k = require('react-native-rust-jose-c');
+console.log('k: ' + new k())
+console.log('jose version is: ' + k.getVersion())
 const editorPanelNavOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
 

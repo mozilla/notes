@@ -96,7 +96,6 @@ def enableProguardInReleaseBuilds = false
 android {
     compileSdkVersion 25
     buildToolsVersion "26.0.2"
-
     defaultConfig {
         applicationId "com.notes"
         minSdkVersion 16
@@ -104,7 +103,7 @@ android {
         versionCode 1
         versionName "1.0"
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters "armeabi-v7a"
         }
         manifestPlaceholders = [
           appAuthRedirectScheme: 'testpilot-notes'
@@ -151,6 +150,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-rust-jose-c')
     compile project(':react-native-keychain')
     compile project(':react-native-randombytes')
     compile project(':react-native-app-auth')
