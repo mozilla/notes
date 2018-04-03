@@ -75,6 +75,7 @@ class Editor extends React.Component {
       if (!this.delayUpdateNote) { // If no delay waiting, we apply modification
         this.ignoreChange = true;
         this.editor.setData(nextProps.note.content || '<p></p>');
+        this.editor.editing.view.focus();
       }
     }
   }
