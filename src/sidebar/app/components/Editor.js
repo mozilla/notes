@@ -32,7 +32,7 @@ class Editor extends React.Component {
         customizeEditor(editor);
 
         // Focus the text editor
-        document.querySelector('.ck-editor__editable').focus();
+        this.editor.editing.view.focus();
 
         editor.document.on('change', (eventInfo, name) => {
           // Cache update event in case of multi-change event (copy pasting trigger many).
@@ -75,6 +75,7 @@ class Editor extends React.Component {
       if (!this.delayUpdateNote) { // If no delay waiting, we apply modification
         this.ignoreChange = true;
         this.editor.setData(nextProps.note.content || '<p></p>');
+        this.editor.editing.view.focus();
       }
     }
   }
