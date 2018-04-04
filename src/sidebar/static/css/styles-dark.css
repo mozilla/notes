@@ -8,8 +8,6 @@
   --primary-font-color: hsla(221deg, 14%, 90%, 1);
   --secondary-font-color: hsla(221deg, 14%, 60%, 1);
   --border-color: hsla(221deg, 14%, 45%, 1);
-
-  --firefox-blue-highlight: hsla(210, 100%, 64%, 1);
 }
 
 body {
@@ -58,6 +56,12 @@ footer.warning button svg path { fill: black !important; }
 
 .photon-menu ul button {
   color: black !important;
+}
+
+.photon-menu ul button:hover,
+.photon-menu ul button:active,
+.photon-menu ul button:focus {
+  background: rgba(128, 128, 128, 0.2) !important;
 }
 
 .photon-menu .iconBtn {
@@ -199,7 +203,7 @@ footer button.iconBtn svg path {
 footer#footer-buttons button.fullWidth:hover { background: var(--main-bg-hover-color) !important; }
 
 .btn.fullWidth.borderBottom:focus,
-footer#footer-buttons button.fullWidth:focus { background: var(--main-bg-focus-color) !important; }
+footer#footer-buttons:not(.warning) button.fullWidth:focus { background: var(--main-bg-focus-color) !important; }
 
 .btn.fullWidth.borderBottom:active,
 footer#footer-buttons button.fullWidth:active { background: var(--main-bg-active-color) !important; }
