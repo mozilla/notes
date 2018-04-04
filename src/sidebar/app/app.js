@@ -41,7 +41,10 @@ browser.storage.local.get().then(result => {
     store.dispatch(authenticate(state.sync.email));
   }
 
-  store.dispatch(kintoLoad(state.notes ? state.notes : []));
+  if (state.notes) {
+    store.dispatch(kintoLoad(state.notes));
+  }
+
 
   // Render root DOM element
   ReactDOM.render((

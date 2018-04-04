@@ -25,7 +25,10 @@ class ListPanel extends React.Component {
 
     // If user is not logged, and has no notes, we create initial content for him
     // and redirect to it.
-    if (this.props.state.sync.welcomePage) {
+    if (this.props.state.sync.welcomePage &&
+        this.props.state.kinto.isLoaded &&
+        this.props.state.notes.length === 0) {
+
       this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
         this.props.history.push(`/note/${id}`);
       });
@@ -55,6 +58,9 @@ class ListPanel extends React.Component {
   }
 
   render() {
+
+    if (!this.props.state.kinto.isLoaded) return '';
+
     return (
       <div className="listView">
         <button
