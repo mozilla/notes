@@ -19,20 +19,24 @@ class ListPanel extends React.Component {
       props.dispatch(setFocusedNote());
       props.history.push('/note');
     };
+
+    this.checkInitialContent = (state) => {
+      if (state.sync.welcomePage && state.kinto.isLoaded && state.notes.length === 0) {
+        this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
+          this.props.history.push(`/note/${id}`);
+        });
+      }
+    };
   }
 
   componentWillMount() {
 
     // If user is not logged, and has no notes, we create initial content for him
     // and redirect to it.
-    if (this.props.state.sync.welcomePage) {
-      this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
-        this.props.history.push(`/note/${id}`);
-      });
-    } else {
-      // Set no focused Note to create new note on send note event.
-      this.props.dispatch(setFocusedNote());
-    }
+    this.checkInitialContent(this.props.state);
+
+    this.props.dispatch(setFocusedNote());
+
   }
 
   componentDidMount() {
@@ -54,7 +58,16 @@ class ListPanel extends React.Component {
     clearTimeout(this.timer);
   }
 
+  componentWillReceiveProps(nextProps) {
+    // If user is not logged, and has no notes, we create initial content for him
+    // and redirect to it.
+    this.checkInitialContent(nextProps.state);
+  }
+
   render() {
+
+    if (!this.props.state.kinto.isLoaded) return '';
+
     return (
       <div className="listView">
         <button
