@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { SEND_TO_NOTES } from '../utils/constants';
 
 import { getPadStats, customizeEditor } from '../utils/editor';
 
@@ -23,12 +24,28 @@ class Editor extends React.Component {
     this.editor = null; // Editor object
     this.ignoreChange = false;
     this.delayUpdateNote = null;
+
+    this.sendToNoteListener = (eventData) => {
+      if (eventData.action === SEND_TO_NOTES) {
+        browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+          if (windowInfo.id === eventData.windowId) {
+            let content = this.editor.getData();
+            if (content === '<p>&nbsp;</p>') content = '';
+            this.editor.setData(content + `<p>${eventData.text}</p>`);
+          }
+        });
+      }
+    }
   }
 
   componentDidMount() {
+
     ClassicEditor.create(this.node, INITIAL_CONFIG)
       .then(editor => {
         this.editor = editor;
+
+        chrome.runtime.onMessage.addListener(this.sendToNoteListener);
+
         customizeEditor(editor);
 
         // Focus the text editor
@@ -89,6 +106,8 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.sendToNoteListener);
+
     if (this.editor) {
       this.editor.destroy();
     }

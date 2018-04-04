@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import INITIAL_CONTENT from '../data/initialContent';
+import { SEND_TO_NOTES } from '../utils/constants';
 
 import NewIcon from './icons/NewIcon';
 import { setFocusedNote, createNote } from '../actions';
@@ -19,9 +20,21 @@ class ListPanel extends React.Component {
       props.dispatch(setFocusedNote());
       props.history.push('/note');
     };
+
+    this.sendToNoteListener = (eventData) => {
+      if (eventData.action === SEND_TO_NOTES) {
+        browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+          if (windowInfo.id === eventData.windowId) {
+            this.props.dispatch(createNote(`<p>${eventData.text}</p>`));
+          }
+        });
+      }
+    }
   }
 
   componentWillMount() {
+
+    chrome.runtime.onMessage.addListener(this.sendToNoteListener);
 
     // If user is not logged, and has no notes, we create initial content for him
     // and redirect to it.
@@ -51,6 +64,7 @@ class ListPanel extends React.Component {
   }
 
   componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.sendToNoteListener);
     clearTimeout(this.timer);
   }
 
