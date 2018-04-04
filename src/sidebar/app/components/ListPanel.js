@@ -29,7 +29,7 @@ class ListPanel extends React.Component {
           }
         });
       }
-    }
+    };
   }
 
   componentWillMount() {

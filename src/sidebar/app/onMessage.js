@@ -6,20 +6,17 @@ import { SYNC_AUTHENTICATED,
          DELETE_NOTE,
          RECONNECT_SYNC,
          DISCONNECTED,
-         ERROR,
-         SEND_TO_NOTES } from './utils/constants';
+         ERROR } from './utils/constants';
          // Actions
 import { authenticate,
          disconnect,
-         createNote,
          createdNote,
-         updatedNote,
          deletedNote,
          saved,
          synced,
          reconnectSync,
          kintoLoad,
-         updateNote,
+         updatedNote,
          error } from './actions';
 import store from './store';
 /**
