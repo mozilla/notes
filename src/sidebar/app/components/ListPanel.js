@@ -26,7 +26,7 @@ class ListPanel extends React.Component {
           this.props.history.push(`/note/${id}`);
         });
       }
-    }
+    };
   }
 
   componentWillMount() {
