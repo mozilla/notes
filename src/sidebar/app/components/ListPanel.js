@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import INITIAL_CONTENT from '../data/initialContent';
+import { SEND_TO_NOTES } from '../utils/constants';
 
 import NewIcon from './icons/NewIcon';
 import { setFocusedNote, createNote } from '../actions';
@@ -19,20 +20,36 @@ class ListPanel extends React.Component {
       props.dispatch(setFocusedNote());
       props.history.push('/note');
     };
+
+    this.sendToNoteListener = (eventData) => {
+      if (eventData.action === SEND_TO_NOTES) {
+        browser.windows.getCurrent({populate: true}).then((windowInfo) => {
+          if (windowInfo.id === eventData.windowId) {
+            this.props.dispatch(createNote(`<p>${eventData.text}</p>`));
+          }
+        });
+      }
+    };
+
+    this.checkInitialContent = (state) => {
+      if (state.sync.welcomePage && state.kinto.isLoaded && state.notes.length === 0) {
+        this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
+          this.props.history.push(`/note/${id}`);
+        });
+      }
+    };
   }
 
   componentWillMount() {
 
+    chrome.runtime.onMessage.addListener(this.sendToNoteListener);
+
     // If user is not logged, and has no notes, we create initial content for him
     // and redirect to it.
-    if (this.props.state.sync.welcomePage) {
-      this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
-        this.props.history.push(`/note/${id}`);
-      });
-    } else {
-      // Set no focused Note to create new note on send note event.
-      this.props.dispatch(setFocusedNote());
-    }
+    this.checkInitialContent(this.props.state);
+
+    this.props.dispatch(setFocusedNote());
+
   }
 
   componentDidMount() {
@@ -51,10 +68,20 @@ class ListPanel extends React.Component {
   }
 
   componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.sendToNoteListener);
     clearTimeout(this.timer);
   }
 
+  componentWillReceiveProps(nextProps) {
+    // If user is not logged, and has no notes, we create initial content for him
+    // and redirect to it.
+    this.checkInitialContent(nextProps.state);
+  }
+
   render() {
+
+    if (!this.props.state.kinto.isLoaded) return '';
+
     return (
       <div className="listView">
         <button
