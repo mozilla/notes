@@ -94,7 +94,7 @@
     "lint:webext": "web-ext lint -s build --ignore-files='sidebar/vendor/*.js' --self-hosted",
     "package": "npm run build && mv web-ext-artifacts/*.zip addon.xpi",
     "postformat": "npm run lint:js -- --fix",
-    "postinstall": "npm run build-ck && node scripts/postinstall.js && node scripts/build-locales.js",
+    "postinstall": "node scripts/postinstall.js && node scripts/build-locales.js",
     "prebuild": "npm run clean",
     "start": "npm run webpack && web-ext run -s build & npm run webpack:watch",
     "start-rtl": "WEB_EXT_PREF=general.useragent.locale=ar npm start",
