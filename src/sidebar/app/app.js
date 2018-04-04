@@ -37,7 +37,7 @@ browser.storage.local.get().then(result => {
 
   const state = JSON.parse(result.redux || '{}');
   // We use stored state to propagate actions and avoid keeping
-  if (result.hasOwnProperty('credentials') && state.sync.email) {
+  if (result.hasOwnProperty('credentials') && state.sync && state.sync.email) {
     store.dispatch(authenticate(state.sync.email));
   }
 
