@@ -30,7 +30,7 @@ class ListPanel extends React.Component {
         });
       }
     };
-    
+
     this.checkInitialContent = (state) => {
       if (state.sync.welcomePage && state.kinto.isLoaded && state.notes.length === 0) {
         this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
