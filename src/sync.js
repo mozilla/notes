@@ -190,7 +190,6 @@ function syncKinto(client, credentials) {
                   conflicts: []
                 });
               }
-
               throw error;
             });
       });

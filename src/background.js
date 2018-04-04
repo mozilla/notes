@@ -87,7 +87,7 @@ function sendMetrics(event, context = {}, sync = reduxSync) {
 }
 
 function fetchProfile(credentials) {
-  fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
+  return fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
     browser.storage.local.set({credentials}).then(() => {
       chrome.runtime.sendMessage({
         action: 'sync-authenticated',
@@ -227,7 +227,11 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'fetch-email':
       credentials.get().then(received => {
-        fetchProfile(received);
+        fetchProfile(received).catch(e => {
+          chrome.runtime.sendMessage({
+            action: 'reconnect'
+          });
+        });
       });
       break;
   }
