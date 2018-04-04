@@ -86,6 +86,18 @@ function sendMetrics(event, context = {}, sync = reduxSync) {
   timeouts[event] = setTimeout(later, 20000);
 }
 
+function fetchProfile(credentials) {
+  return fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
+    browser.storage.local.set({credentials}).then(() => {
+      chrome.runtime.sendMessage({
+        action: 'sync-authenticated',
+        credentials,
+        profile
+      });
+    });
+  });
+}
+
 function authenticate() {
   const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
     chrome.runtime.sendMessage({
@@ -108,15 +120,8 @@ function authenticate() {
       }
     };
 
-    fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
-      browser.storage.local.set({credentials}).then(() => {
-        chrome.runtime.sendMessage({
-          action: 'sync-authenticated',
-          credentials,
-          profile
-        });
-      });
-    });
+    fetchProfile(credentials);
+
   }, (err) => {
     console.error('FxA login failed', err); // eslint-disable-line no-console
     chrome.runtime.sendMessage({
@@ -125,7 +130,6 @@ function authenticate() {
     sendMetrics('login-failed');
   });
 }
-
 browser.runtime.onMessage.addListener(function(eventData) {
   const credentials = new BrowserStorageCredentials(browser.storage.local);
 
@@ -220,6 +224,15 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'redux':
       reduxSync = eventData.sync;
+      break;
+    case 'fetch-email':
+      credentials.get().then(received => {
+        fetchProfile(received).catch(e => {
+          chrome.runtime.sendMessage({
+            action: 'reconnect'
+          });
+        });
+      });
       break;
   }
 });
