@@ -273,7 +273,10 @@ browser.storage.local.get()
 
 // Handle onClick event for the toolbar button
 browser.browserAction.onClicked.addListener(() => {
-  browser.sidebarAction.open();
+  // open sidebar which will trigger `isEditorReady`...
+  if (!isEditorReady) {
+    browser.sidebarAction.open();
+  }
 });
 
 // context menu for 'Send to Notes'
