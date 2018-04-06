@@ -55,6 +55,8 @@ function sendMetrics(event, context = {}, state = reduxState) {
         cd5: context.usesStrikethrough,
         cd6: context.usesList,
       };
+    } else if ('export') {
+      metrics.el = 'html';
     } else if ('new-note') {
       metrics.el = context.origin;
     } else if ('delete-note') {
@@ -62,7 +64,7 @@ function sendMetrics(event, context = {}, state = reduxState) {
     }
 
     // Generate cd10 based on footer.js rules
-    if ([ 'open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export-html', 'delete-note',
+    if ([ 'open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export', 'delete-note',
       'give-feedback', 'limit-reached'].indexOf(event) !== -1) {
       if (state.sync.email) { // If user is authenticated
         if (state.sync.error) {
@@ -191,8 +193,8 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-limit-reached':
       sendMetrics('limit-reached', eventData.context);
       break;
-    case 'metrics-export-html':
-      sendMetrics('export-html');
+    case 'metrics-export':
+      sendMetrics('export');
       break;
     case 'editor-ready':
       isEditorReady = true;
