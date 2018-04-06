@@ -306,7 +306,7 @@ function reconnectSync(credentials) {
 
 function retrieveNote(client) {
   return client
-    .collection('notes', { idSchema: notesIdSchema })
+    .collection('notes', { idSchema: notesIdSchema, filters: {_status: ["created", "updated", "synced"]}})
     .list({})
     .then((list) => {
       // We delete all notes retrieved from server and not properly deleted
@@ -314,7 +314,6 @@ function retrieveNote(client) {
         sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
         client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
       });
-
       return list;
     });
 }
@@ -416,11 +415,16 @@ function createNote(client, credentials, note) { // eslint-disable-line no-unuse
     .create(note, { useRecordId: true })
     .then(() => {
       return syncKinto(client, credentials);
-    })
+    });
 }
 
-function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+function deleteNote(client, credentials, id) { // eslint-disable-line no-unused-vars
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .delete(id)
+    .then(() => {
+      return syncKinto(client, credentials);
+    });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars

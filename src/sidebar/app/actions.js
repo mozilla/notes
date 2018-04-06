@@ -116,12 +116,11 @@ export function createNote(content = '') {
 }
 
 export function deletedNote(id) {
-  return { type: DELETE_NOTE, id };
+  return { type: DELETE_NOTE, id, isSyncing: false };
 }
 export function deleteNote(id) {
-
   chrome.runtime.sendMessage({ action: 'delete-note', id });
-  return { type: DELETE_NOTE, id };
+  return { type: DELETE_NOTE, id, isSyncing: true };
 }
 
 

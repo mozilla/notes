@@ -206,7 +206,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'delete-note':
       // We create a note, and send id with note-created nessage
-      deleteNote(client, eventData.id).then(() => {
+      deleteNote(client, credentials, eventData.id).then(() => {
         // loadFromKinto(client, credentials);
         browser.runtime.sendMessage({
           action: 'delete-note',
