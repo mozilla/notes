@@ -71,6 +71,9 @@ class Header extends React.Component {
 
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
+      chrome.runtime.sendMessage({
+        action: 'metrics-give-feedback'
+      });
       browser.runtime.getBrowserInfo().then((info) => {
         browser.tabs.create({
           url: `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`

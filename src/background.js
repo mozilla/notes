@@ -196,6 +196,9 @@ browser.runtime.onMessage.addListener(function(eventData) {
     case 'metrics-export':
       sendMetrics('export');
       break;
+    case 'metrics-give-feedback':
+      sendMetrics('give-feedback');
+      break;
     case 'editor-ready':
       isEditorReady = true;
       break;
