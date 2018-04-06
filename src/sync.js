@@ -298,19 +298,10 @@ function reconnectSync(credentials) {
   });
 }
 
-function retrieveNote(client) {
+function retrieveNotes(client) {
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .list({})
-    .then((list) => {
-      // We delete all notes retrieved from server and not properly deleted
-      Object.keys(deletedNotesStillOnServer).forEach((id) => {
-        sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
-        client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
-      });
-
-      return list;
-    });
+    .list();
 }
 
 /**
@@ -331,7 +322,7 @@ function retrieveNote(client) {
 function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-vars
   return syncKinto(client, credentials)
     // Ignore failure of syncKinto by retrieving note even when promise rejected
-    .then(() => retrieveNote(client), () => retrieveNote(client))
+    .then(() => retrieveNotes(client), () => retrieveNotes(client))
     .then(result => {
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
@@ -411,7 +402,9 @@ function createNote(client, note) { // eslint-disable-line no-unused-vars
 }
 
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .create({id, deleted: true}, { useRecordId: true });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
