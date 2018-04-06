@@ -306,7 +306,7 @@ function reconnectSync(credentials) {
 
 function retrieveNote(client) {
   return client
-    .collection('notes', { idSchema: notesIdSchema, filters: {_status: ["created", "updated", "synced"]}})
+    .collection('notes', { idSchema: notesIdSchema })
     .list({})
     .then((list) => {
       // We delete all notes retrieved from server and not properly deleted
