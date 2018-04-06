@@ -146,6 +146,7 @@ function mapStateToProps(state) {
 Editor.propTypes = {
     state: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    origin: PropTypes.string.isRequired,
     note: PropTypes.object,
     dispatch: PropTypes.func.isRequired
 };

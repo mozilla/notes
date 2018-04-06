@@ -55,11 +55,11 @@ function sendMetrics(event, context = {}, state = reduxState) {
         cd5: context.usesStrikethrough,
         cd6: context.usesList,
       };
-    } else if ('export') {
+    } else if (event === 'export') {
       metrics.el = 'html';
-    } else if ('new-note') {
+    } else if (event === 'new-note') {
       metrics.el = context.origin;
-    } else if ('delete-note') {
+    } else if (event === 'delete-note') {
       metrics.el = context.origin;
     }
 
