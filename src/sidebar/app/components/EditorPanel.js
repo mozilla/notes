@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FROM_LIST_VIEW, FROM_IN_NOTE } from '../utils/constants';
 
 import Header from './Header';
 import Editor from './Editor';
@@ -14,7 +15,7 @@ class EditorPanel extends React.Component {
     super(props);
     this.props = props;
 
-    this.origin = 'list-view'; // used while sending 'new-note' metric
+    this.origin = FROM_LIST_VIEW; // used while sending 'new-note' metric
 
     this.note = {}; // Note should be reference to state.
     if (props.match.params.id) {
@@ -25,7 +26,7 @@ class EditorPanel extends React.Component {
     }
 
     this.onNewNoteEvent = () => {
-      this.origin = 'in-note';
+      this.origin = FROM_IN_NOTE;
       this.props.dispatch(setFocusedNote());
       props.history.push('/note');
     };

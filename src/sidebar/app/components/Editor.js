@@ -1,11 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SEND_TO_NOTES } from '../utils/constants';
-
-import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
+import { SEND_TO_NOTES, FROM_BLANK_NOTE } from '../utils/constants';
+import { getPadStats, customizeEditor } from '../utils/editor';
 
 import { updateNote, createNote, deleteNote, setFocusedNote } from '../actions';
 
@@ -69,7 +68,7 @@ class Editor extends React.Component {
                       this.props.dispatch(setFocusedNote(id));
                     });
                   } else if (this.props.note.id && (content === '' || content === '<p>&nbsp;</p>')) {
-                    this.props.dispatch(deleteNote(this.props.note.id, 'blank-note'));
+                    this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
                   } else {
                     this.props.dispatch(updateNote(this.props.note.id, content));
                   }
