@@ -89,7 +89,7 @@ export function reconnectSync() {
 }
 
 export function createdNote(id, content, lastModified) {
-  return { type: CREATE_NOTE, id, content, lastModified };
+  return { type: CREATE_NOTE, isSyncing: false };
 }
 export function createNote(content = '') {
 
@@ -100,7 +100,8 @@ export function createNote(content = '') {
     action: 'create-note',
     id,
     content,
-    lastModified: new Date()
+    lastModified: new Date(),
+    isSyncing: true
   });
 
   // Return id to callback using promises

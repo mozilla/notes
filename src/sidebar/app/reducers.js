@@ -95,7 +95,8 @@ function sync(sync = {}, action) {
       });
     case CREATE_NOTE:
       return Object.assign({}, sync, {
-        welcomePage: false
+        welcomePage: false,
+        isSyncing: action.isSyncing ? false : true
       });
     case ERROR:
       return Object.assign({}, sync, {
@@ -152,6 +153,7 @@ function notes(notes = [], action) {
       return res;
     }
     case CREATE_NOTE: {
+      if (!action.id) return notes;
       const list = Array.from(notes).filter((note) => note.id !== action.id);
       list.push({
         id: action.id,
