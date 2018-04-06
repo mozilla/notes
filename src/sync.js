@@ -404,7 +404,7 @@ function createNote(client, note) { // eslint-disable-line no-unused-vars
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create({id, deleted: true}, { useRecordId: true });
+    .create({id, _status: "deleted"}, { useRecordId: true });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
