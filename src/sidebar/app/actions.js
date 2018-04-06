@@ -91,7 +91,7 @@ export function reconnectSync() {
 export function createdNote(id, content, lastModified) {
   return { type: CREATE_NOTE, id, content, lastModified };
 }
-export function createNote(content = '') {
+export function createNote(content = '', origin) {
 
   const id = uuid4();
 
@@ -100,6 +100,7 @@ export function createNote(content = '') {
     action: 'create-note',
     id,
     content,
+    origin,
     lastModified: new Date()
   });
 
@@ -117,9 +118,9 @@ export function createNote(content = '') {
 export function deletedNote(id) {
   return { type: DELETE_NOTE, id };
 }
-export function deleteNote(id) {
+export function deleteNote(id, origin) {
 
-  chrome.runtime.sendMessage({ action: 'delete-note', id });
+  chrome.runtime.sendMessage({ action: 'delete-note', id , origin});
   return { type: DELETE_NOTE, id };
 }
 

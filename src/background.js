@@ -1,9 +1,7 @@
 /**
  * Google Analytics / TestPilot Metrics
  */
-
 const TRACKING_ID = 'UA-35433268-79';
-
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
@@ -30,9 +28,9 @@ const analytics = new TestPilotGA({
 
 // This object is updated onMessage 'redux', sended by sidebar store.js on every change.
 // We need to keep it to generate `cd10`
-let reduxSync = {};
+let reduxState = {};
 
-function sendMetrics(event, context = {}, sync = reduxSync) {
+function sendMetrics(event, context = {}, state = reduxState) {
 
   // This function debounce sending metrics.
   const later = function() {
@@ -57,27 +55,38 @@ function sendMetrics(event, context = {}, sync = reduxSync) {
         cd5: context.usesStrikethrough,
         cd6: context.usesList,
       };
+    } else if ('new-note') {
+      metrics.el = context.origin;
+    } else if ('delete-note') {
+      metrics.el = context.origin;
     }
 
     // Generate cd10 based on footer.js rules
-    if (sync.email) { // If user is authenticated
-      if (sync.error) {
-        metrics.cd10 = 'error';
-      } else if (sync.isSyncing) {
-        metrics.cd10 = 'isSyncing';
+    if ([ 'open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export-html', 'delete-note',
+      'give-feedback', 'limit-reached'].indexOf(event) !== -1) {
+      if (state.sync.email) { // If user is authenticated
+        if (state.sync.error) {
+          metrics.cd10 = 'error';
+        } else if (state.sync.isSyncing) {
+          metrics.cd10 = 'isSyncing';
+        } else {
+          metrics.cd10 = 'synced';
+        }
       } else {
-        metrics.cd10 = 'synced';
+        if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
+          metrics.cd10 = 'openLogin';
+        } else if (state.sync.isPleaseLogin) {
+          metrics.cd10 = 'verifyAccount';
+        } else if (state.sync.isReconnectSync) {
+          metrics.cd10 = 'reconnectSync';
+        } else {
+          metrics.cd10 = 'signIn';
+        }
       }
-    } else {
-      if (sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
-        metrics.cd10 = 'openLogin';
-      } else if (sync.isPleaseLogin) {
-        metrics.cd10 = 'verifyAccount';
-      } else if (sync.isReconnectSync) {
-        metrics.cd10 = 'reconnectSync';
-      } else {
-        metrics.cd10 = 'signIn';
-      }
+    }
+
+    if (state.notes) {
+      metrics.cd11 = state.notes.length;
     }
 
     return analytics.sendEvent('notes', event, metrics);
@@ -163,7 +172,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
           action: 'kinto-loaded',
           notes: result.notes
         });
-      }).catch(() => {
+      }).catch((e) => {
         sendMetrics('open', {loaded: false});
       });
       break;
@@ -189,6 +198,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       isEditorReady = true;
       break;
     case 'create-note':
+      sendMetrics('new-note', { origin: eventData.origin });
       // We create a note, and send id with note-created nessage
       createNote(client, {
         id: eventData.id,
@@ -207,6 +217,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       saveToKinto(client, credentials, eventData.note, eventData.from);
       break;
     case 'delete-note':
+      sendMetrics('delete-note', { origin: eventData.origin });
       // We create a note, and send id with note-created nessage
       deleteNote(client, eventData.id).then(() => {
         // loadFromKinto(client, credentials);
@@ -223,7 +234,7 @@ browser.runtime.onMessage.addListener(function(eventData) {
       });
       break;
     case 'redux':
-      reduxSync = eventData.sync;
+      reduxState = eventData.state;
       break;
     case 'fetch-email':
       credentials.get().then(received => {
@@ -257,6 +268,7 @@ function connected(p) {
     sendMetrics('close', {'closeUI': closeUI});
   });
 }
+
 browser.runtime.onConnect.addListener(connected);
 
 const defaultTheme = {

@@ -79,7 +79,7 @@ class Header extends React.Component {
     };
 
     this.onDelete = () => {
-      props.dispatch(deleteNote(this.props.note.id));
+      props.dispatch(deleteNote(this.props.note.id, 'in-note'));
       this.props.history.push('/');
     };
   }

@@ -25,7 +25,7 @@ class ListPanel extends React.Component {
       if (eventData.action === SEND_TO_NOTES) {
         browser.windows.getCurrent({populate: true}).then((windowInfo) => {
           if (windowInfo.id === eventData.windowId) {
-            this.props.dispatch(createNote(`<p>${eventData.text}</p>`));
+            this.props.dispatch(createNote(`<p>${eventData.text}</p>`, 'send-to-note'));
           }
         });
       }
@@ -33,7 +33,7 @@ class ListPanel extends React.Component {
 
     this.checkInitialContent = (state) => {
       if (state.sync.welcomePage && state.kinto.isLoaded && state.notes.length === 0) {
-        this.props.dispatch(createNote(INITIAL_CONTENT)).then(id => {
+        this.props.dispatch(createNote(INITIAL_CONTENT, 'list-view')).then(id => {
           this.props.history.push(`/note/${id}`);
         });
       }
@@ -53,7 +53,6 @@ class ListPanel extends React.Component {
   }
 
   componentDidMount() {
-    browser.runtime.connect();
     // Disable right clicks
     // Refs: https://stackoverflow.com/a/737043/186202
     document.querySelectorAll('.listView').forEach(sel => {

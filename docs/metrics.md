@@ -38,8 +38,7 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 - `cd8` - the reason an editing session ended. One of `timeout` or `closed`.
 - `cd9` - whether the user was able to load the note panel or not. One of `true` or `false`.
 - `cd10` - provide current user state. Possible values are: 'error', 'isSyncing', 'synced', 'openLogin', 'verifyAccount', 'reconnectSync', and 'signIn'.
-- `cd11` - count of total notes when event is fired: range of 1 to N
-
+- `cd11` - count of total notes when event is fired: range of 0 to N
 
 ### Events
 
@@ -100,7 +99,7 @@ An event fired when the user tries to drag or drop a content into the notepad.
 Event fired when a user creates a new note.
 - `ec` - `notes`
 - `ea` - `new-note`
-- `el` - one of `in-note` or `list-view` where `in-note` refers to the meatball menu flow and `list-view` refers to the button in the list view
+- `el` - one of `in-note`, `list-view`, and `send-to-note` where `in-note` refers to the meatball menu flow, `list-view` refers to the button in the list view, and `send-to-note` refers to the context menu action performed while displaying the list view.
 - `cd10`
 - `cd11`
 
@@ -116,7 +115,7 @@ An event fired when a user exports a note.
 Event fired when a user deletes a note.
 - `ec` - `notes`
 - `ea` - `new-note`
-- `el` - one of `in-note` or `exit-blank-note` which occurs when the user navigates back from a new note without adding content
+- `el` - one of `in-note` or `blank-note` which occurs when the user navigates back from a new note without adding content
 - `cd10`
 - `cd11`
 
@@ -193,7 +192,7 @@ An event fired when the "Send to Notes" context menu is used
 - `ea` - `metrics-context-menu`
 - `cd11`
 
-#### `limit-reached`
+#### `limit-reached` (deprecated)
 An event fired when user goes over the pad limit (15000 character)
 
 - `ec` - `notes`
