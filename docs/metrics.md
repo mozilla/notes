@@ -221,13 +221,4 @@ deleted on server side. Those were deleted before v4.0.0-beta.4 (during multi-no
 - `ec` - `notes`
 - `ea` - `delete-deleted-notes`
 
-#### `export-html` (deprecated)
-
-> Replaced with `export`
-
-An event fired when a user exports a note.
-- `ec` - `notes`
-- `ea` - `export`
-- `cd10`
-- `cd11`
 
