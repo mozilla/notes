@@ -5,13 +5,10 @@ import { connect } from 'react-redux';
 
 import ListItem from './ListItem';
 import PropTypes from 'prop-types';
-//
-// import INITIAL_CONTENT from '../data/initialContent';
-//
-// import NewIcon from './icons/NewIcon';
-// import { deleteNote, setFocusedNote, createNote } from '../actions';
-// import { formatLastModified } from '../utils/utils';
-//
+import {
+  COLOR_NOTES_BLUE,
+  COLOR_NOTES_WHITE
+} from '../utils/constants';
 
 class ListPanel extends React.Component {
 
@@ -20,22 +17,24 @@ class ListPanel extends React.Component {
     this.props = props;
   }
 
-  componentWillMount() {
-  }
-
-  componentDidMount() {
-
-  }
-
-  componentWillUnmount() {
-  }
-
   render() {
     return (
-      <View>
+      <View style={{ flex: 1}}>
         { this.renderList() }
+
+        <FAB
+          small
+          color={COLOR_NOTES_WHITE}
+          style={styles.fab}
+          icon="add"
+          onPress={() => this.newNote()}
+        />
       </View>
     );
+  }
+
+  newNote() {
+    return this.props.navigation.navigate('EditorPanel', {rowId: null});
   }
 
   renderList() {
@@ -45,11 +44,12 @@ class ListPanel extends React.Component {
       return (
         <View>
           <Text>No Notes</Text>
+
         </View>
       )
     } else {
-      var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      var dataSource = ds.cloneWithRows(this.props.state.notes) || []
+      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      const dataSource = ds.cloneWithRows(this.props.state.notes) || [];
       return (
         <View>
           <ListView
@@ -65,27 +65,20 @@ class ListPanel extends React.Component {
               )
             }}
           />
-          <FAB
-            small
-            style={styles.fab}
-            icon="add"
-            onPress={() => {}}
-          />
         </View>
       )
     }
   }
 }
 
-
 const styles = StyleSheet.create({
   fab: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#ee6e73',
+    backgroundColor: COLOR_NOTES_BLUE,
     position: 'absolute',
-    bottom: 10,
+    bottom: 20,
     right: 10,
   },
 });
