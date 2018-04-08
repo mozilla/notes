@@ -314,7 +314,6 @@ function retrieveNote(client) {
         sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
         client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
       });
-
       return list;
     });
 }
@@ -410,14 +409,22 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
   return promise;
 }
 
-function createNote(client, note) { // eslint-disable-line no-unused-vars
+function createNote(client, credentials, note) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create(note, { useRecordId: true });
+    .create(note, { useRecordId: true })
+    .then(() => {
+      return syncKinto(client, credentials);
+    });
 }
 
-function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+function deleteNote(client, credentials, id) { // eslint-disable-line no-unused-vars
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .delete(id)
+    .then(() => {
+      return syncKinto(client, credentials);
+    });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars

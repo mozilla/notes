@@ -89,7 +89,7 @@ export function reconnectSync() {
 }
 
 export function createdNote(id, content, lastModified) {
-  return { type: CREATE_NOTE, id, content, lastModified };
+  return { type: CREATE_NOTE, isSyncing: false };
 }
 export function createNote(content = '') {
 
@@ -100,7 +100,8 @@ export function createNote(content = '') {
     action: 'create-note',
     id,
     content,
-    lastModified: new Date()
+    lastModified: new Date(),
+    isSyncing: true
   });
 
   // Return id to callback using promises
@@ -115,12 +116,11 @@ export function createNote(content = '') {
 }
 
 export function deletedNote(id) {
-  return { type: DELETE_NOTE, id };
+  return { type: DELETE_NOTE, id, isSyncing: false };
 }
 export function deleteNote(id) {
-
   chrome.runtime.sendMessage({ action: 'delete-note', id });
-  return { type: DELETE_NOTE, id };
+  return { type: DELETE_NOTE, id, isSyncing: true };
 }
 
 
