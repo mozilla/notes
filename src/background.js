@@ -64,8 +64,8 @@ function sendMetrics(event, context = {}, state = reduxState) {
     }
 
     // Generate cd10 based on footer.js rules
-    if ([ 'open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export', 'delete-note',
-      'give-feedback', 'limit-reached'].indexOf(event) !== -1) {
+    if (state.sync && ['open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export',
+        'delete-note', 'give-feedback', 'limit-reached'].includes(event)) {
       if (state.sync.email) { // If user is authenticated
         if (state.sync.error) {
           metrics.cd10 = 'error';
