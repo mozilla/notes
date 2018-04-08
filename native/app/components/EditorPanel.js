@@ -22,6 +22,11 @@ class RichTextExample extends Component {
     this.getHTML = this.getHTML.bind(this);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
     this.noteContent = '';
+    this.pollNoteChange = true;
+  }
+
+  componentWillUnmount() {
+    this.pollNoteChange = false;
   }
 
   render() {
@@ -59,10 +64,16 @@ class RichTextExample extends Component {
   }
 
   async getHTML() {
-    const contentHtml = await this.richtext.getContentHtml();
-    if (this.noteContent !== contentHtml) {
-      this.noteContent = contentHtml;
-      console.log('Note updated:', this.noteContent);
+    if (this.richtext) {
+      try {
+        const contentHtml = await this.richtext.getContentHtml();
+        if (this.noteContent !== contentHtml) {
+          this.noteContent = contentHtml;
+          console.log('Note updated:', this.noteContent);
+        }
+      } catch (e) {
+        console.log('Failed to getContentHtml, editor probably closed.', e);
+      }
     }
   }
 
@@ -74,9 +85,11 @@ class RichTextExample extends Component {
 
   pollNoteChanges() {
     this.getHTML();
-    setTimeout(() => {
-      this.pollNoteChanges();
-    }, 2000)
+    if (this.pollNoteChange) {
+      setTimeout(() => {
+        this.pollNoteChanges();
+      }, 2000);
+    }
   }
 }
 
