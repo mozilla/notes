@@ -1,6 +1,3 @@
-// Url to open in firefox to give feedback
-export const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=sidebar';
-
 // Actions
 // FOR LEGACY, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
 export const SYNC_AUTHENTICATED = 'sync-authenticated';
@@ -20,3 +17,9 @@ export const DELETE_NOTE = 'delete-note';
 
 export const FOCUS_NOTE = 'focus-note';
 export const REQUEST_WELCOME_PAGE = 'request-welcome-page';
+
+// COLORS
+
+export const COLOR_NOTES_BLUE = '#4173CE';
+export const COLOR_NOTES_WHITE = '#F9F9FA';
+export const COLOR_APP_BAR = '#F9F9FA';

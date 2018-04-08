@@ -1,16 +1,8 @@
-import { connect } from 'react-redux';
-
 import PropTypes from 'prop-types';
-
-
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform
-} from 'react-native';
-import {RichTextEditor, RichTextToolbar} from 'react-native-zss-rich-text-editor';
+import { connect } from 'react-redux';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import {RichTextEditor} from 'react-native-zss-rich-text-editor';
 
 
 function escapeHtml(unsafe) {
@@ -29,48 +21,75 @@ class RichTextExample extends Component {
     super(props);
     this.getHTML = this.getHTML.bind(this);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
-    console.log('this.props', this.props);
+    this.noteContent = '';
+    this.pollNoteChange = true;
+  }
+
+  componentWillUnmount() {
+    this.pollNoteChange = false;
   }
 
   render() {
-    // TODO: probably there is a better way to do it
-    const navigationId = this.props.navigation.state.params.rowId;
-    const firstNote = this.props.state.notes[navigationId].content;
-    //const firstNote = '<h2>Kinto Self-hosted</h2><p><br data-cke-filler="true"></p><p>This kinto instance has some issues:</p><ul><li>It is over HTTP</li><li>It deletes the Notes when Vlad restarts the docker thing</li></ul><p><br data-cke-filler="true"></p><p></p><p><br data-cke-filler="true"></p><p><strong>Yay!</strong></p>';
-
     return (
       <View style={styles.container}>
         <RichTextEditor
           ref={(r)=>this.richtext = r}
           style={styles.richText}
           hiddenTitle={true}
-          // need to call `escapeHtml` here because otherwise the editor will fail if strings have ` ' ` in them. :(
-          initialContentHTML={escapeHtml(firstNote)}
+          // at first initialContentHTML must be `''` otherwise we would get undefined
+          initialContentHTML=''
+          contentPlaceholder='Take a note...'
           editorInitializedCallback={() => this.onEditorInitialized()}
         />
       </View>
     );
-
   }
 
   onEditorInitialized() {
+    // TODO: probably there is a better way to do it
+    const navigationId = this.props.navigation.state.params.rowId;
+    const {height} = Dimensions.get('window');
+
+    if (navigationId) {
+      const firstNote = this.props.state.notes[navigationId].content;
+      // need to call `escapeHtml` here because otherwise the editor will fail if strings have ` ' ` in them. :(
+      this.richtext._sendAction('SET_CONTENT_HTML', escapeHtml(firstNote));
+    } else {
+      // set height if totally empty, helps with keyboard pull up
+      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
+    }
+
     this.setFocusHandlers();
-    this.getHTML();
+    this.pollNoteChanges();
   }
 
   async getHTML() {
-    const titleHtml = await this.richtext.getTitleHtml();
-    const contentHtml = await this.richtext.getContentHtml();
-    //alert(titleHtml + ' ' + contentHtml)
+    if (this.richtext) {
+      try {
+        const contentHtml = await this.richtext.getContentHtml();
+        if (this.noteContent !== contentHtml) {
+          this.noteContent = contentHtml;
+          console.log('Note updated:', this.noteContent);
+        }
+      } catch (e) {
+        console.log('Failed to getContentHtml, editor probably closed.', e);
+      }
+    }
   }
 
   setFocusHandlers() {
-    this.richtext.setTitleFocusHandler(() => {
-      //alert('title focus');
-    });
     this.richtext.setContentFocusHandler(() => {
-      //alert('content focus');
+      console.log('content focus');
     });
+  }
+
+  pollNoteChanges() {
+    this.getHTML();
+    if (this.pollNoteChange) {
+      setTimeout(() => {
+        this.pollNoteChanges();
+      }, 2000);
+    }
   }
 }
 
@@ -78,11 +97,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    paddingTop: 40
+    backgroundColor: 'transparent'
   },
   richText: {
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },

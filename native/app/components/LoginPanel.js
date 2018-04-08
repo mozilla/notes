@@ -4,9 +4,12 @@ import { Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import store from '../store';
-
+import { trackEvent } from '../utils/metrics';
 import { authorize, refresh } from 'react-native-app-auth';
 import * as Keychain from 'react-native-keychain';
+import {
+  COLOR_NOTES_BLUE
+} from '../utils/constants';
 
 import { createNote } from '../actions';
 
@@ -34,7 +37,6 @@ const refreshConfig = {
 };
 
 const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
-
 
 class LoginPanel extends React.Component {
   onAuth (options={}) {
@@ -76,6 +78,8 @@ class LoginPanel extends React.Component {
       console.log('oauthResponse', oauthResponse);
       console.log('keys_jwe', bundle);
 
+      trackEvent('login-success');
+
       return fxaKeyUtils.decryptBundle(bundle);
     }).then((keys) => {
       scopedKeys = keys;
@@ -113,6 +117,7 @@ class LoginPanel extends React.Component {
       this.props.navigation.navigate('LoginPanel');
       console.log('onAuth', err);
       ToastAndroid.show('Something went wrong: ' + err, ToastAndroid.SHORT);
+      trackEvent('login-failed');
     })
   }
 
@@ -145,7 +150,7 @@ class LoginPanel extends React.Component {
         />
         <Text style={{ fontWeight: 'bold', fontSize: 22, padding: 10 }}>Welcome to Notes</Text>
         <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
-        <Button raised onPress={this.onAuth.bind(this)} color="#008AF8">SIGN IN</Button>
+        <Button raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}>SIGN IN</Button>
       </View>
     );
   }

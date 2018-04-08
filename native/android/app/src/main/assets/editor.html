@@ -1636,7 +1636,8 @@
 			}
 
 			zss_editor.setEditorHeight = function(editorHeight) {
-				zss_editor.editorHeight = editorHeight;
+				//zss_editor.editorHeight = editorHeight;
+              $('#zss_editor_content').height(editorHeight);
 			}
 
 			zss_editor.setPlatform = function(platform) {
@@ -1665,7 +1666,7 @@
 			body {
 				padding-left:10px;
 				padding-right:10px;
-				padding-top: 0px;
+				padding-top: 10px;
 				padding-bottom: 0px;
 				overflow-y: scroll;
 				-webkit-overflow-scrolling: touch;
@@ -1698,8 +1699,8 @@
 			}
 
 			#zss_editor_content {
-				padding-left: 10px;
-				padding-right: 10px;
+				padding-left: 0px;
+				padding-right: 0px;
 			}
 
 			div.zss_editor_title {
@@ -1710,6 +1711,7 @@
 			}
 
 			#zss_editor_title {
+				display: none;
 				padding-left: 10px;
 				padding-right: 10px;
 			}
@@ -1746,7 +1748,6 @@
 	<body>
 		<!-- ZSSRichTextEditor Editable Content -->
 		<div id="zss_editor_title" class="zss_editor_title" contenteditable="true" placeholder="" disableLineBreaks="true"></div>
-		<div id="separatorContainer"><hr></div>
 		<div id="zss_editor_content" class="zss_editor_content" contenteditable="true" placeholder=""></div>
 		<div id="zss_editor_footer"></div>
 	</body>
