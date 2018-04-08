@@ -1,11 +1,49 @@
-machine:
+version: 2
+jobs:
   node:
-    version: 6
+    working_directory: ~/notes
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
 
-test:
-  override:
-    - npm run build
-    - npm run lint
+      - restore_cache:
+         keys:
+           - node-modules
 
-    # Build the extension and copy to artifacts directory.
-    - cp web-ext-artifacts/*.zip $CIRCLE_ARTIFACTS
+      - run: npm install
+      - run: npm run build
+      - run: npm run lint
+      - run: mkdir -p /tmp/artifacts;
+      - run: cp web-ext-artifacts/*.zip /tmp/artifacts
+
+      - store_artifacts:
+          path: /tmp/artifacts
+
+  android:
+    working_directory: ~/notes/android
+    docker:
+      - image: circleci/android:api-25-node8-alpha
+    steps:
+      - checkout
+
+      - restore_cache:
+         keys:
+           - node-modules
+
+      - run: cd native && npm install
+      - run: cd native/android && ./gradlew assembleRelease
+      - run: mkdir -p /tmp/artifacts-android;
+      - run: cp native/android/app/build/outputs/apk/release/app-release-unsigned.apk /tmp/artifacts-android
+
+      - store_artifacts:
+          path: /tmp/artifacts-android
+
+workflows:
+  version: 2
+  node-android:
+    jobs:
+      - node
+      - android:
+          requires:
+            - node
