@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  node:
+  webextension:
     working_directory: ~/notes
     docker:
       - image: circleci/node:8
@@ -8,12 +8,23 @@ jobs:
       - checkout
 
       - restore_cache:
-         keys:
-           - node-modules
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
       - run: npm install
+
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
       - run: npm run build
       - run: npm run lint
+
+      - persist_to_workspace:
+          root: ~/notes
+          paths:
+            - node_modules
+
       - run: mkdir -p /tmp/artifacts;
       - run: cp web-ext-artifacts/*.zip /tmp/artifacts
 
@@ -21,17 +32,27 @@ jobs:
           path: /tmp/artifacts
 
   android:
-    working_directory: ~/notes/android
+    working_directory: ~/notes/native
     docker:
       - image: circleci/android:api-25-node8-alpha
     steps:
       - checkout
 
       - restore_cache:
-         keys:
-           - node-modules
+          key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
 
       - run: cd native && npm install
+
+      - save_cache:
+          key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
+          paths:
+            - native/node_modules
+
+      - persist_to_workspace:
+          root: ~/notes/native
+          paths:
+            - native/node_modules
+
       - run: cd native/android && ./gradlew assembleRelease
       - run: mkdir -p /tmp/artifacts-android;
       - run: cp native/android/app/build/outputs/apk/release/app-release-unsigned.apk /tmp/artifacts-android
@@ -43,7 +64,5 @@ workflows:
   version: 2
   node-android:
     jobs:
-      - node
-      - android:
-          requires:
-            - node
+      - webextension
+      - android
