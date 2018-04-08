@@ -1,11 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SEND_TO_NOTES } from '../utils/constants';
-
-import { getPadStats, customizeEditor } from '../utils/editor';
 
 import INITIAL_CONFIG from '../data/editorConfig';
+import { SEND_TO_NOTES, FROM_BLANK_NOTE } from '../utils/constants';
+import { getPadStats, customizeEditor } from '../utils/editor';
 
 import { updateNote, createNote, deleteNote, setFocusedNote } from '../actions';
 
@@ -65,11 +64,11 @@ class Editor extends React.Component {
 
                 if (!this.ignoreChange) {
                   if (!this.props.note.id) {
-                    this.props.dispatch(createNote(content)).then(id => {
+                    this.props.dispatch(createNote(content, this.props.origin)).then(id => {
                       this.props.dispatch(setFocusedNote(id));
                     });
                   } else if (this.props.note.id && (content === '' || content === '<p>&nbsp;</p>')) {
-                    this.props.dispatch(deleteNote(this.props.note.id));
+                    this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
                   } else {
                     this.props.dispatch(updateNote(this.props.note.id, content));
                   }
@@ -146,6 +145,7 @@ function mapStateToProps(state) {
 Editor.propTypes = {
     state: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    origin: PropTypes.string.isRequired,
     note: PropTypes.object,
     dispatch: PropTypes.func.isRequired
 };
