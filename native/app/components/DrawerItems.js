@@ -58,11 +58,13 @@ class DrawerItems extends React.Component {
   componentWillMount() {
     return fxaUtils.fxaGetCredential().then((loginDetails) => {
       const profile = loginDetails.profile;
-      this.setState({
-        profileAvatar: profile.avatar,
-        profileEmail: profile.email,
-        profileDisplayName: profile.displayName,
-      });
+      if (profile && profile.avatar) {
+        this.setState({
+          profileAvatar: profile.avatar,
+          profileEmail: profile.email,
+          profileDisplayName: profile.displayName,
+        });
+      }
     });
   }
 
@@ -71,7 +73,7 @@ class DrawerItems extends React.Component {
       <View style={[styles.drawerContent]}>
         <View style={{ paddingTop: 55, paddingLeft: 10, paddingBottom: 10, backgroundColor: COLOR_NOTES_BLUE }}>
         <Image
-          style={{width: 75, height: 75 }}
+          style={{width: 75, height: 75}}
           borderRadius={100}
           borderColor='#FFFFFF'
           borderWidth={2}
