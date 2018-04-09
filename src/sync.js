@@ -164,6 +164,7 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
  * caught more easily in testing. Since this application is
  * offline-first, sync failure should not be a failure for callers.
  */
+
 function syncKinto(client, credentials) {
   // Get credentials and lastmodified
   let collection, credential;
@@ -189,6 +190,7 @@ function syncKinto(client, credentials) {
             .sync({
               headers: {Authorization: `Bearer ${credential.access_token}`},
               strategy: 'manual',
+              lastModified: lastSyncTimestamp // eslint-disable-line no-undef
             })
             .catch((error) => {
               if (error.response && error.response.status === 500) {
@@ -202,6 +204,8 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
+      lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
+
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
@@ -265,12 +269,14 @@ function syncKinto(client, credentials) {
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
         console.error(error); // eslint-disable-line no-console
+        lastSyncTimestamp = null; // eslint-disable-line no-undef
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         }).then(() => collection.resetSyncStatus())
           .then(() => syncKinto(client, credentials));
       } else if (error.message.includes('flushed')) {
+        lastSyncTimestamp = null; // eslint-disable-line no-undef
         return collection.resetSyncStatus()
           .then(() => {
             return syncKinto(client, credentials);
@@ -299,6 +305,7 @@ function syncKinto(client, credentials) {
 
 function reconnectSync(credentials) {
   credentials.clear();
+  lastSyncTimestamp = null; // eslint-disable-line no-undef
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'reconnect'
   });
@@ -314,7 +321,6 @@ function retrieveNote(client) {
         sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
         client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
       });
-
       return list;
     });
 }
@@ -410,14 +416,22 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
   return promise;
 }
 
-function createNote(client, note) { // eslint-disable-line no-unused-vars
+function createNote(client, credentials, note) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create(note, { useRecordId: true });
+    .create(note, { useRecordId: true })
+    .then(() => {
+      return syncKinto(client, credentials);
+    });
 }
 
-function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+function deleteNote(client, credentials, id) { // eslint-disable-line no-unused-vars
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .delete(id)
+    .then(() => {
+      return syncKinto(client, credentials);
+    });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
