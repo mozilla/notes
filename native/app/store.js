@@ -13,7 +13,7 @@ const store = createStore(
   notesApp,
   applyMiddleware(
     storeState,
-    thunkMiddleware
+    thunkMiddleware,
   )
 );
 

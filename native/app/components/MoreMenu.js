@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  COLOR_NOTES_BLUE
+} from '../utils/constants';
 
 const UIManager = NativeModules.UIManager;
 
@@ -17,14 +20,14 @@ export default class ToolbarDropdown extends Component {
       () => {},
       (result, index) => {
         if (onPress) {
-          onPress({ action: 'menu', result, index });
+          onPress({action: 'menu', result, index});
         }
       },
     );
   };
 
   render() {
-    const labels = ['Delete', 'Share', 'This menu will only be in the editor'];
+    const labels = ['Delete'];
 
     return (
       <View style={{flexDirection: 'row'}}>
@@ -39,7 +42,7 @@ export default class ToolbarDropdown extends Component {
           <MaterialIcons
             name="more-vert"
             onPress={() => this.onMenuPressed(labels)}
-            style={{ marginRight: 10, color: 'white' }}
+            style={{ marginRight: 10, color: COLOR_NOTES_BLUE }}
             size={30}
           />
         </View>

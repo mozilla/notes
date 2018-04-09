@@ -91,7 +91,7 @@ export function reconnectSync() {
 export function createdNote(id, content, lastModified) {
   return { type: CREATE_NOTE, isSyncing: false };
 }
-export function createNote(content = '') {
+export function createNote(content = '', origin) {
 
   const id = uuid4();
 
@@ -100,6 +100,7 @@ export function createNote(content = '') {
     action: 'create-note',
     id,
     content,
+    origin,
     lastModified: new Date(),
     isSyncing: true
   });
@@ -118,9 +119,11 @@ export function createNote(content = '') {
 export function deletedNote(id) {
   return { type: DELETE_NOTE, id, isSyncing: false };
 }
-export function deleteNote(id) {
-  chrome.runtime.sendMessage({ action: 'delete-note', id });
-  return { type: DELETE_NOTE, id, isSyncing: true };
+
+export function deleteNote(id, origin) {
+
+  chrome.runtime.sendMessage({ action: 'delete-note', id, origin});
+
 }
 
 
@@ -156,7 +159,7 @@ export function exportHTML(content) {
   FileSaver.saveAs(data, exportFileName);
 
   chrome.runtime.sendMessage({
-    action: 'metrics-export-html'
+    action: 'metrics-export'
   });
   return { type: EXPORT_HTML, content };
 }

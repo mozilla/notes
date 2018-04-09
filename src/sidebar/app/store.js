@@ -15,7 +15,7 @@ const storeState = store => next => action => {
   // We send to background.js our current sync status used for metrics `cd10`
   chrome.runtime.sendMessage({
     action: 'redux',
-    sync: store.getState().sync
+    state: store.getState()
   });
 
   return next(action);
