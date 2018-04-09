@@ -39,7 +39,7 @@ class EditorPanel extends React.Component {
         return note.id === nextProps.state.sync.focusedNoteId;
       });
       this.props.dispatch(setFocusedNote(nextProps.state.sync.focusedNoteId));
-    } else if (!this.props.state.sync.isSyncing) {
+    } else if (!nextProps.state.sync.isSyncing) {
       this.note = nextProps.state.notes.find((note) => {
         return note.id === nextProps.state.sync.focusedNoteId;
       });
