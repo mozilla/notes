@@ -164,6 +164,7 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
  * caught more easily in testing. Since this application is
  * offline-first, sync failure should not be a failure for callers.
  */
+
 function syncKinto(client, credentials) {
   // Get credentials and lastmodified
   let collection, credential;
@@ -189,6 +190,7 @@ function syncKinto(client, credentials) {
             .sync({
               headers: {Authorization: `Bearer ${credential.access_token}`},
               strategy: 'manual',
+              lastModified: lastSyncTimestamp
             })
             .catch((error) => {
               if (error.response && error.response.status === 500) {
@@ -202,6 +204,8 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
+      lastSyncTimestamp = new Date().getTime();
+
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
@@ -299,6 +303,7 @@ function syncKinto(client, credentials) {
 
 function reconnectSync(credentials) {
   credentials.clear();
+  lastSyncTimestamp = null;
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'reconnect'
   });

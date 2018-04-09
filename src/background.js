@@ -18,6 +18,7 @@ let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {reso
 
 // Kinto sync and encryption
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
+let lastSyncTimestamp = null; // used by sync to load only changes from lastModified timestamp.
 
 // Analytics
 const analytics = new TestPilotGA({
@@ -108,6 +109,7 @@ function authenticate() {
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
     sendMetrics('login-success');
+    lastSyncTimestamp = null;
     const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
     const credentials = {
       access_token: loginDetails.access_token,
