@@ -95,14 +95,8 @@ class JWETransformer {
     const decoded = await decrypt(this.key, record.content);
     if (record.hasOwnProperty('last_modified')) {
       decoded.last_modified = record.last_modified;
+      decoded.lastModified = new Date(record.last_modified);
     }
-
-    // If note has no lastModified (like singleNote from v3), we use kinto last_modified value.
-    // kinto last_modified is a timestamp
-    if (!decoded.lastModified && decoded.last_modified) {
-      decoded.lastModified = new Date(decoded.last_modified);
-    }
-
 
     // _status: deleted records were deleted on a client, but
     // uploaded as an encrypted blob so we don't leak deletions.
@@ -304,19 +298,10 @@ function reconnectSync(credentials) {
   });
 }
 
-function retrieveNote(client) {
+function retrieveNotes(client) {
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .list({})
-    .then((list) => {
-      // We delete all notes retrieved from server and not properly deleted
-      Object.keys(deletedNotesStillOnServer).forEach((id) => {
-        sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
-        client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
-      });
-
-      return list;
-    });
+    .list();
 }
 
 /**
@@ -337,7 +322,7 @@ function retrieveNote(client) {
 function loadFromKinto(client, credentials) { // eslint-disable-line no-unused-vars
   return syncKinto(client, credentials)
     // Ignore failure of syncKinto by retrieving note even when promise rejected
-    .then(() => retrieveNote(client), () => retrieveNote(client))
+    .then(() => retrieveNotes(client), () => retrieveNotes(client))
     .then(result => {
       browser.runtime.sendMessage({
         action: 'kinto-loaded',
@@ -417,7 +402,9 @@ function createNote(client, note) { // eslint-disable-line no-unused-vars
 }
 
 function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .create({id, _status: "deleted"}, { useRecordId: true });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
