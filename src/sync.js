@@ -190,7 +190,7 @@ function syncKinto(client, credentials) {
             .sync({
               headers: {Authorization: `Bearer ${credential.access_token}`},
               strategy: 'manual',
-              lastModified: lastSyncTimestamp
+              lastModified: lastSyncTimestamp // eslint-disable-line no-undef
             })
             .catch((error) => {
               if (error.response && error.response.status === 500) {
@@ -204,7 +204,7 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
-      lastSyncTimestamp = new Date().getTime();
+      lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
 
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
@@ -303,7 +303,7 @@ function syncKinto(client, credentials) {
 
 function reconnectSync(credentials) {
   credentials.clear();
-  lastSyncTimestamp = null;
+  lastSyncTimestamp = null; // eslint-disable-line no-undef
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'reconnect'
   });
@@ -311,7 +311,7 @@ function reconnectSync(credentials) {
 
 function retrieveNote(client) {
   return client
-    .collection('notes', { idSchema: notesIdSchema, filters: {_status: ["created", "updated", "synced"]}})
+    .collection('notes', { idSchema: notesIdSchema })
     .list({})
     .then((list) => {
       // We delete all notes retrieved from server and not properly deleted

@@ -96,7 +96,7 @@ function sync(sync = {}, action) {
     case CREATE_NOTE:
       return Object.assign({}, sync, {
         welcomePage: false,
-        isSyncing: action.isSyncing ? false : true
+        isSyncing: !action.isSyncing
       });
     case ERROR:
       return Object.assign({}, sync, {

@@ -18,7 +18,8 @@ let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {reso
 
 // Kinto sync and encryption
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
-let lastSyncTimestamp = null; // used by sync to load only changes from lastModified timestamp.
+// Used by sync to load only changes from lastModified timestamp.
+let lastSyncTimestamp = null; // eslint-disable-line no-unused-vars
 
 // Analytics
 const analytics = new TestPilotGA({
