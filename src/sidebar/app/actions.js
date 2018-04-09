@@ -121,9 +121,8 @@ export function deletedNote(id) {
 }
 
 export function deleteNote(id, origin) {
-
   chrome.runtime.sendMessage({ action: 'delete-note', id, origin});
-
+  return { type: DELETE_NOTE, id, isSyncing: true };
 }
 
 
