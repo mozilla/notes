@@ -160,6 +160,7 @@ describe('Authorization', function() {
       collection = client.collection('notes', {
         idSchema: notesIdSchema
       });
+
     });
 
     afterEach(() => {
@@ -193,11 +194,17 @@ describe('Authorization', function() {
           }
         }]
       });
+
       // Then it will try to pull changes that happened while it was
       // pushing -- see e.g. https://github.com/Kinto/kinto.js/issues/555
-      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified&_since=1234$'), {
+      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=[0-9]+'), {
         data: []
       });
+
+      fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified'), {
+        data: []
+      });
+
       decryptMock.withArgs(staticCredential.key, "encrypted resolution").resolves({
         id: "singleNote",
         content: "<p>Resolution</p>",
@@ -226,7 +233,7 @@ describe('Authorization', function() {
     it('should handle old keys correctly', () => {
       // Setup record with older kid that will be fetched after the
       // first successful sync.
-      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=1234$'), {
+      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=[0-9]+'), {
         data: [{
           id: "singleNote",
           content: "encrypted content",
@@ -255,8 +262,15 @@ describe('Authorization', function() {
           }
         }]
       });
+
       // And again, try to fetch stuff apart from what we just pushed.
       fetchMock.mock(new RegExp(recordsPath + '\\?exclude_id=singleNote&_sort=-last_modified$'), {
+        body: {
+          data: []
+        },
+      });
+
+      fetchMock.mock(new RegExp(recordsPath + '\\?_sort=-last_modified&_since=[0-9]+$'), {
         body: {
           data: []
         },

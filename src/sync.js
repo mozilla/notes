@@ -269,12 +269,14 @@ function syncKinto(client, credentials) {
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
         console.error(error); // eslint-disable-line no-console
+        lastSyncTimestamp = null;
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {
           headers: { Authorization: `Bearer ${credential.access_token}` }
         }).then(() => collection.resetSyncStatus())
           .then(() => syncKinto(client, credentials));
       } else if (error.message.includes('flushed')) {
+        lastSyncTimestamp = null;
         return collection.resetSyncStatus()
           .then(() => {
             return syncKinto(client, credentials);
