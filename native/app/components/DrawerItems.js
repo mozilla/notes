@@ -58,11 +58,13 @@ class DrawerItems extends React.Component {
   componentWillMount() {
     return fxaUtils.fxaGetCredential().then((loginDetails) => {
       const profile = loginDetails.profile;
-      this.setState({
-        profileAvatar: profile.avatar,
-        profileEmail: profile.email,
-        profileDisplayName: profile.displayName,
-      });
+      if (profile && profile.avatar) {
+        this.setState({
+          profileAvatar: profile.avatar,
+          profileEmail: profile.email,
+          profileDisplayName: profile.displayName,
+        });
+      }
     });
   }
 
