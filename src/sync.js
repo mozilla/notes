@@ -95,14 +95,8 @@ class JWETransformer {
     const decoded = await decrypt(this.key, record.content);
     if (record.hasOwnProperty('last_modified')) {
       decoded.last_modified = record.last_modified;
+      decoded.lastModified = new Date(record.last_modified);
     }
-
-    // If note has no lastModified (like singleNote from v3), we use kinto last_modified value.
-    // kinto last_modified is a timestamp
-    if (!decoded.lastModified && decoded.last_modified) {
-      decoded.lastModified = new Date(decoded.last_modified);
-    }
-
 
     // _status: deleted records were deleted on a client, but
     // uploaded as an encrypted blob so we don't leak deletions.
