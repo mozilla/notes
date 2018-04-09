@@ -1,20 +1,43 @@
-import React from 'react';
-import { View, ListView, Text, StyleSheet } from 'react-native';
-import { FAB } from 'react-native-paper';
-import { connect } from 'react-redux';
-
+import fxaUtils from '../vendor/fxa-utils';
+import kintoClient from '../vendor/kinto-client';
 import ListItem from './ListItem';
 import PropTypes from 'prop-types';
-import {
-  COLOR_NOTES_BLUE,
-  COLOR_NOTES_WHITE
-} from '../utils/constants';
+import React from 'react';
+import store from "../store";
+import sync from "../sync";
+import { connect } from 'react-redux';
+import { FAB } from 'react-native-paper';
+import { View, ListView, Text, StyleSheet, RefreshControl } from 'react-native';
+import { COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { kintoLoad } from "../actions";
 
 class ListPanel extends React.Component {
-
   constructor(props) {
     super(props);
     this.props = props;
+    this.state = {
+      refreshing: false
+    }
+  }
+
+  _onRefresh() {
+    this.setState({refreshing: true});
+
+    return fxaUtils.fxaGetCredential().then((loginDetails) => {
+      return sync.loadFromKinto(kintoClient, loginDetails);
+    }).then(() => {
+      this.setState({refreshing: false});
+    });
+
+  }
+
+  componentWillMount() {
+    // TODO: Refactor this for offline view
+    sync.retrieveNote(kintoClient).then(result => {
+      store.dispatch(kintoLoad(result && result.data));
+    }).catch((e) => {
+      store.dispatch(kintoLoad());
+    });
   }
 
   render() {
@@ -51,13 +74,20 @@ class ListPanel extends React.Component {
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
       const dataSource = ds.cloneWithRows(this.props.state.notes) || [];
       return (
-        <View>
           <ListView
             dataSource={dataSource}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                colors={[COLOR_NOTES_BLUE]}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
             renderRow={(note, sectionId, rowId) => {
               return (
                 <ListItem
                   content={note.content}
+                  lastModified={note.lastModified}
                   id={note.id}
                   rowId={rowId}
                   navigate={navigate}
@@ -65,7 +95,6 @@ class ListPanel extends React.Component {
               )
             }}
           />
-        </View>
       )
     }
   }

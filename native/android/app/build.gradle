@@ -132,7 +132,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            /** signingConfig signingConfigs.release */
+            // signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -151,6 +151,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-sqlite-2')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-sentry')
     compile project(':react-native-vector-icons')

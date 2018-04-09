@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FROM_LIST_VIEW, FROM_IN_NOTE } from '../utils/constants';
 
 import Header from './Header';
 import Editor from './Editor';
@@ -14,6 +15,8 @@ class EditorPanel extends React.Component {
     super(props);
     this.props = props;
 
+    this.origin = FROM_LIST_VIEW; // used while sending 'new-note' metric
+
     this.note = {}; // Note should be reference to state.
     if (props.match.params.id) {
       this.note = props.state.notes.find((note) => {
@@ -23,15 +26,10 @@ class EditorPanel extends React.Component {
     }
 
     this.onNewNoteEvent = () => {
+      this.origin = FROM_IN_NOTE;
       this.props.dispatch(setFocusedNote());
       props.history.push('/note');
     };
-  }
-
-  componentDidMount() {
-    // Create a connection with the background script to handle open and
-    // close events.
-    browser.runtime.connect();
   }
 
   // This is triggered when redux update state.
@@ -55,7 +53,7 @@ class EditorPanel extends React.Component {
   render() {
     return [
       <Header key="header" history={this.props.history} note={this.note} onNewNoteEvent={this.onNewNoteEvent} />,
-      <Editor key="editor" history={this.props.history} note={this.note} />
+      <Editor key="editor" history={this.props.history} note={this.note} origin={this.origin} />
     ];
   }
 }

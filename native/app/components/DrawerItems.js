@@ -1,19 +1,14 @@
 import * as Keychain from 'react-native-keychain';
 import * as React from 'react';
+import fxaUtils from "../vendor/fxa-utils";
+import store from "../store";
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { Title, Text } from 'react-native-paper';
 import { View, StyleSheet, Image, Linking } from 'react-native';
-import {
-  DrawerItem,
-  DrawerSection,
-  Switch,
-  TouchableRipple,
-  Paragraph,
-  Colors,
-} from 'react-native-paper';
-import {trackEvent} from "../utils/metrics";
 import {COLOR_NOTES_BLUE} from "../utils/constants";
+import {DrawerItem, DrawerSection, Colors } from 'react-native-paper';
+import {trackEvent} from "../utils/metrics";
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -27,6 +22,9 @@ class DrawerItems extends React.Component {
   state = {
     open: false,
     drawerItemIndex: 0,
+    profileAvatar: null,
+    profileEmail: null,
+    profileDisplayName: null,
   };
 
   _setDrawerItem = (index, key) => {
@@ -57,18 +55,31 @@ class DrawerItems extends React.Component {
     }
   };
 
+  componentWillMount() {
+    return fxaUtils.fxaGetCredential().then((loginDetails) => {
+      const profile = loginDetails.profile;
+      this.setState({
+        profileAvatar: profile.avatar,
+        profileEmail: profile.email,
+        profileDisplayName: profile.displayName,
+      });
+    });
+  }
+
   render() {
     return (
       <View style={[styles.drawerContent]}>
-        <View style={{ paddingTop: 55, backgroundColor: COLOR_NOTES_BLUE }}>
+        <View style={{ paddingTop: 55, paddingLeft: 10, paddingBottom: 10, backgroundColor: COLOR_NOTES_BLUE }}>
         <Image
           style={{width: 75, height: 75 }}
           borderRadius={100}
+          borderColor='#FFFFFF'
+          borderWidth={2}
           resizeMode='cover'
-          source={require('../assets/notes-1024.png')}
+          source={{uri: this.state.profileAvatar}}
         />
-        <Title>Display Name</Title>
-        <Text>vlad2@restmail.net</Text>
+        <Title style={{ color: '#FFFFFF' }}>{this.state.profileDisplayName}</Title>
+        <Text style={{ color: '#FFFFFF' }}>{this.state.profileEmail}</Text>
         </View>
         <DrawerSection>
           {DrawerItemsData.map((props, index) => (
