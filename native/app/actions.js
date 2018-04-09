@@ -24,6 +24,10 @@ export function kintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
+export function authenticate(email) {
+  return { type: SYNC_AUTHENTICATED, email };
+}
+
 export function createNote(content = '') {
   const id = uuid4();
   // Return id to callback using promises
