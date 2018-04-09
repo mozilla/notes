@@ -3,6 +3,7 @@ package com.notes;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import dog.craftz.sqlite_2.RNSqlite2Package;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import io.sentry.RNSentryPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSqlite2Package(),
             new GoogleAnalyticsBridgePackage(),
             new RNSentryPackage(MainApplication.this),
             new VectorIconsPackage(),

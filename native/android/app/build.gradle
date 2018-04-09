@@ -151,6 +151,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-sqlite-2')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-sentry')
     compile project(':react-native-vector-icons')
