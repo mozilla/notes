@@ -2,43 +2,40 @@ import fxaUtils from '../vendor/fxa-utils';
 import kintoClient from '../vendor/kinto-client';
 import PropTypes from 'prop-types';
 import React from 'react';
+import store from '../store';
 import sync from '../sync';
+import { authenticate } from '../actions';
 import { Button } from 'react-native-paper';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 import { trackEvent } from '../utils/metrics';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
-const FXA_OAUTH_SERVER = 'https://oauth-featurebox.dev.lcip.org/v1';
-const OAUTH_CLIENT_ID = 'b7d74070a481bc11';
-const OAUTH_REDIRECT = 'https://mozilla-lockbox.github.io/fxa/ios-redirect.html';
-const OAUTH_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
-
-const refreshConfig = {
-  serviceConfiguration: {
-    authorizationEndpoint: `${FXA_OAUTH_SERVER}/authorization`,
-    tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
-  },
-  clientId: OAUTH_CLIENT_ID,
-  redirectUrl: OAUTH_REDIRECT,
-  scopes: OAUTH_SCOPES
-};
 
 class LoginPanel extends React.Component {
-  onAuth (options={}) {
+  onAuth () {
     this.props.navigation.navigate('LoadingPanel');
 
     return Promise.resolve().then(() => {
       return fxaUtils.launchOAuthKeyFlow();
     }).then((loginDetails) => {
       trackEvent('login-success');
+      store.dispatch(authenticate(loginDetails.profile.email));
 
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.SHORT);
       return sync.loadFromKinto(kintoClient, loginDetails);
     }).then(() => {
-      this.props.navigation.navigate('ListPanel');
+      // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
+      this.props.navigation.dispatch(NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
+      }));
     }).catch((err) => {
-      this.props.navigation.navigate('LoginPanel');
+      this.props.navigation.dispatch(NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
+      }));
       console.log('onAuth', err);
       ToastAndroid.show('Something went wrong: ' + err, ToastAndroid.SHORT);
       trackEvent('login-failed');
