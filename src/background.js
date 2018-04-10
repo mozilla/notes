@@ -1,12 +1,22 @@
 /**
  * Google Analytics / TestPilot Metrics
  */
+//
+// export const KINTO_SERVER_URL = 'http://kinto-notes5.lcip.org/v1';
+// export const FXA_PROFILE_SERVER = 'https://featurebox.dev.lcip.org/profile/v1';
+// export const FXA_OAUTH_SERVER = 'https://oauth-featurebox.dev.lcip.org/v1';
+// export const FXA_OAUTH_CLIENT_ID = 'b7d74070a481bc11';
+// export const FXA_OAUTH_REDIRECT = 'https://mozilla-lockbox.github.io/fxa/ios-redirect.html';
+// export const FXA_OAUTH_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
+// export const FXA_OAUTH_ACCESS_TYPE = 'offline';
+
+
 const TRACKING_ID = 'UA-35433268-79';
-const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
+const KINTO_SERVER = 'http://kinto-notes5.lcip.org/v1';
 // XXX: Read this from Kinto fxa-params
-const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
-const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
-const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
+const FXA_CLIENT_ID = 'c6d74070a481bc10';
+const FXA_OAUTH_SERVER = 'https://oauth-featurebox.dev.lcip.org/v1';
+const FXA_PROFILE_SERVER = 'https://featurebox.dev.lcip.org/profile/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
 let closeUI = null;
@@ -112,7 +122,9 @@ function fetchProfile(credentials) {
 }
 
 function authenticate() {
-  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
+  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils({
+    oauthServer: FXA_OAUTH_SERVER
+  });
     chrome.runtime.sendMessage({
       action: 'sync-opening'
     });
