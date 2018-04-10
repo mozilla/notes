@@ -51,7 +51,8 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 ## Design
 
 * Design for reference: https://mozilla.invisionapp.com/share/6VBUYHMRB#/281041484_Firefox_Notes
+* Mobile design for reference: https://mozilla.invisionapp.com/share/BTGS26C2FE4
 
 ## Screenshot
 
-![Notes v3](https://i.imgur.com/Sa9oaTK.png)
+![Notes v4](https://i.imgur.com/kOuI2uG.png)
