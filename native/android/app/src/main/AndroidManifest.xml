@@ -39,8 +39,8 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                      android:host="mozilla-lockbox.github.io"
-                      android:path="/fxa/ios-redirect.html"/>
+                      android:host="mozilla.github.io"
+                      android:path="/notes/fxa/android-redirect.html"/>
             </intent-filter>
         </activity>
     </application>

@@ -1,9 +1,9 @@
 // Servers
-export const KINTO_SERVER_URL = 'http://kinto-notes5.lcip.org/v1';
-export const FXA_PROFILE_SERVER = 'https://featurebox.dev.lcip.org/profile/v1';
-export const FXA_OAUTH_SERVER = 'https://oauth-featurebox.dev.lcip.org/v1';
-export const FXA_OAUTH_CLIENT_ID = 'b7d74070a481bc11';
-export const FXA_OAUTH_REDIRECT = 'https://mozilla-lockbox.github.io/fxa/ios-redirect.html';
+export const KINTO_SERVER_URL = 'https://testpilot.settings.services.mozilla.com/v1';
+export const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
+export const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
+export const FXA_OAUTH_CLIENT_ID = '7f368c6886429f19';
+export const FXA_OAUTH_REDIRECT = 'https://mozilla.github.io/notes/fxa/android-redirect.html';
 export const FXA_OAUTH_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 export const FXA_OAUTH_ACCESS_TYPE = 'offline';
 
