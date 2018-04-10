@@ -4,8 +4,6 @@ A notepad for Firefox
 
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
-[![Waffle.io - Bug Triage](https://badge.waffle.io/mozilla/notes.svg?columns=all)](https://waffle.io/mozilla/notes)
-
 > Discussion Forum: [https://discourse.mozilla.org/c/test-pilot/notes](https://discourse.mozilla.org/c/test-pilot/notes)
 
 
@@ -33,7 +31,6 @@ You can also open the `test/index.html` file in your browser to run the automate
 
 | Permission      | Description                                                                    |
 |-----------------|--------------------------------------------------------------------------------|
-| `downloads`     | Used for the "Export Note to HTML" feature. Exports note into Downloads.       |
 | `contextMenus`  | Used for "Send to Note" feature, sends text from pages to the Notes sidebar.   |
 | `storage`       | Storage for Notes.                                                             |
 | `identity`      | OAuth login to Firefox Accounts to sync your notes.                            |

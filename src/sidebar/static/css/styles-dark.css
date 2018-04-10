@@ -1,5 +1,17 @@
+:root {
+  --main-bg-color: hsla(221deg, 14%, 25%, 1);
+  --main-offset-bg-color: hsla(221deg, 14%, 24%, 1);
+  --main-bg-hover-color: hsla(221deg, 14%, 22%, 1);
+  --main-bg-focus-color: hsla(221deg, 14%, 19%, 1);
+  --main-bg-active-color: hsla(221deg, 14%, 19%, 1);
+
+  --primary-font-color: hsla(221deg, 14%, 90%, 1);
+  --secondary-font-color: hsla(221deg, 14%, 60%, 1);
+  --border-color: hsla(221deg, 14%, 45%, 1);
+}
+
 body {
-  background-color: #393f4c;
+  background-color: var(--main-bg-color);
 }
 
 #notes .ck-toolbar {
@@ -19,13 +31,20 @@ body {
   fill: #000000 !important;
 }
 
-.savingLayout #enable-sync:hover {
+#enable-sync:hover {
   background-color: #323744;
 }
 
-#give-feedback-button svg path {
-  fill: #e6e6e6 !important;
+footer button {
+  background: none !important;
+  color: #e6e6e6 !important;
 }
+footer button svg path { fill: #e6e6e6 !important; }
+footer.warning button.fullWidth {
+  background-color: rgb(255, 236, 173);
+  color: black !important;
+}
+footer.warning button svg path { fill: black !important; }
 
 .photon-menu > button svg path {
   fill: #e6e6e6 !important;
@@ -35,7 +54,17 @@ body {
   fill: black !important;
 }
 
-.photon-menu #context-menu-button {
+.photon-menu ul button {
+  color: black !important;
+}
+
+.photon-menu ul button:hover,
+.photon-menu ul button:active,
+.photon-menu ul button:focus {
+  background: rgba(128, 128, 128, 0.2) !important;
+}
+
+.photon-menu .iconBtn {
   color: #e6e6e6 !important;
 }
 
@@ -45,64 +74,42 @@ body {
 }
 
 #footer-buttons.savingLayout div:first-child.isClickable button:focus,
-.photon-menu #context-menu-button:focus {
+.photon-menu .iconBtn:focus {
   background-color: #272b35;
 }
 #footer-buttons.savingLayout div:first-child.isClickable button:hover,
-.photon-menu #context-menu-button:hover {
+.photon-menu .iconBtn:hover {
   background-color: #323744;
 }
 #footer-buttons.savingLayout div:first-child.isClickable button:active,
-.photon-menu #context-menu-button:active {
+.photon-menu .iconBtn:active {
   background-color: #3d4352;
 }
 
-/*
-.photon-menu .wrapper {
-  border: solid 1px rgba(12, 12, 13, 0.2);
-}
-
-.photon-menu .wrapper ul {
-  background-color: #393f4c;
-  border: solid 1px #393f4c;
-}
-
-.photon-menu .wrapper ul:after { border-color: #393f4c transparent !important; }
-.photon-menu .wrapper ul:before { border-color: #323744 transparent !important; }*/
-
-.warning #context-menu-button:active,
-.warning #context-menu-button:hover,
-.warning #context-menu-button:focus {
-  background-color: rgba(0, 0, 0, .1) !important;
-}
-
-.warning #context-menu-button {
-  background-color: rgb(255, 236, 173);
-}
-
-#syncing-indicator {
-  background: none !important;
-  color: inherit !important;
-}
-
-.warning #syncing-indicator,
 #footer-buttons.warning div:first-child.isClickable button {
   color: black !important;
 }
+/* End Dropdown menu */
 
+/* ck-editor */
 ::-moz-selection {
   background-color: #5675b9;
   color: #fff;
 }
 
 .ck-editor__editable {
-  background-color: #393f4c;
-  color: #e6e6e6;
+  background-color: #272b35;
+  color: var(--primary-font-color);
 }
 
-#notes .ck-toolbar * {
+#notes .ck-editor__top {
+  border-color: var(--border-color);
+  background: var(--main-bg-color);
+}
+
+#notes .ck-toolbar *, #notes .ck-toolbar {
   color: #e6e6e6;
-  background: #272b35;
+  background: var(--main-bg-color);
 }
 
 #notes .ck-toolbar button.ck-on *,
@@ -170,3 +177,53 @@ body {
   background-color: #008080;
 }
 
+.listView ul li button p,
+.listView ul li button p span { color: var(--secondary-font-color); }
+
+.listView ul li button p strong { color: var(--primary-font-color); }
+
+header,
+footer,
+.btn.fullWidth.borderBottom {
+  background: var(--main-bg-color) !important;
+  color: var(--primary-font-color);
+  border-color: var(--border-color);
+}
+
+footer { background: none !important; }
+
+header button.iconBtn svg path,
+footer button.iconBtn svg path {
+  fill: var(--primary-font-color) !important;
+}
+
+.btn.fullWidth.borderBottom svg path { fill: var(--primary-font-color); }
+
+.btn.fullWidth.borderBottom:hover,
+footer#footer-buttons button.fullWidth:hover { background: var(--main-bg-hover-color) !important; }
+
+.btn.fullWidth.borderBottom:focus,
+footer#footer-buttons:not(.warning) button.fullWidth:focus { background: var(--main-bg-focus-color) !important; }
+
+.btn.fullWidth.borderBottom:active,
+footer#footer-buttons button.fullWidth:active { background: var(--main-bg-active-color) !important; }
+
+/* Change syncing footer text to secondary color during and post syncing  */
+footer#footer-buttons.animateSyncIcon div.btnWrapper,
+footer#footer-buttons div.btnWrapper p { color: var(--secondary-font-color); }
+/* Change syncing footer icon color to blue when syncing */
+footer#footer-buttons.animateSyncIcon button#enable-sync svg path { fill: var(--secondary-font-color) !important; }
+
+footer#footer-buttons.warning {
+  background-color: rgb(255, 236, 173) !important;
+  color: black;
+}
+
+footer#footer-buttons.warning button.fullWidth:hover,
+footer#footer-buttons.warning button.fullWidth:active {
+  background: none !important;
+}
+
+button.iconBtn:hover { background: rgba(12, 12, 13, 0.1) !important; }
+button.iconBtn:focus { background: none !important; }
+button.iconBtn:active { background: rgba(12, 12, 13, 0.2) !important; }

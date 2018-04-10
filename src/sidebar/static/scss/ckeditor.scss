@@ -3,21 +3,21 @@
 */
 
 .editorWrapper {
-  display: flex;
-  flex: calc(100% - 40px);
+  flex: 100px;
   flex-direction: column;
   flex-grow: 1;
   margin: 0;
   padding: 0;
   overflow: hidden;
   position: relative;
-
 }
 
 .ck-editor {
   display: flex;
-  flex-direction: column;
+  flex: 100px;
   height: 100%;
+  flex-grow: 1;
+  flex-direction: column;
   margin: 0;
   overflow: hidden;
   padding: 0;
@@ -30,10 +30,11 @@
   }
 
    .ck-editor__top {
-    flex: 40px;
-    flex-direction: column;
-    height: 40px;
     border-bottom: 1px solid #ccc;
+    flex-direction: column;
+    flex: 36px;
+    height: 36px;
+    width: 40em; // max-width of Firefox sidebar is 36em
   }
 
   .ck-editor__main {

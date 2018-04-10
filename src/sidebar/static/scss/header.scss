@@ -1,0 +1,52 @@
+
+/**
+header Styles
+ */
+
+header {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: space-between;
+  // align-items: stretch;
+
+  width: 100%;
+  flex: 40px;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  color: black;
+  font-size: 13px;
+  background: rgb(247, 247, 247);
+
+  box-sizing: border-box;
+
+  position: relative;
+  border-bottom: 1px solid #d7d7db;
+
+  padding-left: 8px;
+  padding-right: 8px;
+
+  p { // Text between sync button and text menu
+    flex: 100%;
+    margin: 0px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    display: block;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0px 6px 0 6px;
+    text-align: center;
+  }
+
+  button, a {
+    transition: background 50ms;
+    &:hover { background-color: rgba(12, 12, 13, 0.1); }
+    &:active { background-color: rgba(12, 12, 13, 0.2); }
+  }
+}
+
