@@ -28,7 +28,7 @@ class SplashPanel extends React.Component {
           actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
         }));
       }
-    }).catch((e) => console.error(e));
+    });
   }
 
   render() {
