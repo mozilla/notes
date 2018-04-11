@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
+import { authenticate } from '../actions';
+
 class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
-        store.dispatch(
+        this.props.navigation.dispatch(
           authenticate(
             loginDetails.profile.email,
             loginDetails.profile.avatar,
@@ -26,7 +28,7 @@ class SplashPanel extends React.Component {
           actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
         }));
       }
-    });
+    }).catch((e) => console.error(e));
   }
 
   render() {
