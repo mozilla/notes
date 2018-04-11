@@ -17,6 +17,9 @@ import {
 } from './utils/constants';
 
 function sync(sync = {}, action) {
+
+  console.log(action);
+
   switch (action.type) {
     case SYNC_AUTHENTICATED:
       return Object.assign({}, sync, {

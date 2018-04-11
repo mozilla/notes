@@ -1,6 +1,7 @@
 import * as Keychain from 'react-native-keychain';
 import * as React from 'react';
 import fxaUtils from "../vendor/fxa-utils";
+import PropTypes from 'prop-types';
 import store from "../store";
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -107,9 +108,9 @@ function mapStateToProps(state) {
   };
 }
 
-// DrawerItems.propTypes = {
-//   state: PropTypes.object.isRequired,
-//   dispatch: PropTypes.func.isRequired
-// };
+DrawerItems.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
 
 export default connect(mapStateToProps)(DrawerItems)

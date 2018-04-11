@@ -11,7 +11,7 @@ class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
-        this.props.navigation.dispatch(
+        this.props.dispatch(
           authenticate(
             loginDetails.profile.email,
             loginDetails.profile.avatar,

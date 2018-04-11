@@ -21,7 +21,7 @@ class LoginPanel extends React.Component {
       return fxaUtils.launchOAuthKeyFlow();
     }).then((loginDetails) => {
       trackEvent('login-success');
-      store.dispatch(
+      this.props.dispatch(
         authenticate(
           loginDetails.profile.email,
           loginDetails.profile.avatar,
