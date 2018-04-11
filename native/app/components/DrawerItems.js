@@ -1,6 +1,7 @@
 import * as Keychain from 'react-native-keychain';
 import * as React from 'react';
 import fxaUtils from "../vendor/fxa-utils";
+import PropTypes from 'prop-types';
 import store from "../store";
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -19,12 +20,15 @@ const DrawerItemsData = [
 ];
 
 class DrawerItems extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.props = props;
+  }
+
   state = {
     open: false,
-    drawerItemIndex: 0,
-    profileAvatar: null,
-    profileEmail: null,
-    profileDisplayName: null,
+    drawerItemIndex: 0
   };
 
   _setDrawerItem = (index, key) => {
@@ -56,16 +60,6 @@ class DrawerItems extends React.Component {
   };
 
   componentWillMount() {
-    return fxaUtils.fxaGetCredential().then((loginDetails) => {
-      const profile = loginDetails.profile;
-      if (profile && profile.avatar) {
-        this.setState({
-          profileAvatar: profile.avatar,
-          profileEmail: profile.email,
-          profileDisplayName: profile.displayName,
-        });
-      }
-    });
   }
 
   render() {
@@ -78,10 +72,10 @@ class DrawerItems extends React.Component {
           borderColor='#FFFFFF'
           borderWidth={2}
           resizeMode='cover'
-          source={{uri: this.state.profileAvatar}}
+          source={{uri: this.props.state.sync.avatar}}
         />
-        <Title style={{ color: '#FFFFFF' }}>{this.state.profileDisplayName}</Title>
-        <Text style={{ color: '#FFFFFF' }}>{this.state.profileEmail}</Text>
+        <Title style={{ color: '#FFFFFF' }}>{this.props.state.sync.displayName}</Title>
+        <Text style={{ color: '#FFFFFF' }}>{this.props.state.sync.email}</Text>
         </View>
         <DrawerSection>
           {DrawerItemsData.map((props, index) => (
@@ -114,9 +108,9 @@ function mapStateToProps(state) {
   };
 }
 
-// DrawerItems.propTypes = {
-//   state: PropTypes.object.isRequired,
-//   dispatch: PropTypes.func.isRequired
-// };
+DrawerItems.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
 
 export default connect(mapStateToProps)(DrawerItems)

@@ -20,10 +20,14 @@ function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
       return Object.assign({}, sync, {
+        // user profile
+        email: action.email,
+        avatar: action.avatar,
+        displayName: action.displayName,
+        // sync state
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
-        email: action.email,
         lastSynced: new Date(),
         isSyncing: true,
         error: null
@@ -31,6 +35,8 @@ function sync(sync = {}, action) {
     case DISCONNECTED:
       return Object.assign({}, sync, {
         email: null,
+        avatar: null,
+        displayName: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
@@ -52,6 +58,8 @@ function sync(sync = {}, action) {
     case RECONNECT_SYNC:
       return Object.assign({}, sync, {
         email: null,
+        avatar: null,
+        displayName: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,

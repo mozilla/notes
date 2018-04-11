@@ -5,10 +5,19 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
+import { authenticate } from '../actions';
+
 class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
+        this.props.dispatch(
+          authenticate(
+            loginDetails.profile.email,
+            loginDetails.profile.avatar,
+            loginDetails.profile.displayName
+          )
+        );
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
