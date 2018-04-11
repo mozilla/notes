@@ -24,8 +24,8 @@ export function kintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
-export function authenticate(email) {
-  return { type: SYNC_AUTHENTICATED, email };
+export function authenticate(email, avatar, displayName) {
+  return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
 }
 
 export function createNote(content = '') {

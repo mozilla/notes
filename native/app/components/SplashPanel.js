@@ -9,6 +9,13 @@ class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
+        store.dispatch(
+          authenticate(
+            loginDetails.profile.email,
+            loginDetails.profile.avatar,
+            loginDetails.profile.displayName
+          )
+        );
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
