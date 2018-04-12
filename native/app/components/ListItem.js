@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: 2,
+    paddingLeft: 4,
     paddingRight: 10
   },
   title: {
