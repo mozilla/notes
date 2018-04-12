@@ -1,20 +1,17 @@
 import * as Keychain from 'react-native-keychain';
 import * as React from 'react';
-import fxaUtils from "../vendor/fxa-utils";
 import PropTypes from 'prop-types';
-import store from "../store";
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { Title, Text, TouchableRipple } from 'react-native-paper';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, ScrollView, StyleSheet, Image, Linking, Modal } from 'react-native';
 
-import {COLOR_NOTES_BLUE} from "../utils/constants";
-import {DrawerItem, DrawerSection, Colors } from 'react-native-paper';
-import {trackEvent} from "../utils/metrics";
-
-
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { COLOR_NOTES_BLUE } from "../utils/constants";
+import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
+import { trackEvent } from "../utils/metrics";
+import fxaUtils from "../vendor/fxa-utils";
+import store from "../store";
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -27,7 +24,7 @@ const DrawerItemsData = [
       return Linking.openURL(SURVEY_PATH);
     }
   },
-   {
+  {
     label : 'Log out',
     action: () => {
       function navigateToLogin () {
@@ -42,15 +39,10 @@ const DrawerItemsData = [
 
       return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
     }
-  },
+  }
 ];
 
 class DrawerItems extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.props = props;
-  }
 
   render() {
     return (
@@ -69,13 +61,13 @@ class DrawerItems extends React.Component {
         </View>
         <ScrollView style={styles.drawerSection}>
           <DrawerSection>
-            {DrawerItemsData.map((props, index) => (
+            {DrawerItemsData.map((item, index) => (
               <DrawerItem
                 key={index}
-                label={ props.label }
+                label={ item.label }
                 style={{ paddingLeft: 14 }}
-                // active={this.state.drawerItemIndex === props}
-                onPress={() => props.action()}
+                // active={this.state.drawerItemIndex === item}
+                onPress={() => item.action()}
               />
             ))}
           </DrawerSection>
