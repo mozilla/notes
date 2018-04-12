@@ -77,7 +77,9 @@ export default class ListItem extends React.Component {
           </Text>
           <View style={ styles.content }>
             <Text numberOfLines={1} style={styles.title}>{firstLine}</Text>
-            <Text numberOfLines={1} style={styles.subtitle}>{secondLine}</Text>
+            { styles.subtitle ?
+              <Text numberOfLines={1} style={styles.subtitle}>{secondLine}</Text>
+              : '' }
           </View>
           <Text style={styles.time}>{formatLastModified(lastModified)}</Text>
         </View>
