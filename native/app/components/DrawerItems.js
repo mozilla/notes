@@ -18,37 +18,18 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
+
+// DrawerItemsData store our drawer button list
 const DrawerItemsData = [
-  { label: 'Give Feedback', key: 0 },
-  { label: 'Log out', key: 1 },
-];
-
-class DrawerItems extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.props = props;
-  }
-
-  state = {
-    open: false,
-    drawerItemIndex: 0
-  };
-
-  _setDrawerItem = (index, key) => {
-    const routeName = this.props.navigation.state.routeName;
-
-    this.setState({ drawerItemIndex: index });
-    // TODO: Refactor this to use something else other than keys?
-    // if (key === 0) {
-    //   return this.props.navigation.navigate('DrawerClose');
-    // }
-
-    if (key === 0) {
+  {
+    label  : 'Give Feedback',
+    action : () => {
       return Linking.openURL(SURVEY_PATH);
     }
-
-    if (key === 1) {
+  },
+   {
+    label : 'Log out',
+    action: () => {
       function navigateToLogin () {
         // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
         const resetAction = NavigationActions.reset({
@@ -61,9 +42,14 @@ class DrawerItems extends React.Component {
 
       return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
     }
-  };
+  },
+];
 
-  componentWillMount() {
+class DrawerItems extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.props = props;
   }
 
   render() {
@@ -85,12 +71,11 @@ class DrawerItems extends React.Component {
           <DrawerSection>
             {DrawerItemsData.map((props, index) => (
               <DrawerItem
-                {...props}
+                key={index}
+                label={ props.label }
                 style={{ paddingLeft: 14 }}
-                key={props.key}
-                color={props.key === 3 ? Colors.tealA200 : undefined}
-                //active={this.state.drawerItemIndex === index}
-                onPress={() => this._setDrawerItem(index, props.key)}
+                // active={this.state.drawerItemIndex === props}
+                onPress={() => props.action()}
               />
             ))}
           </DrawerSection>
@@ -133,9 +118,6 @@ const styles = StyleSheet.create({
     paddingRight: 10
   }
 });
-
-// export default withTheme(DrawerItems);
-
 
 function mapStateToProps(state) {
   return {
