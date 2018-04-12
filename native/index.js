@@ -34,8 +34,15 @@ const appMainNavOptions = ({ navigation }) => {
   return {
     header: (
       <Toolbar style={styles.toolbar}>
-        <ToolbarAction icon='menu' onPress={() => navigation.navigate('DrawerOpen')} />
-        <ToolbarContent title='Notes' />
+        <ToolbarAction
+          size={20}
+          style={{ paddingTop: 4 }}
+          icon='menu'
+          onPress={() => navigation.navigate('DrawerOpen')} />
+        <ToolbarContent
+          style={{ paddingLeft: 0,  }}
+          titleStyle={{ fontSize: 18, color: COLOR_NOTES_BLUE }}
+          title='Notes' />
       </Toolbar>
     )
   };

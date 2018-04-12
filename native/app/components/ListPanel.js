@@ -42,7 +42,7 @@ class ListPanel extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
         { this.renderList() }
 
         <FAB
@@ -67,34 +67,57 @@ class ListPanel extends React.Component {
       return (
         <View>
           <Text>No Notes</Text>
-
         </View>
       )
     } else {
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      const dataSource = ds.cloneWithRows(this.props.state.notes) || [];
+      const dataSource = ds.cloneWithRows(
+          this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })
+        ) || [];
       return (
-          <ListView
-            dataSource={dataSource}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                colors={[COLOR_NOTES_BLUE]}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-            renderRow={(note, sectionId, rowId) => {
-              return (
-                <ListItem
-                  content={note.content}
-                  lastModified={note.lastModified}
-                  id={note.id}
-                  rowId={rowId}
-                  navigate={navigate}
+          <View>
+            <ListView
+              dataSource={dataSource}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  colors={[COLOR_NOTES_BLUE]}
+                  onRefresh={this._onRefresh.bind(this)}
                 />
-              )
-            }}
-          />
+              }
+              renderHeader={() => {
+                return (
+                  <View style={{ backgroundColor: 'white', height: 10}}></View>
+                )
+              }}
+              renderRow={(note, sectionId, rowId) => {
+                return (
+                  <ListItem
+                    id={note.id}
+                    content={note.content}
+                    lastModified={note.lastModified}
+                    rowId={rowId}
+                    navigate={navigate}
+                  />
+                )
+              }}
+              renderFooter={() => {
+                return (
+                  // Try to add a shadow but couldn'not working yett make it work :(
+                  <View style={{
+                    backgroundColor: 'white',
+                    height: 10,
+                    marginBottom: 100, // To see content after FAB button
+                    overflow: 'visible',
+                    shadowOpacity: 0.3,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 10, height: 10},
+                    shadowRadius: 2}}>
+                  </View>
+                )
+              }}
+            />
+          </View>
       )
     }
   }
