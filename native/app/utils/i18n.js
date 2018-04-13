@@ -64,13 +64,11 @@ if (! localeStrings) {
   localeStrings = LOCALE_FILES[localeName];
 }
 
-function getMessage(messageName) {
+function getMessage(messageName, content) {
   const message = localeStrings[messageName];
 
   if (message.placeholders) {
-    Object.keys(message.placeholders).forEach((key) => {
-      message.message = message.message.replace(/\$.*\$/g, content);
-    });
+    message.message = message.message.replace(/\$.*\$/g, content);
   }
 
   return message.message;
