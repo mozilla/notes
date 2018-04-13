@@ -9,6 +9,11 @@ const fxaCryptoRelier = require('./vendor/fxa-crypto-relier');
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
 const browser = {
+  i18n: {
+    getMessage: () => {
+      return '';
+    }
+  },
   runtime: {
     sendMessage: () => {
       console.log('sendMessage', arguments);
@@ -183,6 +188,7 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
   }
 }
 
+
 /**
  * Try to sync our data against the Kinto server.
  *
@@ -191,6 +197,8 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
  * caught more easily in testing. Since this application is
  * offline-first, sync failure should not be a failure for callers.
  */
+let lastSyncTimestamp = null;
+
 function syncKinto(client, loginDetails) {
   // Get credentials and lastmodified
   let collection, credential;
@@ -204,16 +212,19 @@ function syncKinto(client, loginDetails) {
             refreshToken: loginDetails.oauthResponse.refreshToken,
             key
           };
+
           // Query Kinto with the Bearer Token
           collection = client
             .collection('notes', {
               idSchema: notesIdSchema,
               remoteTransformers: [new JWETransformer(credential.key)],
             });
+
           return collection
             .sync({
               headers: {Authorization: `Bearer ${credential.accessToken}`},
               strategy: 'manual',
+              lastModified: lastSyncTimestamp // eslint-disable-line no-undef
             })
             .catch((error) => {
               if (error.response && error.response.status === 500) {
@@ -224,9 +235,11 @@ function syncKinto(client, loginDetails) {
               }
               throw error;
             });
-        });
+      });
     })
     .then(syncResult => {
+      lastSyncTimestamp = syncResult.lastModified; // eslint-disable-line no-undef
+
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
       if (syncResult && syncResult.conflicts.length > 0) {
@@ -265,67 +278,68 @@ function syncKinto(client, loginDetails) {
               resolution.deleted = true;
             }
             client.conflict = true;
-            sendMetrics('handle-conflict'); // eslint-disable-line no-undef
+            // sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
-          .then(() => {
-            return syncKinto(client, credentials);
-          });
+        .then(() => {
+          return syncKinto(client, loginDetails);
+        });
       } else if (syncResult === undefined) {
         throw new Error('syncResult is undefined.');
       }
     })
     .catch(error => {
-      // TODO: WORK IN PROGRESS
-      console.log('errr', error);
-      // if (error.response && error.response.status === 401) {
-      //   // In case of 401 log the user out.
-      //   // FIXME: Fetch a new token and retry?
-      //   return reconnectSync(credentials);
-      // } else if (error instanceof ServerKeyNewerError) {
-      //   // If the key date is greater than current one, log the user out.
-      //   console.error(error); // eslint-disable-line no-console
-      //   return reconnectSync(credentials);
-      // } else if (error instanceof ServerKeyOlderError) {
-      //   // If the key date is older than the current one, we can't help
-      //   // because there is no way we get the previous key.
-      //   // Flush the server because whatever was there is wrong.
-      //   console.error(error); // eslint-disable-line no-console
-      //   const kintoHttp = client.api;
-      //   return kintoHttp.bucket('default').deleteCollection('notes', {
-      //     headers: { Authorization: `Bearer ${credential.accessToken}` }
-      //   }).then(() => collection.resetSyncStatus())
-      //     .then(() => syncKinto(client, credentials));
-      // } else if (error.message.includes('flushed')) {
-      //   return collection.resetSyncStatus()
-      //     .then(() => {
-      //       return syncKinto(client, credentials);
-      //     });
-      // } else if (error.message.includes('syncResult is undefined')) {
-      //   return Promise.resolve(null);
-      // } else if (error.message === 'Failed to renew token') {
-      //   // cannot refresh the access token, log the user out.
-      //   return reconnectSync(credentials);
-      // } else if (error.response
-      //   && error.response.status === 507
-      //   && error.message.includes('Insufficient Storage')) {
-      //
-      //   // cannot refresh the access token, log the user out.
-      //   browser.runtime.sendMessage('notes@mozilla.com', {
-      //     action: 'error',
-      //     message: browser.i18n.getMessage('insufficientStorage')
-      //   });
-      //   return Promise.reject(error);
-      // }
-      // console.error(error); // eslint-disable-line no-console
-      // reconnectSync(credentials);
+      if (error.response && error.response.status === 401) {
+        // In case of 401 log the user out.
+        // FIXME: Fetch a new token and retry?
+        return reconnectSync(loginDetails);
+      } else if (error instanceof ServerKeyNewerError) {
+        // If the key date is greater than current one, log the user out.
+        console.error(error); // eslint-disable-line no-console
+        return reconnectSync(loginDetails);
+      } else if (error instanceof ServerKeyOlderError) {
+        // If the key date is older than the current one, we can't help
+        // because there is no way we get the previous key.
+        // Flush the server because whatever was there is wrong.
+        console.error(error); // eslint-disable-line no-console
+        lastSyncTimestamp = null; // eslint-disable-line no-undef
+        const kintoHttp = client.api;
+        return kintoHttp.bucket('default').deleteCollection('notes', {
+          headers: { Authorization: `Bearer ${credential.accessToken}` }
+        }).then(() => collection.resetSyncStatus())
+          .then(() => syncKinto(client, loginDetails));
+      } else if (error.message.includes('flushed')) {
+        lastSyncTimestamp = null; // eslint-disable-line no-undef
+        return collection.resetSyncStatus()
+          .then(() => {
+            return syncKinto(client, loginDetails);
+          });
+      } else if (error.message.includes('syncResult is undefined')) {
+        return Promise.resolve(null);
+      } else if (error.message === 'Failed to renew token') {
+        // cannot refresh the access token, log the user out.
+        return reconnectSync(loginDetails);
+      } else if (error.response
+                && error.response.status === 507
+                && error.message.includes('Insufficient Storage')) {
+
+        // cannot refresh the access token, log the user out.
+        browser.runtime.sendMessage('notes@mozilla.com', {
+          action: 'error',
+          message: browser.i18n.getMessage('insufficientStorage')
+        });
+        return Promise.reject(error);
+      }
+      console.error(error); // eslint-disable-line no-console
+      reconnectSync(loginDetails);
       return Promise.reject(error);
     });
 }
 
-function reconnectSync(credentials) {
-  credentials.clear();
+function reconnectSync(loginDetails) {
+  // credentials.clear();
+  lastSyncTimestamp = null; // eslint-disable-line no-undef
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: 'reconnect'
   });
@@ -338,9 +352,9 @@ function retrieveNote(client) {
     .then((list) => {
       // We delete all notes retrieved from server and not properly deleted
       Object.keys(deletedNotesStillOnServer).forEach((id) => {
+        // sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
         client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
       });
-
       return list;
     });
 }
@@ -366,14 +380,24 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
       store.dispatch(kintoLoad(result && result.data));
+      // browser.runtime.sendMessage({
+      //   action: 'kinto-loaded',
+      //   notes: result.data,
+      //   last_modified: null
+      // });
     })
     .catch((e) => {
       store.dispatch(kintoLoad());
+      // browser.runtime.sendMessage({
+      //   action: 'kinto-loaded',
+      //   notes: null,
+      //   last_modified: null
+      // });
       return new Promise((resolve) => resolve());
     });
 }
 
-function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disable-line no-unused-vars
+function saveToKinto(client, loginDetails, note, fromWindowId) { // eslint-disable-line no-unused-vars
   let resolve;
   // We do not store empty notes on server side.
   if (note.content === '') { return Promise.resolve(); }
@@ -428,14 +452,22 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
   return promise;
 }
 
-function createNote(client, note) { // eslint-disable-line no-unused-vars
+function createNote(client, loginDetails, note) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create(note, { useRecordId: true });
+    .create(note, { useRecordId: true })
+    .then(() => {
+      return syncKinto(client, loginDetails);
+    });
 }
 
-function deleteNote(client, id) { // eslint-disable-line no-unused-vars
-  return client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
+function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused-vars
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .delete(id)
+    .then(() => {
+      return syncKinto(client, loginDetails);
+    });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
