@@ -49,7 +49,7 @@ export default class ListItem extends React.Component {
     super(props);
 
     this._navigateToNote = () => {
-      props.navigate('EditorPanel', {rowId: props.rowId});
+      props.navigate('EditorPanel', { rowId: props.rowId, note: props.note });
     }
   }
 

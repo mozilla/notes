@@ -52,10 +52,6 @@ const editorPanelOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
   const routeName = navigation.state.routeName;
 
-  const onPress = () => {
-    navigation.navigate('ListPanel');
-  };
-
   return {
     drawerLockMode: 'locked-closed',
     header: (
@@ -68,7 +64,7 @@ const editorPanelOptions = ({ navigation }) => {
           title='Saved'
           titleStyle={{fontSize: 14, textAlign: 'center', color: COLOR_NOTES_BLUE}}
           />
-        <MoreMenu onPress={onPress} />
+        <MoreMenu navigation={navigation} />
       </Toolbar>
     )
   };

@@ -29,11 +29,9 @@ function encrypt(key, content) {
     k: key.k,
     kid: key.kid
   };
-
   // TODO: THIS HAS NOT BEEN TESTED
   return jose.JWK.asKey(jwkKey).then((k) => {
-
-    return jose.JWE.createEncrypt(k.keystore)
+    return jose.JWE.createEncrypt(k.keystore, jwkKey)
       .update(JSON.stringify(content))
       .final()
       .then(function(result) {
@@ -212,7 +210,6 @@ function syncKinto(client, loginDetails) {
             refreshToken: loginDetails.oauthResponse.refreshToken,
             key
           };
-
           // Query Kinto with the Bearer Token
           collection = client
             .collection('notes', {

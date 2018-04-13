@@ -95,6 +95,7 @@ class ListPanel extends React.Component {
                   id={note.id}
                   content={note.content}
                   lastModified={note.lastModified}
+                  note={note}
                   rowId={rowId}
                   navigate={navigate}
                 />

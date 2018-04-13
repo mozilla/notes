@@ -11,8 +11,9 @@ import {
 } from './utils/sync.js';
 
 class Server {
-  constructor() {
-    super();
+
+  configure() {
+
   }
 
   load() {
@@ -25,17 +26,21 @@ class Server {
 
   delete(note) {
     return new Promise((resolve) => {
-      store.dispatch(actionDeleteNote(note.id);
+      store.dispatch(actionDeleteNote(note.id));
+      resolve();
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         deleteNote(kintoClient, loginDetails, note.id).then(() => {
           store.dispatch(actionDeletedNote(note.id));
-          resolve();
         });
       });
     });
   }
 
   update(note) {
+
+  }
+
+  sync() {
 
   }
 }
