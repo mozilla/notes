@@ -54,6 +54,8 @@ jobs:
             - native/node_modules
 
       - run: cd native && ./misc/download_keystore.sh
+      - run: cd native && node ./misc/config-generator.js
+
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
       - run: mkdir -p /tmp/artifacts-android;
       - run: cp native/android/app/build/outputs/apk/release/app-release.apk /tmp/artifacts-android
