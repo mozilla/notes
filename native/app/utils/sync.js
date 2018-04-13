@@ -1,10 +1,10 @@
 import {
-  kintoLoad
-} from './actions';
-import store from './store';
+  actionKintoLoad
+} from '../actions';
+import store from '../store';
 
-const fxaUtils = require('./vendor/fxa-utils');
-const fxaCryptoRelier = require('./vendor/fxa-crypto-relier');
+const fxaUtils = require('../vendor/fxa-utils');
+const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 // TODO WARNING: `jose` is not in the official release in the crypto-relier
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
@@ -379,7 +379,7 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
     // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
     .then(result => {
-      store.dispatch(kintoLoad(result && result.data));
+      store.dispatch(actionKintoLoad(result && result.data));
       // browser.runtime.sendMessage({
       //   action: 'kinto-loaded',
       //   notes: result.data,
@@ -387,7 +387,7 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
       // });
     })
     .catch((e) => {
-      store.dispatch(kintoLoad());
+      store.dispatch(actionKintoLoad());
       // browser.runtime.sendMessage({
       //   action: 'kinto-loaded',
       //   notes: null,

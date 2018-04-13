@@ -13,21 +13,20 @@ const UIManager = NativeModules.UIManager;
 export default class ToolbarDropdown extends Component {
   onMenuPressed = (labels) => {
     const { onPress } = this.props;
-
     UIManager.showPopupMenu(
       findNodeHandle(this.menu),
       labels,
       () => {},
       (result, index) => {
         if (onPress) {
-          onPress({action: 'menu', result, index});
+          onPress({ action: 'menu', result, index });
         }
       },
     );
   };
 
   render() {
-    const labels = ['Delete'];
+    const labels = ['Share', 'Delete'];
 
     return (
       <View style={{flexDirection: 'row'}}>

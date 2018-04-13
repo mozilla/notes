@@ -4,12 +4,12 @@ import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import React from 'react';
 import store from "../store";
-import sync from "../sync";
+import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 import { View, ListView, Text, StyleSheet, RefreshControl } from 'react-native';
 import { COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
-import { kintoLoad } from "../actions";
+import { actionKintoLoad } from "../actions";
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -28,15 +28,14 @@ class ListPanel extends React.Component {
     }).then(() => {
       this.setState({refreshing: false});
     });
-
   }
 
   componentWillMount() {
     // TODO: Refactor this for offline view
     sync.retrieveNote(kintoClient).then(result => {
-      store.dispatch(kintoLoad(result && result.data));
+      store.dispatch(actionKintoLoad(result && result.data));
     }).catch((e) => {
-      store.dispatch(kintoLoad());
+      store.dispatch(actionKintoLoad());
     });
   }
 
@@ -75,49 +74,49 @@ class ListPanel extends React.Component {
           this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })
         ) || [];
       return (
-          <View>
-            <ListView
-              dataSource={dataSource}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  colors={[COLOR_NOTES_BLUE]}
-                  onRefresh={this._onRefresh.bind(this)}
+        <View>
+          <ListView
+            dataSource={dataSource}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                colors={[COLOR_NOTES_BLUE]}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+            renderHeader={() => {
+              return (
+                <View style={{ backgroundColor: 'white', height: 10}}></View>
+              )
+            }}
+            renderRow={(note, sectionId, rowId) => {
+              return (
+                <ListItem
+                  id={note.id}
+                  content={note.content}
+                  lastModified={note.lastModified}
+                  rowId={rowId}
+                  navigate={navigate}
                 />
-              }
-              renderHeader={() => {
-                return (
-                  <View style={{ backgroundColor: 'white', height: 10}}></View>
-                )
-              }}
-              renderRow={(note, sectionId, rowId) => {
-                return (
-                  <ListItem
-                    id={note.id}
-                    content={note.content}
-                    lastModified={note.lastModified}
-                    rowId={rowId}
-                    navigate={navigate}
-                  />
-                )
-              }}
-              renderFooter={() => {
-                return (
-                  // Try to add a shadow but couldn'not working yett make it work :(
-                  <View style={{
-                    backgroundColor: 'white',
-                    height: 10,
-                    marginBottom: 100, // To see content after FAB button
-                    overflow: 'visible',
-                    shadowOpacity: 0.3,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 10, height: 10},
-                    shadowRadius: 2}}>
-                  </View>
-                )
-              }}
-            />
-          </View>
+              )
+            }}
+            renderFooter={() => {
+              return (
+                // Try to add a shadow but couldn'not working yett make it work :(
+                <View style={{
+                  backgroundColor: 'white',
+                  height: 10,
+                  marginBottom: 100, // To see content after FAB button
+                  overflow: 'visible',
+                  shadowOpacity: 0.3,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 10, height: 10},
+                  shadowRadius: 2}}>
+                </View>
+              )
+            }}
+          />
+        </View>
       )
     }
   }

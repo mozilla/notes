@@ -16,19 +16,19 @@ import { SYNC_AUTHENTICATED,
 
 import { v4 as uuid4 } from 'uuid';
 
-export function pleaseLogin() {
+export function actionPleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
-export function kintoLoad(notes) {
+export function actionKintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
-export function authenticate(email, avatar, displayName) {
+export function actionAuthenticate(email, avatar, displayName) {
   return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
 }
 
-export function createNote(content = '') {
+export function actionCreateNote(content = '') {
   const id = uuid4();
   // Return id to callback using promises
   const fct = (dispatch, getState) => {
@@ -39,4 +39,13 @@ export function createNote(content = '') {
   };
 
   return fct;
+}
+
+export function actionDeletedNote(id) {
+  return { type: DELETE_NOTE, id, isSyncing: false };
+}
+
+export function actionDeleteNote(id, origin) {
+  // chrome.runtime.sendMessage({ action: 'delete-note', id, origin});
+  return { type: DELETE_NOTE, id, isSyncing: true };
 }

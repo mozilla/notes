@@ -5,14 +5,14 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
-import { authenticate } from '../actions';
+import { actionAuthenticate } from '../actions';
 
 class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(
-          authenticate(
+          actionAuthenticate(
             loginDetails.profile.email,
             loginDetails.profile.avatar,
             loginDetails.profile.displayName
