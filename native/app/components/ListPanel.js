@@ -42,12 +42,10 @@ class ListPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log('ListPanel componentWillReceiveProps', newProps);
   }
 
   render() {
 
-    console.log('ListPanel render');
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
