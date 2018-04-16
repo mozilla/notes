@@ -19,7 +19,6 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.getHTML = this.getHTML.bind(this);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
     this.noteContent = '';
     this.pollNoteChange = true;
@@ -33,11 +32,12 @@ class RichTextExample extends Component {
     return (
       <View style={styles.container}>
         <RichTextEditor
-          ref={(r)=>this.richtext = r}
+          ref={(r) => this.richtext = r}
           style={styles.richText}
           hiddenTitle={true}
           // at first initialContentHTML must be `''` otherwise we would get undefined
           initialContentHTML=''
+          enableOnChange={true}
           contentPlaceholder='Take a note...'
           editorInitializedCallback={() => this.onEditorInitialized()}
         />
@@ -45,7 +45,14 @@ class RichTextExample extends Component {
     );
   }
 
-  onEditorInitialized() {
+  componentDidMount() {
+    this.richtext.state.onChange.push((e) => {
+      console.log('message', e);
+
+    });
+  }
+
+  onEditorInitialized(e) {
     // TODO: probably there is a better way to do it
     const navigationId = this.props.navigation.state.params.rowId;
     const {height} = Dimensions.get('window');
@@ -60,36 +67,12 @@ class RichTextExample extends Component {
     }
 
     this.setFocusHandlers();
-    this.pollNoteChanges();
-  }
-
-  async getHTML() {
-    if (this.richtext) {
-      try {
-        const contentHtml = await this.richtext.getContentHtml();
-        if (this.noteContent !== contentHtml) {
-          this.noteContent = contentHtml;
-          console.log('Note updated:', this.noteContent);
-        }
-      } catch (e) {
-        console.log('Failed to getContentHtml, editor probably closed.', e);
-      }
-    }
   }
 
   setFocusHandlers() {
     this.richtext.setContentFocusHandler(() => {
       console.log('content focus');
     });
-  }
-
-  pollNoteChanges() {
-    this.getHTML();
-    if (this.pollNoteChange) {
-      setTimeout(() => {
-        this.pollNoteChanges();
-      }, 2000);
-    }
   }
 }
 
