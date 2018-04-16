@@ -6,12 +6,14 @@ import { NavigationActions } from 'react-navigation';
 import { Title, Text, TouchableRipple } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, ScrollView, StyleSheet, Image, Linking, Modal } from 'react-native';
+import moment from 'moment';
 
 import { COLOR_NOTES_BLUE } from "../utils/constants";
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
 import { trackEvent } from "../utils/metrics";
 import fxaUtils from "../vendor/fxa-utils";
 import store from "../store";
+
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -82,7 +84,7 @@ class DrawerItems extends React.Component {
         </ScrollView>
         <TouchableRipple style={styles.footer} onPress={() => console.log('was pressed')}>
           <View style={styles.footerWrapper}>
-              <Text style={{ color: undefined, fontSize: 13 }}>Last synced 9:31 AM</Text>
+              <Text style={{ color: undefined, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
               <MaterialIcons
                 name="sync"
                 style={{ marginRight: 10, color: undefined }}

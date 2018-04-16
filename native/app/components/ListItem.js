@@ -13,38 +13,21 @@ import {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
-
+import moment from 'moment';
 
 const striptags = require('striptags');
 
-function formatLastModified(date) {
+function formatLastModified(date = new Date()) {
 
-  if (!date) {
-    date = new Date();
-  }
+  var m = moment(date);
 
-  if (new Date().getDate() === date.getDate()) {
-    return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  if (new Date().getYear() === date.getYear()) {
-
-    return date.toLocaleDateString([], {
-      month: 'long',
-      day: 'numeric'
-    });
+  if (m.isSame(new Date(), 'day')) {
+    return m.format('LT');
+  } else if (m.isSame(new Date(), 'year')) {
+    return m.format('ll');
   } else {
-
-    return date.toLocaleDateString([], {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return m.format('ll');
   }
-
 }
 
 export default class ListItem extends React.Component {
