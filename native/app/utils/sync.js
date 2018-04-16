@@ -444,19 +444,19 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
 function createNote(client, loginDetails, note) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create(note, { useRecordId: true })
-    .then(() => {
-      return syncKinto(client, loginDetails);
-    });
+    .create(note, { useRecordId: true });
+    // .then(() => {
+    //   return syncKinto(client, loginDetails);
+    // });
 }
 
 function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .delete(id)
-    .then(() => {
-      return syncKinto(client, loginDetails);
-    });
+    .delete(id);
+    // .then(() => {
+    //   return syncKinto(client, loginDetails);
+    // });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
