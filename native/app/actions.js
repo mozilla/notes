@@ -1,3 +1,4 @@
+
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
   TEXT_SAVED,
@@ -13,6 +14,8 @@ import { SYNC_AUTHENTICATED,
   FOCUS_NOTE,
   ERROR,
   REQUEST_WELCOME_PAGE } from './utils/constants';
+import fxaUtils from './vendor/fxa-utils';
+import { deleteNote, createNote, saveToKinto } from './utils/sync';
 
 import { v4 as uuid4 } from 'uuid';
 
@@ -28,24 +31,46 @@ export function actionAuthenticate(email, avatar, displayName) {
   return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
 }
 
-export function actionCreateNote(content = '') {
+export function actionCreateNote(content = '', origin) {
   const id = uuid4();
   // Return id to callback using promises
-  const fct = (dispatch, getState) => {
+  return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       dispatch({ type: CREATE_NOTE, id, content });
-      resolve(id);
+      fxaUtils.fxaGetCredential().then((loginDetails) => {
+        createNote(kintoClient, loginDetails, { id, content }).then(() => {
+          dispatch({ type: CREATE_NOTE, isSyncing: false });
+          resolve(id);
+        });
+      });
     });
   };
-
-  return fct;
 }
 
-export function actionDeletedNote(id) {
-  return { type: DELETE_NOTE, id, isSyncing: false };
+export function actionUpdateNote(id, content, lastModified) {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: UPDATE_NOTE, id, content, lastModified });
+      fxaUtils.fxaGetCredential().then((loginDetails) => {
+        saveToKinto(kintoClient, loginDetails, note).then(() => {
+          dispatch({ type: UPDATE_NOTE, isSyncing: false });
+          resolve(id);
+        });
+      });
+    });
+  };
 }
 
-export function actionDeleteNote(id, origin) {
-  // chrome.runtime.sendMessage({ action: 'delete-note', id, origin});
-  return { type: DELETE_NOTE, id, isSyncing: true };
+export function actionDeleteNote(id) {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: DELETE_NOTE, id, isSyncing: true });
+      fxaUtils.fxaGetCredential().then((loginDetails) => {
+        deleteNote(kintoClient, loginDetails, note.id).then(() => {
+          dispatch({ type: DELETE_NOTE, isSyncing: false });
+          resolve(id);
+        });
+      });
+    });
+  };
 }

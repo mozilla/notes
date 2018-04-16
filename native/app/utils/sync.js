@@ -345,15 +345,7 @@ function reconnectSync(loginDetails) {
 function retrieveNote(client) {
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .list({})
-    .then((list) => {
-      // We delete all notes retrieved from server and not properly deleted
-      Object.keys(deletedNotesStillOnServer).forEach((id) => {
-        // sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
-        client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
-      });
-      return list;
-    });
+    .list();
 }
 
 /**
@@ -394,7 +386,7 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
     });
 }
 
-function saveToKinto(client, loginDetails, note, fromWindowId) { // eslint-disable-line no-unused-vars
+function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unused-vars
   let resolve;
   // We do not store empty notes on server side.
   if (note.content === '') { return Promise.resolve(); }
@@ -403,43 +395,43 @@ function saveToKinto(client, loginDetails, note, fromWindowId) { // eslint-disab
     resolve = thisResolve;
   });
 
-  browser.runtime.sendMessage('notes@mozilla.com', {
-    action: 'text-editing'
-  });
+  // browser.runtime.sendMessage('notes@mozilla.com', {
+  //   action: 'text-editing'
+  // });
 
   const later = function() {
     syncDebounce = null;
     const notes = client.collection('notes', { idSchema: notesIdSchema });
     return notes.upsert(note)
       .then((res) => {
-        browser.runtime.sendMessage('notes@mozilla.com', {
-          action: 'text-saved',
-          note: res ? res.data : undefined,
-          from: fromWindowId
-        });
+        // browser.runtime.sendMessage('notes@mozilla.com', {
+        //   action: 'text-saved',
+        //   note: res ? res.data : undefined,
+        //   from: fromWindowId
+        // });
         client.conflict = false;
         return syncKinto(client, credentials);
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
-      .then(result => {
-        // Set the status to synced
-        return browser.runtime.sendMessage('notes@mozilla.com', {
-          action: 'text-synced',
-          note: result.data.find((n) => n.id === note.id),
-          conflict: client.conflict,
-          from: fromWindowId
-        });
-      })
-      .then(() => {
-        resolve();
+      // .then(result => {
+      //   // Set the status to synced
+      //   return browser.runtime.sendMessage('notes@mozilla.com', {
+      //     action: 'text-synced',
+      //     note: result.data.find((n) => n.id === note.id),
+      //     conflict: client.conflict,
+      //     from: fromWindowId
+      //   });
+      // })
+      .then((result) => {
+        resolve(result.data.find((n) => n.id === note.id), client.conflict);
       })
       .catch(result => {
-        browser.runtime.sendMessage('notes@mozilla.com', {
-          action: 'text-synced',
-          note: undefined,
-          conflict: client.conflict,
-          from: fromWindowId
-        });
+        // browser.runtime.sendMessage('notes@mozilla.com', {
+        //   action: 'text-synced',
+        //   note: undefined,
+        //   conflict: client.conflict,
+        //   from: fromWindowId
+        // });
         resolve();
       });
   };

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { actionDeleteNote } from '../actions';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Server from '../server';
 import {
   COLOR_NOTES_BLUE
 } from '../utils/constants';
@@ -26,11 +26,9 @@ class MoreMenu extends Component {
             console.log('SHARE');
             break;
           case 1:
-            // console.log('DELETE', navigation.state.params.rowId);
-            // console.log(navigation.state.params.note);
-            Server.delete(navigation.state.params.note).then(() => {
-              navigation.navigate('ListPanel');
-            });
+            this.props.dispatch(
+              actionDeleteNote(navigation.state.params.note.id)
+            ).then(() => navigation.navigate('ListPanel'));
             break;
         }
       },
