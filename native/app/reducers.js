@@ -159,13 +159,15 @@ function notes(notes = [], action) {
     }
     case CREATE_NOTE: {
       const list = Array.from(notes).filter((note) => note.id !== action.id);
-      list.push({
-        id: action.id,
-        content: action.content,
-        firstLine: action.content,
-        secondLine: action.content,
-        lastModified: action.lastModified || new Date()
-      });
+      if (action.id) {
+        list.push({
+          id: action.id,
+          content: action.content,
+          firstLine: action.content,
+          secondLine: action.content,
+          lastModified: action.lastModified || new Date()
+        });
+      }
       return list;
     }
     case DELETE_NOTE:
@@ -178,7 +180,7 @@ function notes(notes = [], action) {
         note.firstLine = (action.content);
         note.secondLine = (action.content);
         note.lastModified = new Date(action.lastModified);
-      } else {
+      } else if (action.id) {
         list.push({
           id: action.id,
           content: action.content,

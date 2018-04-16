@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import {RichTextEditor} from 'react-native-zss-rich-text-editor';
-
+import { RichTextEditor } from 'react-native-zss-rich-text-editor';
+import { actionCreateNote, actionUpdateNote, actionDeleteNote } from '../actions';
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -20,12 +20,10 @@ class RichTextExample extends Component {
   constructor(props) {
     super(props);
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
-    this.noteContent = '';
-    this.pollNoteChange = true;
+    this.note = this.props.navigation.state.params.note;
   }
 
   componentWillUnmount() {
-    this.pollNoteChange = false;
   }
 
   render() {
@@ -46,23 +44,28 @@ class RichTextExample extends Component {
   }
 
   componentDidMount() {
-    this.richtext.state.onChange.push((e) => {
-      console.log('message', e);
-
+    this.richtext.registerContentChangeListener((e) => {
+      if (!this.note && e !== '') {
+        this.note = { content: e }
+        this.props.dispatch(actionCreateNote(e)).then((id) => {
+          this.note.id = id;
+        });
+      } else if (this.note && e === '') {
+        this.props.dispatch(actionDeleteNote(this.note.id));
+        this.note = null;
+      } else if (this.note && e !== '') {
+        this.props.dispatch(actionUpdateNote(this.note.id, e, new Date()));
+      }
     });
   }
 
   onEditorInitialized(e) {
-    // TODO: probably there is a better way to do it
-    const navigationId = this.props.navigation.state.params.rowId;
-    const {height} = Dimensions.get('window');
-
-    if (navigationId) {
-      const firstNote = this.props.state.notes[navigationId].content;
+    if (this.note) {
       // need to call `escapeHtml` here because otherwise the editor will fail if strings have ` ' ` in them. :(
-      this.richtext._sendAction('SET_CONTENT_HTML', escapeHtml(firstNote));
+      this.richtext._sendAction('SET_CONTENT_HTML', escapeHtml(this.note.content));
     } else {
       // set height if totally empty, helps with keyboard pull up
+      const { height } = Dimensions.get('window');
       this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
     }
 
@@ -97,5 +100,9 @@ function mapStateToProps(state) {
   };
 }
 
+RichTextExample.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
 
 export default connect(mapStateToProps)(RichTextExample)

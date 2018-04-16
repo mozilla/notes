@@ -19,6 +19,10 @@ const striptags = require('striptags');
 
 function formatLastModified(date) {
 
+  if (!date) {
+    date = new Date();
+  }
+
   if (new Date().getDate() === date.getDate()) {
     return date.toLocaleTimeString([], {
       hour: '2-digit',
@@ -49,20 +53,22 @@ export default class ListItem extends React.Component {
     super(props);
 
     this._navigateToNote = () => {
-      props.navigate('EditorPanel', { rowId: props.rowId, note: props.note });
+      props.navigate('EditorPanel', { note: props.note });
     }
   }
 
 
   render() {
     const {
-      content,
-      lastModified
+      note
     } = this.props;
 
+    let firstLine = '', secondLine = '';
     // FIXME: not perfect, need to be properly done but is good for testing.
-    const firstLine = striptags(content.replace('&nbsp;', ' ').split('</')[0]).substr(0, 150);
-    const secondLine = striptags(content.replace('&nbsp;', ' ').replace(firstLine, '')).substr(0, 150);
+    if (note.content) {
+      firstLine = striptags(note.content.replace('&nbsp;', ' ').split('</')[0]).substr(0, 150);
+      secondLine = striptags(note.content.replace('&nbsp;', ' ').replace(firstLine, '')).substr(0, 150);
+    }
 
     return (
       <TouchableRipple onPress={this._navigateToNote} >
@@ -81,7 +87,7 @@ export default class ListItem extends React.Component {
               <Text numberOfLines={1} style={styles.subtitle}>{secondLine}</Text>
               : '' }
           </View>
-          <Text style={styles.time}>{formatLastModified(lastModified)}</Text>
+          <Text style={styles.time}>{formatLastModified(note.lastModified)}</Text>
         </View>
       </TouchableRipple>
     )

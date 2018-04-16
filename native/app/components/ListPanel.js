@@ -7,7 +7,7 @@ import store from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
-import { View, ListView, Text, StyleSheet, RefreshControl } from 'react-native';
+import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
 import { COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
 import { actionKintoLoad } from "../actions";
 
@@ -18,17 +18,19 @@ class ListPanel extends React.Component {
     this.state = {
       refreshing: false
     }
+
+    this._onRefresh = () => {
+      this.setState({ refreshing: true });
+
+      fxaUtils.fxaGetCredential().then((loginDetails) => {
+        return sync.loadFromKinto(kintoClient, loginDetails);
+      }).then(() => {
+        this.setState({ refreshing: false });
+      });
+    }
   }
 
-  _onRefresh() {
-    this.setState({refreshing: true});
-
-    return fxaUtils.fxaGetCredential().then((loginDetails) => {
-      return sync.loadFromKinto(kintoClient, loginDetails);
-    }).then(() => {
-      this.setState({refreshing: false});
-    });
-  }
+  _keyExtractor = (item, index) => item.id;
 
   componentWillMount() {
     // TODO: Refactor this for offline view
@@ -39,7 +41,13 @@ class ListPanel extends React.Component {
     });
   }
 
+  componentWillReceiveProps(newProps) {
+    console.log('ListPanel componentWillReceiveProps', newProps);
+  }
+
   render() {
+
+    console.log('ListPanel render');
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
@@ -56,7 +64,7 @@ class ListPanel extends React.Component {
   }
 
   newNote() {
-    return this.props.navigation.navigate('EditorPanel', {rowId: null});
+    return this.props.navigation.navigate('EditorPanel', { note: null });
   }
 
   renderList() {
@@ -69,55 +77,46 @@ class ListPanel extends React.Component {
         </View>
       )
     } else {
-      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      const dataSource = ds.cloneWithRows(
-          this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })
-        ) || [];
       return (
-        <View>
-          <ListView
-            dataSource={dataSource}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                colors={[COLOR_NOTES_BLUE]}
-                onRefresh={this._onRefresh.bind(this)}
+        <FlatList
+          data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              colors={[ COLOR_NOTES_BLUE ]}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          ListHeaderComponent={() => {
+            return (
+              <View style={{ backgroundColor: 'white', height: 10}}></View>
+            )
+          }}
+          keyExtractor={this._keyExtractor}
+          renderItem={({item}) => {
+            return (
+              <ListItem
+                note={item}
+                navigate={navigate}
               />
-            }
-            renderHeader={() => {
-              return (
-                <View style={{ backgroundColor: 'white', height: 10}}></View>
-              )
-            }}
-            renderRow={(note, sectionId, rowId) => {
-              return (
-                <ListItem
-                  id={note.id}
-                  content={note.content}
-                  lastModified={note.lastModified}
-                  note={note}
-                  rowId={rowId}
-                  navigate={navigate}
-                />
-              )
-            }}
-            renderFooter={() => {
-              return (
-                // Try to add a shadow but couldn'not working yett make it work :(
-                <View style={{
-                  backgroundColor: 'white',
-                  height: 10,
-                  marginBottom: 100, // To see content after FAB button
-                  overflow: 'visible',
-                  shadowOpacity: 0.3,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 10, height: 10},
-                  shadowRadius: 2}}>
-                </View>
-              )
-            }}
-          />
-        </View>
+            )
+          }}
+          ListFooterComponent={() => {
+            return (
+              // Try to add a shadow but couldn'not working yett make it work :(
+              <View style={{
+                backgroundColor: 'white',
+                height: 10,
+                marginBottom: 100, // To see content after FAB button
+                overflow: 'visible',
+                shadowOpacity: 0.3,
+                shadowColor: '#000',
+                shadowOffset: { width: 10, height: 10},
+                shadowRadius: 2}}>
+              </View>
+            )
+          }}
+        />
       )
     }
   }

@@ -1,3 +1,4 @@
+import kintoClient from './vendor/kinto-client';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -31,7 +32,7 @@ export function actionAuthenticate(email, avatar, displayName) {
   return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
 }
 
-export function actionCreateNote(content = '', origin) {
+export function actionCreateNote(content = '') {
   const id = uuid4();
   // Return id to callback using promises
   return (dispatch, getState) => {
@@ -52,9 +53,9 @@ export function actionUpdateNote(id, content, lastModified) {
     return new Promise((resolve, reject) => {
       dispatch({ type: UPDATE_NOTE, id, content, lastModified });
       fxaUtils.fxaGetCredential().then((loginDetails) => {
-        saveToKinto(kintoClient, loginDetails, note).then(() => {
+        saveToKinto(kintoClient, loginDetails, { id, content, lastModified }).then(() => {
           dispatch({ type: UPDATE_NOTE, isSyncing: false });
-          resolve(id);
+          resolve();
         });
       });
     });
@@ -66,7 +67,7 @@ export function actionDeleteNote(id) {
     return new Promise((resolve, reject) => {
       dispatch({ type: DELETE_NOTE, id, isSyncing: true });
       fxaUtils.fxaGetCredential().then((loginDetails) => {
-        deleteNote(kintoClient, loginDetails, note.id).then(() => {
+        deleteNote(kintoClient, loginDetails, id).then(() => {
           dispatch({ type: DELETE_NOTE, isSyncing: false });
           resolve(id);
         });
