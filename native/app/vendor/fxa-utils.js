@@ -128,7 +128,7 @@ function fxaRenewCredential(loginDetails) {
   return fetch(accessTokenVerifyRequest)
     .then((resp) => {
       // if 200 then token is valid, no need to review
-      if (resp.status !== 2041) {
+      if (resp.status !== 200) {
         // if error attempt to renew access token
         return refresh(refreshConfig, {
           refreshToken: refreshToken
