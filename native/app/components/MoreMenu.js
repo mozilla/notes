@@ -23,9 +23,6 @@ class MoreMenu extends Component {
       (result, index) => {
         switch (index) {
           case 0:
-            console.log('SHARE');
-            break;
-          case 1:
             this.props.dispatch(
               actionDeleteNote(navigation.state.params.note.id)
             ).then(() => navigation.navigate('ListPanel'));
@@ -36,7 +33,7 @@ class MoreMenu extends Component {
   };
 
   render() {
-    const labels = ['Share', 'Delete'];
+    const labels = ['Delete'];
 
     return (
       <View style={{flexDirection: 'row'}}>
