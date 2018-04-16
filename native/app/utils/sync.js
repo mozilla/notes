@@ -31,7 +31,7 @@ function encrypt(key, content) {
   };
   // TODO: THIS HAS NOT BEEN TESTED
   return jose.JWK.asKey(jwkKey).then((k) => {
-    return jose.JWE.createEncrypt(k.keystore, jwkKey)
+    return jose.JWE.createEncrypt({ format: 'compact' }, jwkKey)
       .update(JSON.stringify(content))
       .final()
       .then(function(result) {
