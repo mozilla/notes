@@ -3,7 +3,7 @@ import './shim.js'
 // setup crash tracking
 import { Sentry } from 'react-native-sentry';
 // TODO: change this to prod vars later on
-const SENTRY_DSN = null;
+const SENTRY_DSN = require('./config').SENTRY_DSN;
 
 if (SENTRY_DSN) {
   Sentry.config(SENTRY_DSN).install();

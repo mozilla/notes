@@ -6,7 +6,7 @@
     "start": "react-native run-android",
     "cli": "node node_modules/react-native/local-cli/cli.js start",
     "dm": "adb shell input keyevent 82",
-    "postinstall": "rn-nodeify --hack --install",
+    "postinstall": "rn-nodeify --hack --install && node misc/build-locales.js",
     "build": "cd android && ./gradlew assembleRelease"
   },
   "repository": "mozilla/notes",
@@ -26,6 +26,7 @@
     "https-browserify": "0.0.1",
     "indexeddbshim": "^3.5.1",
     "path-browserify": "0.0.0",
+    "pontoon-to-webext": "^1.0.2",
     "process": "~0.11.10",
     "prop-types": "~15.6.1",
     "querystring-es3": "~0.2.1",

@@ -12,6 +12,7 @@ import { NavigationActions } from 'react-navigation';
 import { trackEvent } from '../utils/metrics';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
+import i18nGetMessage from '../utils/i18n';
 
 class LoginPanel extends React.Component {
   onAuth () {
@@ -55,7 +56,7 @@ class LoginPanel extends React.Component {
           style={{width: 150, height: 150 }}
           source={require('../assets/notes-1024.png')}
         />
-        <Text style={{ fontWeight: 'bold', fontSize: 22, padding: 10 }}>Welcome to Notes</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 22, padding: 10 }}>{i18nGetMessage('welcomeTitle3')}</Text>
         <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
         <Button raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}>SIGN IN</Button>
       </View>
