@@ -16,33 +16,40 @@ import store from "../store";
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
 
-// DrawerItemsData store our drawer button list
-const DrawerItemsData = [
-  {
-    label  : 'Give Feedback',
-    action : () => {
-      return Linking.openURL(SURVEY_PATH);
-    }
-  },
-  {
-    label : 'Log out',
-    action: () => {
-      function navigateToLogin () {
-        // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
-        const resetAction = NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
-        });
-        this.props.navigation.dispatch(resetAction);
-        trackEvent('webext-button-disconnect');
-      }
-
-      return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
-    }
-  }
-];
 
 class DrawerItems extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    // DrawerItemsData store our drawer button list
+    this.drawerItemsData = [
+      {
+        label  : 'Give Feedback',
+        action : () => {
+          return Linking.openURL(SURVEY_PATH);
+        }
+      },
+      {
+        label : 'Log out',
+        action: () => {
+          function navigateToLogin () {
+            // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
+            const resetAction = NavigationActions.reset({
+              index: 0,
+              actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
+            });
+            this.props.navigation.dispatch(resetAction);
+            trackEvent('webext-button-disconnect');
+          }
+
+          return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
+        }
+      }
+    ];
+
+  }
+
 
   render() {
     return (
@@ -61,7 +68,7 @@ class DrawerItems extends React.Component {
         </View>
         <ScrollView style={styles.drawerSection}>
           <DrawerSection>
-            {DrawerItemsData.map((item, index) => (
+            {this.drawerItemsData.map((item, index) => (
               <DrawerItem
                 key={index}
                 label={ item.label }
