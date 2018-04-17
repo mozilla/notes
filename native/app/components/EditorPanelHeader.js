@@ -12,6 +12,24 @@ class EditorPanelHeader extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      content: this._setNoteStatus(props)
+    };
+  }
+
+  _setNoteStatus = (props) => {
+    if (props.state.sync.isSyncing) {
+      return 'Syncing';
+    } else {
+      return 'Synced'
+    }
+  };
+
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      content: this._setNoteStatus(newProps)
+    });
   }
 
   render() {
@@ -23,7 +41,7 @@ class EditorPanelHeader extends Component {
            color={ COLOR_NOTES_BLUE }
            onPress={() => { navigation.goBack() }} />
         <ToolbarContent
-          title='Saved'
+          title={ this.state.content }
           titleStyle={{ fontSize: 14, textAlign: 'center', color: COLOR_NOTES_BLUE }}
           />
         <MoreMenu navigation={ navigation } />

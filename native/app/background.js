@@ -36,7 +36,7 @@ browser.runtime.onMessage.addListener(eventData => {
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.createNote(kintoClient, loginDetails,
           { id: eventData.id, content: eventData.content, lastModified: new Date() }).then(() => {
-          store.dispatch({ type: CREATE_NOTE, isSyncing: false });
+          store.dispatch({ type: TEXT_SYNCED });
         });
       });
       break;
@@ -44,14 +44,15 @@ browser.runtime.onMessage.addListener(eventData => {
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.saveToKinto(kintoClient, loginDetails,
           { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
-          store.dispatch({ type: UPDATE_NOTE, isSyncing: false });
+            console.log('dispatch updated synced');
+          store.dispatch({ type: TEXT_SYNCED });
         });
       });
       break;
     case DELETE_NOTE:
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.deleteNote(kintoClient, loginDetails, eventData.id).then(() => {
-          store.dispatch({ type: DELETE_NOTE, isSyncing: false });
+          store.dispatch({ type: TEXT_SYNCED });
         });
       });
       break;
