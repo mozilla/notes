@@ -8,7 +8,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing } from 'react-native';
 import moment from 'moment';
 
-import { COLOR_NOTES_BLUE, KINTO_LOADED } from '../utils/constants';
+import { COLOR_DARK_BACKGROUND,
+         COLOR_DARK_TEXT,
+         COLOR_DARK_SUBTEXT,
+         COLOR_DARK_WARNING,
+         COLOR_DARK_SYNC,
+         COLOR_NOTES_BLUE,
+         KINTO_LOADED } from '../utils/constants';
+
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
 import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
@@ -96,35 +103,30 @@ class DrawerItems extends React.Component {
   render() {
     return (
       <View style={styles.drawerContent}>
-        <View style={{ paddingTop: 55, paddingLeft: 30, paddingBottom: 20, backgroundColor: COLOR_NOTES_BLUE }}>
+        <View style={{ paddingTop: 55, marginLeft: 30, paddingBottom: 30, borderBottomColor: '#4A4A4F', borderBottomWidth: 1 }}>
           <Image
-            style={{width: 75, height: 75 }}
+            style={{width: 75, height: 75, marginBottom: 4 }}
             borderRadius={100}
             borderColor='#FFFFFF'
             borderWidth={2}
             resizeMode='cover'
             source={{uri: this.props.state.sync.avatar}}
           />
-          <Title style={{ color: '#FFFFFF' }}>{this.props.state.sync.displayName}</Title>
-          <Text style={{ color: '#FFFFFF' }}>{this.props.state.sync.email}</Text>
+          <Title style={{ color: COLOR_DARK_TEXT }}>{this.props.state.sync.displayName}</Title>
+          <Text style={{ color: COLOR_DARK_SUBTEXT }}>{this.props.state.sync.email}</Text>
         </View>
         <ScrollView style={styles.drawerSection}>
-          <DrawerSection>
-            {this.drawerItemsData.map((item, index) => (
-              <DrawerItem
-                key={index}
-                label={ item.label }
-                style={{ paddingLeft: 14 }}
-                // active={this.state.drawerItemIndex === item}
-                onPress={() => item.action()}
-              />
-            ))}
-          </DrawerSection>
+
+          {this.drawerItemsData.map((item, index) => (
+            <TouchableRipple key={index} style={styles.wrapper} onPress={() => item.action()}>
+              <Text style={{ color: COLOR_DARK_TEXT, paddingLeft: 14 }}>{ item.label }</Text>
+            </TouchableRipple>
+          ))}
 
         </ScrollView>
         <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
           <View style={styles.footerWrapper}>
-              <Text style={{ color: undefined, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
+              <Text style={{ color: COLOR_DARK_SYNC, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
               <Animated.View                 // Special animatable View
                 style={{
                   ...this.props.style,
@@ -137,7 +139,7 @@ class DrawerItems extends React.Component {
                 }} >
                 <MaterialIcons
                   name='sync'
-                  style={{ color: undefined }}
+                  style={{ color: COLOR_DARK_SYNC }}
                   size={20}
                 />
               </Animated.View>
@@ -151,10 +153,11 @@ class DrawerItems extends React.Component {
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
+    backgroundColor: COLOR_DARK_BACKGROUND
   },
   drawerSection: {
     flexGrow: 1,
-    paddingTop: 10
+    paddingTop: 15
   },
   footer: {
     flexGrow: 0
@@ -168,6 +171,13 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
     paddingLeft: 28,
     paddingRight: 20
+  },
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    height: 48,
   }
 });
 

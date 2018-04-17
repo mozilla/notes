@@ -11,6 +11,11 @@ export const FXA_OAUTH_ACCESS_TYPE = 'offline';
 export const COLOR_NOTES_BLUE = '#4173CE';
 export const COLOR_NOTES_WHITE = '#F9F9FA';
 export const COLOR_APP_BAR = '#F9F9FA';
+export const COLOR_DARK_BACKGROUND = '#38383D';
+export const COLOR_DARK_TEXT = '#FFFFFF';
+export const COLOR_DARK_SUBTEXT = '#bbbbbf';
+export const COLOR_DARK_WARNING = '#ef6b6b';
+export const COLOR_DARK_SYNC = '#42d0b2';
 
 // Actions
 // FOR LEGACY, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
