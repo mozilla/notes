@@ -14,17 +14,17 @@ import { AppRegistry, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from './app/utils/constants';
 import store from './app/store';
 
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
+import EditorPanelHeader from './app/components/EditorPanelHeader';
 import ListPanel from './app/components/ListPanel';
+import ListPanelHeader from './app/components/ListPanelHeader';
 import LoadingPanel from './app/components/LoadingPanel';
 import LoginPanel from './app/components/LoginPanel';
-import MoreMenu from './app/components/MoreMenu';
 import SplashPanel from './app/components/SplashPanel';
 
 import background from './app/background';
@@ -35,17 +35,7 @@ const appMainNavOptions = ({ navigation }) => {
 
   return {
     header: (
-      <Toolbar style={styles.toolbar}>
-        <ToolbarAction
-          size={20}
-          style={{ paddingTop: 4 }}
-          icon='menu'
-          onPress={() => navigation.navigate('DrawerOpen')} />
-        <ToolbarContent
-          style={{ paddingLeft: 0,  }}
-          titleStyle={{ fontSize: 18, color: COLOR_NOTES_BLUE }}
-          title='Notes' />
-      </Toolbar>
+      <ListPanelHeader navigation={navigation}></ListPanelHeader>
     )
   };
 };
@@ -57,17 +47,8 @@ const editorPanelOptions = ({ navigation }) => {
   return {
     drawerLockMode: 'locked-closed',
     header: (
-      <Toolbar style={styles.toolbar}>
-        <MaterialIcons name="chevron-left"
-           size={30}
-           color={COLOR_NOTES_BLUE}
-           onPress={() => { navigation.goBack(); }} />
-        <ToolbarContent
-          title='Saved'
-          titleStyle={{fontSize: 14, textAlign: 'center', color: COLOR_NOTES_BLUE}}
-          />
-        <MoreMenu navigation={navigation} />
-      </Toolbar>
+      <EditorPanelHeader navigation={navigation}>
+      </EditorPanelHeader>
     )
   };
 };
