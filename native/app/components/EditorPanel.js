@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
 import { createNote, updateNote, deleteNote } from '../actions';
+import { COLOR_APP_BAR } from '../utils/constants';
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'transparent'
+    backgroundColor: COLOR_APP_BAR
   },
   richText: {
     alignItems: 'center',
