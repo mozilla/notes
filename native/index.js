@@ -11,12 +11,12 @@ if (SENTRY_DSN) {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React from 'react';
-import { AppRegistry, StyleSheet } from 'react-native';
+import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 
-import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from './app/utils/constants';
+import { COLOR_APP_BAR, COLOR_STATUS_BAR, COLOR_NOTES_BLUE } from './app/utils/constants';
 import store from './app/store';
 
 import DrawerItems from './app/components/DrawerItems';
@@ -138,6 +138,11 @@ const App = DrawerNavigator(
 );
 
 class Notes extends React.Component {
+  componentDidMount() {
+    StatusBar.setBackgroundColor(COLOR_STATUS_BAR);
+    StatusBar.setBarStyle('dark-content');
+  }
+
   render () {
     return (
       <Provider store={store}>
