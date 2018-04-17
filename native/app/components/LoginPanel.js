@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import store from '../store';
 import sync from '../utils/sync';
-import { actionAuthenticate } from '../actions';
+import { authenticate } from '../actions';
 import { Button } from 'react-native-paper';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import { connect } from 'react-redux';
@@ -25,7 +25,7 @@ class LoginPanel extends React.Component {
     }).then((loginDetails) => {
       trackEvent('login-success');
       this.props.dispatch(
-        actionAuthenticate(
+        authenticate(
           loginDetails.profile.email,
           loginDetails.profile.avatar,
           loginDetails.profile.displayName
