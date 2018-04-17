@@ -874,6 +874,13 @@
 			}
 
 			zss_editor.init = function() {
+               // replace <divs> with paragraphs
+               try {
+                 document.execCommand('defaultParagraphSeparator', false, 'p');
+                 document.execCommand('DefaultParagraphSeparator', false, 'p');
+               } catch (e) {
+                 // failed to exec that command
+               }
 
 				disableLineBreakIfNecessary('zss_editor_title');
 				disableLineBreakIfNecessary('zss_editor_content');

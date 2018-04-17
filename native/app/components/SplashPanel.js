@@ -10,6 +10,7 @@ import { authenticate } from '../actions';
 class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
+      console.log('KeyStore data:', loginDetails);
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(
           authenticate(
