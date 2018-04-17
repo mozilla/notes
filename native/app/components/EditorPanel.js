@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: COLOR_APP_BAR
+    backgroundColor: 'white'
   },
   richText: {
     alignItems: 'center',

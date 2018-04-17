@@ -61,7 +61,8 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
   toolbar: {
-    backgroundColor: COLOR_APP_BAR,
+    backgroundColor: 'white',
+    opacity: 0.9,
     shadowOpacity: 0,
     elevation: 0
   }
