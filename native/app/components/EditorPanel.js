@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
-import { actionCreateNote, actionUpdateNote, actionDeleteNote } from '../actions';
+import { createNote, updateNote, deleteNote } from '../actions';
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -19,11 +19,7 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.setFocusHandlers = this.setFocusHandlers.bind(this);
     this.note = this.props.navigation.state.params.note;
-  }
-
-  componentWillUnmount() {
   }
 
   render() {
@@ -47,14 +43,14 @@ class RichTextExample extends Component {
     this.richtext.registerContentChangeListener((e) => {
       if (!this.note && e !== '') {
         this.note = { content: e }
-        this.props.dispatch(actionCreateNote(e)).then((id) => {
+        this.props.dispatch(createNote(e)).then((id) => {
           this.note.id = id;
         });
       } else if (this.note && e === '') {
-        this.props.dispatch(actionDeleteNote(this.note.id));
+        this.props.dispatch(deleteNote(this.note.id));
         this.note = null;
       } else if (this.note && e !== '') {
-        this.props.dispatch(actionUpdateNote(this.note.id, e, new Date()));
+        this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }
     });
   }
@@ -68,14 +64,6 @@ class RichTextExample extends Component {
       const { height } = Dimensions.get('window');
       this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
     }
-
-    this.setFocusHandlers();
-  }
-
-  setFocusHandlers() {
-    this.richtext.setContentFocusHandler(() => {
-      console.log('content focus');
-    });
   }
 }
 

@@ -1,4 +1,3 @@
-import kintoClient from './vendor/kinto-client';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -15,63 +14,54 @@ import { SYNC_AUTHENTICATED,
   FOCUS_NOTE,
   ERROR,
   REQUEST_WELCOME_PAGE } from './utils/constants';
-import fxaUtils from './vendor/fxa-utils';
-import { deleteNote, createNote, saveToKinto } from './utils/sync';
 
+import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
 
-export function actionPleaseLogin() {
+export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
-export function actionKintoLoad(notes) {
+export function kintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
-export function actionAuthenticate(email, avatar, displayName) {
+export function authenticate(email, avatar, displayName) {
   return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
 }
 
-export function actionCreateNote(content = '') {
+export function createNote(content = '') {
   const id = uuid4();
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       dispatch({ type: CREATE_NOTE, id, content });
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        createNote(kintoClient, loginDetails, { id, content }).then(() => {
-          dispatch({ type: CREATE_NOTE, isSyncing: false });
-          resolve(id);
-        });
+
+      browser.runtime.sendMessage({
+        type: CREATE_NOTE,
+        id,
+        content
       });
+
+      resolve(id);
     });
   };
 }
 
-export function actionUpdateNote(id, content, lastModified) {
-  return (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      dispatch({ type: UPDATE_NOTE, id, content, lastModified });
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        saveToKinto(kintoClient, loginDetails, { id, content, lastModified }).then(() => {
-          dispatch({ type: UPDATE_NOTE, isSyncing: false });
-          resolve();
-        });
-      });
-    });
-  };
+export function updateNote(id, content, lastModified) {
+  browser.runtime.sendMessage({
+    type: UPDATE_NOTE,
+    id,
+    content,
+    lastModified
+  });
+  return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
-export function actionDeleteNote(id) {
-  return (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      dispatch({ type: DELETE_NOTE, id, isSyncing: true });
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        deleteNote(kintoClient, loginDetails, id).then(() => {
-          dispatch({ type: DELETE_NOTE, isSyncing: false });
-          resolve(id);
-        });
-      });
-    });
-  };
+export function deleteNote(id) {
+  browser.runtime.sendMessage({
+    type: DELETE_NOTE,
+    id
+  });
+  return { type: DELETE_NOTE, id, isSyncing: true };
 }

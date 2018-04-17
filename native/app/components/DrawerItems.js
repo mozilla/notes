@@ -115,7 +115,6 @@ class DrawerItems extends React.Component {
         <TouchableRipple style={styles.footer} onPress={() => console.log('was pressed')}>
           <View style={styles.footerWrapper}>
               <Text style={{ color: undefined, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
-
               <Animated.View                 // Special animatable View
                 style={{
                   ...this.props.style,

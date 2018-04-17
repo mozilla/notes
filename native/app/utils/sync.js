@@ -1,5 +1,5 @@
 import {
-  actionKintoLoad
+  kintoLoad
 } from '../actions';
 import store from '../store';
 
@@ -367,21 +367,7 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
   return syncKinto(client, loginDetails)
     // Ignore failure of syncKinto by retrieving note even when promise rejected
     .then(() => retrieveNote(client), () => retrieveNote(client))
-    .then(result => {
-      store.dispatch(actionKintoLoad(result && result.data));
-      // browser.runtime.sendMessage({
-      //   action: 'kinto-loaded',
-      //   notes: result.data,
-      //   last_modified: null
-      // });
-    })
     .catch((e) => {
-      store.dispatch(actionKintoLoad());
-      // browser.runtime.sendMessage({
-      //   action: 'kinto-loaded',
-      //   notes: null,
-      //   last_modified: null
-      // });
       return new Promise((resolve) => resolve());
     });
 }
@@ -444,19 +430,19 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
 function createNote(client, loginDetails, note) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .create(note, { useRecordId: true });
-    // .then(() => {
-    //   return syncKinto(client, loginDetails);
-    // });
+    .create(note, { useRecordId: true })
+    .then(() => {
+      return syncKinto(client, loginDetails);
+    });
 }
 
 function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused-vars
   return client
     .collection('notes', { idSchema: notesIdSchema })
-    .delete(id);
-    // .then(() => {
-    //   return syncKinto(client, loginDetails);
-    // });
+    .delete(id)
+    .then(() => {
+      return syncKinto(client, loginDetails);
+    });
 }
 
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars

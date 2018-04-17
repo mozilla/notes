@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
 import { COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
-import { actionKintoLoad } from "../actions";
+import { kintoLoad } from "../actions";
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -32,20 +32,7 @@ class ListPanel extends React.Component {
 
   _keyExtractor = (item, index) => item.id;
 
-  componentWillMount() {
-    // TODO: Refactor this for offline view
-    sync.retrieveNote(kintoClient).then(result => {
-      store.dispatch(actionKintoLoad(result && result.data));
-    }).catch((e) => {
-      store.dispatch(actionKintoLoad());
-    });
-  }
-
-  componentWillReceiveProps(newProps) {
-  }
-
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
@@ -101,7 +88,7 @@ class ListPanel extends React.Component {
           }}
           ListFooterComponent={() => {
             return (
-              // Try to add a shadow but couldn'not working yett make it work :(
+              // Try to add a shadow but couldn't yet make it work :(
               <View style={{
                 backgroundColor: 'white',
                 height: 10,

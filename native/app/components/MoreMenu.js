@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { actionDeleteNote } from '../actions';
+import { deleteNote } from '../actions';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -23,9 +23,8 @@ class MoreMenu extends Component {
       (result, index) => {
         switch (index) {
           case 0:
-            this.props.dispatch(
-              actionDeleteNote(navigation.state.params.note.id)
-            ).then(() => navigation.navigate('ListPanel'));
+            this.props.dispatch(deleteNote(navigation.state.params.note.id));
+            navigation.navigate('ListPanel');
             break;
         }
       },

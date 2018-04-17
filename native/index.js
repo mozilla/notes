@@ -9,12 +9,12 @@ if (SENTRY_DSN) {
   Sentry.config(SENTRY_DSN).install();
 }
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React from 'react';
 import { AppRegistry, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from './app/utils/constants';
 import store from './app/store';
@@ -26,6 +26,8 @@ import LoadingPanel from './app/components/LoadingPanel';
 import LoginPanel from './app/components/LoginPanel';
 import MoreMenu from './app/components/MoreMenu';
 import SplashPanel from './app/components/SplashPanel';
+
+import background from './app/background';
 
 const appMainNavOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
