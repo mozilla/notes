@@ -3,7 +3,9 @@ import fxaUtils from './vendor/fxa-utils';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
+  SYNCING,
   TEXT_SAVED,
+  TEXT_SYNCING,
   TEXT_SYNCED,
   RECONNECT_SYNC,
   DISCONNECTED,
@@ -24,6 +26,7 @@ import { SYNC_AUTHENTICATED,
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.type) {
     case KINTO_LOADED:
+      store.dispatch({ type: TEXT_SYNCING });
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.loadFromKinto(kintoClient, loginDetails).then(result => {
           if (result && result.data) {

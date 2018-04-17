@@ -17,6 +17,7 @@ export const COLOR_APP_BAR = '#F9F9FA';
 export const SYNC_AUTHENTICATED = 'sync-authenticated';
 export const KINTO_LOADED = 'kinto-loaded';
 export const TEXT_SAVED = 'text-saved';
+export const TEXT_SYNCING = 'text-syncing';
 export const TEXT_SYNCED = 'text-synced';
 export const OPENING_LOGIN = 'opening-login';
 export const PLEASE_LOGIN = 'please-login';

@@ -8,12 +8,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing } from 'react-native';
 import moment from 'moment';
 
-import { COLOR_NOTES_BLUE } from "../utils/constants";
+import { COLOR_NOTES_BLUE, KINTO_LOADED } from '../utils/constants';
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
-import { trackEvent } from "../utils/metrics";
-import fxaUtils from "../vendor/fxa-utils";
-import store from "../store";
-
+import { trackEvent } from '../utils/metrics';
+import fxaUtils from '../vendor/fxa-utils';
+import store from '../store';
+import browser from '../browser';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -51,20 +51,30 @@ class DrawerItems extends React.Component {
       }
     ];
 
-    this.animation = Animated.timing(this.state.rotation, {
-      toValue: 0,
-      duration: 2000,
-      easing: Easing.linear
-    });
-
     this._startAnimation = () => {
       this.state.rotation.setValue(1);
-      this.animation.start(() => this._startAnimation());
+      Animated.timing(this.state.rotation, {
+        toValue: 0,
+        duration: 2000,
+        easing: Easing.linear
+      }).start(() => {
+        if (this.props.state.sync.isSyncing) {
+          this._startAnimation()
+        }
+      });
     };
 
     this._stopAnimation = () => {
-      this.animation.stop();
+      Animated.timing(
+        this.state.rotation
+      ).stop();
     };
+
+    this._requestSync = () => {
+      browser.runtime.sendMessage({
+        type: KINTO_LOADED
+      });
+    }
 
   }
 
@@ -112,7 +122,7 @@ class DrawerItems extends React.Component {
           </DrawerSection>
 
         </ScrollView>
-        <TouchableRipple style={styles.footer} onPress={() => console.log('was pressed')}>
+        <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
           <View style={styles.footerWrapper}>
               <Text style={{ color: undefined, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
               <Animated.View                 // Special animatable View
@@ -126,7 +136,7 @@ class DrawerItems extends React.Component {
                   }]
                 }} >
                 <MaterialIcons
-                  name="sync"
+                  name='sync'
                   style={{ color: undefined }}
                   size={20}
                 />
