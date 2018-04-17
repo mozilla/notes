@@ -20,7 +20,7 @@ class EditorPanelHeader extends Component {
 
   _setNoteStatus = (props) => {
     if (props.state.sync.isSyncing) {
-      return 'Syncing';
+      return 'Syncing...';
     } else {
       return 'Synced'
     }
