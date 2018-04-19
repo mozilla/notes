@@ -1,4 +1,4 @@
-package com.notes;
+package org.mozilla.testpilot.notes;
 
 import com.facebook.react.ReactActivity;
 
