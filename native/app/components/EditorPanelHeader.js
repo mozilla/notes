@@ -48,9 +48,6 @@ class EditorPanelHeader extends Component {
       </Toolbar>
     );
   }
-
-  componentDidMount() {
-  }
 }
 
 function mapStateToProps(state) {

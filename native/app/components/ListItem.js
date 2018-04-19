@@ -22,8 +22,6 @@ function formatLastModified(date = new Date()) {
 
   if (m.isSame(new Date(), 'day')) {
     return m.format('LT');
-  } else if (m.isSame(new Date(), 'year')) {
-    return m.format('ll');
   } else {
     return m.format('ll');
   }

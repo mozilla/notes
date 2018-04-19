@@ -28,9 +28,6 @@ class ListPanelHeader extends Component {
       </Toolbar>
     );
   }
-
-  componentDidMount() {
-  }
 }
 
 function mapStateToProps(state) {
