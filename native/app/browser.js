@@ -1,3 +1,5 @@
+import i18nGetMessage from '../utils/i18n';
+
 // Send message
 async function sendMessage(...args) {
   if (args.length >= 2 && args[0] instanceof String && args[0] === 'notes@mozilla.com') {
@@ -9,8 +11,8 @@ async function sendMessage(...args) {
 
 const browser = {
   i18n: {
-    getMessage: () => {
-      return '';
+    getMessage: (id, extra) => {
+      return i18nGetMessage(id, extra);
     }
   },
   runtime: {
