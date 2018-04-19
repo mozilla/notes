@@ -47,7 +47,6 @@ browser.runtime.onMessage.addListener(eventData => {
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.saveToKinto(kintoClient, loginDetails,
           { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
-            console.log('dispatch updated synced');
           store.dispatch({ type: TEXT_SYNCED });
         });
       });

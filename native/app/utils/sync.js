@@ -383,7 +383,7 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
         //   from: fromWindowId
         // });
         client.conflict = false;
-        return syncKinto(client, credentials);
+        return syncKinto(client, loginDetails);
       })
       .then(() => retrieveNote(client), () => retrieveNote(client))
       // .then(result => {
