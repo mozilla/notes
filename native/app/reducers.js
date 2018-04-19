@@ -211,6 +211,8 @@ function notes(notes = [], action) {
       }
       return list;
     }
+    case DISCONNECTED:
+      return [];
     default:
       return notes;
   }
