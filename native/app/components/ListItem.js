@@ -8,8 +8,7 @@ import {
 
 import {
   Title,
-  Subheading,
-  TouchableRipple } from 'react-native-paper';
+  Subheading } from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
@@ -54,7 +53,7 @@ export default class ListItem extends React.Component {
     }
 
     return (
-      <TouchableRipple onPress={this._navigateToNote} >
+      <TouchableOpacity onPress={this._navigateToNote} >
         <View style={styles.wrapper} >
           <Text style={ styles.selector } >
             <MaterialIcons
@@ -72,7 +71,7 @@ export default class ListItem extends React.Component {
           </View>
           <Text style={styles.time}>{formatLastModified(note.lastModified)}</Text>
         </View>
-      </TouchableRipple>
+      </TouchableOpacity>
     )
   }
 }

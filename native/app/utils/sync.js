@@ -2,24 +2,12 @@ import {
   kintoLoad
 } from '../actions';
 import store from '../store';
+import browser from '../browser';
 
 const fxaUtils = require('../vendor/fxa-utils');
 const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 // TODO WARNING: `jose` is not in the official release in the crypto-relier
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
-
-const browser = {
-  i18n: {
-    getMessage: () => {
-      return '';
-    }
-  },
-  runtime: {
-    sendMessage: () => {
-      console.log('sendMessage', arguments);
-    }
-  }
-};
 
 let syncDebounce = null;
 
@@ -29,7 +17,6 @@ function encrypt(key, content) {
     k: key.k,
     kid: key.kid
   };
-  // TODO: THIS HAS NOT BEEN TESTED
   return jose.JWK.asKey(jwkKey).then((k) => {
     return jose.JWE.createEncrypt({ format: 'compact' }, jwkKey)
       .update(JSON.stringify(content))

@@ -1,13 +1,18 @@
 // Send message
 async function sendMessage(...args) {
   if (args.length >= 2 && args[0] instanceof String && args[0] === 'notes@mozilla.com') {
-    console.log('Implement me');
+    browser.runtime.onMessage.dispatch(args[1]);
   } else {
     browser.runtime.onMessage.dispatch(args[0]);
   }
 }
 
 const browser = {
+  i18n: {
+    getMessage: () => {
+      return '';
+    }
+  },
   runtime: {
     sendMessage,
     onMessage: {
