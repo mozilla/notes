@@ -37,12 +37,6 @@ class DrawerItems extends React.Component {
     // DrawerItemsData store our drawer button list
     this.drawerItemsData = [
       {
-        label  : 'Give Feedback',
-        action : () => {
-          return Linking.openURL(SURVEY_PATH);
-        }
-      },
-      {
         label : 'Log out',
         action: () => {
           function navigateToLogin () {
@@ -58,6 +52,12 @@ class DrawerItems extends React.Component {
             action: DISCONNECTED
           });
           return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
+        }
+      },
+      {
+        label  : 'Feedback',
+        action : () => {
+          return Linking.openURL(SURVEY_PATH);
         }
       }
     ];
