@@ -18,12 +18,14 @@ class MoreMenu extends Component {
     const { navigation } = this.props;
     UIManager.showPopupMenu(
       findNodeHandle(this.menu),
-      labels,
-      () => {},
-      (result, index) => {
+      labels, // actions
+      () => {}, // onError
+      (result, index) => { //onSuccess
         switch (index) {
           case 0:
-            this.props.dispatch(deleteNote(navigation.state.params.note.id));
+            if (this.props.state.sync.focusedNoteId) {
+              this.props.dispatch(deleteNote(this.props.state.sync.focusedNoteId));
+            }
             navigation.navigate('ListPanel');
             break;
         }

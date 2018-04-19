@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
-import { createNote, updateNote, deleteNote } from '../actions';
+import { createNote, updateNote, deleteNote, setFocusedNote } from '../actions';
 import { COLOR_APP_BAR } from '../utils/constants';
 
 function escapeHtml(unsafe) {
@@ -21,6 +21,9 @@ class RichTextExample extends Component {
   constructor(props) {
     super(props);
     this.note = this.props.navigation.state.params.note;
+    if (this.note) {
+      this.props.dispatch(setFocusedNote(this.note.id));
+    }
   }
 
   render() {
@@ -48,10 +51,12 @@ class RichTextExample extends Component {
         this.note = { content: e }
         this.props.dispatch(createNote(e)).then((note) => {
           this.note.id = note.id;
+          this.props.dispatch(setFocusedNote(note.id));
         });
       } else if (this.note && e === '') {
         this.props.dispatch(deleteNote(this.note.id));
         this.note = null;
+        this.props.dispatch(setFocusedNote());
       } else if (this.note && e !== '') {
         this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }

@@ -74,6 +74,10 @@ export function deleteNote(id) {
   return { type: DELETE_NOTE, id, isSyncing: true };
 }
 
+export function setFocusedNote(id) {
+  return { type: FOCUS_NOTE, id };
+}
+
 export function error(message) {
   return { type: ERROR, message};
 }
