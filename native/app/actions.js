@@ -31,10 +31,18 @@ export function authenticate(email, avatar, displayName) {
 }
 
 export function createNote(content = '') {
-  const id = uuid4();
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
+
+      const id = uuid4();
+
+      // If note is not a paragraph, we force creation but editor should also
+      // trigger an update with <p> in it to double check
+      if (!content.startsWith('<p>')) {
+        content = `<p>${content}</p>`;
+      }
+
       dispatch({ type: CREATE_NOTE, id, content });
 
       browser.runtime.sendMessage({
@@ -42,8 +50,7 @@ export function createNote(content = '') {
         id,
         content
       });
-
-      resolve(id);
+      resolve({ id, content });
     });
   };
 }

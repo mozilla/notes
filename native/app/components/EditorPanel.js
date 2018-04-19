@@ -31,8 +31,9 @@ class RichTextExample extends Component {
           style={styles.richText}
           hiddenTitle={true}
           // at first initialContentHTML must be `''` otherwise we would get undefined
-          initialContentHTML=''
+          initialContentHTML={this.note ? escapeHtml(this.note.content) : ''}
           enableOnChange={true}
+          customCSS="p:first-child { margin-top: 0; }"
           contentPlaceholder='Take a note...'
           editorInitializedCallback={() => this.onEditorInitialized()}
         />
@@ -43,9 +44,10 @@ class RichTextExample extends Component {
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
       if (!this.note && e !== '') {
+        this.richtext.setParagraph();
         this.note = { content: e }
-        this.props.dispatch(createNote(e)).then((id) => {
-          this.note.id = id;
+        this.props.dispatch(createNote(e)).then((note) => {
+          this.note.id = note.id;
         });
       } else if (this.note && e === '') {
         this.props.dispatch(deleteNote(this.note.id));
@@ -57,10 +59,7 @@ class RichTextExample extends Component {
   }
 
   onEditorInitialized(e) {
-    if (this.note) {
-      // need to call `escapeHtml` here because otherwise the editor will fail if strings have ` ' ` in them. :(
-      this.richtext._sendAction('SET_CONTENT_HTML', escapeHtml(this.note.content));
-    } else {
+    if (!this.note) {
       // set height if totally empty, helps with keyboard pull up
       const { height } = Dimensions.get('window');
       this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-  },
+  }
 });
 
 
