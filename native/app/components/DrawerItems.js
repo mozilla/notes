@@ -55,7 +55,7 @@ class DrawerItems extends React.Component {
             trackEvent('webext-button-disconnect');
           }
           browser.runtime.sendMessage({
-            type: DISCONNECTED
+            action: DISCONNECTED
           });
           return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
         }
@@ -84,7 +84,7 @@ class DrawerItems extends React.Component {
 
     this._requestSync = () => {
       browser.runtime.sendMessage({
-        type: KINTO_LOADED
+        action: KINTO_LOADED
       });
     }
 
@@ -136,10 +136,22 @@ class DrawerItems extends React.Component {
           ))}
 
         </ScrollView>
-        <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
-          <View style={styles.footerWrapper}>
+        { this.props.state.sync.error ?
+          <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
+            <View style={styles.footerWrapper}>
+              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.error }</Text>
+              <MaterialIcons
+                name='warning'
+                style={{ color: COLOR_DARK_WARNING }}
+                size={20}
+              />
+            </View>
+          </TouchableRipple>
+          :
+          <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
+            <View style={styles.footerWrapper}>
               <Text style={{ color: COLOR_DARK_SYNC, fontSize: 13 }}>{ statusLabel }</Text>
-              <Animated.View                 // Special animatable View
+              <Animated.View
                 style={{
                   ...this.props.style,
                   transform: [{
@@ -155,8 +167,9 @@ class DrawerItems extends React.Component {
                   size={20}
                 />
               </Animated.View>
-          </View>
-        </TouchableRipple>
+            </View>
+          </TouchableRipple>
+        }
       </View>
     );
   }

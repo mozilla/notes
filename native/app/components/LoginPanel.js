@@ -33,7 +33,7 @@ class LoginPanel extends React.Component {
       );
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.SHORT);
       browser.runtime.sendMessage({
-        type: KINTO_LOADED
+        action: KINTO_LOADED
       });
       return Promise.resolve();
     }).then(() => {

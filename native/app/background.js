@@ -19,13 +19,12 @@ import { SYNC_AUTHENTICATED,
   ERROR,
   REQUEST_WELCOME_PAGE } from './utils/constants';
 
-
  import browser from './browser';
  import store from './store';
  import sync from './utils/sync';
 
 browser.runtime.onMessage.addListener(eventData => {
-  switch(eventData.type) {
+  switch(eventData.action) {
     case KINTO_LOADED:
       store.dispatch({ type: TEXT_SYNCING });
       fxaUtils.fxaGetCredential().then((loginDetails) => {
@@ -63,6 +62,13 @@ browser.runtime.onMessage.addListener(eventData => {
       fxaUtils.fxaGetCredential().then((loginDetails) => {
         sync.clearKinto(kintoClient);
       });
+      break;
+    case ERROR:
+      store.dispatch({ type: ERROR, message: eventData.message });
+      break;
+    case RECONNECT_SYNC:
+      console.log('Implement me (background.js RECONNECT_SYNC message)');
+      store.dispatch({ type: ERROR, message: 'Reconnect to Sync' });
     default:
       break;
   }

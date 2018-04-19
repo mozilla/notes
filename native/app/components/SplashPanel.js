@@ -29,7 +29,7 @@ class SplashPanel extends React.Component {
           }));
         } else {
           browser.runtime.sendMessage({
-            type: KINTO_LOADED
+            action: KINTO_LOADED
           });
         }
       } else {

@@ -46,7 +46,7 @@ export function createNote(content = '') {
       dispatch({ type: CREATE_NOTE, id, content });
 
       browser.runtime.sendMessage({
-        type: CREATE_NOTE,
+        action: CREATE_NOTE,
         id,
         content
       });
@@ -57,7 +57,7 @@ export function createNote(content = '') {
 
 export function updateNote(id, content, lastModified) {
   browser.runtime.sendMessage({
-    type: UPDATE_NOTE,
+    action: UPDATE_NOTE,
     id,
     content,
     lastModified
@@ -67,8 +67,12 @@ export function updateNote(id, content, lastModified) {
 
 export function deleteNote(id) {
   browser.runtime.sendMessage({
-    type: DELETE_NOTE,
+    action: DELETE_NOTE,
     id
   });
   return { type: DELETE_NOTE, id, isSyncing: true };
+}
+
+export function error(message) {
+  return { type: ERROR, message};
 }
