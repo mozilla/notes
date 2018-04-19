@@ -13,13 +13,7 @@ class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
-        this.props.dispatch(
-          authenticate(
-            loginDetails.profile.email,
-            loginDetails.profile.avatar,
-            loginDetails.profile.displayName
-          )
-        );
+        this.props.dispatch(authenticate(loginDetails));
 
         // If redux exist, we load redux, if not we don't do it.
         if (this.props.state.kinto.isLoaded) {

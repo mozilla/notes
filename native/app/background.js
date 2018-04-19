@@ -27,41 +27,31 @@ browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
     case KINTO_LOADED:
       store.dispatch({ type: TEXT_SYNCING });
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        sync.loadFromKinto(kintoClient, loginDetails).then(result => {
-          if (result && result.data) {
-            store.dispatch({ type: KINTO_LOADED, notes: result.data });
-          }
-        });
+      sync.loadFromKinto(kintoClient, store.getState().sync.loginDetails).then(result => {
+        if (result && result.data) {
+          store.dispatch({ type: KINTO_LOADED, notes: result.data });
+        }
       });
       break;
     case CREATE_NOTE:
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        sync.createNote(kintoClient, loginDetails,
-          { id: eventData.id, content: eventData.content, lastModified: new Date() }).then(() => {
-          store.dispatch({ type: TEXT_SYNCED });
-        });
+      sync.createNote(kintoClient, store.getState().sync.loginDetails,
+        { id: eventData.id, content: eventData.content, lastModified: new Date() }).then(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case UPDATE_NOTE:
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        sync.saveToKinto(kintoClient, loginDetails,
-          { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
-          store.dispatch({ type: TEXT_SYNCED });
-        });
+      sync.saveToKinto(kintoClient, store.getState().sync.loginDetails,
+        { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case DELETE_NOTE:
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        sync.deleteNote(kintoClient, loginDetails, eventData.id).then(() => {
-          store.dispatch({ type: TEXT_SYNCED });
-        });
+      sync.deleteNote(kintoClient, store.getState().sync.loginDetails, eventData.id).then(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case DISCONNECTED:
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        sync.clearKinto(kintoClient);
-      });
+      sync.clearKinto(kintoClient);
       break;
     case ERROR:
       store.dispatch({ type: ERROR, message: eventData.message });

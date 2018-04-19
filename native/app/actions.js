@@ -1,3 +1,4 @@
+import * as Keychain from 'react-native-keychain';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -26,8 +27,8 @@ export function kintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
-export function authenticate(email, avatar, displayName) {
-  return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
+export function authenticate(loginDetails) {
+  return { type: SYNC_AUTHENTICATED, loginDetails };
 }
 
 export function createNote(content = '') {
@@ -75,4 +76,17 @@ export function deleteNote(id) {
 
 export function error(message) {
   return { type: ERROR, message};
+}
+
+export function disconnect() {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      browser.runtime.sendMessage({
+        action: DISCONNECTED
+      });
+      dispatch({ type: DISCONNECTED });
+      Keychain.resetGenericPassword().then(resolve, reject);
+    });
+  };
+
 }

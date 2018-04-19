@@ -1,4 +1,3 @@
-import * as Keychain from 'react-native-keychain';
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,6 +21,7 @@ import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import store from '../store';
 import browser from '../browser';
+import { disconnect } from '../actions';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -48,10 +48,7 @@ class DrawerItems extends React.Component {
             this.props.navigation.dispatch(resetAction);
             trackEvent('webext-button-disconnect');
           }
-          browser.runtime.sendMessage({
-            action: DISCONNECTED
-          });
-          return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
+          props.dispatch(disconnect()).then(navigateToLogin.bind(this));
         }
       },
       {
@@ -122,19 +119,17 @@ class DrawerItems extends React.Component {
             borderColor='#FFFFFF'
             borderWidth={2}
             resizeMode='cover'
-            source={{uri: this.props.state.sync.avatar}}
+            source={{uri: this.props.state.profile.avatar}}
           />
-          <Title style={{ color: COLOR_DARK_TEXT }}>{this.props.state.sync.displayName}</Title>
-          <Text style={{ color: COLOR_DARK_SUBTEXT }}>{this.props.state.sync.email}</Text>
+          <Title style={{ color: COLOR_DARK_TEXT }}>{this.props.state.profile.displayName}</Title>
+          <Text style={{ color: COLOR_DARK_SUBTEXT }}>{this.props.state.profile.email}</Text>
         </View>
         <ScrollView style={styles.drawerSection}>
-
-          {this.drawerItemsData.map((item, index) => (
-            <TouchableRipple key={index} style={styles.wrapper} onPress={() => item.action()}>
-              <Text style={{ color: COLOR_DARK_TEXT, paddingLeft: 14 }}>{ item.label }</Text>
-            </TouchableRipple>
-          ))}
-
+        {this.drawerItemsData.map((item, index) => (
+          <TouchableRipple key={index} style={styles.wrapper} onPress={() => item.action()}>
+            <Text style={{ color: COLOR_DARK_TEXT, paddingLeft: 14 }}>{ item.label }</Text>
+          </TouchableRipple>
+        ))}
         </ScrollView>
         { this.props.state.sync.error ?
           <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>

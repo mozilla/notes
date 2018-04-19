@@ -17,27 +17,44 @@ import {
   REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
+function profile(profile = {}, action) {
+  switch (action.type) {
+    case SYNC_AUTHENTICATED:
+      return Object.assign({}, profile, {
+        email: action.loginDetails.profile.email,
+        avatar: action.loginDetails.profile.avatar,
+        avatarDefault: action.loginDetails.profile.avatarDefault,
+        displayName: action.loginDetails.profile.displayName,
+        locale: action.loginDetails.profile.locale
+      });
+    case DISCONNECTED:
+      return Object.assign({}, profile, {
+        email: null,
+        avatar: null,
+        avatarDefault: null,
+        displayName: null,
+        locale: null
+      });
+    default:
+      return profile;
+  }
+}
+
 function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
       return Object.assign({}, sync, {
-        // user profile
-        email: action.email,
-        avatar: action.avatar,
-        displayName: action.displayName,
-        // sync state
+        loginDetails: action.loginDetails,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
         lastSynced: new Date(),
         isSyncing: true,
-        error: null
+        error: null,
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
-        email: null,
-        avatar: null,
-        displayName: null,
+        loginDetails: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
@@ -58,9 +75,7 @@ function sync(sync = {}, action) {
       });
     case RECONNECT_SYNC:
       return Object.assign({}, sync, {
-        email: null,
-        avatar: null,
-        displayName: null,
+        loginDetails: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
@@ -202,6 +217,7 @@ function notes(notes = [], action) {
 }
 
 const noteApp = combineReducers({
+  profile,
   sync,
   kinto,
   notes

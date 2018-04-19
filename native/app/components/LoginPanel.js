@@ -24,13 +24,7 @@ class LoginPanel extends React.Component {
       return fxaUtils.launchOAuthKeyFlow();
     }).then((loginDetails) => {
       trackEvent('login-success');
-      this.props.dispatch(
-        authenticate(
-          loginDetails.profile.email,
-          loginDetails.profile.avatar,
-          loginDetails.profile.displayName
-        )
-      );
+      this.props.dispatch(authenticate(loginDetails));
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.SHORT);
       browser.runtime.sendMessage({
         action: KINTO_LOADED

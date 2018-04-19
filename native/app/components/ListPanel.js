@@ -22,9 +22,7 @@ class ListPanel extends React.Component {
     this._onRefresh = () => {
       this.setState({ refreshing: true });
 
-      fxaUtils.fxaGetCredential().then((loginDetails) => {
-        return sync.loadFromKinto(kintoClient, loginDetails);
-      }).then(() => {
+      return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
         this.setState({ refreshing: false });
       });
     }
