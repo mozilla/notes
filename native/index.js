@@ -9,7 +9,6 @@ if (SENTRY_DSN) {
   Sentry.config(SENTRY_DSN).install();
 }
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React from 'react';
 import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
@@ -21,11 +20,14 @@ import store from './app/store';
 
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
+import EditorPanelHeader from './app/components/EditorPanelHeader';
 import ListPanel from './app/components/ListPanel';
+import ListPanelHeader from './app/components/ListPanelHeader';
 import LoadingPanel from './app/components/LoadingPanel';
 import LoginPanel from './app/components/LoginPanel';
-import MoreMenu from './app/components/MoreMenu';
 import SplashPanel from './app/components/SplashPanel';
+
+import background from './app/background';
 
 const appMainNavOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
@@ -33,10 +35,7 @@ const appMainNavOptions = ({ navigation }) => {
 
   return {
     header: (
-      <Toolbar style={styles.toolbar}>
-        <ToolbarAction icon='menu' onPress={() => navigation.navigate('DrawerOpen')} />
-        <ToolbarContent title='Notes' />
-      </Toolbar>
+      <ListPanelHeader navigation={navigation}></ListPanelHeader>
     )
   };
 };
@@ -45,24 +44,11 @@ const editorPanelOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
   const routeName = navigation.state.routeName;
 
-  const onPress = () => {
-    navigation.navigate('ListPanel');
-  };
-
   return {
     drawerLockMode: 'locked-closed',
     header: (
-      <Toolbar style={styles.toolbar}>
-        <MaterialIcons name="chevron-left"
-           size={30}
-           color={COLOR_NOTES_BLUE}
-           onPress={() => { navigation.goBack(); }} />
-        <ToolbarContent
-          title='Saved'
-          titleStyle={{fontSize: 14, textAlign: 'center', color: COLOR_NOTES_BLUE}}
-          />
-        <MoreMenu onPress={onPress} />
-      </Toolbar>
+      <EditorPanelHeader navigation={navigation}>
+      </EditorPanelHeader>
     )
   };
 };

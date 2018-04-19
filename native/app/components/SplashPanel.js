@@ -5,30 +5,43 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
+import { KINTO_LOADED } from '../utils/constants';
+import browser from '../browser';
 import { authenticate } from '../actions';
 
 class SplashPanel extends React.Component {
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
-        this.props.dispatch(
-          authenticate(
-            loginDetails.profile.email,
-            loginDetails.profile.avatar,
-            loginDetails.profile.displayName
-          )
-        );
-        this.props.navigation.dispatch(NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
-        }));
+        this.props.dispatch(authenticate(loginDetails));
+
+        // If redux exist, we load redux, if not we don't do it.
+        if (this.props.state.kinto.isLoaded) {
+          this.props.navigation.dispatch(NavigationActions.reset({
+            index: 0,
+            actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
+          }));
+        } else {
+          browser.runtime.sendMessage({
+            action: KINTO_LOADED
+          });
+        }
       } else {
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
+          actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
         }));
       }
     });
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.state.kinto.isLoaded) {
+      this.props.navigation.dispatch(NavigationActions.reset({
+        index: 0,
+        actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
+      }));
+    }
   }
 
   render() {

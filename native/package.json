@@ -25,6 +25,7 @@
     "events": "~1.1.1",
     "https-browserify": "0.0.1",
     "indexeddbshim": "^3.5.1",
+    "moment": "^2.22.1",
     "path-browserify": "0.0.0",
     "pontoon-to-webext": "^1.0.2",
     "process": "~0.11.10",

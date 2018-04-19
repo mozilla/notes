@@ -10,6 +10,11 @@ export const FXA_OAUTH_ACCESS_TYPE = 'offline';
 // Colors
 export const COLOR_NOTES_BLUE = '#4173CE';
 export const COLOR_NOTES_WHITE = '#F9F9FA';
+export const COLOR_DARK_BACKGROUND = '#38383D';
+export const COLOR_DARK_TEXT = '#FFFFFF';
+export const COLOR_DARK_SUBTEXT = '#bbbbbf';
+export const COLOR_DARK_WARNING = '#ef6b6b';
+export const COLOR_DARK_SYNC = '#42d0b2';
 export const COLOR_STATUS_BAR = '#F9F9FA';
 export const COLOR_APP_BAR = '#FFFFFF';
 
@@ -18,6 +23,7 @@ export const COLOR_APP_BAR = '#FFFFFF';
 export const SYNC_AUTHENTICATED = 'sync-authenticated';
 export const KINTO_LOADED = 'kinto-loaded';
 export const TEXT_SAVED = 'text-saved';
+export const TEXT_SYNCING = 'text-syncing';
 export const TEXT_SYNCED = 'text-synced';
 export const OPENING_LOGIN = 'opening-login';
 export const PLEASE_LOGIN = 'please-login';

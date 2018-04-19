@@ -1,3 +1,5 @@
+import * as Keychain from 'react-native-keychain';
+
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
   TEXT_SAVED,
@@ -14,6 +16,7 @@ import { SYNC_AUTHENTICATED,
   ERROR,
   REQUEST_WELCOME_PAGE } from './utils/constants';
 
+import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
 
 export function pleaseLogin() {
@@ -24,19 +27,70 @@ export function kintoLoad(notes) {
   return { type: KINTO_LOADED, notes };
 }
 
-export function authenticate(email, avatar, displayName) {
-  return { type: SYNC_AUTHENTICATED, email, avatar, displayName };
+export function authenticate(loginDetails) {
+  return { type: SYNC_AUTHENTICATED, loginDetails };
 }
 
 export function createNote(content = '') {
-  const id = uuid4();
   // Return id to callback using promises
-  const fct = (dispatch, getState) => {
+  return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
+
+      const id = uuid4();
+
+      // If note is not a paragraph, we force creation but editor should also
+      // trigger an update with <p> in it to double check
+      if (!content.startsWith('<p>')) {
+        content = `<p>${content}</p>`;
+      }
+
       dispatch({ type: CREATE_NOTE, id, content });
-      resolve(id);
+
+      browser.runtime.sendMessage({
+        action: CREATE_NOTE,
+        id,
+        content
+      });
+      resolve({ id, content });
+    });
+  };
+}
+
+export function updateNote(id, content, lastModified) {
+  browser.runtime.sendMessage({
+    action: UPDATE_NOTE,
+    id,
+    content,
+    lastModified
+  });
+  return { type: UPDATE_NOTE, id, content, lastModified };
+}
+
+export function deleteNote(id) {
+  browser.runtime.sendMessage({
+    action: DELETE_NOTE,
+    id
+  });
+  return { type: DELETE_NOTE, id, isSyncing: true };
+}
+
+export function setFocusedNote(id) {
+  return { type: FOCUS_NOTE, id };
+}
+
+export function error(message) {
+  return { type: ERROR, message};
+}
+
+export function disconnect() {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      browser.runtime.sendMessage({
+        action: DISCONNECTED
+      });
+      dispatch({ type: DISCONNECTED });
+      Keychain.resetGenericPassword().then(resolve, reject);
     });
   };
 
-  return fct;
 }

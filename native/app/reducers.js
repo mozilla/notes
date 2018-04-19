@@ -3,6 +3,7 @@ import {
   SYNC_AUTHENTICATED,
   DISCONNECTED,
   TEXT_SAVED,
+  TEXT_SYNCING,
   TEXT_SYNCED,
   KINTO_LOADED,
   OPENING_LOGIN,
@@ -16,27 +17,44 @@ import {
   REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
+function profile(profile = {}, action) {
+  switch (action.type) {
+    case SYNC_AUTHENTICATED:
+      return Object.assign({}, profile, {
+        email: action.loginDetails.profile.email,
+        avatar: action.loginDetails.profile.avatar,
+        avatarDefault: action.loginDetails.profile.avatarDefault,
+        displayName: action.loginDetails.profile.displayName,
+        locale: action.loginDetails.profile.locale
+      });
+    case DISCONNECTED:
+      return Object.assign({}, profile, {
+        email: null,
+        avatar: null,
+        avatarDefault: null,
+        displayName: null,
+        locale: null
+      });
+    default:
+      return profile;
+  }
+}
+
 function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
       return Object.assign({}, sync, {
-        // user profile
-        email: action.email,
-        avatar: action.avatar,
-        displayName: action.displayName,
-        // sync state
+        loginDetails: action.loginDetails,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
         lastSynced: new Date(),
         isSyncing: true,
-        error: null
+        error: null,
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
-        email: null,
-        avatar: null,
-        displayName: null,
+        loginDetails: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
@@ -57,9 +75,7 @@ function sync(sync = {}, action) {
       });
     case RECONNECT_SYNC:
       return Object.assign({}, sync, {
-        email: null,
-        avatar: null,
-        displayName: null,
+        loginDetails: null,
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
@@ -79,6 +95,10 @@ function sync(sync = {}, action) {
     case TEXT_SAVED:
       return Object.assign({}, sync, {
         isSyncing: sync.email ? sync.isSyncing : false
+      });
+    case TEXT_SYNCING:
+      return Object.assign({}, sync, {
+        isSyncing: true
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
@@ -159,13 +179,15 @@ function notes(notes = [], action) {
     }
     case CREATE_NOTE: {
       const list = Array.from(notes).filter((note) => note.id !== action.id);
-      list.push({
-        id: action.id,
-        content: action.content,
-        firstLine: action.content,
-        secondLine: action.content,
-        lastModified: action.lastModified || new Date()
-      });
+      if (action.id) {
+        list.push({
+          id: action.id,
+          content: action.content,
+          firstLine: action.content,
+          secondLine: action.content,
+          lastModified: action.lastModified || new Date()
+        });
+      }
       return list;
     }
     case DELETE_NOTE:
@@ -178,7 +200,7 @@ function notes(notes = [], action) {
         note.firstLine = (action.content);
         note.secondLine = (action.content);
         note.lastModified = new Date(action.lastModified);
-      } else {
+      } else if (action.id) {
         list.push({
           id: action.id,
           content: action.content,
@@ -195,6 +217,7 @@ function notes(notes = [], action) {
 }
 
 const noteApp = combineReducers({
+  profile,
   sync,
   kinto,
   notes

@@ -4,11 +4,11 @@ import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import React from 'react';
 import store from "../store";
-import sync from "../sync";
+import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
-import { View, ListView, Text, StyleSheet, RefreshControl } from 'react-native';
-import { COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
+import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
 import { kintoLoad } from "../actions";
 
 class ListPanel extends React.Component {
@@ -18,31 +18,21 @@ class ListPanel extends React.Component {
     this.state = {
       refreshing: false
     }
+
+    this._onRefresh = () => {
+      this.setState({ refreshing: true });
+
+      return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
+        this.setState({ refreshing: false });
+      });
+    }
   }
 
-  _onRefresh() {
-    this.setState({refreshing: true});
-
-    return fxaUtils.fxaGetCredential().then((loginDetails) => {
-      return sync.loadFromKinto(kintoClient, loginDetails);
-    }).then(() => {
-      this.setState({refreshing: false});
-    });
-
-  }
-
-  componentWillMount() {
-    // TODO: Refactor this for offline view
-    sync.retrieveNote(kintoClient).then(result => {
-      store.dispatch(kintoLoad(result && result.data));
-    }).catch((e) => {
-      store.dispatch(kintoLoad());
-    });
-  }
+  _keyExtractor = (item, index) => item.id;
 
   render() {
     return (
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
         { this.renderList() }
 
         <FAB
@@ -57,7 +47,7 @@ class ListPanel extends React.Component {
   }
 
   newNote() {
-    return this.props.navigation.navigate('EditorPanel', {rowId: null});
+    return this.props.navigation.navigate('EditorPanel', { note: null });
   }
 
   renderList() {
@@ -67,40 +57,60 @@ class ListPanel extends React.Component {
       return (
         <View>
           <Text>No Notes</Text>
-
         </View>
       )
     } else {
-      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      const dataSource = ds.cloneWithRows(this.props.state.notes) || [];
       return (
-          <ListView
-            dataSource={dataSource}
+        <View style={styles.container}>
+          <FlatList
+            data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
-                colors={[COLOR_NOTES_BLUE]}
+                colors={[ COLOR_NOTES_BLUE ]}
                 onRefresh={this._onRefresh.bind(this)}
               />
             }
-            renderRow={(note, sectionId, rowId) => {
+            ListHeaderComponent={() => {
+              return (
+                <View style={{ backgroundColor: 'white', height: 10}}></View>
+              )
+            }}
+            keyExtractor={this._keyExtractor}
+            renderItem={({item}) => {
               return (
                 <ListItem
-                  content={note.content}
-                  lastModified={note.lastModified}
-                  id={note.id}
-                  rowId={rowId}
+                  note={item}
                   navigate={navigate}
                 />
               )
             }}
+            ListFooterComponent={() => {
+              return (
+                // Try to add a shadow but couldn't yet make it work :(
+                <View style={{
+                  backgroundColor: 'white',
+                  height: 10,
+                  marginBottom: 100, // To see content after FAB button
+                  overflow: 'visible',
+                  shadowOpacity: 0.3,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 10, height: 10},
+                  shadowRadius: 2}}>
+                </View>
+              )
+            }}
           />
+        </View>
       )
     }
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLOR_APP_BAR
+  },
   fab: {
     width: 60,
     height: 60,

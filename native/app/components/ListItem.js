@@ -2,53 +2,113 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  StyleSheet
 } from 'react-native'
+
+import {
+  Title,
+  Subheading } from 'react-native-paper';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { COLOR_NOTES_BLUE } from '../utils/constants';
+import moment from 'moment';
 
 const striptags = require('striptags');
 
-function formatLastModified(date) {
+function formatLastModified(date = new Date()) {
 
-  if (new Date().getDate() === date.getDate()) {
-    return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  var m = moment(date);
+
+  if (m.isSame(new Date(), 'day')) {
+    return m.format('LT');
+  } else {
+    return m.format('ll');
   }
-
-  return date.toLocaleDateString([], {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 }
 
 export default class ListItem extends React.Component {
+
+  constructor (props) {
+    super(props);
+
+    this._navigateToNote = () => {
+      props.navigate('EditorPanel', { note: props.note });
+    }
+  }
+
+
   render() {
     const {
-      content,
-      navigate,
-      rowId,
-      lastModified
+      note
     } = this.props;
 
+    let firstLine = '', secondLine = '';
+    // FIXME: not perfect, need to be properly done but is good for testing.
+    if (note.content) {
+      firstLine = striptags(note.content.replace('&nbsp;', ' ').split('</')[0]).substr(0, 150);
+      secondLine = striptags(note.content.replace('&nbsp;', ' ').replace(firstLine, '')).substr(0, 150);
+    }
 
     return (
-      <TouchableOpacity onPress={() =>
-        // TODO: Fix navigation here to go the the selected note using note uuid?
-        navigate('EditorPanel', {rowId: rowId})
-      }>
-        <View>
-          <View style={{ padding: 10 }} >
-            <Text>
-              {striptags(content).substr(0, 50)}
-            </Text>
-            <Text>
-              {formatLastModified(lastModified)}
-            </Text>
+      <TouchableOpacity onPress={this._navigateToNote} >
+        <View style={styles.wrapper} >
+          <Text style={ styles.selector } >
+            <MaterialIcons
+              name="remove"
+              style={{ color: COLOR_NOTES_BLUE }}
+              size={22}
+
+            />
+          </Text>
+          <View style={ styles.content }>
+            <Text numberOfLines={1} style={styles.title}>{firstLine}</Text>
+            { styles.subtitle ?
+              <Text numberOfLines={1} style={styles.subtitle}>{secondLine}</Text>
+              : '' }
           </View>
+          <Text style={styles.time}>{formatLastModified(note.lastModified)}</Text>
         </View>
       </TouchableOpacity>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 0,
+    paddingRight: 10,
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  selector: {
+    flexShrink: 0,
+    paddingLeft: 18,
+    paddingRight: 18
+  },
+  content: {
+    flexGrow: 1,
+    flexShrink: 1,
+    paddingLeft: 4,
+    paddingRight: 10
+  },
+  title: {
+    color: 'black',
+    fontWeight: '400'
+  },
+  subtitle: {
+    color: undefined
+  },
+  time: {
+    flexShrink: 0,
+    color: undefined,
+    fontSize: 11,
+    paddingLeft: 10,
+    paddingRight: 5
+  }
+});
