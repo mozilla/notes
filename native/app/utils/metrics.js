@@ -1,7 +1,7 @@
 import { GoogleAnalyticsTracker } from "react-native-google-analytics-bridge";
 
 // See https://github.com/mozilla/notes/blob/master/docs/metrics.md for details
-const tracker = new GoogleAnalyticsTracker('UA-101177676-1');
+const tracker = new GoogleAnalyticsTracker('UA-35433268-79');
 const EVENT_CATEGORY = 'notes';
 
 export const trackEvent = (action) => {
