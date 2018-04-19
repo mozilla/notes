@@ -62,7 +62,7 @@ class DrawerItems extends React.Component {
       this.state.rotation.setValue(1);
       Animated.timing(this.state.rotation, {
         toValue: 0,
-        duration: 2000,
+        duration: 1000,
         easing: Easing.linear
       }).start(() => {
         if (this.props.state.sync.isSyncing) {
@@ -71,6 +71,7 @@ class DrawerItems extends React.Component {
       });
     };
 
+    // I don't think this is working.
     this._stopAnimation = () => {
       Animated.timing(
         this.state.rotation
@@ -101,6 +102,13 @@ class DrawerItems extends React.Component {
   }
 
   render() {
+    let statusLabel;
+    if (this.props.state.sync.isSyncing) {
+      statusLabel = 'Syncing...';
+    } else {
+      statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;
+    }
+
     return (
       <View style={styles.drawerContent}>
         <View style={{ paddingTop: 55, marginLeft: 30, paddingBottom: 30, borderBottomColor: '#4A4A4F', borderBottomWidth: 1 }}>
@@ -126,14 +134,14 @@ class DrawerItems extends React.Component {
         </ScrollView>
         <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
           <View style={styles.footerWrapper}>
-              <Text style={{ color: COLOR_DARK_SYNC, fontSize: 13 }}>Last synced { moment(this.props.state.sync.lastSynced).format('LT') }</Text>
+              <Text style={{ color: COLOR_DARK_SYNC, fontSize: 13 }}>{ statusLabel }</Text>
               <Animated.View                 // Special animatable View
                 style={{
                   ...this.props.style,
                   transform: [{
                     rotate: this.state.rotation.interpolate({
                       inputRange: [0, 1],
-                      outputRange: ['0deg', '360deg']
+                      outputRange: ['0deg', '180deg']
                     })
                   }]
                 }} >
