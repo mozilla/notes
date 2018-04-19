@@ -6,6 +6,11 @@ import browser from '../browser';
 
 const fxaUtils = require('../vendor/fxa-utils');
 const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
+
+import {
+  RECONNECT_SYNC,
+  ERROR as ERROR_MSG } from './constants';
+
 // TODO WARNING: `jose` is not in the official release in the crypto-relier
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
@@ -310,7 +315,7 @@ function syncKinto(client, loginDetails) {
 
         // cannot refresh the access token, log the user out.
         browser.runtime.sendMessage('notes@mozilla.com', {
-          action: 'error',
+          action: ERROR_MSG,
           message: browser.i18n.getMessage('insufficientStorage')
         });
         return Promise.reject(error);
@@ -325,7 +330,7 @@ function reconnectSync(loginDetails) {
   // credentials.clear();
   lastSyncTimestamp = null; // eslint-disable-line no-undef
   browser.runtime.sendMessage('notes@mozilla.com', {
-    action: 'reconnect'
+    action: RECONNECT_SYNC
   });
 }
 
@@ -432,6 +437,12 @@ function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused
     });
 }
 
+function clearKinto(client) {
+  return client
+    .collection('notes', { idSchema: notesIdSchema })
+    .clear();
+}
+
 function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
   const notes = client.collection('notes', { idSchema: notesIdSchema });
   return notes.resetSyncStatus();
@@ -445,4 +456,5 @@ module.exports = {
   retrieveNote,
   reconnectSync,
   saveToKinto,
+  clearKinto
 };

@@ -19,6 +19,7 @@ import { SYNC_AUTHENTICATED,
   ERROR,
   REQUEST_WELCOME_PAGE } from './utils/constants';
 
+
  import browser from './browser';
  import store from './store';
  import sync from './utils/sync';
@@ -58,6 +59,10 @@ browser.runtime.onMessage.addListener(eventData => {
         });
       });
       break;
+    case DISCONNECTED:
+      fxaUtils.fxaGetCredential().then((loginDetails) => {
+        sync.clearKinto(kintoClient);
+      });
     default:
       break;
   }

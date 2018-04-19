@@ -14,7 +14,8 @@ import { COLOR_DARK_BACKGROUND,
          COLOR_DARK_WARNING,
          COLOR_DARK_SYNC,
          COLOR_NOTES_BLUE,
-         KINTO_LOADED } from '../utils/constants';
+         KINTO_LOADED,
+         DISCONNECTED } from '../utils/constants';
 
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
 import { trackEvent } from '../utils/metrics';
@@ -53,6 +54,9 @@ class DrawerItems extends React.Component {
             this.props.navigation.dispatch(resetAction);
             trackEvent('webext-button-disconnect');
           }
+          browser.runtime.sendMessage({
+            type: DISCONNECTED
+          });
           return Keychain.resetGenericPassword().then(navigateToLogin.bind(this), navigateToLogin.bind(this));
         }
       }
