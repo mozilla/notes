@@ -1,4 +1,4 @@
-import i18nGetMessage from '../utils/i18n';
+import i18nGetMessage from './utils/i18n';
 
 // Send message
 async function sendMessage(...args) {
