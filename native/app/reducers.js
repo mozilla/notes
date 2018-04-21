@@ -138,6 +138,10 @@ function kinto(kinto = {}, action) {
       return Object.assign({}, kinto, {
         isLoaded: true
       });
+    case DISCONNECTED:
+      return Object.assign({}, kinto, {
+        isLoaded: false
+      });
     default:
       return kinto;
   }
@@ -211,6 +215,8 @@ function notes(notes = [], action) {
       }
       return list;
     }
+    case DISCONNECTED:
+      return [];
     default:
       return notes;
   }
