@@ -4,9 +4,17 @@ import './shim.js'
 import { Sentry } from 'react-native-sentry';
 // TODO: change this to prod vars later on
 const SENTRY_DSN = require('./config').SENTRY_DSN;
-
 if (SENTRY_DSN) {
-  Sentry.config(SENTRY_DSN).install();
+  Sentry.config(SENTRY_DSN, {
+    maxBreadcrumbs: 5,
+    autoBreadcrumbs: {
+      'xhr': false, // XMLHttpRequest
+      'console': false, // console logging
+      'dom': false, // DOM interactions, i.e. clicks/typing
+      'location': false, // url changes, including pushState/popState
+      'sentry': true // sentry events
+    }
+  }).install();
 }
 
 import React from 'react';
