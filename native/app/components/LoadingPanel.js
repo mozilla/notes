@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, ProgressBarAndroid, Image } from 'react-native';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { COLOR_NOTES_BLUE } from '../utils/constants';
+import { connect } from 'react-redux';
+import { View, Text, ProgressBarAndroid, Image } from 'react-native';
 
 class LoadingPanel extends React.Component {
 
@@ -18,7 +19,7 @@ class LoadingPanel extends React.Component {
           source={require('../assets/notes-1024.png')}
         />
         <Text style={{ fontWeight: 'bold', fontSize: 22, padding: 20 }}>Decrypting your notes...</Text>
-        <ProgressBarAndroid styleAttr="Inverse" />
+        <ProgressBarAndroid color={COLOR_NOTES_BLUE} styleAttr="Inverse" />
       </View>
     );
   }
