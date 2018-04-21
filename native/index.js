@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 
-import { COLOR_APP_BAR, COLOR_STATUS_BAR, COLOR_NOTES_BLUE } from './app/utils/constants';
+import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
 import store from './app/store';
 
 import DrawerItems from './app/components/DrawerItems';

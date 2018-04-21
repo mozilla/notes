@@ -87,16 +87,16 @@ class ListPanel extends React.Component {
             }}
             ListFooterComponent={() => {
               return (
-                // Try to add a shadow but couldn't yet make it work :(
                 <View style={{
-                  backgroundColor: 'white',
-                  height: 10,
-                  marginBottom: 100, // To see content after FAB button
+                  height: 1,
+                  backgroundColor: '#F9F9FA',
                   overflow: 'visible',
-                  shadowOpacity: 0.3,
+                  marginBottom: 90,
+                  elevation: 1,
                   shadowColor: '#000',
-                  shadowOffset: { width: 10, height: 10},
-                  shadowRadius: 2}}>
+                  shadowOpacity: 0.24,
+                  shadowOffset: { width: 0, height: 0.75},
+                  shadowRadius: 1.5}}>
                 </View>
               )
             }}
@@ -109,7 +109,7 @@ class ListPanel extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLOR_APP_BAR
+    backgroundColor: '#F9F9FA',
   },
   fab: {
     width: 60,
