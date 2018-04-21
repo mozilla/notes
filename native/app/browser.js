@@ -2,7 +2,7 @@ import i18nGetMessage from './utils/i18n';
 
 // Send message
 async function sendMessage(...args) {
-  if (args.length >= 2 && args[0] instanceof String && args[0] === 'notes@mozilla.com') {
+  if (args.length >= 2 && (args[0] instanceof String || typeof args[0] === 'string')&& args[0] === 'notes@mozilla.com') {
     browser.runtime.onMessage.dispatch(args[1]);
   } else {
     browser.runtime.onMessage.dispatch(args[0]);

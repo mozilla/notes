@@ -197,7 +197,7 @@ function syncKinto(client, loginDetails) {
       return fxaUtils.fxaRenewCredential(loginDetails)
         .then((loginDetails) => {
           const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
-          const credential = {
+          credential = {
             accessToken: loginDetails.oauthResponse.accessToken,
             refreshToken: loginDetails.oauthResponse.refreshToken,
             key
@@ -283,15 +283,17 @@ function syncKinto(client, loginDetails) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
         return reconnectSync(loginDetails);
-      } else if (error instanceof ServerKeyNewerError) {
+
+        // NOTE: we cannot use `instanceof ServerKeyNewerError` below in React Native
+      } else if (error.message === 'key used to encrypt the record appears to be newer than our key') {
         // If the key date is greater than current one, log the user out.
-        console.error(error); // eslint-disable-line no-console
+        //console.error(error); // eslint-disable-line no-console
         return reconnectSync(loginDetails);
-      } else if (error instanceof ServerKeyOlderError) {
+      } else if (error.message === 'key used to encrypt the record appears to be older than our key') {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
         // Flush the server because whatever was there is wrong.
-        console.error(error); // eslint-disable-line no-console
+        //console.error(error); // eslint-disable-line no-console
         lastSyncTimestamp = null; // eslint-disable-line no-undef
         const kintoHttp = client.api;
         return kintoHttp.bucket('default').deleteCollection('notes', {

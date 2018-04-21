@@ -26,6 +26,15 @@ import { disconnect } from '../actions';
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
 
+function navigateToLogin (props) {
+  // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
+  const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
+  });
+  props.navigation.dispatch(resetAction);
+  trackEvent('webext-button-disconnect');
+}
 
 class DrawerItems extends React.Component {
 
@@ -39,16 +48,7 @@ class DrawerItems extends React.Component {
       {
         label : 'Log out',
         action: () => {
-          function navigateToLogin () {
-            // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
-            const resetAction = NavigationActions.reset({
-              index: 0,
-              actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
-            });
-            this.props.navigation.dispatch(resetAction);
-            trackEvent('webext-button-disconnect');
-          }
-          props.dispatch(disconnect()).then(navigateToLogin.bind(this));
+          props.dispatch(disconnect()).then(navigateToLogin(props));
         }
       },
       {
@@ -84,10 +84,21 @@ class DrawerItems extends React.Component {
         action: KINTO_LOADED
       });
     }
-
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
+
+    function select(state) {
+      return state.sync.error
+    }
+    // TODO: unsubscribe this?
+    store.subscribe(() => {
+      const err = select(store.getState());
+      if (err) {
+        navigation.navigate('DrawerOpen');
+      }
+    })
   }
 
   componentWillReceiveProps(newProps) {
@@ -132,7 +143,9 @@ class DrawerItems extends React.Component {
         ))}
         </ScrollView>
         { this.props.state.sync.error ?
-          <TouchableRipple style={styles.footer} onPress={ () => this._requestSync() }>
+          <TouchableRipple style={styles.footer} onPress={ () => {
+            this.props.dispatch(disconnect()).then(navigateToLogin(this.props));
+          } }>
             <View style={styles.footerWrapper}>
               <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.error }</Text>
               <MaterialIcons
