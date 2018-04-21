@@ -61,8 +61,8 @@ class ListPanel extends React.Component {
       )
     } else {
       return (
-        <View style={styles.container}>
           <FlatList
+            contentContainerStyle={{marginBottom:90}}
             data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
             refreshControl={
               <RefreshControl
@@ -101,16 +101,12 @@ class ListPanel extends React.Component {
               )
             }}
           />
-        </View>
       )
     }
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F9F9FA',
-  },
   fab: {
     width: 60,
     height: 60,
