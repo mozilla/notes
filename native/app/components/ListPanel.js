@@ -6,9 +6,9 @@ import React from 'react';
 import store from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
-import { FAB } from 'react-native-paper';
+import { FAB, Snackbar } from 'react-native-paper';
 import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
-import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
 import { kintoLoad } from "../actions";
 
 class ListPanel extends React.Component {
@@ -16,7 +16,8 @@ class ListPanel extends React.Component {
     super(props);
     this.props = props;
     this.state = {
-      refreshing: false
+      refreshing: false,
+      snackbarSyncedvisible: false
     }
 
     this._onRefresh = () => {
@@ -24,6 +25,7 @@ class ListPanel extends React.Component {
 
       return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
         this.setState({ refreshing: false });
+        this.setState({ snackbarSyncedvisible: true })
       });
     }
   }
@@ -31,9 +33,21 @@ class ListPanel extends React.Component {
   _keyExtractor = (item, index) => item.id;
 
   render() {
+
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
+
+        <Snackbar
+          style={{
+            backgroundColor: COLOR_DARK_SYNC
+          }}
+          visible={this.state.snackbarSyncedvisible}
+          onDismiss={() => this.setState({ snackbarSyncedvisible: false })}
+          duration={3000}
+        >
+          Notes synced!
+        </Snackbar>
 
         <FAB
           small
