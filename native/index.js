@@ -19,9 +19,9 @@ if (SENTRY_DSN) {
 
 import React from 'react';
 import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
-import { Provider } from 'react-redux';
+import { Provider as StoreProvider } from 'react-redux';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
-import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
+import { Toolbar, ToolbarContent, ToolbarAction, Provider as PaperProvider } from 'react-native-paper';
 
 import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
 import store from './app/store';
@@ -139,9 +139,11 @@ class Notes extends React.Component {
 
   render () {
     return (
-      <Provider store={store}>
+      <StoreProvider store={store}>
+        <PaperProvider>
         <App/>
-      </Provider>
+        </PaperProvider>
+      </StoreProvider>
     )
   }
 }
