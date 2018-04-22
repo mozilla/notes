@@ -133,7 +133,8 @@ const App = DrawerNavigator(
 
 class Notes extends React.Component {
   componentDidMount() {
-    StatusBar.setBackgroundColor(COLOR_STATUS_BAR);
+    StatusBar.setBackgroundColor('rgba(249, 249, 250, 0.3)');
+    StatusBar.setTranslucent(true);
     StatusBar.setBarStyle('dark-content');
   }
 

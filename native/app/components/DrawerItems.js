@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { Title, Text, TouchableRipple } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing } from 'react-native';
+import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing, StatusBar } from 'react-native';
 import moment from 'moment';
 
 import { COLOR_DARK_BACKGROUND,
@@ -186,7 +186,8 @@ class DrawerItems extends React.Component {
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
-    backgroundColor: COLOR_DARK_BACKGROUND
+    backgroundColor: COLOR_DARK_BACKGROUND,
+    paddingTop: StatusBar.currentHeight
   },
   drawerSection: {
     flexGrow: 1,

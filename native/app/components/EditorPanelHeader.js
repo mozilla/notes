@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, StatusBar } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     opacity: 0.9,
     shadowOpacity: 0,
-    elevation: 0
+    elevation: 0,
+    paddingTop: StatusBar.currentHeight,
   }
 });
 
