@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, StatusBar } from 'react-native';
 
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from '../utils/constants';
@@ -39,6 +39,7 @@ function mapStateToProps(state) {
 const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: COLOR_APP_BAR,
+    paddingTop: StatusBar.currentHeight
   }
 });
 
