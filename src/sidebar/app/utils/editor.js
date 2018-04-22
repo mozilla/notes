@@ -45,9 +45,16 @@ function customizeEditor(editor) {
   // prevent adding a '„' character and instead close the editor
   // when using the Notes keyboard shortcut within the editor
   // Refs: https://github.com/mozilla/notes/issues/780
-  editor.keystrokes.set('Alt+Shift+W', (e) => {
-    e.preventDefault();
+  editor.keystrokes.set('Alt+Shift+W', (data, cancel) => {
+    cancel();
     browser.sidebarAction.close();
+  });
+
+  // "Ctrl/Cmd + s" keystroke is ignored when a note is focused - this prevents
+  // the native "Save as" popup from appearing for the adjacent webpage.
+  // Refs: https://github.com/mozilla/notes/issues/955
+  editor.keystrokes.set('Ctrl+S', (data, cancel) => {
+    cancel();
   });
 
   localizeEditorButtons();
