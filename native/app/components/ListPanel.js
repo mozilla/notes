@@ -28,23 +28,28 @@ class ListPanel extends React.Component {
         action: KINTO_LOADED
       });
     }
+
+    this._keyExtractor = (item, index) => item.id;
+  }
+
+  _triggerSnackbar = () => {
+    this.setState({
+      refreshing: false,
+      snackbarSyncedvisible: this.props.navigation.isFocused()
+    });
   }
 
   componentWillReceiveProps(newProps) {
     if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-      this.setState({
-        refreshing: false,
-        snackbarSyncedvisible: this.props.navigation.isFocused()
-      });
+      if (this.props.state.sync.isSyncingFrom === 'drawer') {
+        setTimeout(this._triggerSnackbar, 400);
+      } else {
+        this._triggerSnackbar();
+      }
     }
   }
 
-
-
-  _keyExtractor = (item, index) => item.id;
-
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }

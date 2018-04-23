@@ -26,7 +26,7 @@ import { SYNC_AUTHENTICATED,
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
     case KINTO_LOADED:
-      store.dispatch({ type: TEXT_SYNCING });
+      store.dispatch({ type: TEXT_SYNCING, from: eventData.from });
       sync.loadFromKinto(kintoClient, store.getState().sync.loginDetails).then(result => {
         if (result && result.data) {
           store.dispatch({ type: KINTO_LOADED, notes: result.data });

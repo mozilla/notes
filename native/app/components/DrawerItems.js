@@ -81,7 +81,8 @@ class DrawerItems extends React.Component {
 
     this._requestSync = () => {
       browser.runtime.sendMessage({
-        action: KINTO_LOADED
+        action: KINTO_LOADED,
+        from: 'drawer'
       });
     }
   }
