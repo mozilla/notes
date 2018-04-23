@@ -19,7 +19,7 @@ import { COLOR_DARK_BACKGROUND,
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
 import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
-import store from '../store';
+import { store } from '../store';
 import browser from '../browser';
 import { disconnect, kintoLoad } from '../actions';
 

@@ -23,6 +23,11 @@ class LoginPanel extends React.Component {
       trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);
+
+      this.props.navigation.dispatch(NavigationActions.reset({
+        index: 0,
+        actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
+      }));
       this.props.dispatch(kintoLoad());
       return Promise.resolve();
     }).catch((err) => {
@@ -34,16 +39,6 @@ class LoginPanel extends React.Component {
       ToastAndroid.show('Something went wrong. ' + err, ToastAndroid.LONG);
       trackEvent('login-failed');
     })
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.state.kinto.isLoaded) {
-      // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
-      this.props.navigation.dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-      }));
-    }
   }
 
   render() {

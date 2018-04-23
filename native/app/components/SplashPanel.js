@@ -15,22 +15,12 @@ class SplashPanel extends React.Component {
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(authenticate(loginDetails));
 
-        // If redux exist, we load redux, if not we don't do it.
-        if (this.props.state.kinto.isLoaded) {
-          this.props.navigation.dispatch(NavigationActions.reset({
-            index: 0,
-            actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-          }));
-        } else {
-          this.props.dispatch(kintoLoad()).then(_ => {
-            this.props.navigation.dispatch(NavigationActions.reset({
-              index: 0,
-              actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-            }));
-          }).catch(exception => {
-            console.error(exception);
-          });
-        }
+        this.props.navigation.dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
+        }));
+        this.props.dispatch(kintoLoad());
+
       } else {
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,
