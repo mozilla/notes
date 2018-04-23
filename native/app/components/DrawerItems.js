@@ -48,7 +48,11 @@ class DrawerItems extends React.Component {
       {
         label : 'Log out',
         action: () => {
-          props.dispatch(disconnect()).then(navigateToLogin(props));
+          navigateToLogin(props);
+          // We delay disconnect event to avoid empty UI while drawer is closing
+          setTimeout(() => {
+            props.dispatch(disconnect());
+          }, 500);
         }
       },
       {
