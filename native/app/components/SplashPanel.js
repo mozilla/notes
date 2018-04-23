@@ -7,7 +7,7 @@ import { View, Text, ToastAndroid, Image } from 'react-native';
 
 import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';
-import { authenticate } from '../actions';
+import { authenticate, kintoLoad } from '../actions';
 
 class SplashPanel extends React.Component {
   componentDidMount() {
@@ -15,14 +15,12 @@ class SplashPanel extends React.Component {
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(authenticate(loginDetails));
 
-        // TODO: If redux exist, we load it, if not we load from kinto.
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,
           actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
         }));
-        browser.runtime.sendMessage({
-          action: KINTO_LOADED
-        });
+        this.props.dispatch(kintoLoad());
+
       } else {
         this.props.navigation.dispatch(NavigationActions.reset({
           index: 0,

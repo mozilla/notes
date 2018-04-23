@@ -24,21 +24,24 @@ class ListPanel extends React.Component {
 
     this._onRefresh = () => {
       this.setState({ refreshing: true });
-
-      return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
-        this.setState({ refreshing: false });
-        this.setState({ snackbarSyncedvisible: true })
-      });
-
+      props.dispatch(kintoLoad());
     }
+
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-        browser.runtime.sendMessage({
-          action: KINTO_LOADED
-        });
+        props.dispatch(kintoLoad());
       }
       this.setState({ appState: nextAppState });
     }
+
+    this._keyExtractor = (item, index) => item.id;
+
+    this._triggerSnackbar = () => {
+      this.setState({
+        refreshing: false,
+        snackbarSyncedvisible: props.navigation.isFocused()
+      });
+    };
   }
 
   componentDidMount() {
@@ -49,10 +52,19 @@ class ListPanel extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  _keyExtractor = (item, index) => item.id;
+
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+      if (this.props.state.sync.isSyncingFrom === 'drawer') {
+        setTimeout(this._triggerSnackbar, 400);
+      } else {
+        this._triggerSnackbar();
+      }
+    }
+  }
 
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
@@ -62,7 +74,11 @@ class ListPanel extends React.Component {
             backgroundColor: COLOR_DARK_SYNC
           }}
           visible={this.state.snackbarSyncedvisible}
-          onDismiss={() => this.setState({ snackbarSyncedvisible: false })}
+          onDismiss={() => {
+            this.setState({
+              snackbarSyncedvisible: false
+            });
+          }}
           duration={3000}
         >
           Notes synced!
