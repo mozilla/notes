@@ -8,8 +8,9 @@ import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
 import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
-import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
+import browser from "../browser";
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -23,10 +24,25 @@ class ListPanel extends React.Component {
     this._onRefresh = () => {
       this.setState({ refreshing: true });
 
-      return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
-        this.setState({ refreshing: false });
-        this.setState({ snackbarSyncedvisible: true })
+      browser.runtime.sendMessage({
+        action: KINTO_LOADED
       });
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (!newProps.state.sync.isSyncing) {
+      // We do not display snackbar on sync if triggered from other than pullRefresh
+      if (this.state.refreshing && this.props.state.sync.isSyncing) {
+        this.setState({
+          snackbarSyncedvisible: true,
+          refreshing: false
+        });
+      } else {
+        this.setState({
+          refreshing: false
+        });
+      }
     }
   }
 
