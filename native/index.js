@@ -140,9 +140,6 @@ class Notes extends React.Component {
   }
 
   render () {
-
-    console.log(store.getState(), persistor);
-
     return (
       <StoreProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>

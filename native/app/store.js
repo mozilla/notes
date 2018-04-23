@@ -10,7 +10,6 @@ import thunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
 
 const storeState = store => next => action => {
-  console.log(store.getState());
   return next(action);
 };
 
