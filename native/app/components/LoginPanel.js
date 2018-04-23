@@ -1,7 +1,7 @@
 import fxaUtils from '../vendor/fxa-utils';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { authenticate } from '../actions';
+import { authenticate, kintoLoad } from '../actions';
 import { Button } from 'react-native-paper';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import { connect } from 'react-redux';
@@ -23,9 +23,7 @@ class LoginPanel extends React.Component {
       trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);
-      browser.runtime.sendMessage({
-        action: KINTO_LOADED
-      });
+      this.props.dispatch(kintoLoad());
       return Promise.resolve();
     }).catch((err) => {
       this.props.navigation.dispatch(NavigationActions.reset({
