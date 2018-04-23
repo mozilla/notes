@@ -1,8 +1,10 @@
 import * as Keychain from 'react-native-keychain';
+import kintoClient from './vendor/kinto-client';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
   TEXT_SAVED,
+  TEXT_SYNCING,
   TEXT_SYNCED,
   RECONNECT_SYNC,
   DISCONNECTED,
@@ -18,13 +20,27 @@ import { SYNC_AUTHENTICATED,
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
+ import sync from './utils/sync';
 
 export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
-export function kintoLoad(notes) {
-  return { type: KINTO_LOADED, notes };
+export function kintoLoad(from) {
+  // Return id to callback using promises
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: TEXT_SYNCING, from: from });
+      sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
+        if (result && result.data) {
+          dispatch({ type: KINTO_LOADED, notes: result.data });
+        }
+        resolve();
+      }).catch(_ => {
+        reject();
+      });
+    });
+  };
 }
 
 export function authenticate(loginDetails) {

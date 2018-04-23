@@ -8,8 +8,9 @@ import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
 import { View, FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
-import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
+import browser from "../browser";
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -22,18 +23,30 @@ class ListPanel extends React.Component {
 
     this._onRefresh = () => {
       this.setState({ refreshing: true });
+      props.dispatch(kintoLoad());
+    }
 
-      return sync.loadFromKinto(kintoClient, props.state.sync.loginDetails).then(() => {
-        this.setState({ refreshing: false });
-        this.setState({ snackbarSyncedvisible: true })
-      });
+    this._keyExtractor = (item, index) => item.id;
+  }
+
+  _triggerSnackbar = () => {
+    this.setState({
+      refreshing: false,
+      snackbarSyncedvisible: this.props.navigation.isFocused()
+    });
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+      if (this.props.state.sync.isSyncingFrom === 'drawer') {
+        setTimeout(this._triggerSnackbar, 400);
+      } else {
+        this._triggerSnackbar();
+      }
     }
   }
 
-  _keyExtractor = (item, index) => item.id;
-
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         { this.renderList() }
@@ -43,7 +56,11 @@ class ListPanel extends React.Component {
             backgroundColor: COLOR_DARK_SYNC
           }}
           visible={this.state.snackbarSyncedvisible}
-          onDismiss={() => this.setState({ snackbarSyncedvisible: false })}
+          onDismiss={() => {
+            this.setState({
+              snackbarSyncedvisible: false
+            });
+          }}
           duration={3000}
         >
           Notes synced!

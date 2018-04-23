@@ -84,12 +84,14 @@ function sync(sync = {}, action) {
     case DELETE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true,
+        isSyncingFrom: 'deleteNote',
         focusedNoteId: sync.focusedNoteId === action.id ? null : sync.focusedNoteId,
         error: null
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
         isSyncing: true,
+        isSyncingFrom: 'updateNote',
         error: null
       });
     case TEXT_SAVED:
@@ -98,16 +100,19 @@ function sync(sync = {}, action) {
       });
     case TEXT_SYNCING:
       return Object.assign({}, sync, {
-        isSyncing: true
+        isSyncing: true,
+        isSyncingFrom: action.from
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
         isSyncing: false,
+        isSyncingFrom: null,
         lastSynced: new Date()
       });
     case KINTO_LOADED:
       return Object.assign({}, sync, {
         isSyncing: false,
+        isSyncingFrom: null,
         lastSynced: new Date()
       });
     case FOCUS_NOTE:

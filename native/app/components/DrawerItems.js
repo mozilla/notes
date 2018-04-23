@@ -21,7 +21,7 @@ import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import store from '../store';
 import browser from '../browser';
-import { disconnect } from '../actions';
+import { disconnect, kintoLoad } from '../actions';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -80,8 +80,9 @@ class DrawerItems extends React.Component {
     };
 
     this._requestSync = () => {
-      browser.runtime.sendMessage({
-        action: KINTO_LOADED
+      props.dispatch(kintoLoad('drawer')).then(_ => {
+        // If load succeed, we close drawer
+        this.props.navigation.navigate('DrawerClose');
       });
     }
   }
@@ -104,7 +105,7 @@ class DrawerItems extends React.Component {
   componentWillReceiveProps(newProps) {
     if (newProps.state.sync.isSyncing && !this.props.state.sync.isSyncing) {
       this._startAnimation();
-    } else if (!newProps.state.sync.isSyncing) {
+    } else if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
       this._stopAnimation();
     }
   }
