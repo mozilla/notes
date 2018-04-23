@@ -7,9 +7,10 @@ import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
-import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid } from 'react-native';
-import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE } from '../utils/constants';
+import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid, AppState } from 'react-native';
+import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
+import browser from '../browser';
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class ListPanel extends React.Component {
     this.props = props;
     this.state = {
       refreshing: false,
-      snackbarSyncedvisible: false
+      snackbarSyncedvisible: false,
+      appState: AppState.currentState
     }
 
     this._onRefresh = () => {
@@ -27,7 +29,24 @@ class ListPanel extends React.Component {
         this.setState({ refreshing: false });
         this.setState({ snackbarSyncedvisible: true })
       });
+
     }
+    this._handleAppStateChange = (nextAppState) => {
+      if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+        browser.runtime.sendMessage({
+          action: KINTO_LOADED
+        });
+      }
+      this.setState({ appState: nextAppState });
+    }
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
   _keyExtractor = (item, index) => item.id;
