@@ -7,7 +7,7 @@ import { View, Text, ToastAndroid, Image } from 'react-native';
 
 import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';
-import { authenticate } from '../actions';
+import { authenticate, kintoLoad } from '../actions';
 
 class SplashPanel extends React.Component {
   componentDidMount() {
@@ -22,8 +22,13 @@ class SplashPanel extends React.Component {
             actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
           }));
         } else {
-          browser.runtime.sendMessage({
-            action: KINTO_LOADED
+          this.props.dispatch(kintoLoad()).then(_ => {
+            this.props.navigation.dispatch(NavigationActions.reset({
+              index: 0,
+              actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
+            }));
+          }).catch(exception => {
+            console.error(exception);
           });
         }
       } else {
@@ -33,15 +38,6 @@ class SplashPanel extends React.Component {
         }));
       }
     });
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.state.kinto.isLoaded) {
-      this.props.navigation.dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-      }));
-    }
   }
 
   render() {

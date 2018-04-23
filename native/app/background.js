@@ -26,12 +26,7 @@ import { SYNC_AUTHENTICATED,
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
     case KINTO_LOADED:
-      store.dispatch({ type: TEXT_SYNCING, from: eventData.from });
-      sync.loadFromKinto(kintoClient, store.getState().sync.loginDetails).then(result => {
-        if (result && result.data) {
-          store.dispatch({ type: KINTO_LOADED, notes: result.data });
-        }
-      });
+      console.error('Deprecated KINTO_LOADED in background');
       break;
     case CREATE_NOTE:
       sync.createNote(kintoClient, store.getState().sync.loginDetails,

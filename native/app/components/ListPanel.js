@@ -23,10 +23,7 @@ class ListPanel extends React.Component {
 
     this._onRefresh = () => {
       this.setState({ refreshing: true });
-
-      browser.runtime.sendMessage({
-        action: KINTO_LOADED
-      });
+      props.dispatch(kintoLoad());
     }
 
     this._keyExtractor = (item, index) => item.id;
