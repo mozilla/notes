@@ -31,20 +31,15 @@ class ListPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (!newProps.state.sync.isSyncing) {
-      // We do not display snackbar on sync if triggered from other than pullRefresh
-      if (this.state.refreshing && this.props.state.sync.isSyncing) {
-        this.setState({
-          snackbarSyncedvisible: true,
-          refreshing: false
-        });
-      } else {
-        this.setState({
-          refreshing: false
-        });
-      }
+    if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+      this.setState({
+        refreshing: false,
+        snackbarSyncedvisible: this.props.navigation.isFocused()
+      });
     }
   }
+
+
 
   _keyExtractor = (item, index) => item.id;
 
@@ -59,7 +54,11 @@ class ListPanel extends React.Component {
             backgroundColor: COLOR_DARK_SYNC
           }}
           visible={this.state.snackbarSyncedvisible}
-          onDismiss={() => this.setState({ snackbarSyncedvisible: false })}
+          onDismiss={() => {
+            this.setState({
+              snackbarSyncedvisible: false
+            });
+          }}
           duration={3000}
         >
           Notes synced!

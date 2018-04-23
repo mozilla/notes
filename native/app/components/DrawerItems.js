@@ -104,8 +104,9 @@ class DrawerItems extends React.Component {
   componentWillReceiveProps(newProps) {
     if (newProps.state.sync.isSyncing && !this.props.state.sync.isSyncing) {
       this._startAnimation();
-    } else if (!newProps.state.sync.isSyncing) {
+    } else if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
       this._stopAnimation();
+      this.props.navigation.navigate('DrawerClose');
     }
   }
 
