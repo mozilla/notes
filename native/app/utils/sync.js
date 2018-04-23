@@ -1,7 +1,7 @@
 import {
   kintoLoad
 } from '../actions';
-import store from '../store';
+import { store } from '../store';
 import browser from '../browser';
 
 const fxaUtils = require('../vendor/fxa-utils');

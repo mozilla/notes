@@ -20,11 +20,12 @@ if (SENTRY_DSN) {
 import React from 'react';
 import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
 import { Provider as StoreProvider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react'
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction, Provider as PaperProvider } from 'react-native-paper';
 
 import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
-import store from './app/store';
+import { store, persistor } from './app/store';
 
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
@@ -139,11 +140,16 @@ class Notes extends React.Component {
   }
 
   render () {
+
+    console.log(store.getState(), persistor);
+
     return (
       <StoreProvider store={store}>
-        <PaperProvider>
-        <App/>
-        </PaperProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <App/>
+          </PaperProvider>
+        </PersistGate>
       </StoreProvider>
     )
   }

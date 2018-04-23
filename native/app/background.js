@@ -20,7 +20,7 @@ import { SYNC_AUTHENTICATED,
   REQUEST_WELCOME_PAGE } from './utils/constants';
 
  import browser from './browser';
- import store from './store';
+ import { store } from './store';
  import sync from './utils/sync';
 
 browser.runtime.onMessage.addListener(eventData => {

@@ -3,7 +3,7 @@ import kintoClient from '../vendor/kinto-client';
 import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import React from 'react';
-import store from "../store";
+import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
