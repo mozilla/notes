@@ -208,7 +208,6 @@ function syncKinto(client, loginDetails) {
               idSchema: notesIdSchema,
               remoteTransformers: [new JWETransformer(credential.key)],
             });
-
           return collection
             .sync({
               headers: {Authorization: `Bearer ${credential.accessToken}`},
@@ -227,7 +226,7 @@ function syncKinto(client, loginDetails) {
       });
     })
     .then(syncResult => {
-      lastSyncTimestamp = syncResult.lastModified; // eslint-disable-line no-undef
+      lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
 
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?
@@ -415,7 +414,6 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
         resolve();
       });
   };
-
   clearTimeout(syncDebounce);
   syncDebounce = setTimeout(later, 400);
   return promise;
