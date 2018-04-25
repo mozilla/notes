@@ -27,16 +27,15 @@ function formatLastModified(date = new Date()) {
   }
 }
 
-export default class ListItem extends React.Component {
+class ListItem extends React.Component {
 
   constructor (props) {
     super(props);
 
     this._navigateToNote = () => {
-      props.navigate('EditorPanel', { note: props.note });
+      props.navigate('EditorPanel', { id: props.note.id });
     }
   }
-
 
   render() {
     const {
@@ -112,3 +111,5 @@ const styles = StyleSheet.create({
     paddingRight: 5
   }
 });
+
+export default ListItem

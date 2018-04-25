@@ -20,8 +20,8 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.note = this.props.navigation.state.params.note;
-    if (this.note) {
+    this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
+    if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
     }
   }
@@ -47,7 +47,7 @@ class RichTextExample extends Component {
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
       if (!this.note && e !== '') {
-        this.richtext.setParagraph();
+        this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
         this.note = { content: e }
         this.props.dispatch(createNote(e)).then((note) => {
           this.note.id = note.id;
