@@ -20,6 +20,9 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      ignoreNewProps: false // Ignore Props if change was trigger by the editor
+    };
     this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
     if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
@@ -48,7 +51,7 @@ class RichTextExample extends Component {
     this.richtext.registerContentChangeListener((e) => {
       if (!this.note && e !== '') {
         this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
-        this.note = { content: e }
+        this.note = { content: e };
         this.props.dispatch(createNote(e)).then((note) => {
           this.note.id = note.id;
           this.props.dispatch(setFocusedNote(note.id));
@@ -60,7 +63,31 @@ class RichTextExample extends Component {
       } else if (this.note && e !== '') {
         this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }
+      this.setState({
+        ignoreNewProps: true
+      });
     });
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (!newProps.state.sync.isSyncing) {
+      // Is synced is done, and ignoreNewProps is true because change was triggered by the editor
+      if (!this.state.ignoreNewProps) {
+        // We udpate note in case a sync was performed background and change current selected note.
+        this.note = newProps.state.notes.find((note) => {
+          return note.id === newProps.navigation.state.params.id;
+        });
+        if (this.note) {
+          this.richtext.setContentHTML(this.note.content);
+        } else {
+          // If currentNote has been deleted on sync, we redirect to listPanel
+          this.props.navigation.goBack();
+        }
+      }
+      this.setState({
+        ignoreNewProps: false
+      });
+    }
   }
 
   onEditorInitialized(e) {
@@ -99,3 +126,4 @@ RichTextExample.propTypes = {
 };
 
 export default connect(mapStateToProps)(RichTextExample)
+

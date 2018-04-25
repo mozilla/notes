@@ -52,8 +52,6 @@ class ListPanel extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-
-
   componentWillReceiveProps(newProps) {
     if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
       if (this.props.state.sync.isSyncingFrom === 'drawer') {
