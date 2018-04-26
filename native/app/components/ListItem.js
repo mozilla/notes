@@ -14,8 +14,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import moment from 'moment';
 
-const striptags = require('striptags');
-
 function formatLastModified(date = new Date()) {
 
   var m = moment(date);
@@ -42,14 +40,6 @@ export default class ListItem extends React.Component {
     const {
       note
     } = this.props;
-
-    let firstLine = '', secondLine = '';
-    // FIXME: not perfect, need to be properly done but is good for testing.
-    if (note.content) {
-      firstLine = striptags(note.content.replace('&nbsp;', ' ').split('</')[0]).substr(0, 150);
-      secondLine = striptags(note.content.replace('&nbsp;', ' ').replace(firstLine, '')).substr(0, 150);
-    }
-
     return (
       <TouchableOpacity onPress={this._navigateToNote} >
         <View style={styles.wrapper} >
@@ -62,12 +52,16 @@ export default class ListItem extends React.Component {
             />
           </Text>
           <View style={ styles.content }>
-            <Text numberOfLines={1} style={styles.title}>{firstLine}</Text>
-            { styles.subtitle ?
-              <Text numberOfLines={1} style={styles.subtitle}>{secondLine}</Text>
-              : '' }
+            { note.firstLine ?
+              <Text numberOfLines={1} style={styles.title}>{note.firstLine}</Text>
+              :
+              <Text numberOfLines={1} style={styles.emptyTitle}>Take a note...</Text>
+            }
+            { note.secondLine ?
+              <Text numberOfLines={1} style={styles.subtitle}>{note.secondLine}</Text>
+              : null }
           </View>
-          <Text style={styles.time}>{formatLastModified(note.lastModified)}</Text>
+          <Text style={styles.time}>{ formatLastModified(note.lastModified) }</Text>
         </View>
       </TouchableOpacity>
     )
@@ -103,6 +97,9 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: undefined
+  },
+  emptyTitle: {
+    color: 'rgb(224, 224, 224)'
   },
   time: {
     flexShrink: 0,
