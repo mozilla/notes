@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
 import { createNote, updateNote, deleteNote, setFocusedNote } from '../actions';
-import { COLOR_APP_BAR } from '../utils/constants';
+import { COLOR_APP_BAR, KINTO_LOADED } from '../utils/constants';
+
+import browser from '../browser';
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -20,12 +22,58 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      ignoreNewProps: false // Ignore Props if change was trigger by the editor
-    };
     this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
     if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
+    }
+  }
+
+  componentDidMount() {
+    this.richtext.registerContentChangeListener((e) => {
+      if (!this.note && e !== '') {
+        this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
+        this.note = { content: e };
+        this.props.dispatch(createNote(e)).then((note) => {
+          this.note.id = note.id;
+          this.props.dispatch(setFocusedNote(note.id));
+        });
+      } else if (this.note && e === '') {
+        this.props.dispatch(deleteNote(this.note.id));
+        this.note = null;
+        this.props.dispatch(setFocusedNote());
+      } else if (this.note && e !== '') {
+        this.props.dispatch(updateNote(this.note.id, e, new Date()));
+      }
+    });
+
+    // Listen to KintoLoad event to update UI if current note has changed.
+    this._onLoadEvent = (eventData) => {
+      switch(eventData.action) {
+        case KINTO_LOADED:
+          if (this.note && this.props.navigation.isFocused()) {
+            newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            if (newNote) {
+              this.note = newNote;
+              this.richtext.setContentHTML(this.note.content);
+            } else {
+              this.props.navigation.goBack();
+            }
+          }
+          break;
+      }
+    };
+    browser.runtime.onMessage.addListener(this._onLoadEvent);
+  }
+
+  componentWillUnmount() {
+    browser.runtime.onMessage.removeListener(this._onLoadEvent);
+  }
+
+  onEditorInitialized(e) {
+    if (!this.note) {
+      // set height if totally empty, helps with keyboard pull up
+      const { height } = Dimensions.get('window');
+      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
     }
   }
 
@@ -45,57 +93,6 @@ class RichTextExample extends Component {
         />
       </View>
     );
-  }
-
-  componentDidMount() {
-    this.richtext.registerContentChangeListener((e) => {
-      if (!this.note && e !== '') {
-        this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
-        this.note = { content: e };
-        this.props.dispatch(createNote(e)).then((note) => {
-          this.note.id = note.id;
-          this.props.dispatch(setFocusedNote(note.id));
-        });
-      } else if (this.note && e === '') {
-        this.props.dispatch(deleteNote(this.note.id));
-        this.note = null;
-        this.props.dispatch(setFocusedNote());
-      } else if (this.note && e !== '') {
-        this.props.dispatch(updateNote(this.note.id, e, new Date()));
-      }
-      this.setState({
-        ignoreNewProps: true
-      });
-    });
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (!newProps.state.sync.isSyncing) {
-      // Is synced is done, and ignoreNewProps is true because change was triggered by the editor
-      if (!this.state.ignoreNewProps) {
-        // We udpate note in case a sync was performed background and change current selected note.
-        this.note = newProps.state.notes.find((note) => {
-          return note.id === newProps.navigation.state.params.id;
-        });
-        if (this.note) {
-          this.richtext.setContentHTML(this.note.content);
-        } else {
-          // If currentNote has been deleted on sync, we redirect to listPanel
-          this.props.navigation.goBack();
-        }
-      }
-      this.setState({
-        ignoreNewProps: false
-      });
-    }
-  }
-
-  onEditorInitialized(e) {
-    if (!this.note) {
-      // set height if totally empty, helps with keyboard pull up
-      const { height } = Dimensions.get('window');
-      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
-    }
   }
 }
 
