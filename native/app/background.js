@@ -48,6 +48,9 @@ browser.runtime.onMessage.addListener(eventData => {
     case DISCONNECTED:
       sync.clearKinto(kintoClient);
       break;
+    case TEXT_SYNCING:
+      store.dispatch({ type: TEXT_SYNCING });
+      break;
     case ERROR:
       store.dispatch({ type: ERROR, message: eventData.message });
       break;
