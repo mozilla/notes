@@ -20,7 +20,7 @@ import { SYNC_AUTHENTICATED,
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
- import sync from './utils/sync';
+import sync from './utils/sync';
 
 export function pleaseLogin() {
   return { type: PLEASE_LOGIN };

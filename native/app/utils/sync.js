@@ -9,6 +9,7 @@ const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 
 import {
   RECONNECT_SYNC,
+  TEXT_SYNCING,
   ERROR as ERROR_MSG } from './constants';
 
 // TODO WARNING: `jose` is not in the official release in the crypto-relier
@@ -190,6 +191,11 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
 let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
+
+  browser.runtime.sendMessage({
+    action: TEXT_SYNCING
+  });
+
   // Get credentials and lastmodified
   let collection, credential;
   return Promise.resolve()
@@ -366,56 +372,39 @@ function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-
 }
 
 function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unused-vars
-  let resolve;
+
   // We do not store empty notes on server side.
   if (note.content === '') { return Promise.resolve(); }
+
+  let resolve;
 
   const promise = new Promise(thisResolve => {
     resolve = thisResolve;
   });
 
-  // browser.runtime.sendMessage('notes@mozilla.com', {
-  //   action: 'text-editing'
-  // });
+  const notes = client.collection('notes', { idSchema: notesIdSchema });
+  notes.upsert(note).then(() => {
 
-  const later = function() {
-    syncDebounce = null;
-    const notes = client.collection('notes', { idSchema: notesIdSchema });
-    return notes.upsert(note)
-      .then((res) => {
-        // browser.runtime.sendMessage('notes@mozilla.com', {
-        //   action: 'text-saved',
-        //   note: res ? res.data : undefined,
-        //   from: fromWindowId
-        // });
-        client.conflict = false;
-        return syncKinto(client, loginDetails);
-      })
-      .then(() => retrieveNote(client), () => retrieveNote(client))
-      // .then(result => {
-      //   // Set the status to synced
-      //   return browser.runtime.sendMessage('notes@mozilla.com', {
-      //     action: 'text-synced',
-      //     note: result.data.find((n) => n.id === note.id),
-      //     conflict: client.conflict,
-      //     from: fromWindowId
-      //   });
-      // })
-      .then((result) => {
-        resolve(result.data.find((n) => n.id === note.id), client.conflict);
-      })
-      .catch(result => {
-        // browser.runtime.sendMessage('notes@mozilla.com', {
-        //   action: 'text-synced',
-        //   note: undefined,
-        //   conflict: client.conflict,
-        //   from: fromWindowId
-        // });
-        resolve();
+    const later = function() {
+      browser.runtime.sendMessage('notes@mozilla.com', {
+        action: TEXT_SYNCING
       });
-  };
-  clearTimeout(syncDebounce);
-  syncDebounce = setTimeout(later, 400);
+
+      client.conflict = false;
+      syncDebounce = null;
+      return syncKinto(client, loginDetails)
+        .then(() => retrieveNote(client), () => retrieveNote(client))
+        .then((result) => {
+          resolve(result.data.find((n) => n.id === note.id), client.conflict);
+        })
+        .catch(result => {
+          resolve();
+        });
+    };
+    clearTimeout(syncDebounce);
+    syncDebounce = setTimeout(later, 2000);
+  });
+
   return promise;
 }
 
