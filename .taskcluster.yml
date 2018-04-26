@@ -1,0 +1,30 @@
+version: 0
+tasks:
+  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+    workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        events:
+          - pull_request.closed
+          - pull_request.opened
+          - pull_request.reopened
+          - pull_request.synchronize
+          - push
+          - release
+    payload:
+      maxRunTime: 3600
+      image: node
+      command:
+        - /bin/bash
+        - '--login'
+        - '-c'
+        - >-
+          git clone {{event.head.repo.url}} repo && cd repo && git config
+          advice.detachedHead false && git checkout {{event.head.sha}} && npm
+          install . && npm test
+    metadata:
+      name: Test Pilot Notes
+      description: Test Pilot Notes
+      owner: '{{ event.head.user.email }}'
+      source: '{{ event.head.repo.url }}'
+allowPullRequests: public
