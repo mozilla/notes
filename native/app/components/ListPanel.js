@@ -106,12 +106,6 @@ class ListPanel extends React.Component {
           <ProgressBarAndroid color={COLOR_NOTES_BLUE} styleAttr="Inverse" />
         </View>
       )
-    } else if (! this.props.state.notes || this.props.state.notes.length <= 0) {
-      return (
-        <View>
-          <Text>No Notes</Text>
-        </View>
-      )
     } else {
       return (
         <FlatList
@@ -124,10 +118,19 @@ class ListPanel extends React.Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-          ListHeaderComponent={() => {
+          ListEmptyComponent={() => {
             return (
-              <View style={{ backgroundColor: 'white', height: 10}}></View>
+              <View>
+                <Text>No Notes</Text>
+              </View>
             )
+          }}
+          ListHeaderComponent={() => {
+            return this.props.state.notes && this.props.state.notes.length > 0 ?
+              (
+                <View style={{ backgroundColor: 'white', height: 10}}></View>
+              )
+              : null;
           }}
           keyExtractor={this._keyExtractor}
           renderItem={({item}) => {
@@ -139,19 +142,21 @@ class ListPanel extends React.Component {
             )
           }}
           ListFooterComponent={() => {
-            return (
-              <View style={{
-                height: 1,
-                backgroundColor: '#F9F9FA',
-                overflow: 'visible',
-                marginBottom: 90,
-                elevation: 1,
-                shadowColor: '#000',
-                shadowOpacity: 0.24,
-                shadowOffset: { width: 0, height: 0.75},
-                shadowRadius: 1.5}}>
-              </View>
-            )
+            return this.props.state.notes && this.props.state.notes.length > 0 ?
+              (
+                <View style={{
+                  height: 1,
+                  backgroundColor: '#F9F9FA',
+                  overflow: 'visible',
+                  marginBottom: 90,
+                  elevation: 1,
+                  shadowColor: '#000',
+                  shadowOpacity: 0.24,
+                  shadowOffset: { width: 0, height: 0.75},
+                  shadowRadius: 1.5}}>
+                </View>
+              )
+              : null;
           }}
         />
       )
