@@ -66,6 +66,7 @@ class RichTextExample extends Component {
   }
 
   componentWillUnmount() {
+    this.props.dispatch(setFocusedNote());
     browser.runtime.onMessage.removeListener(this._onLoadEvent);
   }
 
