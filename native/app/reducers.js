@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { firstLine, secondLine } from './utils/utils';
+
 import {
   SYNC_AUTHENTICATED,
   DISCONNECTED,
@@ -158,8 +160,8 @@ function notes(notes = [], action) {
       if (action.notes) {
         const list = Array.from(action.notes);
         list.map((note) => {
-          note.firstLine = note.content;
-          note.secondLine = note.content;
+          note.firstLine = firstLine(note.content);
+          note.secondLine = secondLine(note.content);
           if (!(note.lastModified instanceof Date)) {
             note.lastModified = note.lastModified ? new Date(note.lastModified) : new Date();
           }
@@ -169,7 +171,6 @@ function notes(notes = [], action) {
       return notes;
     }
     case TEXT_SYNCED: {
-
       if (!action.notes) return notes;
 
       const res = [];
@@ -178,8 +179,8 @@ function notes(notes = [], action) {
         res.push({
           id: note.id,
           content: note.content,
-          firstLine: note.content,
-          secondLine: note.content,
+          firstLine: firstLine(note.content),
+          secondLine: secondLine(note.content),
           lastModified: note.lastModified instanceof Date ? note.lastModified : new Date(note.lastModified)
         });
       });
@@ -192,8 +193,8 @@ function notes(notes = [], action) {
         list.push({
           id: action.id,
           content: action.content,
-          firstLine: action.content,
-          secondLine: action.content,
+          firstLine: firstLine(action.content),
+          secondLine: secondLine(action.content),
           lastModified: action.lastModified || new Date()
         });
       }
@@ -213,8 +214,8 @@ function notes(notes = [], action) {
         list.push({
           id: action.id,
           content: action.content,
-          firstLine: (action.content),
-          secondLine: (action.content),
+          firstLine: firstLine(action.content),
+          secondLine: secondLine(action.content),
           lastModified: new Date(action.lastModified)
         });
       }
