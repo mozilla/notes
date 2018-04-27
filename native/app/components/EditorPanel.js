@@ -22,6 +22,7 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
+    this.paragraphHasBeenInjected = false; // catch setParagraph Callback on creation
     this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
     if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
@@ -30,18 +31,23 @@ class RichTextExample extends Component {
 
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
-      if (!this.note && e !== '') {
-        this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
+      if (!this.note && !this.paragraphHasBeenInjected) { // new note never paragraphed, not in redux
+        // Because .setParagraph() trigger and update, we use paragraphHasBeenInjected to handle its
+        // callback and avoid a non expected dispatch(updateNote())
+        this.paragraphHasBeenInjected = true;
+        this.richtext.setParagraph();
+      } else if (!this.note) { // new note has been paragraphed, we push on redux
+        this.paragraphHasBeenInjected = false;
         this.note = { content: e };
         this.props.dispatch(createNote(e)).then((note) => {
           this.note.id = note.id;
           this.props.dispatch(setFocusedNote(note.id));
         });
-      } else if (this.note && e === '') {
+      } else if (this.note && e === '') { // if we delete all caracters from a note
         this.props.dispatch(deleteNote(this.note.id));
         this.note = null;
         this.props.dispatch(setFocusedNote());
-      } else if (this.note && e !== '') {
+      } else if (this.note && e !== '') { // default case, on modification we save
         this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }
     });
@@ -70,7 +76,7 @@ class RichTextExample extends Component {
     browser.runtime.onMessage.removeListener(this._onLoadEvent);
   }
 
-  onEditorInitialized(e) {
+  onEditorInitialized() {
     if (!this.note) {
       // set height if totally empty, helps with keyboard pull up
       const { height } = Dimensions.get('window');
@@ -109,8 +115,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   }
 });
-
-
 
 function mapStateToProps(state) {
   return {

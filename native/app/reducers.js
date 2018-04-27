@@ -92,8 +92,8 @@ function sync(sync = {}, action) {
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
-        isSyncing: true,
-        isSyncingFrom: 'updateNote',
+        isSyncing: false,
+        isSyncingFrom: null,
         error: null
       });
     case TEXT_SAVED:
@@ -128,6 +128,7 @@ function sync(sync = {}, action) {
       });
     case CREATE_NOTE:
       return Object.assign({}, sync, {
+        isSyncing: false,
         welcomePage: false
       });
     case ERROR:
