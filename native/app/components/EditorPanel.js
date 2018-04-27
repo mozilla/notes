@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
 import { createNote, updateNote, deleteNote, setFocusedNote } from '../actions';
-import { COLOR_APP_BAR } from '../utils/constants';
+import { COLOR_APP_BAR, KINTO_LOADED } from '../utils/constants';
+
+import browser from '../browser';
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -20,9 +22,59 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.note = this.props.navigation.state.params.note;
-    if (this.note) {
+    this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
+    if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
+    }
+  }
+
+  componentDidMount() {
+    this.richtext.registerContentChangeListener((e) => {
+      if (!this.note && e !== '') {
+        this.richtext.setParagraph(); // setParagraph will wrap content around <p></p> markups
+        this.note = { content: e };
+        this.props.dispatch(createNote(e)).then((note) => {
+          this.note.id = note.id;
+          this.props.dispatch(setFocusedNote(note.id));
+        });
+      } else if (this.note && e === '') {
+        this.props.dispatch(deleteNote(this.note.id));
+        this.note = null;
+        this.props.dispatch(setFocusedNote());
+      } else if (this.note && e !== '') {
+        this.props.dispatch(updateNote(this.note.id, e, new Date()));
+      }
+    });
+
+    // Listen to KintoLoad event to update UI if current note has changed.
+    this._onLoadEvent = (eventData) => {
+      switch(eventData.action) {
+        case KINTO_LOADED:
+          if (this.note && this.props.navigation.isFocused()) {
+            newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            if (newNote) {
+              this.note = newNote;
+              this.richtext.setContentHTML(this.note.content);
+            } else {
+              this.props.navigation.goBack();
+            }
+          }
+          break;
+      }
+    };
+    browser.runtime.onMessage.addListener(this._onLoadEvent);
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(setFocusedNote());
+    browser.runtime.onMessage.removeListener(this._onLoadEvent);
+  }
+
+  onEditorInitialized(e) {
+    if (!this.note) {
+      // set height if totally empty, helps with keyboard pull up
+      const { height } = Dimensions.get('window');
+      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
     }
   }
 
@@ -42,33 +94,6 @@ class RichTextExample extends Component {
         />
       </View>
     );
-  }
-
-  componentDidMount() {
-    this.richtext.registerContentChangeListener((e) => {
-      if (!this.note && e !== '') {
-        this.richtext.setParagraph();
-        this.note = { content: e }
-        this.props.dispatch(createNote(e)).then((note) => {
-          this.note.id = note.id;
-          this.props.dispatch(setFocusedNote(note.id));
-        });
-      } else if (this.note && e === '') {
-        this.props.dispatch(deleteNote(this.note.id));
-        this.note = null;
-        this.props.dispatch(setFocusedNote());
-      } else if (this.note && e !== '') {
-        this.props.dispatch(updateNote(this.note.id, e, new Date()));
-      }
-    });
-  }
-
-  onEditorInitialized(e) {
-    if (!this.note) {
-      // set height if totally empty, helps with keyboard pull up
-      const { height } = Dimensions.get('window');
-      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
-    }
   }
 }
 
@@ -99,3 +124,4 @@ RichTextExample.propTypes = {
 };
 
 export default connect(mapStateToProps)(RichTextExample)
+

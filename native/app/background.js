@@ -25,9 +25,6 @@ import { SYNC_AUTHENTICATED,
 
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
-    case KINTO_LOADED:
-      console.error('Deprecated KINTO_LOADED in background');
-      break;
     case CREATE_NOTE:
       sync.createNote(kintoClient, store.getState().sync.loginDetails,
         { id: eventData.id, content: eventData.content, lastModified: new Date() }).then(() => {

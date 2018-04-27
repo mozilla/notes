@@ -34,6 +34,9 @@ export function kintoLoad(from) {
       sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
         if (result && result.data) {
           dispatch({ type: KINTO_LOADED, notes: result.data });
+          browser.runtime.sendMessage({
+            action: KINTO_LOADED
+          });
         }
         resolve();
       }).catch(_ => {
