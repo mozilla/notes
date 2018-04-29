@@ -208,8 +208,8 @@ function notes(notes = [], action) {
       const note = list.find((note) => note.id === action.id);
       if (note) {
         note.content = action.content;
-        note.firstLine = (action.content);
-        note.secondLine = (action.content);
+        note.firstLine = firstLine(action.content);
+        note.secondLine = secondLine(action.content);
         note.lastModified = new Date(action.lastModified);
       } else if (action.id) {
         list.push({
