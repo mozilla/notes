@@ -95,7 +95,7 @@ class RichTextExample extends Component {
           initialContentHTML={this.note ? escapeHtml(this.note.content) : ''}
           enableOnChange={true}
           customCSS="p:first-child { margin-top: 0; }"
-          contentPlaceholder='Take a note...'
+          contentPlaceholder={ browser.i18n.getMessage('emptyPlaceHolder') }
           editorInitializedCallback={() => this.onEditorInitialized()}
         />
       </View>

@@ -13,6 +13,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import moment from 'moment';
+import browser from '../browser';
 
 function formatLastModified(date = new Date()) {
 
@@ -54,7 +55,7 @@ class ListItem extends React.Component {
             { note.firstLine ?
               <Text numberOfLines={1} style={styles.title}>{note.firstLine}</Text>
               :
-              <Text numberOfLines={1} style={styles.emptyTitle}>Take a note...</Text>
+              <Text numberOfLines={1} style={styles.emptyTitle}>{ browser.i18n.getMessage('emptyPlaceHolder') }</Text>
             }
             { note.secondLine ?
               <Text numberOfLines={1} style={styles.subtitle}>{note.secondLine}</Text>
