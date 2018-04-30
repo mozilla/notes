@@ -7,10 +7,13 @@ import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
-import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid, AppState } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
 import browser from '../browser';
+
+import ListPanelEmpty from './ListPanelEmpty';
+import ListPanelLoading from './ListPanelLoading';
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -102,14 +105,26 @@ class ListPanel extends React.Component {
     const { navigate } = this.props.navigation;
     if (!this.props.state.kinto.isLoaded) {
       return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ProgressBarAndroid color={COLOR_NOTES_BLUE} styleAttr="Inverse" />
-        </View>
+        <ListPanelLoading></ListPanelLoading>
       )
     } else {
+      let styleList = {};
+      if (this.props.state.notes.length === 0) {
+        styleList = {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingRight: 40,
+          paddingLeft: 40
+        };
+      } else {
+        styleList = { marginBottom:90 };
+      }
+
+
       return (
         <FlatList
-          contentContainerStyle={{marginBottom:90}}
+          contentContainerStyle={styleList}
           data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
           refreshControl={
             <RefreshControl
@@ -120,9 +135,7 @@ class ListPanel extends React.Component {
           }
           ListEmptyComponent={() => {
             return (
-              <View>
-                <Text>No Notes</Text>
-              </View>
+              <ListPanelEmpty></ListPanelEmpty>
             )
           }}
           ListHeaderComponent={() => {
@@ -173,7 +186,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 10,
-  },
+  }
 });
 
 function mapStateToProps(state) {
