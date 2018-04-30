@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
 import { View, FlatList, StyleSheet, RefreshControl, AppState } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
-import { kintoLoad } from "../actions";
+import { kintoLoad, createNote } from "../actions";
 import browser from '../browser';
 
 import ListPanelEmpty from './ListPanelEmpty';
@@ -22,7 +22,8 @@ class ListPanel extends React.Component {
     this.state = {
       refreshing: false,
       snackbarSyncedvisible: false,
-      appState: AppState.currentState
+      appState: AppState.currentState,
+      deletedNote: null
     }
 
     this._onRefresh = () => {
@@ -42,8 +43,18 @@ class ListPanel extends React.Component {
     this._triggerSnackbar = () => {
       this.setState({
         refreshing: false,
+        deletedNote: null,
         snackbarSyncedvisible: props.navigation.isFocused()
       });
+    };
+
+    this._undoDelete = () => {
+      props.dispatch(createNote(this.state.deletedNote)).then(() => {
+        this.setState({
+          deletedNote: null,
+          snackbarSyncedvisible: false
+        });
+      }).catch(e => console.error(e));
     };
   }
 
@@ -56,11 +67,20 @@ class ListPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-      if (this.props.state.sync.isSyncingFrom === 'drawer') {
-        setTimeout(this._triggerSnackbar, 400);
-      } else {
-        this._triggerSnackbar();
+    if (newProps.navigation.isFocused()) {
+      // Display sycned note snackbar
+      if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+        if (this.props.state.sync.isSyncingFrom === 'drawer') {
+          setTimeout(this._triggerSnackbar, 400);
+        } else {
+          this._triggerSnackbar();
+        }
+      }
+      // Display deleted note snackbar
+      if (newProps.navigation.getParam('deletedNote')) {
+          const deletedNote = newProps.navigation.getParam('deletedNote');
+          newProps.navigation.setParams({ deletedNote: null });
+          this.setState({ deletedNote, snackbarSyncedvisible: false });
       }
     }
   }
@@ -74,15 +94,39 @@ class ListPanel extends React.Component {
           style={{
             backgroundColor: COLOR_DARK_SYNC
           }}
-          visible={this.state.snackbarSyncedvisible}
+          visible={ this.state.snackbarSyncedvisible && !this.state.deletedNote }
           onDismiss={() => {
             this.setState({
+              deletedNote: null,
               snackbarSyncedvisible: false
             });
           }}
           duration={3000}
         >
           Notes synced!
+        </Snackbar>
+
+        <Snackbar
+          style={{
+            backgroundColor: COLOR_NOTES_BLUE
+          }}
+          visible={ !this.state.snackbarSyncedvisible && this.state.deletedNote }
+          onDismiss={() => {
+            this.setState({
+              deletedNote: null,
+              snackbarSyncedvisible: false
+            });
+          }}
+          duration={3000}
+          theme={{ colors: { accent: 'white' }}}
+          action={{
+            text: 'undo',
+            onPress: () => {
+              this._undoDelete();
+            }
+          }}
+        >
+          Deleted Note !
         </Snackbar>
 
         { this.props.state.kinto.isLoaded ?

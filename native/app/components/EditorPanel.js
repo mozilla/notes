@@ -39,7 +39,7 @@ class RichTextExample extends Component {
       } else if (!this.note) { // new note has been paragraphed, we push on redux
         this.paragraphHasBeenInjected = false;
         this.note = { content: e };
-        this.props.dispatch(createNote(e)).then((note) => {
+        this.props.dispatch(createNote(this.note)).then((note) => {
           this.note.id = note.id;
           this.props.dispatch(setFocusedNote(note.id));
         });
