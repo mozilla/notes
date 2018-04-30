@@ -121,7 +121,6 @@ class ListPanel extends React.Component {
         styleList = { marginBottom:90 };
       }
 
-
       return (
         <FlatList
           contentContainerStyle={styleList}
@@ -146,7 +145,7 @@ class ListPanel extends React.Component {
               : null;
           }}
           keyExtractor={this._keyExtractor}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return (
               <ListItem
                 note={item}
