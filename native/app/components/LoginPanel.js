@@ -14,7 +14,16 @@ import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';
 
 class LoginPanel extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false
+    };
+  }
+
   onAuth () {
+    this.setState({ isLoading: true });
     this.props.navigation.navigate('LoadingPanel');
 
     return Promise.resolve().then(() => {
@@ -38,7 +47,7 @@ class LoginPanel extends React.Component {
       console.log('onAuth', err);
       ToastAndroid.show('Something went wrong. ' + err, ToastAndroid.LONG);
       trackEvent('login-failed');
-    })
+    });
   }
 
   render() {
@@ -48,9 +57,12 @@ class LoginPanel extends React.Component {
           style={{width: 150, height: 150 }}
           source={require('../assets/notes-1024.png')}
         />
-        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 10 }}>{ i18nGetMessage('welcomeTitle3') }</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+          { i18nGetMessage('welcomeTitle3') }
+        </Text>
         <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
-        <Button raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE} style={styles.btnSignin}>SIGN IN</Button>
+        <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
+          style={styles.btnSignin}>SIGN IN</Button>
       </View>
     );
   }
