@@ -49,7 +49,7 @@ class DrawerItems extends React.Component {
     // DrawerItemsData store our drawer button list
     this.drawerItemsData = [
       {
-        label : 'Log out',
+        label : browser.i18n.getMessage('logout'),
         action: () => {
           navigateToLogin(props);
           // We delay disconnect event to avoid empty UI while drawer is closing
@@ -59,7 +59,7 @@ class DrawerItems extends React.Component {
         }
       },
       {
-        label  : 'Feedback',
+        label  : browser.i18n.getMessage('feedback2'),
         action : () => {
           trackEvent('give-feedback');
           return Linking.openURL(SURVEY_PATH);
@@ -158,9 +158,9 @@ class DrawerItems extends React.Component {
     if (this.props.state.sync.isConnected === false) {
       statusLabel = 'Offline';
     } else if (this.props.state.sync.isSyncing) {
-      statusLabel = 'Syncing...';
+      statusLabel = browser.i18n.getMessage('syncProgress2');
     } else {
-      statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;
+      statusLabel = browser.i18n.getMessage('syncComplete5', moment(this.props.state.sync.lastSynced).format('LT'));
     }
 
     return (
