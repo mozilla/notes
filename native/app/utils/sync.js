@@ -427,6 +427,7 @@ function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused
 }
 
 function clearKinto(client) {
+  lastSyncTimestamp = null
   const notes = client.collection('notes', { idSchema: notesIdSchema });
   return client
     .collection('notes', { idSchema: notesIdSchema })
@@ -435,15 +436,9 @@ function clearKinto(client) {
     });
 }
 
-function disconnectFromKinto(client) { // eslint-disable-line no-unused-vars
-  const notes = client.collection('notes', { idSchema: notesIdSchema });
-  return notes.resetSyncStatus();
-}
-
 module.exports = {
   createNote,
   deleteNote,
-  disconnectFromKinto,
   loadFromKinto,
   retrieveNote,
   reconnectSync,
