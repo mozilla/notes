@@ -17,6 +17,7 @@ export const COLOR_DARK_WARNING = '#ef6b6b';
 export const COLOR_DARK_SYNC = '#3FD4B4';
 export const COLOR_STATUS_BAR = '#F9F9FA';
 export const COLOR_APP_BAR = '#FFFFFF';
+export const COLOR_EMPTY = 'rgb(224, 224, 224)';
 
 // Actions
 // FOR LEGACY, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
