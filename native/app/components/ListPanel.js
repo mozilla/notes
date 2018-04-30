@@ -7,10 +7,13 @@ import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
-import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid, AppState, Image } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
 import browser from '../browser';
+
+import ListPanelEmpty from './ListPanelEmpty';
+import ListPanelLoading from './ListPanelLoading';
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -102,9 +105,7 @@ class ListPanel extends React.Component {
     const { navigate } = this.props.navigation;
     if (!this.props.state.kinto.isLoaded) {
       return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ProgressBarAndroid color={COLOR_NOTES_BLUE} styleAttr="Inverse" />
-        </View>
+        <ListPanelLoading></ListPanelLoading>
       )
     } else {
       let styleList = {};
@@ -134,13 +135,7 @@ class ListPanel extends React.Component {
           }
           ListEmptyComponent={() => {
             return (
-              <View style={styles.noNotes}>
-                <Image
-                  style={{width: 150, height: 150, marginBottom: 30 }}
-                  source={require('../assets/notes-1024.png')}
-                />
-                <Text style={styles.centered}>Your notes will show up here and are synced across your connected devices.</Text>
-              </View>
+              <ListPanelEmpty></ListPanelEmpty>
             )
           }}
           ListHeaderComponent={() => {
@@ -191,15 +186,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 10,
-  },
-  noNotes: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40
-  },
-  centered: {
-    textAlign: 'center'
   }
 });
 
