@@ -7,7 +7,7 @@ import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB, Snackbar } from 'react-native-paper';
-import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid, AppState } from 'react-native';
+import { View, FlatList, Text, StyleSheet, RefreshControl, ProgressBarAndroid, AppState, Image } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad } from "../actions";
 import browser from '../browser';
@@ -107,9 +107,23 @@ class ListPanel extends React.Component {
         </View>
       )
     } else {
+      let styleList = {};
+      if (this.props.state.notes.length === 0) {
+        styleList = {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingRight: 40,
+          paddingLeft: 40
+        };
+      } else {
+        styleList = { marginBottom:90 };
+      }
+
+
       return (
         <FlatList
-          contentContainerStyle={{marginBottom:90}}
+          contentContainerStyle={styleList}
           data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
           refreshControl={
             <RefreshControl
@@ -120,8 +134,12 @@ class ListPanel extends React.Component {
           }
           ListEmptyComponent={() => {
             return (
-              <View>
-                <Text>No Notes</Text>
+              <View style={styles.noNotes}>
+                <Image
+                  style={{width: 150, height: 150, marginBottom: 30 }}
+                  source={require('../assets/notes-1024.png')}
+                />
+                <Text style={styles.centered}>Your notes will show up here and are synced across your connected devices.</Text>
               </View>
             )
           }}
@@ -174,6 +192,15 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 10,
   },
+  noNotes: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40
+  },
+  centered: {
+    textAlign: 'center'
+  }
 });
 
 function mapStateToProps(state) {
