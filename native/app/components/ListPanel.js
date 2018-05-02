@@ -179,13 +179,13 @@ class ListPanel extends React.Component {
 
 const styles = StyleSheet.create({
   fab: {
-    width: 60,
-    height: 60,
+    width: 56,
+    height: 56,
     borderRadius: 30,
     backgroundColor: COLOR_NOTES_BLUE,
     position: 'absolute',
-    bottom: 20,
-    right: 10,
+    bottom: 24,
+    right: 24,
   }
 });
 
