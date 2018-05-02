@@ -6,7 +6,7 @@ import React from 'react';
 import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
-import { FAB, Snackbar } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import { View, FlatList, StyleSheet, RefreshControl, AppState } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote } from "../actions";
@@ -14,6 +14,7 @@ import browser from '../browser';
 
 import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
+import Snackbar from './Snackbar';
 
 class ListPanel extends React.Component {
   constructor(props) {
