@@ -157,41 +157,45 @@ class Snackbar extends React.Component<Props, State> {
   };
 
   _show = () => {
-    Animated.parallel([
-      Animated.timing(this.state.opacity, {
-        toValue: 1,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-      Animated.timing(this.state.yPosition, {
-        toValue: 0,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      const { duration } = this.props;
-      if (duration !== Snackbar.DURATION_INDEFINITE) {
-        this._hideTimeout = setTimeout(this.props.onDismiss, duration);
-      }
-    });
+    const { duration } = this.props;
+    if (duration !== Snackbar.DURATION_INDEFINITE) {
+      this._hideTimeout = setTimeout(this.props.onDismiss, duration);
+    }
+    // Animated.parallel([
+    //   Animated.timing(this.state.opacity, {
+    //     toValue: 1,
+    //     duration: SNACKBAR_ANIMATION_DURATION,
+    //     useNativeDriver: true,
+    //   }),
+    //   Animated.timing(this.state.yPosition, {
+    //     toValue: 0,
+    //     duration: SNACKBAR_ANIMATION_DURATION,
+    //     useNativeDriver: true,
+    //   }),
+    // ]).start(() => {
+    //   const { duration } = this.props;
+    //   if (duration !== Snackbar.DURATION_INDEFINITE) {
+    //     this._hideTimeout = setTimeout(this.props.onDismiss, duration);
+    //   }
+    // });
   };
 
   _hide = () => {
     if (this._hideTimeout) {
       clearTimeout(this._hideTimeout);
     }
-    Animated.parallel([
-      Animated.timing(this.state.opacity, {
-        toValue: 0,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-      Animated.timing(this.state.yPosition, {
-        toValue: this.state.height,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Animated.parallel([
+    //   Animated.timing(this.state.opacity, {
+    //     toValue: 0,
+    //     duration: SNACKBAR_ANIMATION_DURATION,
+    //     useNativeDriver: true,
+    //   }),
+    //   Animated.timing(this.state.yPosition, {
+    //     toValue: this.state.height,
+    //     duration: SNACKBAR_ANIMATION_DURATION,
+    //     useNativeDriver: true,
+    //   }),
+    // ]).start();
   };
 
   render() {
@@ -209,12 +213,12 @@ class Snackbar extends React.Component<Props, State> {
           style={[
             styles.wrapper,
             {
-              opacity: this.state.rendered ? 1 : 0,
-              transform: [
-                {
-                  translateY: this.state.yPosition,
-                },
-              ],
+              opacity: 1 // this.state.rendered ? 1 : 0,
+              // transform: [
+              //   {
+              //     translateY: this.state.yPosition,
+              //   },
+              // ],
             },
             style,
           ]}
@@ -224,10 +228,11 @@ class Snackbar extends React.Component<Props, State> {
               style={[
                 styles.container,
                 {
-                  opacity: this.state.opacity.interpolate({
-                    inputRange: [0, 0.8, 1],
-                    outputRange: [0, 0.2, 1],
-                  }),
+                  opacity: 1
+                  // opacity: this.state.opacity.interpolate({
+                  //   inputRange: [0, 0.8, 1],
+                  //   outputRange: [0, 0.2, 1],
+                  // }),
                 },
               ]}
             >
