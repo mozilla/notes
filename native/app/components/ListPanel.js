@@ -17,6 +17,7 @@ import ListPanelLoading from './ListPanelLoading';
 import Snackbar from './Snackbar';
 
 const SNACKBAR_ANIMATION_DURATION = 250;
+const SNACKBAR_HEIGHT = 48;
 
 const SYNCED_SNACKBAR = {
   text: 'Notes synced!',
@@ -33,32 +34,34 @@ class ListPanel extends React.Component {
       refreshing: false,
       appState: AppState.currentState,
       deletedNote: null,
-      yPosition: new Animated.Value(50),
+      yPosition: new Animated.Value(SNACKBAR_HEIGHT),
       snackbarVisible: false,
       snackbar: null
     }
 
     this._onRefresh = () => {
       this.setState({ refreshing: true });
-      props.dispatch(kintoLoad());
+      props.dispatch(kintoLoad()).then(() => {
+        this.setState({ refreshing: false });
+      });
     }
 
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-        props.dispatch(kintoLoad());
+        props.dispatch(kintoLoad()).then(() => {
+          this.setState({ refreshing: false });
+        });
       }
       this.setState({ appState: nextAppState });
     }
 
-    this._keyExtractor = (item, index) => item.id;
-
     this._showSnackbar = (snackbar) => {
 
-      if (!this.state.snackbar) {
+      if (!this.state.snackbar && props.navigation.isFocused()) {
+
         this.setState({
-          refreshing: false,
           snackbar,
-          snackbarVisible: props.navigation.isFocused(),
+          snackbarVisible: true,
         });
 
         Animated.timing(this.state.yPosition, {
@@ -77,22 +80,22 @@ class ListPanel extends React.Component {
       });
 
       Animated.timing(this.state.yPosition, {
-        toValue: 50,
+        toValue: SNACKBAR_HEIGHT,
         duration: SNACKBAR_ANIMATION_DURATION,
         useNativeDriver: true,
-      }).start();
-
-      setTimeout(() => {
+      }).start(() => {
         this.setState({
           snackbar: null
         });
-      }, SNACKBAR_ANIMATION_DURATION);
+      });
+
     };
 
     this._undoDelete = () => {
+      this._hideSnackbar();
       props.dispatch(createNote(this.state.deletedNote)).then(() => {
-        this._hideSnackbar();
-      }).catch(e => console.error(e));
+
+      });
     };
   }
 
@@ -109,11 +112,10 @@ class ListPanel extends React.Component {
 
       // Display sycned note snackbar
       if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-        const snackbar = SYNCED_SNACKBAR;
         if (this.props.state.sync.isSyncingFrom === 'drawer') {
-          setTimeout(() => this._showSnackbar(snackbar), 400);
+          setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
         } else {
-          this._showSnackbar(snackbar);
+          this._showSnackbar(SYNCED_SNACKBAR);
         }
       }
 
@@ -180,8 +182,8 @@ class ListPanel extends React.Component {
               transform: [
                 {
                   translateY: this.state.yPosition.interpolate({
-                    inputRange: [0, 50],
-                    outputRange: [-50, 0]
+                    inputRange: [0, SNACKBAR_HEIGHT],
+                    outputRange: [-1 * SNACKBAR_HEIGHT, 0]
                   }),
                 },
               ],
@@ -191,17 +193,11 @@ class ListPanel extends React.Component {
               color={COLOR_NOTES_WHITE}
               style={styles.fab}
               icon="add"
-              onPress={() => this.newNote()}
+              onPress={() => this.props.navigation.navigate('EditorPanel', { note: null }) }
             />
           </Animated.View> : null }
       </View>
     );
-  }
-
-
-
-  newNote() {
-    return this.props.navigation.navigate('EditorPanel', { note: null });
   }
 
   renderList() {
@@ -223,7 +219,6 @@ class ListPanel extends React.Component {
       } else {
         styleList = { marginBottom:90 };
       }
-
 
       return (
         <FlatList
@@ -248,7 +243,7 @@ class ListPanel extends React.Component {
               )
               : null;
           }}
-          keyExtractor={this._keyExtractor}
+          keyExtractor={ (item) => item.id }
           renderItem={({item}) => {
             return (
               <ListItem
