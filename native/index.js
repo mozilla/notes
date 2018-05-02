@@ -21,7 +21,7 @@ import React from 'react';
 import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
 import { Provider as StoreProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import { Toolbar, ToolbarContent, ToolbarAction, Provider as PaperProvider } from 'react-native-paper';
 
 import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
@@ -81,7 +81,7 @@ const fade = (props) => {
   }
 }
 
-const AppNavigator = StackNavigator(
+const AppNavigator = createStackNavigator(
   {
     SplashPanel: {
       screen: SplashPanel,
@@ -123,7 +123,7 @@ const AppNavigator = StackNavigator(
   }
 );
 
-const App = DrawerNavigator(
+const App = createDrawerNavigator(
   { Home: { screen: AppNavigator } },
   {
     contentComponent: (props) => (

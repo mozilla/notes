@@ -1,17 +1,12 @@
-import fxaUtils from '../vendor/fxa-utils';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { authenticate, kintoLoad } from '../actions';
-import { Button } from 'react-native-paper';
-import { COLOR_NOTES_BLUE } from '../utils/constants';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
-import { trackEvent } from '../utils/metrics';
-import { View, Text, ToastAndroid, Image, StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
+import { NavigationActions, StackActions } from 'react-navigation';
+import { View, Text, ProgressBarAndroid, ToastAndroid, Image, StyleSheet } from 'react-native';
 
-import i18nGetMessage from '../utils/i18n';
-import { KINTO_LOADED } from '../utils/constants';
-import browser from '../browser';
+ import { COLOR_NOTES_BLUE } from '../utils/constants';
+ import i18nGetMessage from '../utils/i18n';
 
 class LoginPanel extends React.Component {
 
@@ -25,29 +20,6 @@ class LoginPanel extends React.Component {
   onAuth () {
     this.setState({ isLoading: true });
     this.props.navigation.navigate('LoadingPanel');
-
-    return Promise.resolve().then(() => {
-      return fxaUtils.launchOAuthKeyFlow();
-    }).then((loginDetails) => {
-      trackEvent('login-success');
-      this.props.dispatch(authenticate(loginDetails));
-      ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);
-
-      this.props.navigation.dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-      }));
-      this.props.dispatch(kintoLoad());
-      return Promise.resolve();
-    }).catch((err) => {
-      this.props.navigation.dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
-      }));
-      console.log('onAuth', err);
-      ToastAndroid.show('Something went wrong. ' + err, ToastAndroid.LONG);
-      trackEvent('login-failed');
-    });
   }
 
   render() {

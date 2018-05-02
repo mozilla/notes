@@ -2,7 +2,8 @@ import fxaUtils from '../vendor/fxa-utils';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
+
 import { View, Text, ToastAndroid, Image } from 'react-native';
 
 import { KINTO_LOADED } from '../utils/constants';
@@ -14,18 +15,18 @@ class SplashPanel extends React.Component {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(authenticate(loginDetails));
-
-        this.props.navigation.dispatch(NavigationActions.reset({
-          index: 0,
-          actions: [ NavigationActions.navigate({ routeName: 'ListPanel' }) ],
-        }));
         this.props.dispatch(kintoLoad());
-
-      } else {
-        this.props.navigation.dispatch(NavigationActions.reset({
+        const resetAction = StackActions.reset({
           index: 0,
-          actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
-        }));
+          actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
+        });
+        this.props.navigation.dispatch(resetAction);
+      } else {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
+        });
+        this.props.navigation.dispatch(resetAction);
       }
     });
   }
