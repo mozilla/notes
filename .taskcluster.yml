@@ -27,4 +27,4 @@ tasks:
       description: Test Pilot Notes
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: public
+allowPullRequests: collaborators
