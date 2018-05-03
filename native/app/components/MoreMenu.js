@@ -30,7 +30,7 @@ class MoreMenu extends Component {
             if (deletedNote) {
               this.props.dispatch(deleteNote(deletedNote.id));
             }
-            navigation.navigate('ListPanel');
+            navigation.navigate('ListPanel', { deletedNote });
             break;
         }
       },

@@ -56,9 +56,7 @@ class ListPanel extends React.Component {
     }
 
     this._showSnackbar = (snackbar) => {
-
-      if (!this.state.snackbar && props.navigation.isFocused()) {
-
+      if (!this.state.snackbar) {
         this.setState({
           snackbar,
           snackbarVisible: true,
@@ -93,9 +91,7 @@ class ListPanel extends React.Component {
 
     this._undoDelete = () => {
       this._hideSnackbar();
-      props.dispatch(createNote(this.state.deletedNote)).then(() => {
-
-      });
+      props.dispatch(createNote(this.state.deletedNote));
     };
   }
 
@@ -122,7 +118,7 @@ class ListPanel extends React.Component {
       // Display deleted note snackbar
       if (newProps.navigation.getParam('deletedNote')) {
         // We store deletedNote to be able to recreate it if user click undo
-        const deletedNote = newProps.navigation.getParam('deletedNote')
+        const deletedNote = newProps.navigation.getParam('deletedNote');
         this.setState({ deletedNote });
 
         // Erase params for future componentWillReceiveProps events
