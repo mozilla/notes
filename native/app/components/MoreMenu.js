@@ -26,7 +26,7 @@ class MoreMenu extends Component {
             if (this.props.state.sync.focusedNoteId) {
               this.props.dispatch(deleteNote(this.props.state.sync.focusedNoteId));
             }
-            navigation.popToTop('ListPanel');
+            navigation.navigate('ListPanel');
             break;
         }
       },

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions, DrawerActions } from 'react-navigation';
 import { Title, Text, TouchableRipple } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing, StatusBar } from 'react-native';
@@ -27,10 +27,10 @@ import { disconnect, kintoLoad } from '../actions';
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
 
 function navigateToLogin (props) {
-  // Reset back button nav. See https://reactnavigation.org/docs/navigation-actions.html#reset
-  const resetAction = NavigationActions.reset({
+
+  const resetAction = StackActions.reset({
     index: 0,
-    actions: [ NavigationActions.navigate({ routeName: 'LoginPanel' }) ],
+    actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
   });
   props.navigation.dispatch(resetAction);
   trackEvent('webext-button-disconnect');
@@ -86,7 +86,7 @@ class DrawerItems extends React.Component {
     this._requestSync = () => {
       props.dispatch(kintoLoad('drawer')).then(_ => {
         // If load succeed, we close drawer
-        this.props.navigation.navigate('DrawerClose');
+        this.props.navigation.dispatch(DrawerActions.closeDrawer());
       });
     }
   }
@@ -101,7 +101,7 @@ class DrawerItems extends React.Component {
     store.subscribe(() => {
       const err = select(store.getState());
       if (err) {
-        navigation.navigate('DrawerOpen');
+        navigation.openDrawer();
       }
     })
   }
