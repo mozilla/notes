@@ -13,15 +13,15 @@ tasks:
           - release
     payload:
       maxRunTime: 3600
-      image: node
+      image: circleci/android:api-25-node8-alpha
       command:
         - /bin/bash
         - '--login'
         - '-c'
         - >-
           git clone {{event.head.repo.url}} repo && cd repo && git config
-          advice.detachedHead false && git checkout {{event.head.sha}} && npm
-          install . && npm test
+          advice.detachedHead false && git checkout {{event.head.sha}} && cd native && npm
+          install . && cd android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
     metadata:
       name: Test Pilot Notes
       description: Test Pilot Notes
