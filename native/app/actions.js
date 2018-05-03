@@ -50,27 +50,34 @@ export function authenticate(loginDetails) {
   return { type: SYNC_AUTHENTICATED, loginDetails };
 }
 
-export function createNote(content = '') {
+export function createNote(note = {}) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
 
-      const id = uuid4();
+      note.id = uuid4();
+      if (!note.lastModified) note.lastModified = new Date();
 
       // If note is not a paragraph, we force creation but editor should also
       // trigger an update with <p> in it to double check
-      if (!content.startsWith('<p>')) {
-        content = `<p>${content}</p>`;
+      if (note.content && !note.content.startsWith('<p>')) {
+        note.content = `<p>${note.content}</p>`;
       }
 
-      dispatch({ type: CREATE_NOTE, id, content });
+      dispatch({
+        type: CREATE_NOTE,
+        id: note.id,
+        content: note.content,
+        lastModified: note.lastModified
+      });
 
       browser.runtime.sendMessage({
         action: CREATE_NOTE,
-        id,
-        content
+        id: note.id,
+        content: note.content,
+        lastModified: note.lastModified
       });
-      resolve({ id, content });
+      resolve({ id: note.id, content: note.content, lastModified: note.lastModified });
     });
   };
 }

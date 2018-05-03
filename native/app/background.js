@@ -27,7 +27,7 @@ browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
     case CREATE_NOTE:
       sync.createNote(kintoClient, store.getState().sync.loginDetails,
-        { id: eventData.id, content: eventData.content, lastModified: new Date() }).then(() => {
+        { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
       });
       break;

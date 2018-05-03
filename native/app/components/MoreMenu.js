@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deleteNote } from '../actions';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   COLOR_NOTES_BLUE
@@ -23,10 +24,13 @@ class MoreMenu extends Component {
       (result, index) => { //onSuccess
         switch (index) {
           case 0:
-            if (this.props.state.sync.focusedNoteId) {
-              this.props.dispatch(deleteNote(this.props.state.sync.focusedNoteId));
+            const deletedNote = this.props.state.notes.find((note) => {
+              return note.id === this.props.state.sync.focusedNoteId
+            });
+            if (deletedNote) {
+              this.props.dispatch(deleteNote(deletedNote.id));
             }
-            navigation.navigate('ListPanel');
+            navigation.navigate('ListPanel', { deletedNote });
             break;
         }
       },
