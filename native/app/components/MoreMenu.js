@@ -28,7 +28,7 @@ class MoreMenu extends Component {
               return note.id === this.props.state.sync.focusedNoteId
             });
             if (deletedNote) {
-              this.props.dispatch(deleteNote(deletedNote.id));
+              this.props.dispatch(deleteNote(deletedNote.id, 'in-note'));
             }
             navigation.navigate('ListPanel', { deletedNote });
             break;

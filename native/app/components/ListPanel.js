@@ -11,6 +11,8 @@ import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated } from '
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote } from "../actions";
 import browser from '../browser';
+import { trackEvent } from '../utils/metrics';
+
 
 import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
@@ -40,6 +42,7 @@ class ListPanel extends React.Component {
     }
 
     this._onRefresh = () => {
+      trackEvent('webext-button-authenticate');
       this.setState({ refreshing: true });
       props.dispatch(kintoLoad()).then(() => {
         this.setState({ refreshing: false });
@@ -48,9 +51,12 @@ class ListPanel extends React.Component {
 
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+        trackEvent('open');
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
         });
+      } else {
+        trackEvent('close', { state: nextAppState });
       }
       this.setState({ appState: nextAppState });
     }

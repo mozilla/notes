@@ -20,17 +20,20 @@ import { SYNC_AUTHENTICATED,
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
+import { trackEvent } from './utils/metrics';
 import sync from './utils/sync';
 
 export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
-export function kintoLoad(from) {
+export function kintoLoad(origin) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-      dispatch({ type: TEXT_SYNCING, from: from });
+
+      dispatch({ type: TEXT_SYNCING, from: origin });
+
       sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
         if (result && result.data) {
           dispatch({ type: KINTO_LOADED, notes: result.data });
@@ -54,6 +57,10 @@ export function createNote(note = {}) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
+
+      trackEvent('new-note', {
+        el: 'list-view'
+      });
 
       note.id = uuid4();
       if (!note.lastModified) note.lastModified = new Date();
@@ -83,6 +90,7 @@ export function createNote(note = {}) {
 }
 
 export function updateNote(id, content, lastModified) {
+
   browser.runtime.sendMessage({
     action: UPDATE_NOTE,
     id,
@@ -92,7 +100,11 @@ export function updateNote(id, content, lastModified) {
   return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
-export function deleteNote(id) {
+export function deleteNote(id, origin) {
+  trackEvent('new-note', {
+    el: origin
+  });
+
   browser.runtime.sendMessage({
     action: DELETE_NOTE,
     id

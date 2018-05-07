@@ -3,6 +3,8 @@ import {
 } from '../actions';
 import { store } from '../store';
 import browser from '../browser';
+import { trackEvent } from './metrics';
+import striptags from 'striptags';
 
 const fxaUtils = require('../vendor/fxa-utils');
 const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
@@ -272,7 +274,7 @@ function syncKinto(client, loginDetails) {
               resolution.deleted = true;
             }
             client.conflict = true;
-            // sendMetrics('handle-conflict'); // eslint-disable-line no-undef
+            trackEvent('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
@@ -388,6 +390,12 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
     const later = function() {
       browser.runtime.sendMessage('notes@mozilla.com', {
         action: TEXT_SYNCING
+      });
+
+      trackEvent('changed', {
+        cm1: striptags(note.content).length,
+        cm2: (striptags(note.content.replace(/<\/p>|<\/li>/gi, '\n')).match(/\n/g) || []).length,
+        cm3: null, // Size of change
       });
 
       client.conflict = false;
