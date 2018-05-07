@@ -37,6 +37,7 @@ class EditorPanelHeader extends Component {
     return (
       <Toolbar style={ styles.toolbar }>
         <MaterialIcons name="chevron-left"
+           style={ styles.backButton }
            size={30}
            color={ COLOR_NOTES_BLUE }
            onPress={() => { navigation.goBack() }} />
@@ -59,10 +60,14 @@ function mapStateToProps(state) {
 const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: 'white',
+    padding: 0,
     opacity: 0.9,
     shadowOpacity: 0,
     elevation: 0,
     paddingTop: StatusBar.currentHeight,
+  },
+  backButton: {
+    padding: 10
   }
 });
 

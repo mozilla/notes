@@ -41,7 +41,7 @@ class MoreMenu extends Component {
     const labels = ['Delete'];
 
     return (
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         <View>
           <View
             ref={c => this.menu = c}
@@ -53,7 +53,7 @@ class MoreMenu extends Component {
           <MaterialIcons
             name="more-vert"
             onPress={() => this.onMenuPressed(labels)}
-            style={{ marginRight: 10, color: COLOR_NOTES_BLUE }}
+            style={[{ paddingRight: 10, paddingLeft: 10, color: COLOR_NOTES_BLUE }]}
             size={30}
           />
         </View>
