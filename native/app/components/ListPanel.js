@@ -6,16 +6,27 @@ import React from 'react';
 import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
-import { FAB, Snackbar } from 'react-native-paper';
-import { View, FlatList, StyleSheet, RefreshControl, AppState } from 'react-native';
+import { FAB } from 'react-native-paper';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
-import { kintoLoad } from "../actions";
+import { kintoLoad, createNote } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
 
 
 import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
+import Snackbar from './Snackbar';
+
+const SNACKBAR_ANIMATION_DURATION = 250;
+const SNACKBAR_HEIGHT = 48;
+
+const SYNCED_SNACKBAR = {
+  text: 'Notes synced!',
+  color: COLOR_DARK_SYNC,
+  action: null,
+  duration: 3000
+};
 
 class ListPanel extends React.Component {
   constructor(props) {
@@ -23,33 +34,70 @@ class ListPanel extends React.Component {
     this.props = props;
     this.state = {
       refreshing: false,
-      snackbarSyncedvisible: false,
-      appState: AppState.currentState
+      appState: AppState.currentState,
+      deletedNote: null,
+      yPosition: new Animated.Value(SNACKBAR_HEIGHT),
+      snackbarVisible: false,
+      snackbar: null
     }
 
     this._onRefresh = () => {
       trackEvent('webext-button-authenticate');
       this.setState({ refreshing: true });
-      props.dispatch(kintoLoad());
+      props.dispatch(kintoLoad()).then(() => {
+        this.setState({ refreshing: false });
+      });
     }
 
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
         trackEvent('open');
-        props.dispatch(kintoLoad());
+        props.dispatch(kintoLoad()).then(() => {
+          this.setState({ refreshing: false });
+        });
       } else {
         trackEvent('close', { state: nextAppState });
       }
       this.setState({ appState: nextAppState });
     }
 
-    this._keyExtractor = (item, index) => item.id;
+    this._showSnackbar = (snackbar) => {
+      if (!this.state.snackbar) {
+        this.setState({
+          snackbar,
+          snackbarVisible: true,
+        });
 
-    this._triggerSnackbar = () => {
+        Animated.timing(this.state.yPosition, {
+          toValue: 0, // this.state.height,
+          duration: SNACKBAR_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }).start();
+      }
+    };
+
+    this._hideSnackbar = () => {
+
       this.setState({
-        refreshing: false,
-        snackbarSyncedvisible: props.navigation.isFocused()
+        snackbarVisible: false,
+        deletedNote: null
       });
+
+      Animated.timing(this.state.yPosition, {
+        toValue: SNACKBAR_HEIGHT,
+        duration: SNACKBAR_ANIMATION_DURATION,
+        useNativeDriver: true,
+      }).start(() => {
+        this.setState({
+          snackbar: null
+        });
+      });
+
+    };
+
+    this._undoDelete = () => {
+      this._hideSnackbar();
+      props.dispatch(createNote(this.state.deletedNote));
     };
   }
 
@@ -62,49 +110,96 @@ class ListPanel extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-      if (this.props.state.sync.isSyncingFrom === 'drawer') {
-        setTimeout(this._triggerSnackbar, 400);
-      } else {
-        this._triggerSnackbar();
+    if (newProps.navigation.isFocused()) {
+
+      // Display sycned note snackbar
+      if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+        if (this.props.state.sync.isSyncingFrom === 'drawer') {
+          setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
+        } else {
+          this._showSnackbar(SYNCED_SNACKBAR);
+        }
+      }
+
+      // Display deleted note snackbar
+      if (newProps.navigation.getParam('deletedNote')) {
+        // We store deletedNote to be able to recreate it if user click undo
+        const deletedNote = newProps.navigation.getParam('deletedNote');
+        this.setState({ deletedNote });
+
+        // Erase params for future componentWillReceiveProps events
+        newProps.navigation.setParams({ deletedNote: null });
+
+        // Show snackbar
+        this._showSnackbar({
+          text: 'Note deleted!',
+          color: COLOR_NOTES_BLUE,
+          action: {
+            text: 'UNDO',
+            onPress: () => {
+              this._undoDelete();
+            }
+          },
+          duration: 6000
+        });
       }
     }
   }
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, position: 'relative' }}>
         { this.renderList() }
 
         <Snackbar
           style={{
-            backgroundColor: COLOR_DARK_SYNC
+            backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
+            transform: [
+              {
+                translateY: this.state.yPosition,
+              },
+            ],
           }}
-          visible={this.state.snackbarSyncedvisible}
+          visible={ this.state.snackbarVisible }
+          action={ this.state.snackbar ? this.state.snackbar.action : null }
+          theme={{ colors: { accent: 'white' }}}
           onDismiss={() => {
-            this.setState({
-              snackbarSyncedvisible: false
-            });
+            this._hideSnackbar();
           }}
-          duration={3000}
+          duration={ this.state.snackbar ? this.state.snackbar.duration : 3000 }
         >
-          Notes synced!
+          { this.state.snackbar ? this.state.snackbar.text : '' }
         </Snackbar>
 
         { this.props.state.kinto.isLoaded ?
-        <FAB
-          small
-          color={COLOR_NOTES_WHITE}
-          style={styles.fab}
-          icon="add"
-          onPress={() => this.newNote()}
-        /> : null }
+          <Animated.View style={[
+            {
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: 84,
+              height: 84,
+            },
+            {
+              transform: [
+                {
+                  translateY: this.state.yPosition.interpolate({
+                    inputRange: [0, SNACKBAR_HEIGHT],
+                    outputRange: [-1 * SNACKBAR_HEIGHT, 0]
+                  }),
+                },
+              ],
+            }]}>
+            <FAB
+              small
+              color={COLOR_NOTES_WHITE}
+              style={styles.fab}
+              icon="add"
+              onPress={() => this.props.navigation.navigate('EditorPanel', { note: null }) }
+            />
+          </Animated.View> : null }
       </View>
     );
-  }
-
-  newNote() {
-    return this.props.navigation.navigate('EditorPanel', { note: null });
   }
 
   renderList() {
@@ -126,7 +221,6 @@ class ListPanel extends React.Component {
       } else {
         styleList = { marginBottom:90 };
       }
-
 
       return (
         <FlatList
@@ -151,7 +245,7 @@ class ListPanel extends React.Component {
               )
               : null;
           }}
-          keyExtractor={this._keyExtractor}
+          keyExtractor={ (item) => item.id }
           renderItem={({item}) => {
             return (
               <ListItem
@@ -185,13 +279,13 @@ class ListPanel extends React.Component {
 
 const styles = StyleSheet.create({
   fab: {
-    width: 60,
-    height: 60,
+    width: 56,
+    height: 56,
     borderRadius: 30,
     backgroundColor: COLOR_NOTES_BLUE,
     position: 'absolute',
-    bottom: 20,
-    right: 10,
+    bottom: 24,
+    right: 24,
   }
 });
 
