@@ -24,7 +24,7 @@ class MoreMenu extends Component {
         switch (index) {
           case 0:
             if (this.props.state.sync.focusedNoteId) {
-              this.props.dispatch(deleteNote(this.props.state.sync.focusedNoteId));
+              this.props.dispatch(deleteNote(this.props.state.sync.focusedNoteId, 'in-note'));
             }
             navigation.navigate('ListPanel');
             break;

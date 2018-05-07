@@ -1,5 +1,6 @@
 import kintoClient from './vendor/kinto-client';
 import fxaUtils from './vendor/fxa-utils';
+import { trackEvent } from './utils/metrics';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -52,7 +53,7 @@ browser.runtime.onMessage.addListener(eventData => {
       store.dispatch({ type: ERROR, message: eventData.message });
       break;
     case RECONNECT_SYNC:
-      console.log('Implement me (background.js RECONNECT_SYNC message)');
+      trackEvent('reconnect-sync');
       store.dispatch({ type: ERROR, message: 'Reconnect to Sync' });
     default:
       break;

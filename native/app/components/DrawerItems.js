@@ -58,6 +58,7 @@ class DrawerItems extends React.Component {
       {
         label  : 'Feedback',
         action : () => {
+          trackEvent('give-feedback');
           return Linking.openURL(SURVEY_PATH);
         }
       }
@@ -84,6 +85,8 @@ class DrawerItems extends React.Component {
     };
 
     this._requestSync = () => {
+
+      trackEvent('webext-button-authenticate');
       props.dispatch(kintoLoad('drawer')).then(_ => {
         // If load succeed, we close drawer
         this.props.navigation.dispatch(DrawerActions.closeDrawer());

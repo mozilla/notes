@@ -34,7 +34,7 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 - `cd4` - whether the user has, anywhere in their active notepad, italicized text. One of `true` or `false`.
 - `cd5` - whether the user has, anywhere in their active notepad, strikethrough text. One of `true` or `false`.
 - `cd6` - whether the user has, anywhere in their active notepad, a list. One of `true` or `false`.
-- `cd7` - the UI element used to open or close the notepad. Possible values TBD, but may include `closeButton`, `sidebarButton`, and `sidebarSwitcher`.
+- `cd7` - the UI element used to open or close the notepad. Possible values TBD, but may include `closeButton`, `sidebarButton`, `sidebarSwitcher`, `appBackground`, `appInactive`.
 - `cd8` - the reason an editing session ended. One of `timeout` or `closed`.
 - `cd9` - whether the user was able to load the note panel or not. One of `true` or `false`.
 - `cd10` - provide current user state. Possible values are: 'error', 'isSyncing', 'synced', 'openLogin', 'verifyAccount', 'reconnectSync', and 'signIn'.
@@ -220,5 +220,3 @@ deleted on server side. Those were deleted before v4.0.0-beta.4 (during multi-no
 
 - `ec` - `notes`
 - `ea` - `delete-deleted-notes`
-
-
