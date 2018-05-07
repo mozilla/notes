@@ -16,6 +16,7 @@ import {
   PLEASE_LOGIN,
   FOCUS_NOTE,
   ERROR,
+  NET_INFO,
   REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
@@ -52,6 +53,7 @@ function sync(sync = {}, action) {
         isReconnectSync: false,
         lastSynced: new Date(),
         isSyncing: true,
+        isConnected: true,
         error: null,
       });
     case DISCONNECTED:
@@ -134,6 +136,10 @@ function sync(sync = {}, action) {
     case ERROR:
       return Object.assign({}, sync, {
         error: action.message
+      });
+    case NET_INFO:
+      return Object.assign({}, sync, {
+        isConnected: action.isConnected
       });
     default:
       return sync;

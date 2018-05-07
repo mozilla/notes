@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { NavigationActions, StackActions, DrawerActions } from 'react-navigation';
 import { Title, Text, TouchableRipple } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing, StatusBar } from 'react-native';
+import { View, ScrollView, StyleSheet, Image, Linking, Modal, Animated, Easing,
+  StatusBar, ToastAndroid } from 'react-native';
 import moment from 'moment';
 
 import { COLOR_DARK_BACKGROUND,
@@ -86,11 +87,16 @@ class DrawerItems extends React.Component {
 
     this._requestSync = () => {
 
-      trackEvent('webext-button-authenticate');
-      props.dispatch(kintoLoad('drawer')).then(_ => {
-        // If load succeed, we close drawer
-        this.props.navigation.dispatch(DrawerActions.closeDrawer());
-      });
+      if (this.props.state.sync.isConnected === false) {
+        props.navigation.dispatch(DrawerActions.closeDrawer());
+        ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+      } else {
+        trackEvent('webext-button-authenticate');
+        props.dispatch(kintoLoad('drawer')).then(_ => {
+          // If load succeed, we close drawer
+          props.navigation.dispatch(DrawerActions.closeDrawer());
+        });
+      }
     }
   }
 
@@ -104,7 +110,7 @@ class DrawerItems extends React.Component {
     store.subscribe(() => {
       const err = select(store.getState());
       if (err) {
-        navigation.openDrawer();
+        this.props.navigation.dispatch(DrawerActions.openDrawer());
       }
     })
   }
@@ -123,7 +129,9 @@ class DrawerItems extends React.Component {
 
   render() {
     let statusLabel;
-    if (this.props.state.sync.isSyncing) {
+    if (this.props.state.sync.isConnected === false) {
+      statusLabel = 'Offline';
+    } else if (this.props.state.sync.isSyncing) {
       statusLabel = 'Syncing...';
     } else {
       statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;

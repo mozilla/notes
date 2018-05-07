@@ -7,9 +7,9 @@ import { store } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
-import { kintoLoad, createNote } from "../actions";
+import { kintoLoad, createNote, setNetInfo } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
 
@@ -42,11 +42,15 @@ class ListPanel extends React.Component {
     }
 
     this._onRefresh = () => {
-      trackEvent('webext-button-authenticate');
-      this.setState({ refreshing: true });
-      props.dispatch(kintoLoad()).then(() => {
-        this.setState({ refreshing: false });
-      });
+      if (this.props.state.sync.isConnected === false) {
+        ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+      } else {
+        trackEvent('webext-button-authenticate');
+        this.setState({ refreshing: true });
+        props.dispatch(kintoLoad()).then(() => {
+          this.setState({ refreshing: false });
+        });
+      }
     }
 
     this._handleAppStateChange = (nextAppState) => {
@@ -54,12 +58,25 @@ class ListPanel extends React.Component {
         trackEvent('open');
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
+        })
+        // On opening the app, we check network stratus
+        NetInfo.isConnected.fetch().then(isConnected => {
+          props.dispatch(setNetInfo(isConnected));
         });
       } else {
         trackEvent('close', { state: nextAppState });
       }
       this.setState({ appState: nextAppState });
     }
+
+    this._handleNetworkStateChange = (connectionInfo) => {
+      const wasConnected = this.props.state.sync.isConnected;
+      props.dispatch(setNetInfo(connectionInfo.type !== 'none'));
+      // if network is back, we trigger a sync
+      if (wasConnected === false && this.props.state.sync.isConnected !== false) {
+        props.dispatch(kintoLoad());
+      }
+    };
 
     this._showSnackbar = (snackbar) => {
       if (!this.state.snackbar) {
@@ -103,10 +120,12 @@ class ListPanel extends React.Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    NetInfo.addEventListener('connectionChange', this._handleNetworkStateChange);
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+    NetInfo.removeEventListener('connectionChange', this._handleNetworkStateChange);
   }
 
   componentWillReceiveProps(newProps) {

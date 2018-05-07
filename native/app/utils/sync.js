@@ -194,6 +194,9 @@ let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
 
+  // If devics is offline, we skip syncing.
+  if (store.getState().sync.isConnected === false) return Promise.resolve();
+
   browser.runtime.sendMessage({
     action: TEXT_SYNCING
   });
@@ -327,6 +330,9 @@ function syncKinto(client, loginDetails) {
           action: ERROR_MSG,
           message: browser.i18n.getMessage('insufficientStorage')
         });
+        return Promise.reject(error);
+      } else if (error.message.includes('Network request failed')) {
+        reconnectSync(loginDetails);
         return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
