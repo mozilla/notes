@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { Button } from 'react-native-paper';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { View, Text, ProgressBarAndroid, ToastAndroid, Image, StyleSheet } from 'react-native';
+import { kintoLoad, disconnect} from '../actions';
 
- import { COLOR_NOTES_BLUE } from '../utils/constants';
+ import { COLOR_NOTES_BLUE, DISCONNECTED } from '../utils/constants';
  import i18nGetMessage from '../utils/i18n';
 
 class LoginPanel extends React.Component {
@@ -22,19 +23,30 @@ class LoginPanel extends React.Component {
     this.props.navigation.navigate('LoadingPanel');
   }
 
+  signInLater() {
+    this.props.dispatch(disconnect()).then(() => {
+      this.props.dispatch(kintoLoad());
+      this.props.navigation.navigate('ListPanel');
+    });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Image
-          style={{width: 150, height: 150 }}
-          source={require('../assets/notes-1024.png')}
-        />
-        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 10 }}>
-          { i18nGetMessage('welcomeTitle3') }
-        </Text>
-        <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
-        <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
-          style={styles.btnSignin}>SIGN IN</Button>
+        <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 30 }}>
+          <Image
+            style={{width: 150, height: 150 }}
+            source={require('../assets/notes-1024.png')}
+          />
+          <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+            { i18nGetMessage('welcomeTitle3') }
+          </Text>
+          <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
+          <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
+            style={styles.btnSignin}>SIGN IN</Button>
+        </View>
+        <Button onPress={this.signInLater.bind(this)} color={COLOR_NOTES_BLUE}
+          style={styles.btnSignin}>Sign in later</Button>
       </View>
     );
   }

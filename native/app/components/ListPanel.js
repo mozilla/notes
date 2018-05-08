@@ -3,7 +3,7 @@ import kintoClient from '../vendor/kinto-client';
 import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { store } from "../store";
+import { store, persistor } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
@@ -12,7 +12,6 @@ import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } fr
 import { kintoLoad, createNote, setNetInfo } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
-
 
 import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
@@ -56,15 +55,18 @@ class ListPanel extends React.Component {
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
         trackEvent('open');
-        props.dispatch(kintoLoad()).then(() => {
-          this.setState({ refreshing: false });
-        })
         // On opening the app, we check network stratus
         NetInfo.isConnected.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
+          if (props.state.profile.email) {
+            props.dispatch(kintoLoad()).then(() => {
+              this.setState({ refreshing: false });
+            })
+          }
         });
       } else {
         trackEvent('close', { state: nextAppState });
+        persistor.flush();
       }
       this.setState({ appState: nextAppState });
     }
@@ -132,7 +134,12 @@ class ListPanel extends React.Component {
     if (newProps.navigation.isFocused()) {
 
       // Display sycned note snackbar
-      if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
+      if (this.props.state.sync.isSyncing &&
+          !newProps.state.sync.isSyncing &&
+          !newProps.state.sync.error &&
+          newProps.state.sync.isConnected &&
+          this.state.appState === 'active' &&
+          newProps.state.profile.email) {
         if (this.props.state.sync.isSyncingFrom === 'drawer') {
           setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
         } else {

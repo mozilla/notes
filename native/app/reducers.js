@@ -16,8 +16,7 @@ import {
   PLEASE_LOGIN,
   FOCUS_NOTE,
   ERROR,
-  NET_INFO,
-  REQUEST_WELCOME_PAGE
+  NET_INFO
 } from './utils/constants';
 
 function profile(profile = {}, action) {
@@ -53,7 +52,6 @@ function sync(sync = {}, action) {
         isReconnectSync: false,
         lastSynced: new Date(),
         isSyncing: true,
-        isConnected: true,
         error: null,
       });
     case DISCONNECTED:
@@ -105,7 +103,8 @@ function sync(sync = {}, action) {
     case TEXT_SYNCING:
       return Object.assign({}, sync, {
         isSyncing: true,
-        isSyncingFrom: action.from
+        isSyncingFrom: action.from,
+        error: null
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
@@ -123,15 +122,9 @@ function sync(sync = {}, action) {
       return Object.assign({}, sync, {
         focusedNoteId: action.id
       });
-    // REQUEST_WELCOME_PAGE is triggered on start if redux has never been init.
-    case REQUEST_WELCOME_PAGE:
-      return Object.assign({}, sync, {
-        welcomePage: true
-      });
     case CREATE_NOTE:
       return Object.assign({}, sync, {
-        isSyncing: false,
-        welcomePage: false
+        isSyncing: false
       });
     case ERROR:
       return Object.assign({}, sync, {

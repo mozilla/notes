@@ -40,7 +40,6 @@ export const DELETE_NOTE = 'delete-note';
 
 export const FOCUS_NOTE = 'focus-note';
 export const ERROR = 'error';
-export const REQUEST_WELCOME_PAGE = 'request-welcome-page';
 
 export const FROM_IN_NOTE = 'in-note';
 export const FROM_LIST_VIEW = 'list-view';

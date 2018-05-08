@@ -21,7 +21,7 @@ import { SYNC_AUTHENTICATED,
   REQUEST_WELCOME_PAGE } from './utils/constants';
 
  import browser from './browser';
- import { store } from './store';
+ import { store, persistor } from './store';
  import sync from './utils/sync';
 
 browser.runtime.onMessage.addListener(eventData => {
@@ -45,6 +45,7 @@ browser.runtime.onMessage.addListener(eventData => {
       break;
     case DISCONNECTED:
       sync.clearKinto(kintoClient);
+      persistor.purge();
       break;
     case TEXT_SYNCING:
       store.dispatch({ type: TEXT_SYNCING });
