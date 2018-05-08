@@ -171,7 +171,7 @@ class DrawerItems extends React.Component {
             borderColor='#FFFFFF'
             borderWidth={2}
             resizeMode='cover'
-            source={this.props.state.profile.avatar ? {uri: this.props.state.profile.avatar} : require('../assets/profile.png')}
+            source={{uri: this.props.state.profile.avatar}}
           />
           <Title style={{ color: COLOR_DARK_TEXT }}>{this.props.state.profile.displayName}</Title>
           <Text style={{ color: COLOR_DARK_SUBTEXT }}>{this.props.state.profile.email}</Text>
