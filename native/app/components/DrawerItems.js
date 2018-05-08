@@ -111,7 +111,6 @@ class DrawerItems extends React.Component {
       }).then((loginDetails) => {
         trackEvent('login-success');
         this.setState({ isOpeningLogin: false });
-        ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);
         this.props.dispatch(authenticate(loginDetails));
         this.props.dispatch(kintoLoad()).then(() => {
           props.navigation.dispatch(DrawerActions.closeDrawer());
@@ -157,10 +156,6 @@ class DrawerItems extends React.Component {
 
     if (this.props.state.sync.isConnected === false) {
       statusLabel = 'Offline';
-    } else if (!this.props.state.profile.email && !this.state.isOpeningLogin) {
-      statusLabel = 'Sign in to Sync';
-    } else if (!this.props.state.profile.email && this.state.isOpeningLogin) {
-      statusLabel = 'Opening login…';
     } else if (this.props.state.sync.isSyncing) {
       statusLabel = 'Syncing...';
     } else {
