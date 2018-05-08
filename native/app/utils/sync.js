@@ -194,7 +194,6 @@ let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
 
-  console.log(loginDetails, store.getState());
   // If device is offline, we skip syncing.
   if (store.getState().sync.isConnected === false ||
       !store.getState().profile.email) return Promise.resolve();
