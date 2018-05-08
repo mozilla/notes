@@ -23,13 +23,6 @@ class LoginPanel extends React.Component {
     this.props.navigation.navigate('LoadingPanel');
   }
 
-  signInLater() {
-    this.props.dispatch(disconnect()).then(() => {
-      this.props.dispatch(kintoLoad());
-      this.props.navigation.navigate('ListPanel');
-    });
-  }
-
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -45,8 +38,6 @@ class LoginPanel extends React.Component {
           <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
             style={styles.btnSignin}>SIGN IN</Button>
         </View>
-        <Button onPress={this.signInLater.bind(this)} color={COLOR_NOTES_BLUE}
-          style={styles.btnSignin}>Sign in later</Button>
       </View>
     );
   }
