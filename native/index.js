@@ -43,7 +43,6 @@ import background from './app/background';
 const appMainNavOptions = ({ navigation }) => {
   const { params = {} } = navigation.state;
   const routeName = navigation.state.routeName;
-
   return {
     header: (
       <ListPanelHeader navigation={navigation}></ListPanelHeader>
@@ -56,7 +55,6 @@ const editorPanelOptions = ({ navigation }) => {
   const routeName = navigation.state.routeName;
 
   return {
-    drawerLockMode: 'locked-closed',
     header: (
       <EditorPanelHeader navigation={navigation}>
       </EditorPanelHeader>
@@ -88,22 +86,19 @@ const AppNavigator = createStackNavigator(
     SplashPanel: {
       screen: SplashPanel,
       navigationOptions: {
-        header: null,
-        drawerLockMode: 'locked-closed',
+        header: null
       }
     },
     LoginPanel: {
       screen: LoginPanel,
       navigationOptions: {
-        header: null,
-        drawerLockMode: 'locked-closed',
+        header: null
       }
     },
     LoadingPanel: {
       screen: LoadingPanel,
       navigationOptions: {
-        header: null,
-        drawerLockMode: 'locked-closed',
+        header: null
       }
     },
     ListPanel: {
@@ -128,6 +123,7 @@ const AppNavigator = createStackNavigator(
 const App = createDrawerNavigator(
   { Home: { screen: AppNavigator } },
   {
+    drawerLockMode: 'locked-closed',
     contentComponent: (props) => (
       <DrawerItems {...props} />
     ),
