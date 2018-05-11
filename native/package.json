@@ -39,7 +39,7 @@
     "react-native-keychain": "3.0.0-rc.3",
     "react-native-level-fs": "~3.0.0",
     "react-native-os": "~1.1.0",
-    "react-native-paper": "github:vladikoff/react-native-paper#notes",
+    "react-native-paper": "^1.7.0",
     "react-native-randombytes": "~3.0.0",
     "react-native-sentry": "^0.35.3",
     "react-native-sqlite-2": "^1.5.2",

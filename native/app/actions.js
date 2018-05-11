@@ -13,7 +13,8 @@ import { SYNC_AUTHENTICATED,
   FOCUS_NOTE,
   ERROR,
   NET_INFO,
-  TOGGLE_SELECT } from './utils/constants';
+  TOGGLE_SELECT,
+  RESET_SELECT } from './utils/constants';
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
@@ -142,3 +143,6 @@ export function toggleSelect(note) {
   return { type: TOGGLE_SELECT, note};
 }
 
+export function resetSelect() {
+  return { type: RESET_SELECT };
+}
