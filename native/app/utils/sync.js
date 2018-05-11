@@ -194,6 +194,10 @@ let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
 
+  // If device is offline, we skip syncing.
+  if (store.getState().sync.isConnected === false ||
+      !store.getState().profile.email) return Promise.resolve();
+
   browser.runtime.sendMessage({
     action: TEXT_SYNCING
   });
@@ -328,6 +332,9 @@ function syncKinto(client, loginDetails) {
           message: browser.i18n.getMessage('insufficientStorage')
         });
         return Promise.reject(error);
+      } else if (error.message.includes('Network request failed')) {
+        reconnectSync(loginDetails);
+        return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
       reconnectSync(loginDetails);
@@ -435,11 +442,9 @@ function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused
 }
 
 function clearKinto(client) {
-  lastSyncTimestamp = null
+  lastSyncTimestamp = null;
   const notes = client.collection('notes', { idSchema: notesIdSchema });
-  return client
-    .collection('notes', { idSchema: notesIdSchema })
-    .clear().then(() => {
+  return notes.clear().then(() => {
       return notes.resetSyncStatus();
     });
 }

@@ -19,7 +19,9 @@ class EditorPanelHeader extends Component {
   }
 
   _setNoteStatus = (props) => {
-    if (props.state.sync.isSyncing) {
+    if (props.state.sync.isConnected === false) {
+      return 'Offline';
+    } else if (props.state.sync.isSyncing) {
       return 'Syncing...';
     } else {
       return 'Synced'

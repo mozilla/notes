@@ -31,6 +31,7 @@ export const RECONNECT_SYNC = 'reconnect';
 export const DISCONNECTED = 'disconnected';
 export const SEND_TO_NOTES = 'send-to-notes';
 export const EXPORT_HTML = 'export-html';
+export const NET_INFO = 'net-info';
 
 // CRUD actions on note
 export const CREATE_NOTE = 'create-note';
@@ -39,7 +40,6 @@ export const DELETE_NOTE = 'delete-note';
 
 export const FOCUS_NOTE = 'focus-note';
 export const ERROR = 'error';
-export const REQUEST_WELCOME_PAGE = 'request-welcome-page';
 
 export const FROM_IN_NOTE = 'in-note';
 export const FROM_LIST_VIEW = 'list-view';

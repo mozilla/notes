@@ -6,17 +6,13 @@ import { SYNC_AUTHENTICATED,
   TEXT_SAVED,
   TEXT_SYNCING,
   TEXT_SYNCED,
-  RECONNECT_SYNC,
   DISCONNECTED,
-  EXPORT_HTML,
   CREATE_NOTE,
   UPDATE_NOTE,
   DELETE_NOTE,
-  PLEASE_LOGIN,
-  OPENING_LOGIN,
   FOCUS_NOTE,
   ERROR,
-  REQUEST_WELCOME_PAGE } from './utils/constants';
+  NET_INFO } from './utils/constants';
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
@@ -27,13 +23,15 @@ export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
+export function syncing() {
+   return { type: TEXT_SYNCING };
+}
+
 export function kintoLoad(origin) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-
       dispatch({ type: TEXT_SYNCING, from: origin });
-
       sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
         if (result && result.data) {
           dispatch({ type: KINTO_LOADED, notes: result.data });
@@ -116,6 +114,13 @@ export function setFocusedNote(id) {
   return { type: FOCUS_NOTE, id };
 }
 
+export function setNetInfo(isConnected) {
+  return {
+    type: NET_INFO,
+    isConnected
+  };
+}
+
 export function error(message) {
   return { type: ERROR, message};
 }
@@ -130,5 +135,5 @@ export function disconnect() {
       Keychain.resetGenericPassword().then(resolve, reject);
     });
   };
-
 }
+
