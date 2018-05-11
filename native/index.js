@@ -81,49 +81,65 @@ const fade = (props) => {
   }
 }
 
-const AppNavigator = createStackNavigator(
-  {
-    SplashPanel: {
-      screen: SplashPanel,
-      navigationOptions: {
-        header: null
-      }
-    },
-    LoginPanel: {
-      screen: LoginPanel,
-      navigationOptions: {
-        header: null
-      }
-    },
-    LoadingPanel: {
-      screen: LoadingPanel,
-      navigationOptions: {
-        header: null
-      }
-    },
-    ListPanel: {
-      screen: ListPanel
-    },
-    EditorPanel: {
-      screen: EditorPanel,
-      navigationOptions: editorPanelOptions
-    },
+const routeConfigMap = {
+  SplashPanel: {
+    screen: SplashPanel,
+    navigationOptions: {
+      header: null,
+      drawerLockMode: 'locked-closed'
+    }
   },
-  {
-    initialRouteName: 'SplashPanel',
-    navigationOptions: appMainNavOptions,
-    transitionConfig: () => ({
-      screenInterpolator: (props) => {
-        return fade(props)
-      }
-    })
-  }
-);
+  LoginPanel: {
+    screen: LoginPanel,
+    navigationOptions: {
+      header: null,
+      drawerLockMode: 'locked-closed'
+    }
+  },
+  LoadingPanel: {
+    screen: LoadingPanel,
+    navigationOptions: {
+      header: null,
+      drawerLockMode: 'locked-closed'
+    }
+  },
+  ListPanel: {
+    screen: ListPanel
+  },
+  EditorPanel: {
+    screen: EditorPanel,
+    navigationOptions: editorPanelOptions
+  },
+};
+
+const stackConfig = {
+  initialRouteName: 'SplashPanel',
+  navigationOptions: appMainNavOptions,
+  transitionConfig: () => ({
+    screenInterpolator: (props) => {
+      return fade(props)
+    }
+  })
+};
 
 const App = createDrawerNavigator(
-  { Home: { screen: AppNavigator } },
+  { Home: {
+      screen: createStackNavigator(routeConfigMap, stackConfig),
+      navigationOptions: ({ navigation, navigationOptions }) => {
+        // react-navigation since v2 no longer reach navigationOptions on stack tree,
+        // To disable drawerLockMode on some screen we need to manually reach this value.
+        const routes = navigation.state.routes;
+        const routeName = routes[routes.length - 1].routeName;
+        if (Object.keys(routeConfigMap).includes(routeName) &&
+            routeConfigMap[routeName].navigationOptions &&
+            routeConfigMap[routeName].navigationOptions.drawerLockMode) {
+          navigationOptions.drawerLockMode = routeConfigMap[routeName].navigationOptions.drawerLockMode;
+        }
+        return navigationOptions;
+      }
+    }
+  },
   {
-    drawerLockMode: 'locked-closed',
     contentComponent: (props) => (
       <DrawerItems {...props} />
     ),
