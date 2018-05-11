@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { deleteNote } from '../actions';
+import { deleteNotes } from '../actions';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -28,7 +28,7 @@ class MoreMenu extends Component {
               return note.id === this.props.state.sync.focusedNoteId
             });
             if (deletedNote) {
-              this.props.dispatch(deleteNote([ deletedNote.id ], 'in-note'));
+              this.props.dispatch(deleteNotes([ deletedNote.id ], 'in-note'));
             }
             navigation.navigate('ListPanel', { deletedNote: [ deletedNote ] });
             break;

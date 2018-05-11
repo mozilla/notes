@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions, StatusBar } from 'react-native';
-import { resetSelect } from "../actions";
+import { resetSelect, deleteNotes } from "../actions";
 
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from '../utils/constants';
@@ -18,7 +18,16 @@ class ListPanelHeader extends Component {
     };
 
     this._deleteSelection = () => {
+      const state = this.props.state;
+      const notes = state.notes.filter((note) => state.sync.selected.includes(note.id));
 
+      if (state.sync.selected) {
+        this.props.dispatch(deleteNotes(state.sync.selected, 'multi-delete'));
+      }
+      this.props.navigation.navigate('ListPanel', { deletedNote: notes });
+
+      // console.log(notes);
+      // props.dispatch(resetSelect());
     }
   }
 

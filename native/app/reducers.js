@@ -93,7 +93,8 @@ function sync(sync = {}, action) {
         isSyncing: true,
         isSyncingFrom: 'deleteNote',
         focusedNoteId: action.ids.includes(sync.focusedNoteId) ? null : sync.focusedNoteId,
-        error: null
+        error: null,
+        selected: null
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
@@ -147,7 +148,9 @@ function sync(sync = {}, action) {
       } else {
         selected.push(action.note.id);
       }
-      return { selected };
+      return Object.assign({}, sync, {
+        selected: selected
+      });
     case RESET_SELECT:
       return Object.assign({}, sync, {
         selected: null

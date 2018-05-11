@@ -100,7 +100,7 @@ export function updateNote(id, content, lastModified) {
   return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
-export function deleteNote(ids = [], origin) {
+export function deleteNotes(ids = [], origin) {
   trackEvent('delete-note', {
     el: origin
   });

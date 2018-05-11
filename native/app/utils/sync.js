@@ -452,6 +452,8 @@ function deleteNotes(client, loginDetails, ids) { // eslint-disable-line no-unus
 
   return Promise.all(promises).then(() => {
     return syncKinto(client, loginDetails);
+  }).catch(() => {
+    return Promise.resolve();
   });
 }
 
