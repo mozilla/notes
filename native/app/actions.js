@@ -12,7 +12,8 @@ import { SYNC_AUTHENTICATED,
   DELETE_NOTE,
   FOCUS_NOTE,
   ERROR,
-  NET_INFO } from './utils/constants';
+  NET_INFO,
+  TOGGLE_SELECT } from './utils/constants';
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
@@ -135,5 +136,9 @@ export function disconnect() {
       Keychain.resetGenericPassword().then(resolve, reject);
     });
   };
+}
+
+export function toggleSelect(note) {
+  return { type: TOGGLE_SELECT, note};
 }
 

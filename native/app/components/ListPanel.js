@@ -165,7 +165,7 @@ class ListPanel extends React.Component {
 
         // Show snackbar
         this._showSnackbar({
-          text: 'Note deleted!',
+          text: 'Deleted 1 note',
           color: COLOR_NOTES_BLUE,
           action: {
             text: 'UNDO',
@@ -204,7 +204,7 @@ class ListPanel extends React.Component {
           { this.state.snackbar ? this.state.snackbar.text : '' }
         </Snackbar>
 
-        { this.props.state.kinto.isLoaded ?
+        { this.props.state.kinto.isLoaded && !this.props.state.sync.selected ?
           <Animated.View style={[
             {
               position: 'absolute',

@@ -17,6 +17,9 @@ import {
   FOCUS_NOTE,
   ERROR,
   NET_INFO
+  TOGGLE_SELECT,
+  RESET_SELECT,
+  REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
 function profile(profile = {}, action) {
@@ -53,6 +56,7 @@ function sync(sync = {}, action) {
         lastSynced: new Date(),
         isSyncing: true,
         error: null,
+        selected: null
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
@@ -60,7 +64,8 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
-        error: null
+        error: null,
+        selected: null
       });
     case OPENING_LOGIN:
       return Object.assign({}, sync, {
@@ -133,6 +138,19 @@ function sync(sync = {}, action) {
     case NET_INFO:
       return Object.assign({}, sync, {
         isConnected: action.isConnected
+      });
+    case TOGGLE_SELECT:
+      const selected = Array.from(sync.selected || []);
+      if (selected.includes(action.note.id)) {
+        selected = selected.filter((note) => note !== action.note.id);
+        if (selected.length === 0) selected = null;
+      } else {
+        selected.push(action.note.id);
+      }
+      return { selected };
+    case RESET_SELECT:
+      return Object.assign({}, sync, {
+        selected: null
       });
     default:
       return sync;

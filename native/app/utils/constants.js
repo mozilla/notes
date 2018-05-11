@@ -32,6 +32,8 @@ export const DISCONNECTED = 'disconnected';
 export const SEND_TO_NOTES = 'send-to-notes';
 export const EXPORT_HTML = 'export-html';
 export const NET_INFO = 'net-info';
+export const TOGGLE_SELECT = 'toggle-select';
+export const RESET_SELECT = 'reset-select';
 
 // CRUD actions on note
 export const CREATE_NOTE = 'create-note';

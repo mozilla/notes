@@ -1,4 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import {
   View,
   Text,
@@ -14,6 +17,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import moment from 'moment';
 import browser from '../browser';
+import { toggleSelect } from '../actions';
 
 function formatLastModified(date = new Date()) {
 
@@ -30,25 +34,48 @@ class ListItem extends React.Component {
 
   constructor (props) {
     super(props);
+    this.state = {
+      isSelected: false
+    };
 
     this._navigateToNote = () => {
-      props.navigate('EditorPanel', { id: props.note.id });
+      if (this.props.state.sync.selected) {
+        this._toggleSelect();
+      } else {
+        props.navigate('EditorPanel', { id: props.note.id });
+      }
+    }
+
+    this._toggleSelect = () => {
+      props.dispatch(toggleSelect(props.note));
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    const selected = newProps.state.sync.selected;
+    if (selected && selected.includes(newProps.note.id)) {
+      this.setState({ isSelected: true });
+    } else {
+      this.setState({ isSelected: false });
     }
   }
 
   render() {
     const {
-      note
+      note, state
     } = this.props;
+
+    itemStyle = [styles.wrapper];
+    if (this.state.isSelected) itemStyle.push(styles.selected);
+
     return (
       <TouchableOpacity onPress={this._navigateToNote} >
-        <View style={styles.wrapper} >
-          <Text style={ styles.selector } >
+        <View style={ itemStyle } >
+          <Text style={ styles.selector } onPress={this._toggleSelect}  >
             <MaterialIcons
-              name="remove"
+              name={ this.state.isSelected ? "done" : "remove" }
               style={{ color: COLOR_NOTES_BLUE }}
               size={22}
-
             />
           </Text>
           <View style={ styles.content }>
@@ -80,6 +107,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
+  selected: {
+    backgroundColor: 'rgb(236, 241, 250)'
+  },
   selector: {
     flexShrink: 0,
     paddingLeft: 18,
@@ -110,4 +140,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListItem
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
+
+ListItem.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(ListItem);
