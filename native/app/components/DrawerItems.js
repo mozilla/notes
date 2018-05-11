@@ -132,8 +132,9 @@ class DrawerItems extends React.Component {
     }
     // TODO: unsubscribe this?
     store.subscribe(() => {
-      const err = select(store.getState());
-      if (err) {
+      const state = store.getState();
+      const err = select(state);
+      if (err && !state.sync.loginDetails) {
         this.props.navigation.dispatch(DrawerActions.openDrawer());
       }
     })

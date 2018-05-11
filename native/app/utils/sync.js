@@ -429,6 +429,10 @@ function createNote(client, loginDetails, note) { // eslint-disable-line no-unus
     .create(note, { useRecordId: true })
     .then(() => {
       return syncKinto(client, loginDetails);
+    })
+    .catch((error) => {
+      // syncKinto handle errors by sending an ERROR message to background
+      return Promise.resolve();
     });
 }
 
@@ -438,6 +442,10 @@ function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused
     .delete(id)
     .then(() => {
       return syncKinto(client, loginDetails);
+    })
+    .catch((error) => {
+      // syncKinto handle errors by sending an ERROR message to background
+      return Promise.resolve();
     });
 }
 
