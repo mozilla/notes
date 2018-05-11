@@ -442,17 +442,17 @@ function createNote(client, loginDetails, note) { // eslint-disable-line no-unus
     });
 }
 
-function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused-vars
-  return client
-    .collection('notes', { idSchema: notesIdSchema })
-    .delete(id)
-    .then(() => {
-      return syncKinto(client, loginDetails);
-    })
-    .catch((error) => {
-      // syncKinto handle errors by sending an ERROR message to background
-      return Promise.resolve();
-    });
+function deleteNotes(client, loginDetails, ids) { // eslint-disable-line no-unused-vars
+
+  const promises = [];
+
+  ids.forEach((id) => {
+    promises.push(client.collection('notes', { idSchema: notesIdSchema }).delete(id));
+  });
+
+  return Promise.all(promises).then(() => {
+    return syncKinto(client, loginDetails);
+  });
 }
 
 function clearKinto(client) {
@@ -465,7 +465,7 @@ function clearKinto(client) {
 
 module.exports = {
   createNote,
-  deleteNote,
+  deleteNotes,
   loadFromKinto,
   retrieveNote,
   reconnectSync,

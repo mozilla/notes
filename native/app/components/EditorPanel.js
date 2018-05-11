@@ -44,7 +44,7 @@ class RichTextExample extends Component {
           this.props.dispatch(setFocusedNote(note.id));
         });
       } else if (this.note && e === '') { // if we delete all caracters from a note
-        this.props.dispatch(deleteNote(this.note.id, 'blank-note'));
+        this.props.dispatch(deleteNote([ this.note.id ], 'blank-note'));
         this.note = null;
         this.props.dispatch(setFocusedNote());
       } else if (this.note && e !== '') { // default case, on modification we save

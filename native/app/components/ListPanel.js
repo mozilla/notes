@@ -116,7 +116,9 @@ class ListPanel extends React.Component {
 
     this._undoDelete = () => {
       this._hideSnackbar();
-      props.dispatch(createNote(this.state.deletedNote));
+      this.state.deletedNote.forEach((note) => {
+        props.dispatch(createNote(note));
+      });
     };
   }
 
@@ -165,7 +167,7 @@ class ListPanel extends React.Component {
 
         // Show snackbar
         this._showSnackbar({
-          text: 'Deleted 1 note',
+          text: `Deleted ${ deletedNote.length } note`,
           color: COLOR_NOTES_BLUE,
           action: {
             text: 'UNDO',

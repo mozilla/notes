@@ -100,16 +100,16 @@ export function updateNote(id, content, lastModified) {
   return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
-export function deleteNote(id, origin) {
-  trackEvent('new-note', {
+export function deleteNote(ids = [], origin) {
+  trackEvent('delete-note', {
     el: origin
   });
 
   browser.runtime.sendMessage({
     action: DELETE_NOTE,
-    id
+    ids
   });
-  return { type: DELETE_NOTE, id, isSyncing: true };
+  return { type: DELETE_NOTE, ids, isSyncing: true };
 }
 
 export function setFocusedNote(id) {

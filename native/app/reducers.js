@@ -92,7 +92,7 @@ function sync(sync = {}, action) {
       return Object.assign({}, sync, {
         isSyncing: true,
         isSyncingFrom: 'deleteNote',
-        focusedNoteId: sync.focusedNoteId === action.id ? null : sync.focusedNoteId,
+        focusedNoteId: action.ids.includes(sync.focusedNoteId) ? null : sync.focusedNoteId,
         error: null
       });
     case UPDATE_NOTE:
@@ -219,7 +219,7 @@ function notes(notes = [], action) {
       return list;
     }
     case DELETE_NOTE:
-      return Array.from(notes).filter((note) => note.id !== action.id);
+      return Array.from(notes).filter((note) => !action.ids.includes(note.id));
     case UPDATE_NOTE: {
       const list = Array.from(notes);
       const note = list.find((note) => note.id === action.id);
