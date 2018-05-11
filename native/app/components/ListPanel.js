@@ -38,7 +38,8 @@ class ListPanel extends React.Component {
       yPosition: new Animated.Value(SNACKBAR_HEIGHT),
       snackbarVisible: false,
       snackbar: null
-    }
+    };
+    this.snackbarList = [];
 
     this._onRefresh = () => {
       if (this.props.state.sync.isConnected === false) {
@@ -92,6 +93,8 @@ class ListPanel extends React.Component {
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
         }).start();
+      } else {
+        this.snackbarList.push(snackbar);
       }
     };
 
@@ -110,6 +113,9 @@ class ListPanel extends React.Component {
         this.setState({
           snackbar: null
         });
+        if (this.snackbarList.length > 0) {
+          this._showSnackbar(this.snackbarList.shift());
+        }
       });
 
     };
