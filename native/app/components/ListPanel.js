@@ -173,7 +173,7 @@ class ListPanel extends React.Component {
 
         // Show snackbar
         this._showSnackbar({
-          text: `Deleted ${ deletedNote.length } note${ deletedNote.length > 1 ? 's' : '' }`,
+          text: 'Notes deleted.',
           color: COLOR_NOTES_BLUE,
           action: {
             text: 'UNDO',

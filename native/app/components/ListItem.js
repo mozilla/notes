@@ -14,7 +14,7 @@ import {
   Subheading } from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { COLOR_NOTES_BLUE } from '../utils/constants';
+import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_NOTES_BLUE_LIGHT, COLOR_DARK_EMPTY_TEXT } from '../utils/constants';
 import moment from 'moment';
 import browser from '../browser';
 import { toggleSelect } from '../actions';
@@ -101,14 +101,14 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingLeft: 0,
     paddingRight: 10,
-    backgroundColor: 'white',
+    backgroundColor: COLOR_APP_BAR,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   selected: {
-    backgroundColor: 'rgb(236, 241, 250)'
+    backgroundColor: COLOR_NOTES_BLUE_LIGHT
   },
   selector: {
     flexShrink: 0,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     color: undefined
   },
   emptyTitle: {
-    color: 'rgb(224, 224, 224)'
+    color: COLOR_DARK_EMPTY_TEXT
   },
   time: {
     flexShrink: 0,

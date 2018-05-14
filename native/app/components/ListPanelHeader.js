@@ -6,7 +6,7 @@ import { StyleSheet, View, Dimensions, StatusBar } from 'react-native';
 import { resetSelect, deleteNotes } from "../actions";
 
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
-import { COLOR_APP_BAR, COLOR_NOTES_BLUE } from '../utils/constants';
+import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_DARK_TEXT } from '../utils/constants';
 
 class ListPanelHeader extends Component {
 
@@ -25,9 +25,6 @@ class ListPanelHeader extends Component {
         this.props.dispatch(deleteNotes(state.sync.selected, 'multi-delete'));
       }
       this.props.navigation.navigate('ListPanel', { deletedNote: notes });
-
-      // console.log(notes);
-      // props.dispatch(resetSelect());
     }
   }
 
@@ -39,17 +36,17 @@ class ListPanelHeader extends Component {
           <ToolbarAction
             size={20}
             style={{ paddingTop: 4 }}
-            color='white'
+            color={COLOR_DARK_TEXT}
             icon='clear'
             onPress={() => this._resetSelection()} />
           <ToolbarContent
             style={{ paddingLeft: 0,  }}
-            titleStyle={{ fontSize: 18, color: 'white' }}
-            title={ `${this.props.state.sync.selected.length} selected`} />
+            titleStyle={{ fontSize: 18, color: COLOR_DARK_TEXT }}
+            title='Selection' />
           <ToolbarAction
             size={20}
             style={{ paddingTop: 4 }}
-            color='white'
+            color={COLOR_DARK_TEXT}
             icon='delete'
             onPress={() => this._deleteSelection()} />
         </Toolbar>
@@ -61,7 +58,7 @@ class ListPanelHeader extends Component {
         <ToolbarAction
           size={20}
           style={{ paddingTop: 4 }}
-          color='#4173CE'
+          color={COLOR_NOTES_BLUE}
           icon='menu'
           onPress={() => navigation.openDrawer()} />
         <ToolbarContent
