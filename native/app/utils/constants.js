@@ -9,14 +9,17 @@ export const FXA_OAUTH_ACCESS_TYPE = 'offline';
 
 // Colors
 export const COLOR_NOTES_BLUE = '#4173CE';
+export const COLOR_NOTES_BLUE_LIGHT = '#ecf1fa';
 export const COLOR_NOTES_WHITE = '#F9F9FA';
 export const COLOR_DARK_BACKGROUND = '#38383D';
 export const COLOR_DARK_TEXT = '#FFFFFF';
 export const COLOR_DARK_SUBTEXT = '#bbbbbf';
+export const COLOR_DARK_EMPTY_TEXT = '#e0e0e0';
 export const COLOR_DARK_WARNING = '#ef6b6b';
 export const COLOR_DARK_SYNC = '#3FD4B4';
 export const COLOR_STATUS_BAR = '#F9F9FA';
 export const COLOR_APP_BAR = '#FFFFFF';
+
 
 // Actions
 // FOR LEGACY, THOSE STRING MATCH THE ONE USED IN BACKGROUND.js
@@ -32,6 +35,8 @@ export const DISCONNECTED = 'disconnected';
 export const SEND_TO_NOTES = 'send-to-notes';
 export const EXPORT_HTML = 'export-html';
 export const NET_INFO = 'net-info';
+export const TOGGLE_SELECT = 'toggle-select';
+export const RESET_SELECT = 'reset-select';
 
 // CRUD actions on note
 export const CREATE_NOTE = 'create-note';

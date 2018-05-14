@@ -1,4 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import {
   View,
   Text,
@@ -11,9 +14,10 @@ import {
   Subheading } from 'react-native-paper';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { COLOR_NOTES_BLUE } from '../utils/constants';
+import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_NOTES_BLUE_LIGHT, COLOR_DARK_EMPTY_TEXT } from '../utils/constants';
 import moment from 'moment';
 import browser from '../browser';
+import { toggleSelect } from '../actions';
 
 function formatLastModified(date = new Date()) {
 
@@ -30,25 +34,48 @@ class ListItem extends React.Component {
 
   constructor (props) {
     super(props);
+    this.state = {
+      isSelected: false
+    };
 
     this._navigateToNote = () => {
-      props.navigate('EditorPanel', { id: props.note.id });
+      if (this.props.state.sync.selected) {
+        this._toggleSelect();
+      } else {
+        props.navigate('EditorPanel', { id: props.note.id });
+      }
+    }
+
+    this._toggleSelect = () => {
+      props.dispatch(toggleSelect(props.note));
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    const selected = newProps.state.sync.selected;
+    if (selected && selected.includes(newProps.note.id)) {
+      this.setState({ isSelected: true });
+    } else {
+      this.setState({ isSelected: false });
     }
   }
 
   render() {
     const {
-      note
+      note, state
     } = this.props;
+
+    itemStyle = [styles.wrapper];
+    if (this.state.isSelected) itemStyle.push(styles.selected);
+
     return (
       <TouchableOpacity onPress={this._navigateToNote} >
-        <View style={styles.wrapper} >
-          <Text style={ styles.selector } >
+        <View style={ itemStyle } >
+          <Text style={ styles.selector } onPress={this._toggleSelect}  >
             <MaterialIcons
-              name="remove"
+              name={ this.state.isSelected ? "done" : "remove" }
               style={{ color: COLOR_NOTES_BLUE }}
               size={22}
-
             />
           </Text>
           <View style={ styles.content }>
@@ -74,11 +101,14 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingLeft: 0,
     paddingRight: 10,
-    backgroundColor: 'white',
+    backgroundColor: COLOR_APP_BAR,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  selected: {
+    backgroundColor: COLOR_NOTES_BLUE_LIGHT
   },
   selector: {
     flexShrink: 0,
@@ -99,7 +129,7 @@ const styles = StyleSheet.create({
     color: undefined
   },
   emptyTitle: {
-    color: 'rgb(224, 224, 224)'
+    color: COLOR_DARK_EMPTY_TEXT
   },
   time: {
     flexShrink: 0,
@@ -110,4 +140,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListItem
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
+
+ListItem.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(ListItem);

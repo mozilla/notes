@@ -16,7 +16,10 @@ import {
   PLEASE_LOGIN,
   FOCUS_NOTE,
   ERROR,
-  NET_INFO
+  NET_INFO,
+  TOGGLE_SELECT,
+  RESET_SELECT,
+  REQUEST_WELCOME_PAGE
 } from './utils/constants';
 
 function profile(profile = {}, action) {
@@ -53,6 +56,7 @@ function sync(sync = {}, action) {
         lastSynced: new Date(),
         isSyncing: true,
         error: null,
+        selected: null
       });
     case DISCONNECTED:
       return Object.assign({}, sync, {
@@ -60,7 +64,8 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: false,
-        error: null
+        error: null,
+        selected: null
       });
     case OPENING_LOGIN:
       return Object.assign({}, sync, {
@@ -87,8 +92,9 @@ function sync(sync = {}, action) {
       return Object.assign({}, sync, {
         isSyncing: true,
         isSyncingFrom: 'deleteNote',
-        focusedNoteId: sync.focusedNoteId === action.id ? null : sync.focusedNoteId,
-        error: null
+        focusedNoteId: action.ids.includes(sync.focusedNoteId) ? null : sync.focusedNoteId,
+        error: null,
+        selected: null
       });
     case UPDATE_NOTE:
       return Object.assign({}, sync, {
@@ -133,6 +139,21 @@ function sync(sync = {}, action) {
     case NET_INFO:
       return Object.assign({}, sync, {
         isConnected: action.isConnected
+      });
+    case TOGGLE_SELECT:
+      const selected = Array.from(sync.selected || []);
+      if (selected.includes(action.note.id)) {
+        selected = selected.filter((note) => note !== action.note.id);
+        if (selected.length === 0) selected = null;
+      } else {
+        selected.push(action.note.id);
+      }
+      return Object.assign({}, sync, {
+        selected: selected
+      });
+    case RESET_SELECT:
+      return Object.assign({}, sync, {
+        selected: null
       });
     default:
       return sync;
@@ -201,7 +222,7 @@ function notes(notes = [], action) {
       return list;
     }
     case DELETE_NOTE:
-      return Array.from(notes).filter((note) => note.id !== action.id);
+      return Array.from(notes).filter((note) => !action.ids.includes(note.id));
     case UPDATE_NOTE: {
       const list = Array.from(notes);
       const note = list.find((note) => note.id === action.id);

@@ -38,7 +38,8 @@ class ListPanel extends React.Component {
       yPosition: new Animated.Value(SNACKBAR_HEIGHT),
       snackbarVisible: false,
       snackbar: null
-    }
+    };
+    this.snackbarList = [];
 
     this._onRefresh = () => {
       if (this.props.state.sync.isConnected === false) {
@@ -92,6 +93,8 @@ class ListPanel extends React.Component {
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
         }).start();
+      } else {
+        this.snackbarList.push(snackbar);
       }
     };
 
@@ -110,13 +113,18 @@ class ListPanel extends React.Component {
         this.setState({
           snackbar: null
         });
+        if (this.snackbarList.length > 0) {
+          this._showSnackbar(this.snackbarList.shift());
+        }
       });
 
     };
 
     this._undoDelete = () => {
       this._hideSnackbar();
-      props.dispatch(createNote(this.state.deletedNote));
+      this.state.deletedNote.forEach((note) => {
+        props.dispatch(createNote(note));
+      });
     };
   }
 
@@ -165,7 +173,7 @@ class ListPanel extends React.Component {
 
         // Show snackbar
         this._showSnackbar({
-          text: 'Note deleted!',
+          text: 'Notes deleted.',
           color: COLOR_NOTES_BLUE,
           action: {
             text: 'UNDO',
@@ -204,7 +212,7 @@ class ListPanel extends React.Component {
           { this.state.snackbar ? this.state.snackbar.text : '' }
         </Snackbar>
 
-        { this.props.state.kinto.isLoaded ?
+        { this.props.state.kinto.isLoaded && !this.props.state.sync.selected ?
           <Animated.View style={[
             {
               position: 'absolute',

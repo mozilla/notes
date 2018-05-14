@@ -12,7 +12,9 @@ import { SYNC_AUTHENTICATED,
   DELETE_NOTE,
   FOCUS_NOTE,
   ERROR,
-  NET_INFO } from './utils/constants';
+  NET_INFO,
+  TOGGLE_SELECT,
+  RESET_SELECT } from './utils/constants';
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
@@ -98,16 +100,13 @@ export function updateNote(id, content, lastModified) {
   return { type: UPDATE_NOTE, id, content, lastModified };
 }
 
-export function deleteNote(id, origin) {
-  trackEvent('new-note', {
-    el: origin
-  });
-
+export function deleteNotes(ids = [], origin) {
   browser.runtime.sendMessage({
     action: DELETE_NOTE,
-    id
+    ids,
+    origin
   });
-  return { type: DELETE_NOTE, id, isSyncing: true };
+  return { type: DELETE_NOTE, ids, isSyncing: true };
 }
 
 export function setFocusedNote(id) {
@@ -137,3 +136,10 @@ export function disconnect() {
   };
 }
 
+export function toggleSelect(note) {
+  return { type: TOGGLE_SELECT, note};
+}
+
+export function resetSelect() {
+  return { type: RESET_SELECT };
+}

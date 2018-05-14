@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RichTextEditor } from 'react-native-zss-rich-text-editor';
-import { createNote, updateNote, deleteNote, setFocusedNote } from '../actions';
+import { createNote, updateNote, deleteNotes, setFocusedNote } from '../actions';
 import { COLOR_APP_BAR, KINTO_LOADED } from '../utils/constants';
 
 import browser from '../browser';
@@ -44,7 +44,7 @@ class RichTextExample extends Component {
           this.props.dispatch(setFocusedNote(note.id));
         });
       } else if (this.note && e === '') { // if we delete all caracters from a note
-        this.props.dispatch(deleteNote(this.note.id, 'blank-note'));
+        this.props.dispatch(deleteNotes([ this.note.id ], 'blank-note'));
         this.note = null;
         this.props.dispatch(setFocusedNote());
       } else if (this.note && e !== '') { // default case, on modification we save
