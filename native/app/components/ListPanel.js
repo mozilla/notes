@@ -133,26 +133,26 @@ class ListPanel extends React.Component {
   componentWillReceiveProps(newProps) {
     if (newProps.navigation.isFocused()) {
 
-        // Display synced note snackbar
-        if (this.props.state.sync.isSyncing &&
-            !newProps.state.sync.isSyncing &&
-            !newProps.state.sync.error &&
-            newProps.state.sync.isConnected &&
-            this.state.appState === 'active' &&
-            newProps.state.profile.email) {
-          if (this.props.state.sync.isSyncingFrom === 'drawer') {
-            setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
-          } else {
-            this._showSnackbar(SYNCED_SNACKBAR);
-          }
-        } else if (newProps.state.sync.error && newProps.state.sync.loginDetails) {
-          this._showSnackbar({
-            text: newProps.state.sync.error,
-            color: COLOR_DARK_WARNING,
-            action: null,
-            duration: 3000
-          });
+      // Display synced note snackbar
+      if (this.props.state.sync.isSyncing &&
+          !newProps.state.sync.isSyncing &&
+          !newProps.state.sync.error &&
+          newProps.state.sync.isConnected &&
+          this.state.appState === 'active' &&
+          newProps.state.profile.email) {
+        if (this.props.state.sync.isSyncingFrom === 'drawer') {
+          setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
+        } else {
+          this._showSnackbar(SYNCED_SNACKBAR);
         }
+      } else if (newProps.state.sync.error && newProps.state.sync.loginDetails) {
+        this._showSnackbar({
+          text: newProps.state.sync.error,
+          color: COLOR_DARK_WARNING,
+          action: null,
+          duration: 3000
+        });
+      }
 
       // Display deleted note snackbar
       if (newProps.navigation.getParam('deletedNote')) {
