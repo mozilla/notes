@@ -101,13 +101,10 @@ export function updateNote(id, content, lastModified) {
 }
 
 export function deleteNotes(ids = [], origin) {
-  trackEvent('delete-note', {
-    el: origin
-  });
-
   browser.runtime.sendMessage({
     action: DELETE_NOTE,
-    ids
+    ids,
+    origin
   });
   return { type: DELETE_NOTE, ids, isSyncing: true };
 }

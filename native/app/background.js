@@ -39,7 +39,7 @@ browser.runtime.onMessage.addListener(eventData => {
       });
       break;
     case DELETE_NOTE:
-      sync.deleteNotes(kintoClient, store.getState().sync.loginDetails, eventData.ids).then(() => {
+      sync.deleteNotes(kintoClient, store.getState().sync.loginDetails, eventData.ids, eventData.origin).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
       });
       break;

@@ -442,12 +442,16 @@ function createNote(client, loginDetails, note) { // eslint-disable-line no-unus
     });
 }
 
-function deleteNotes(client, loginDetails, ids) { // eslint-disable-line no-unused-vars
+function deleteNotes(client, loginDetails, ids, origin) { // eslint-disable-line no-unused-vars
 
   const promises = [];
 
   ids.forEach((id) => {
-    promises.push(client.collection('notes', { idSchema: notesIdSchema }).delete(id));
+    promises.push(client.collection('notes', { idSchema: notesIdSchema }).delete(id).then(() => {
+      trackEvent('delete-note', {
+        el: origin
+      });
+    }));
   });
 
   return Promise.all(promises).then(() => {
