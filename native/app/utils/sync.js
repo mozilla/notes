@@ -428,7 +428,17 @@ function createNote(client, loginDetails, note) { // eslint-disable-line no-unus
     .collection('notes', { idSchema: notesIdSchema })
     .create(note, { useRecordId: true })
     .then(() => {
-      return syncKinto(client, loginDetails);
+      clearTimeout(syncDebounce);
+      syncDebounce = setTimeout(() => {
+        syncKinto(client, loginDetails).catch(() => {
+          return Promise.resolve();
+        })
+      }, 2000);
+      return Promise.resolve();
+    })
+    .catch((error) => {
+      // syncKinto handle errors by sending an ERROR message to background
+      return Promise.resolve();
     });
 }
 
@@ -438,6 +448,10 @@ function deleteNote(client, loginDetails, id) { // eslint-disable-line no-unused
     .delete(id)
     .then(() => {
       return syncKinto(client, loginDetails);
+    })
+    .catch((error) => {
+      // syncKinto handle errors by sending an ERROR message to background
+      return Promise.resolve();
     });
 }
 

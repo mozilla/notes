@@ -8,7 +8,7 @@ import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
-import { COLOR_DARK_SYNC, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
+import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
@@ -133,7 +133,7 @@ class ListPanel extends React.Component {
   componentWillReceiveProps(newProps) {
     if (newProps.navigation.isFocused()) {
 
-      // Display sycned note snackbar
+      // Display synced note snackbar
       if (this.props.state.sync.isSyncing &&
           !newProps.state.sync.isSyncing &&
           !newProps.state.sync.error &&
@@ -145,6 +145,13 @@ class ListPanel extends React.Component {
         } else {
           this._showSnackbar(SYNCED_SNACKBAR);
         }
+      } else if (newProps.state.sync.error && newProps.state.sync.loginDetails) {
+        this._showSnackbar({
+          text: newProps.state.sync.error,
+          color: COLOR_DARK_WARNING,
+          action: null,
+          duration: 3000
+        });
       }
 
       // Display deleted note snackbar

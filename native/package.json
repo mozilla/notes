@@ -47,7 +47,7 @@
     "react-native-udp": "~2.3.1",
     "react-native-vector-icons": "~4.5.0",
     "react-native-zss-rich-text-editor": "github:vladikoff/react-native-zss-rich-text-editor#rn54",
-    "react-navigation": "~2.0.0-rc.7",
+    "react-navigation": "github:sebastienbarbier/react-navigation",
     "react-redux": "~5.0.7",
     "readable-stream": "~1.0.33",
     "redux": "~3.7.2",
