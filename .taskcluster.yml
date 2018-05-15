@@ -29,10 +29,10 @@ tasks:
           ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD &&
           set -x && cp app/build/outputs/apk/release/app-release.apk /tmp/apk
       artifacts:
-        'public':
-          type: 'directory'
-          path: '/tmp/apk'
-          expires: "{{ '1 week' | $fromNow }}"
+        'public/app-release.apk':
+          type: 'file'
+          path: '/tmp/apk/app-release.apk'
+          expires: "{{ '1 month' | $fromNow }}"
     metadata:
       name: Test Pilot Notes
       description: Test Pilot Notes
