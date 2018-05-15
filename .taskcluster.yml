@@ -24,7 +24,7 @@ tasks:
         - >-
           cd ~ && git clone {{event.head.repo.url}} repo && cd repo && git config
           advice.detachedHead false && git checkout {{event.head.sha}} && cd native &&
-          ./misc/taskcluster_secrets.sh && ./misc/download_keystore.sh &&
+          source ./misc/taskcluster_secrets.sh && echo "exported: ${TOKEN}" && ./misc/download_keystore.sh &&
           npm install . && echo $foo && cd android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
     metadata:
       name: Test Pilot Notes
