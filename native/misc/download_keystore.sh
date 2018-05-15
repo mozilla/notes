@@ -1,3 +1,5 @@
+#!/bin/bash -ex
+
 # use curl to download a keystore from $KEYSTORE_URI, if set,
 # to the path/filename set in $KEYSTORE.
 if [[ $KEYSTORE && ${KEYSTORE} && $KEYSTORE_URI && ${KEYSTORE_URI} ]]
