@@ -24,8 +24,10 @@ tasks:
         - >-
           cd ~ && git clone {{event.head.repo.url}} repo && cd repo && git config
           advice.detachedHead false && git checkout {{event.head.sha}} && cd native &&
-          source ./misc/taskcluster_secrets.sh && echo $MYAPP_RELEASE_KEY_ALIAS &&
-          npm install . && echo $foo && cd android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
+          source ./misc/taskcluster_secrets.sh &&
+          npm install . && echo $foo && cd android && set +x &&
+          ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD &&
+          set -x
     metadata:
       name: Test Pilot Notes
       description: Test Pilot Notes
