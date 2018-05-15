@@ -22,7 +22,7 @@ tasks:
         - '--login'
         - '-c'
         - >-
-          cd ~ && set +x && secrets_url="https://secrets.taskcluster.net/v1/secret/project/testpilot/notes" &&
+          cd ~ && set +x && secrets_url="http://taskcluster/secrets/v1/secret/project/testpilot/notes" &&
           SECRET=$(curl "${secrets_url}") && echo "${SECRET}" &&
           git clone {{event.head.repo.url}} repo && cd repo && git config
           advice.detachedHead false && git checkout {{event.head.sha}} && cd native && npm
