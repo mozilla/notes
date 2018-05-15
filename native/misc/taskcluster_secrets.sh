@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 
 set +x
+
 secrets_url="http://taskcluster/secrets/v1/secret/project/testpilot/notes"
 SECRET=$(curl "${secrets_url}")
 
@@ -12,6 +13,6 @@ MYAPP_RELEASE_STORE_FILE=$(echo "${SECRET}" | jq -r '.secret.MYAPP_RELEASE_STORE
 MYAPP_RELEASE_STORE_PASSWORD=$(echo "${SECRET}" | jq -r '.secret.MYAPP_RELEASE_STORE_PASSWORD')
 SENTRY_DSN=$(echo "${SECRET}" | jq -r '.secret.SENTRY_DSN')
 
-sh ./download_keystore.sh
+sh ./misc/download_keystore.sh
 
 set -x
