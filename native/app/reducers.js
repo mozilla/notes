@@ -65,7 +65,8 @@ function sync(sync = {}, action) {
         isPleaseLogin: false,
         isReconnectSync: false,
         error: null,
-        selected: null
+        selected: null,
+        isConnected: true
       });
     case OPENING_LOGIN:
       return Object.assign({}, sync, {
