@@ -12,4 +12,6 @@ MYAPP_RELEASE_STORE_FILE=$(echo "${SECRET}" | jq -r '.secret.MYAPP_RELEASE_STORE
 MYAPP_RELEASE_STORE_PASSWORD=$(echo "${SECRET}" | jq -r '.secret.MYAPP_RELEASE_STORE_PASSWORD')
 SENTRY_DSN=$(echo "${SECRET}" | jq -r '.secret.SENTRY_DSN')
 
+sh ./download_keystore.sh
+
 set -x
