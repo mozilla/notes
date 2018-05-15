@@ -10,7 +10,6 @@ jobs:
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
-      - run: npm i -g npm@5
       - run: npm install
 
       - save_cache:
