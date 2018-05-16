@@ -39,8 +39,7 @@ class EditorPanelHeader extends Component {
 
   _setToolbarContent = (content, color = COLOR_NOTES_BLUE) => {
 
-    if (this.state.toolbarContentIndex === 0) {
-
+    if (this.state.toolbarContentIndex === 0 && content !== this.state.content2) {
       this.setState({
         content2: content,
         color2: color,
@@ -53,7 +52,7 @@ class EditorPanelHeader extends Component {
         useNativeDriver: true,
       }).start();
 
-    } else {
+    } else if (this.state.toolbarContentIndex === 1 && content !== this.state.content1) {
 
       this.setState({
         content1: content,

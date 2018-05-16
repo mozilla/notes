@@ -110,7 +110,7 @@ function sync(sync = {}, action) {
     case TEXT_SYNCING:
       return Object.assign({}, sync, {
         isSyncing: true,
-        isSyncingFrom: action.from,
+        isSyncingFrom: sync.isSyncingFrom || action.from,
         error: null
       });
     case TEXT_SYNCED:

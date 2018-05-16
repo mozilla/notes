@@ -7,6 +7,7 @@ import { store, persistor } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
+
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo } from "../actions";
@@ -140,20 +141,20 @@ class ListPanel extends React.Component {
 
   componentWillReceiveProps(newProps) {
     if (newProps.navigation.isFocused()) {
-
       // Display synced note snackbar
       if (this.props.state.sync.isSyncing &&
           !newProps.state.sync.isSyncing &&
           !newProps.state.sync.error &&
-          newProps.state.sync.isConnected &&
+          newProps.state.sync.isConnected !== false &&
           this.state.appState === 'active' &&
           newProps.state.profile.email) {
+
         if (this.props.state.sync.isSyncingFrom === 'drawer') {
           setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
-        } else {
+        } else if (this.props.state.sync.isSyncingFrom !== 'deleteNote') {
           this._showSnackbar(SYNCED_SNACKBAR);
         }
-      } else if (newProps.state.sync.error && newProps.state.sync.loginDetails) {
+      } else if (!this.props.state.sync.error && newProps.state.sync.error && newProps.state.sync.loginDetails) {
         this._showSnackbar({
           text: newProps.state.sync.error,
           color: COLOR_DARK_WARNING,
@@ -184,6 +185,8 @@ class ListPanel extends React.Component {
           duration: 6000
         });
       }
+    } else {
+      this.snackbarList = [];
     }
   }
 
@@ -191,7 +194,6 @@ class ListPanel extends React.Component {
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         { this.renderList() }
-
         <Snackbar
           style={{
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
