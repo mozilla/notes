@@ -248,18 +248,18 @@ class Snackbar extends React.Component<Props, State> {
                 {children}
               </Text>
               {action ? (
-                <View
-                  style={{
-                    marginHorizontal: buttonMargin,
-                  }}
-                >
+                <View>
                   <TouchableWithoutFeedback
                     onPress={() => {
                       action.onPress();
                       this._hide();
                     }}
                   >
-                    <View>
+                    <View
+                      style={{
+                        paddingHorizontal: buttonMargin,
+                        paddingVertical: 12
+                      }}>
                       <Text style={{ color: colors.accent }}>
                         {action.text.toUpperCase()}
                       </Text>
