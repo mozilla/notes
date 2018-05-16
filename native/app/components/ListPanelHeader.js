@@ -60,7 +60,7 @@ class ListPanelHeader extends Component {
           style={{ paddingTop: 4 }}
           color={COLOR_NOTES_BLUE}
           icon='menu'
-          onPress={() => navigation.openDrawer()} />
+          onPress={() => navigation.toggleDrawer()} />
         <ToolbarContent
           style={{ paddingLeft: 0,  }}
           titleStyle={{ fontSize: 18, color: COLOR_NOTES_BLUE }}
