@@ -22,7 +22,7 @@ import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
 import { Provider as StoreProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
-import { Toolbar, ToolbarContent, ToolbarAction, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
 import { store, persistor } from './app/store';
@@ -104,7 +104,9 @@ const routeConfigMap = {
     }
   },
   ListPanel: {
-    screen: ListPanel
+    screen: (props) => {
+      return <PaperProvider><ListPanel {...props} /></PaperProvider>
+    }
   },
   EditorPanel: {
     screen: EditorPanel,
@@ -158,9 +160,7 @@ class Notes extends React.Component {
     return (
       <StoreProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <PaperProvider>
-            <App/>
-          </PaperProvider>
+          <App/>
         </PersistGate>
       </StoreProvider>
     )

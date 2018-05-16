@@ -7,6 +7,7 @@ import { store, persistor } from "../store";
 import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
+
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo } from "../actions";
@@ -190,7 +191,6 @@ class ListPanel extends React.Component {
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         { this.renderList() }
-
         <Snackbar
           style={{
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
