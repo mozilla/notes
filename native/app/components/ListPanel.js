@@ -122,10 +122,16 @@ class ListPanel extends React.Component {
     };
 
     this._undoDelete = () => {
-      this._hideSnackbar();
-      this.state.deletedNote.forEach((note) => {
-        props.dispatch(createNote(note));
-      });
+
+      const promises = [];
+
+      if (this.state.deletedNote) {
+        this.state.deletedNote.forEach((note) => {
+          promises.push(props.dispatch(createNote(note)));
+        });
+      }
+
+      Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar);
     };
   }
 
