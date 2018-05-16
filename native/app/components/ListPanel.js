@@ -220,7 +220,7 @@ class ListPanel extends React.Component {
               position: 'absolute',
               bottom: 0,
               right: 0,
-              width: 84,
+              width: 92,
               height: 84,
             },
             {
