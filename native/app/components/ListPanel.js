@@ -148,12 +148,13 @@ class ListPanel extends React.Component {
           newProps.state.sync.isConnected !== false &&
           this.state.appState === 'active' &&
           newProps.state.profile.email) {
+
         if (this.props.state.sync.isSyncingFrom === 'drawer') {
           setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
-        } else {
+        } else if (this.props.state.sync.isSyncingFrom !== 'deleteNote') {
           this._showSnackbar(SYNCED_SNACKBAR);
         }
-      } else if (newProps.state.sync.error && newProps.state.sync.loginDetails) {
+      } else if (!this.props.state.sync.error && newProps.state.sync.error && newProps.state.sync.loginDetails) {
         this._showSnackbar({
           text: newProps.state.sync.error,
           color: COLOR_DARK_WARNING,
@@ -184,6 +185,8 @@ class ListPanel extends React.Component {
           duration: 6000
         });
       }
+    } else {
+      this.snackbarList = [];
     }
   }
 
