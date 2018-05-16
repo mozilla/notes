@@ -36,7 +36,9 @@ class ListPanel extends React.Component {
       refreshing: false,
       appState: AppState.currentState,
       deletedNote: null,
-      yPosition: new Animated.Value(SNACKBAR_HEIGHT),
+      hideFab: false,
+      fabPositionAnimation: new Animated.Value(SNACKBAR_HEIGHT),
+      fabOpacityAnimation: new Animated.Value(1),
       snackbarVisible: false,
       snackbar: null
     };
@@ -89,7 +91,7 @@ class ListPanel extends React.Component {
           snackbarVisible: true,
         });
 
-        Animated.timing(this.state.yPosition, {
+        Animated.timing(this.state.fabPositionAnimation, {
           toValue: 0, // this.state.height,
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
@@ -106,7 +108,7 @@ class ListPanel extends React.Component {
         deletedNote: null
       });
 
-      Animated.timing(this.state.yPosition, {
+      Animated.timing(this.state.fabPositionAnimation, {
         toValue: SNACKBAR_HEIGHT,
         duration: SNACKBAR_ANIMATION_DURATION,
         useNativeDriver: true,
@@ -185,6 +187,24 @@ class ListPanel extends React.Component {
           duration: 6000
         });
       }
+
+      if (!this.props.state.sync.selected && newProps.state.sync.selected) {
+        Animated.timing(this.state.fabOpacityAnimation, {
+          toValue: 0,
+            duration: 150,
+            useNativeDriver: true,
+          }).start(() => this.setState({
+            hideFab: true,
+            fabOpacityAnimation: new Animated.Value(0)
+          }));
+      } else if (this.props.state.sync.selected && !newProps.state.sync.selected) {
+         this.setState({ hideFab: false });
+         Animated.timing(this.state.fabOpacityAnimation, {
+            toValue: 1,
+            duration: 150,
+            useNativeDriver: true,
+          }).start();
+      }
     } else {
       this.snackbarList = [];
     }
@@ -199,7 +219,7 @@ class ListPanel extends React.Component {
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
             transform: [
               {
-                translateY: this.state.yPosition,
+                translateY: this.state.fabPositionAnimation,
               },
             ],
           }}
@@ -214,7 +234,7 @@ class ListPanel extends React.Component {
           { this.state.snackbar ? this.state.snackbar.text : '' }
         </Snackbar>
 
-        { this.props.state.kinto.isLoaded && !this.props.state.sync.selected ?
+        { this.props.state.kinto.isLoaded && !this.state.hideFab ?
           <Animated.View style={[
             {
               position: 'absolute',
@@ -222,13 +242,18 @@ class ListPanel extends React.Component {
               right: 0,
               width: 92,
               height: 84,
+              opacity: this.state.fabOpacityAnimation
             },
             {
               transform: [
                 {
-                  translateY: this.state.yPosition.interpolate({
+                  translateY: this.state.fabPositionAnimation.interpolate({
                     inputRange: [0, SNACKBAR_HEIGHT],
                     outputRange: [-1 * SNACKBAR_HEIGHT, 0]
+                  }),
+                  scale: this.state.fabOpacityAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.9, 1]
                   }),
                 },
               ],
