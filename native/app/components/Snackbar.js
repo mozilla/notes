@@ -223,7 +223,7 @@ class Snackbar extends React.Component<Props, State> {
             style,
           ]}
         >
-          <TouchableWithoutFeedback onPress={onDismiss}>
+          <TouchableWithoutFeedback onPress={!action ? onDismiss : null}>
             <Animated.View
               style={[
                 styles.container,
