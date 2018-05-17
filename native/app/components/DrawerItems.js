@@ -90,8 +90,10 @@ class DrawerItems extends React.Component {
     this._requestSync = () => {
 
       if (this.props.state.sync.isConnected === false) {
-        props.navigation.dispatch(DrawerActions.closeDrawer());
-        ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+        if (this.props.navigation.state.isDrawerOpen) {
+          props.navigation.dispatch(DrawerActions.closeDrawer());
+          ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+        }
       } else if (!this.props.state.profile.email) {
         this._requestReconnect();
       } else {
