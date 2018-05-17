@@ -160,7 +160,9 @@ class Notes extends React.Component {
     return (
       <StoreProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App/>
+          <PaperProvider>
+            <App/>
+          </PaperProvider>
         </PersistGate>
       </StoreProvider>
     )
