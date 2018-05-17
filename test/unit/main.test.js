@@ -369,7 +369,7 @@ describe('Authorization', function() {
           chai.assert(browser.runtime.sendMessage.calledThrice);
           chai.expect(browser.runtime.sendMessage.getCall(0).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(0).args[1]).eql({
-            action: 'text-editing',
+            action: 'text-syncing',
           });
           chai.expect(browser.runtime.sendMessage.getCall(1).args[0]).eql('notes@mozilla.com');
           chai.expect(browser.runtime.sendMessage.getCall(1).args[1]).eql({

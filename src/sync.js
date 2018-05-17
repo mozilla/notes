@@ -423,9 +423,9 @@ function createNote(client, credentials, note) { // eslint-disable-line no-unuse
     .then(() => {
       clearTimeout(syncDebounce);
       syncDebounce = setTimeout(() => {
-        syncKinto(client, loginDetails).catch(() => {
+        syncKinto(client, credentials).catch(() => {
           return Promise.resolve();
-        })
+        });
       }, 2000);
       return Promise.resolve();
     });
