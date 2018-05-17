@@ -259,11 +259,13 @@ class ListPanel extends React.Component {
                     inputRange: [0, SNACKBAR_HEIGHT],
                     outputRange: [-1 * SNACKBAR_HEIGHT, 0]
                   }),
+                },
+                {
                   scale: this.state.fabOpacityAnimation.interpolate({
                     inputRange: [0, 1],
                     outputRange: [0.9, 1]
                   }),
-                },
+                }
               ],
             }]}>
             <FAB
