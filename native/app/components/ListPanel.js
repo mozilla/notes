@@ -104,8 +104,7 @@ class ListPanel extends React.Component {
     this._hideSnackbar = () => {
 
       this.setState({
-        snackbarVisible: false,
-        deletedNote: null
+        snackbarVisible: false
       });
 
       Animated.timing(this.state.fabPositionAnimation, {
@@ -123,12 +122,12 @@ class ListPanel extends React.Component {
 
     };
 
-    this._undoDelete = () => {
+    this._undoDelete = (deletedNote) => {
 
       const promises = [];
 
-      if (this.state.deletedNote) {
-        this.state.deletedNote.forEach((note) => {
+      if (deletedNote && Array.isArray(deletedNote)) {
+        deletedNote.forEach((note) => {
           promises.push(props.dispatch(createNote(note)));
         });
       }
@@ -175,7 +174,6 @@ class ListPanel extends React.Component {
       if (newProps.navigation.getParam('deletedNote')) {
         // We store deletedNote to be able to recreate it if user click undo
         const deletedNote = newProps.navigation.getParam('deletedNote');
-        this.setState({ deletedNote });
 
         // Erase params for future componentWillReceiveProps events
         newProps.navigation.setParams({ deletedNote: null });
@@ -187,7 +185,7 @@ class ListPanel extends React.Component {
           action: {
             text: 'UNDO',
             onPress: () => {
-              this._undoDelete();
+              this._undoDelete(deletedNote);
             }
           },
           duration: 6000
@@ -213,7 +211,7 @@ class ListPanel extends React.Component {
       }
     } else {
       this.snackbarList = [];
-      this._hideSnackbar();
+      // this._hideSnackbar();
     }
   }
 
