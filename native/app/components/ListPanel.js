@@ -211,7 +211,6 @@ class ListPanel extends React.Component {
       }
     } else {
       this.snackbarList = [];
-      // this._hideSnackbar();
     }
   }
 
