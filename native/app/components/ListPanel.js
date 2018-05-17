@@ -193,16 +193,22 @@ class ListPanel extends React.Component {
       }
 
       if (!this.props.state.sync.selected && newProps.state.sync.selected) {
+        Animated.timing(this.state.fabOpacityAnimation).stop();
         Animated.timing(this.state.fabOpacityAnimation, {
           toValue: 0,
             duration: 150,
             useNativeDriver: true,
-          }).start(() => this.setState({
-            hideFab: true,
-            fabOpacityAnimation: new Animated.Value(0)
-          }));
+          }).start(({ finished }) => {
+            if (finished) {
+              this.setState({
+                hideFab: true,
+                fabOpacityAnimation: new Animated.Value(0)
+              });
+            }
+          });
       } else if (this.props.state.sync.selected && !newProps.state.sync.selected) {
          this.setState({ hideFab: false });
+         Animated.timing(this.state.fabOpacityAnimation).stop();
          Animated.timing(this.state.fabOpacityAnimation, {
             toValue: 1,
             duration: 150,
