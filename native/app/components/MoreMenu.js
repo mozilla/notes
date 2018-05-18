@@ -15,26 +15,38 @@ const UIManager = NativeModules.UIManager;
  * Details: https://github.com/react-navigation/react-navigation/issues/1212
  */
 class MoreMenu extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false
+    };
+  }
+
   onMenuPressed = (labels) => {
-    const { navigation } = this.props;
-    UIManager.showPopupMenu(
-      findNodeHandle(this.menu),
-      labels, // actions
-      () => {}, // onError
-      (result, index) => { //onSuccess
-        switch (index) {
-          case 0:
-            const deletedNote = this.props.state.notes.find((note) => {
-              return note.id === this.props.state.sync.focusedNoteId
-            });
-            if (deletedNote) {
-              this.props.dispatch(deleteNotes([ deletedNote.id ], 'in-note'));
-            }
-            navigation.navigate('ListPanel', { deletedNote: [ deletedNote ] });
-            break;
-        }
-      },
-    );
+    if (!this.state.isOpen) {
+      const { navigation } = this.props;
+      this.setState({ isOpen: true });
+      UIManager.showPopupMenu(
+        findNodeHandle(this.menu),
+        labels, // actions
+        () => this.setState({ isOpen: false }), // onError
+        (result, index) => { //onSuccess
+          this.setState({ isOpen: false });
+          switch (index) {
+            case 0:
+              const deletedNote = this.props.state.notes.find((note) => {
+                return note.id === this.props.state.sync.focusedNoteId
+              });
+              if (deletedNote) {
+                this.props.dispatch(deleteNotes([ deletedNote.id ], 'in-note'));
+              }
+              navigation.navigate('ListPanel', { deletedNote: [ deletedNote ] });
+              break;
+          }
+        },
+      );
+    }
   };
 
   render() {
