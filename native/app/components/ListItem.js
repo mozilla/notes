@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   },
   selector: {
     flexShrink: 0,
-    paddingTop: 18,
-    paddingBottom: 18,
+    paddingTop: 8,
+    paddingBottom: 8,
     paddingLeft: 18,
     paddingRight: 18
   },
