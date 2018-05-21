@@ -106,23 +106,25 @@ class DrawerItems extends React.Component {
     };
 
     this._requestReconnect = () => {
-      this.setState({ isOpeningLogin: true });
-      return Promise.resolve().then(() => {
-        this.props.dispatch(syncing());
-        return fxaUtils.launchOAuthKeyFlow();
-      }).then((loginDetails) => {
-        trackEvent('login-success');
-        this.setState({ isOpeningLogin: false });
-        this.props.dispatch(authenticate(loginDetails));
-        this.props.dispatch(kintoLoad()).then(() => {
-          props.navigation.dispatch(DrawerActions.closeDrawer());
+      if (!this.props.state.profile.email) {
+        this.setState({ isOpeningLogin: true });
+        return Promise.resolve().then(() => {
+          this.props.dispatch(syncing());
+          return fxaUtils.launchOAuthKeyFlow();
+        }).then((loginDetails) => {
+          trackEvent('login-success');
+          this.setState({ isOpeningLogin: false });
+          this.props.dispatch(authenticate(loginDetails));
+          this.props.dispatch(kintoLoad()).then(() => {
+            props.navigation.dispatch(DrawerActions.closeDrawer());
+          });
+        }).catch((exception) => {
+          this.setState({ isOpeningLogin: false });
+          browser.runtime.sendMessage({
+            action: RECONNECT_SYNC
+          });
         });
-      }).catch((exception) => {
-        this.setState({ isOpeningLogin: false });
-        browser.runtime.sendMessage({
-          action: RECONNECT_SYNC
-        });
-      });
+      }
     };
   }
 
