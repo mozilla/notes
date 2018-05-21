@@ -47,9 +47,11 @@ class MoreMenu extends Component {
               navigation.navigate('ListPanel');
             }
             break;
-        }
-      },
-    );
+          }
+        },
+      );
+
+    }
   };
 
   render() {
