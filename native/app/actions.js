@@ -62,7 +62,7 @@ export function createNote(note = {}) {
         el: 'list-view'
       });
 
-      note.id = note.id || uuid4();
+      note.id = uuid4();
       if (!note.lastModified) note.lastModified = new Date();
 
       // If note is not a paragraph, we force creation but editor should also

@@ -103,36 +103,45 @@ class ListPanel extends React.Component {
 
     this._hideSnackbar = () => {
 
-      this.setState({
-        snackbarVisible: false
-      });
-
-      Animated.timing(this.state.fabPositionAnimation, {
-        toValue: SNACKBAR_HEIGHT,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }).start(() => {
+      return new Promise((resolve) => {
         this.setState({
-          snackbar: null
+          snackbarVisible: false
         });
-        if (this.snackbarList.length > 0) {
-          this._showSnackbar(this.snackbarList.shift());
-        }
+
+        Animated.timing(this.state.fabPositionAnimation, {
+          toValue: SNACKBAR_HEIGHT,
+          duration: SNACKBAR_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }).start(() => {
+          this.setState({
+            snackbar: null
+          });
+          if (this.snackbarList.length > 0) {
+            this._showSnackbar(this.snackbarList.shift());
+          }
+          resolve();
+        });
       });
 
     };
 
     this._undoDelete = (deletedNote) => {
 
-      const promises = [];
+      if (!this.ignoreUndo) {
+        this.ignoreUndo = true;
 
-      if (deletedNote && Array.isArray(deletedNote)) {
-        deletedNote.forEach((note) => {
-          promises.push(props.dispatch(createNote(note)));
+        const promises = [];
+
+        if (deletedNote && Array.isArray(deletedNote)) {
+          deletedNote.forEach((note) => {
+            promises.push(props.dispatch(createNote(note)));
+          });
+        }
+
+        Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar).then(() => {
+          this.ignoreUndo = false;
         });
       }
-
-      Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar);
     };
   }
 
