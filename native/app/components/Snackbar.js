@@ -9,7 +9,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-import ThemedPortal from 'react-native-paper/src/components/Portal/ThemedPortal';
 import withTheme  from 'react-native-paper/src/core/withTheme';
 import { white } from 'react-native-paper/src/styles/colors';
 import type { Theme } from 'react-native-paper/src/types';
@@ -207,70 +206,68 @@ class Snackbar extends React.Component<Props, State> {
     const contentRightMargin = action ? 0 : 24;
 
     return (
-      <ThemedPortal>
-        <Animated.View
-          onLayout={this._onLayout}
-          style={[
-            styles.wrapper,
-            {
-              opacity: 1 // this.state.rendered ? 1 : 0,
-              // transform: [
-              //   {
-              //     translateY: this.state.yPosition,
-              //   },
-              // ],
-            },
-            style,
-          ]}
-        >
-          <TouchableWithoutFeedback onPress={!action ? onDismiss : null}>
-            <Animated.View
+      <Animated.View
+        onLayout={this._onLayout}
+        style={[
+          styles.wrapper,
+          {
+            opacity: 1 // this.state.rendered ? 1 : 0,
+            // transform: [
+            //   {
+            //     translateY: this.state.yPosition,
+            //   },
+            // ],
+          },
+          style,
+        ]}
+      >
+        <TouchableWithoutFeedback onPress={!action ? onDismiss : null}>
+          <Animated.View
+            style={[
+              styles.container,
+              {
+                opacity: 1
+                // opacity: this.state.opacity.interpolate({
+                //   inputRange: [0, 0.8, 1],
+                //   outputRange: [0, 0.2, 1],
+                // }),
+              },
+            ]}
+          >
+            <Text
               style={[
-                styles.container,
+                styles.content,
                 {
-                  opacity: 1
-                  // opacity: this.state.opacity.interpolate({
-                  //   inputRange: [0, 0.8, 1],
-                  //   outputRange: [0, 0.2, 1],
-                  // }),
+                  fontFamily: fonts.regular,
+                  marginRight: contentRightMargin,
                 },
               ]}
             >
-              <Text
-                style={[
-                  styles.content,
-                  {
-                    fontFamily: fonts.regular,
-                    marginRight: contentRightMargin,
-                  },
-                ]}
-              >
-                {children}
-              </Text>
-              {action ? (
-                <View>
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      action.onPress();
-                      this._hide();
-                    }}
-                  >
-                    <View
-                      style={{
-                        paddingHorizontal: buttonMargin,
-                        paddingVertical: 12
-                      }}>
-                      <Text style={{ color: colors.accent }}>
-                        {action.text.toUpperCase()}
-                      </Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              ) : null}
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        </Animated.View>
-      </ThemedPortal>
+              {children}
+            </Text>
+            {action ? (
+              <View>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    action.onPress();
+                    this._hide();
+                  }}
+                >
+                  <View
+                    style={{
+                      paddingHorizontal: buttonMargin,
+                      paddingVertical: 12
+                    }}>
+                    <Text style={{ color: colors.accent }}>
+                      {action.text.toUpperCase()}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            ) : null}
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </Animated.View>
     );
   }
 }
