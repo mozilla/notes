@@ -41,8 +41,6 @@ import SplashPanel from './app/components/SplashPanel';
 import background from './app/background';
 
 const appMainNavOptions = ({ navigation }) => {
-  const { params = {} } = navigation.state;
-  const routeName = navigation.state.routeName;
   return {
     header: (
       <ListPanelHeader navigation={navigation}></ListPanelHeader>
@@ -51,14 +49,11 @@ const appMainNavOptions = ({ navigation }) => {
 };
 
 const editorPanelOptions = ({ navigation }) => {
-  const { params = {} } = navigation.state;
-  const routeName = navigation.state.routeName;
-
   return {
     header: (
-      <EditorPanelHeader navigation={navigation}>
-      </EditorPanelHeader>
-    )
+      <EditorPanelHeader navigation={navigation}></EditorPanelHeader>
+    ),
+    drawerLockMode: 'locked-closed'
   };
 };
 
@@ -132,10 +127,13 @@ const App = createDrawerNavigator(
         // To disable drawerLockMode on some screen we need to manually reach this value.
         const routes = navigation.state.routes;
         const routeName = routes[routes.length - 1].routeName;
-        if (Object.keys(routeConfigMap).includes(routeName) &&
-            routeConfigMap[routeName].navigationOptions &&
-            routeConfigMap[routeName].navigationOptions.drawerLockMode) {
-          navigationOptions.drawerLockMode = routeConfigMap[routeName].navigationOptions.drawerLockMode;
+        if (Object.keys(routeConfigMap).includes(routeName)) {
+          const route = routeConfigMap[routeName];
+          if (typeof route.navigationOptions === "function") {
+            navigationOptions.drawerLockMode = route.navigationOptions.call(this, navigation).drawerLockMode;
+          } else if (route.navigationOptions) {
+            navigationOptions.drawerLockMode = route.navigationOptions.drawerLockMode;
+          }
         }
         return navigationOptions;
       }
