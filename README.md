@@ -17,7 +17,7 @@ git clone https://github.com/mozilla/notes.git
 git clone https://github.com/[yourusername]/notes.git
 ```
 * Step 2: Navigate to the root of the directory you cloned and run:
-> Make sure to use Node.js 6+.
+> Make sure to use Node.js 8+.
 
 | Command         | Description                               |
 |-----------------|-------------------------------------------|
