@@ -98,43 +98,50 @@ class ListPanel extends React.Component {
         }).start();
       } else {
         this.snackbarList.push(snackbar);
-        this._hideSnackbar();
       }
     };
 
     this._hideSnackbar = () => {
 
-      this.setState({
-        snackbarVisible: false,
-        deletedNote: null
-      });
-
-      Animated.timing(this.state.fabPositionAnimation, {
-        toValue: SNACKBAR_HEIGHT,
-        duration: SNACKBAR_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }).start(() => {
+      return new Promise((resolve) => {
         this.setState({
-          snackbar: null
+          snackbarVisible: false
         });
-        if (this.snackbarList.length > 0) {
-          this._showSnackbar(this.snackbarList.shift());
-        }
+
+        Animated.timing(this.state.fabPositionAnimation, {
+          toValue: SNACKBAR_HEIGHT,
+          duration: SNACKBAR_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }).start(() => {
+          this.setState({
+            snackbar: null
+          });
+          if (this.snackbarList.length > 0) {
+            this._showSnackbar(this.snackbarList.shift());
+          }
+          resolve();
+        });
       });
 
     };
 
-    this._undoDelete = () => {
+    this._undoDelete = (deletedNote) => {
 
-      const promises = [];
+      if (!this.ignoreUndo) {
+        this.ignoreUndo = true;
 
-      if (this.state.deletedNote) {
-        this.state.deletedNote.forEach((note) => {
-          promises.push(props.dispatch(createNote(note)));
+        const promises = [];
+
+        if (deletedNote && Array.isArray(deletedNote)) {
+          deletedNote.forEach((note) => {
+            promises.push(props.dispatch(createNote(note)));
+          });
+        }
+
+        Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar).then(() => {
+          this.ignoreUndo = false;
         });
       }
-
-      Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar);
     };
   }
 
@@ -176,7 +183,6 @@ class ListPanel extends React.Component {
       if (newProps.navigation.getParam('deletedNote')) {
         // We store deletedNote to be able to recreate it if user click undo
         const deletedNote = newProps.navigation.getParam('deletedNote');
-        this.setState({ deletedNote });
 
         // Erase params for future componentWillReceiveProps events
         newProps.navigation.setParams({ deletedNote: null });
@@ -188,7 +194,7 @@ class ListPanel extends React.Component {
           action: {
             text: 'UNDO',
             onPress: () => {
-              this._undoDelete();
+              this._undoDelete(deletedNote);
             }
           },
           duration: 6000
@@ -196,16 +202,22 @@ class ListPanel extends React.Component {
       }
 
       if (!this.props.state.sync.selected && newProps.state.sync.selected) {
+        Animated.timing(this.state.fabOpacityAnimation).stop();
         Animated.timing(this.state.fabOpacityAnimation, {
           toValue: 0,
             duration: 150,
             useNativeDriver: true,
-          }).start(() => this.setState({
-            hideFab: true,
-            fabOpacityAnimation: new Animated.Value(0)
-          }));
+          }).start(({ finished }) => {
+            if (finished) {
+              this.setState({
+                hideFab: true,
+                fabOpacityAnimation: new Animated.Value(0)
+              });
+            }
+          });
       } else if (this.props.state.sync.selected && !newProps.state.sync.selected) {
          this.setState({ hideFab: false });
+         Animated.timing(this.state.fabOpacityAnimation).stop();
          Animated.timing(this.state.fabOpacityAnimation, {
             toValue: 1,
             duration: 150,
@@ -214,7 +226,6 @@ class ListPanel extends React.Component {
       }
     } else {
       this.snackbarList = [];
-      this._hideSnackbar();
     }
   }
 

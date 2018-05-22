@@ -35,6 +35,7 @@ class MoreMenu extends Component {
           this.setState({ isOpen: false });
           switch (index) {
             case 0:
+            if (this.props.state.sync.focusedNoteId) {
               const deletedNote = this.props.state.notes.find((note) => {
                 return note.id === this.props.state.sync.focusedNoteId
               });
@@ -42,10 +43,14 @@ class MoreMenu extends Component {
                 this.props.dispatch(deleteNotes([ deletedNote.id ], 'in-note'));
               }
               navigation.navigate('ListPanel', { deletedNote: [ deletedNote ] });
-              break;
+            } else {
+              navigation.navigate('ListPanel');
+            }
+            break;
           }
         },
       );
+
     }
   };
 

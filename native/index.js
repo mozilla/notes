@@ -105,7 +105,7 @@ const routeConfigMap = {
   },
   ListPanel: {
     screen: (props) => {
-      return <PaperProvider><ListPanel {...props} /></PaperProvider>
+      return <ListPanel {...props} />
     }
   },
   EditorPanel: {
