@@ -134,12 +134,19 @@ class DrawerItems extends React.Component {
     function select(state) {
       return state.sync.error
     }
-    // TODO: unsubscribe this?
+
     store.subscribe(() => {
       const state = store.getState();
       const err = select(state);
+      const routes = this.props.navigation.state.routes[0].routes;
+      const route = routes[routes.length - 1];
       if (err && !state.sync.loginDetails) {
-        this.props.navigation.dispatch(DrawerActions.openDrawer());
+        if (route.routeName === 'EditorPanel') {
+          this.props.navigation.navigate('ListPanel');
+          setTimeout(() => this.props.navigation.dispatch(DrawerActions.openDrawer()), 250);
+        } else {
+          this.props.navigation.dispatch(DrawerActions.openDrawer())
+        }
       }
     })
   }
