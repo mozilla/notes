@@ -1,6 +1,7 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
          TEXT_SAVED,
+         TEXT_SYNCING,
          TEXT_SYNCED,
          CREATE_NOTE,
          DELETE_NOTE,
@@ -13,6 +14,7 @@ import { authenticate,
          createdNote,
          deletedNote,
          saved,
+         syncing,
          synced,
          reconnectSync,
          kintoLoad,
@@ -45,7 +47,6 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case CREATE_NOTE:
         store.dispatch(createdNote(eventData.id, eventData.content, eventData.lastModified));
-        store.dispatch(synced()); // stop syncing animation
         break;
       case DELETE_NOTE:
         store.dispatch(deletedNote(eventData.id));
@@ -61,6 +62,9 @@ chrome.runtime.onMessage.addListener(eventData => {
             ));
           }
         });
+        break;
+      case TEXT_SYNCING:
+        store.dispatch(syncing());
         break;
       case TEXT_SYNCED:
         browser.windows.getCurrent({populate: true}).then((windowInfo) => {
