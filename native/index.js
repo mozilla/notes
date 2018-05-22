@@ -2,7 +2,6 @@
 import './shim.js'
 // setup crash tracking
 import { Sentry } from 'react-native-sentry';
-// TODO: change this to prod vars later on
 const SENTRY_DSN = require('./config').SENTRY_DSN;
 if (SENTRY_DSN) {
   Sentry.config(SENTRY_DSN, {
@@ -58,23 +57,23 @@ const editorPanelOptions = ({ navigation }) => {
 };
 
 const fade = (props) => {
-  const {position, scene} = props
+  const {position, scene} = props;
 
-  const index = scene.index
+  const index = scene.index;
 
-  const translateX = 0
-  const translateY = 0
+  const translateX = 0;
+  const translateY = 0;
 
   const opacity = position.interpolate({
     inputRange: [index - 0.7, index, index + 0.7],
     outputRange: [0.3, 1, 0.3]
-  })
+  });
 
   return {
     opacity,
     transform: [{translateX}, {translateY}]
   }
-}
+};
 
 const routeConfigMap = {
   SplashPanel: {
