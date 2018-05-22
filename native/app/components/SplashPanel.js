@@ -4,29 +4,39 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 
-import { View, Text, ToastAndroid, Image } from 'react-native';
+import { View, Text, ToastAndroid, Image, NetInfo } from 'react-native';
 
 import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';
-import { authenticate, kintoLoad } from '../actions';
+import { authenticate, kintoLoad, setNetInfo } from '../actions';
+
 
 class SplashPanel extends React.Component {
+
+  // Reset history from StackNavigator and redirect to `destination` param
+  resetAndRedirect = (destination) => {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: destination })],
+    });
+    this.props.navigation.dispatch(resetAction);
+  };
+
   componentDidMount() {
     fxaUtils.fxaGetCredential().then((loginDetails) => {
       if (loginDetails && loginDetails.profile) {
         this.props.dispatch(authenticate(loginDetails));
-        this.props.dispatch(kintoLoad());
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
+
+        // On opening the app, we check network stratus
+        NetInfo.isConnected.fetch().then(isConnected => {
+          this.props.dispatch(setNetInfo(isConnected));
+          if (isConnected) this.props.dispatch(kintoLoad());
+          this.resetAndRedirect('ListPanel');
+        }).catch(() => {
+          this.resetAndRedirect('ListPanel');
         });
-        this.props.navigation.dispatch(resetAction);
       } else {
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
-        });
-        this.props.navigation.dispatch(resetAction);
+        this.resetAndRedirect('LoginPanel');
       }
     });
   }
