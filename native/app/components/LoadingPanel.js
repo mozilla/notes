@@ -42,7 +42,9 @@ class LoadingPanel extends React.Component {
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
       });
-      this.props.navigation.dispatch(resetAction);
+      setTimeout(() => {
+        this.props.navigation.dispatch(resetAction);
+      }, 1000);
     });
   }
 
