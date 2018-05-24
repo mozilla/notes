@@ -13,6 +13,7 @@ import { SYNC_AUTHENTICATED,
   FOCUS_NOTE,
   ERROR,
   NET_INFO,
+  RECONNECT_SYNC,
   TOGGLE_SELECT,
   RESET_SELECT } from './utils/constants';
 
@@ -23,6 +24,11 @@ import sync from './utils/sync';
 
 export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
+}
+
+export function reconnectSync() {
+  trackEvent('reconnect-sync');
+  return { type: RECONNECT_SYNC, message: 'Reconnect to Sync' };
 }
 
 export function syncing() {

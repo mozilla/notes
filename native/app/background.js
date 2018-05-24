@@ -1,6 +1,5 @@
 import kintoClient from './vendor/kinto-client';
 import fxaUtils from './vendor/fxa-utils';
-import { trackEvent } from './utils/metrics';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -23,6 +22,7 @@ import { SYNC_AUTHENTICATED,
  import browser from './browser';
  import { store, persistor } from './store';
  import sync from './utils/sync';
+ import { reconnectSync } from './actions';
 
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
@@ -54,8 +54,7 @@ browser.runtime.onMessage.addListener(eventData => {
       store.dispatch({ type: ERROR, message: eventData.message });
       break;
     case RECONNECT_SYNC:
-      trackEvent('reconnect-sync');
-      store.dispatch({ type: ERROR, message: 'Reconnect to Sync' });
+      store.dispatch(reconnectSync());
     default:
       break;
   }

@@ -15,7 +15,6 @@ import { COLOR_DARK_BACKGROUND,
          COLOR_DARK_SYNC,
          COLOR_NOTES_BLUE,
          KINTO_LOADED,
-         RECONNECT_SYNC,
          DISCONNECTED } from '../utils/constants';
 
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
@@ -23,7 +22,7 @@ import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import { store } from '../store';
 import browser from '../browser';
-import { disconnect, kintoLoad, authenticate, syncing } from '../actions';
+import { disconnect, kintoLoad, authenticate, syncing, reconnectSync } from '../actions';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -120,9 +119,7 @@ class DrawerItems extends React.Component {
           });
         }).catch((exception) => {
           this.setState({ isOpeningLogin: false });
-          browser.runtime.sendMessage({
-            action: RECONNECT_SYNC
-          });
+          this.props.dispatch(reconnectSync());
         });
       }
     };
