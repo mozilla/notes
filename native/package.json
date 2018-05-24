@@ -41,7 +41,7 @@
     "react-native-level-fs": "~3.0.0",
     "react-native-os": "~1.1.0",
     "react-native-paper": "^1.7.0",
-    "react-native-randombytes": "github:vladikoff/react-native-randombytes#ver55",
+    "react-native-randombytes": "~3.2.0",
     "react-native-sentry": "^0.35.3",
     "react-native-sqlite-2": "^1.5.2",
     "react-native-tcp": "~3.3.0",
