@@ -10,7 +10,7 @@ import { FAB } from 'react-native-paper';
 
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
-import { kintoLoad, createNote, setNetInfo } from "../actions";
+import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
 
@@ -25,6 +25,7 @@ const SYNCED_SNACKBAR = {
   text: 'Notes synced!',
   color: COLOR_DARK_SYNC,
   action: null,
+  onDismiss: null,
   duration: 3000
 };
 
@@ -52,6 +53,8 @@ class ListPanel extends React.Component {
         this.setState({ refreshing: true });
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
+        }).catch(() => {
+          this.setState({ refreshing: false });
         });
       }
     }
@@ -65,7 +68,9 @@ class ListPanel extends React.Component {
           if (props.state.profile.email) {
             props.dispatch(kintoLoad()).then(() => {
               this.setState({ refreshing: false });
-            })
+            }).catch(() => {
+              this.setState({ refreshing: false });
+            });
           }
         });
       } else {
@@ -97,7 +102,10 @@ class ListPanel extends React.Component {
           useNativeDriver: true,
         }).start();
       } else {
-        this.snackbarList.push(snackbar);
+        if (snackbar.color !== COLOR_DARK_WARNING &&
+          this.state.snackbar.text !== snackbar.text) {
+          this.snackbarList.push(snackbar);
+        }
       }
     };
 
@@ -143,6 +151,20 @@ class ListPanel extends React.Component {
         });
       }
     };
+
+    this._requestReconnect = () => {
+      if (!this.props.state.sync.loginDetails) {
+        return Promise.resolve().then(() => {
+          return fxaUtils.launchOAuthKeyFlow();
+        }).then((loginDetails) => {
+          trackEvent('login-success');
+          this.props.dispatch(authenticate(loginDetails));
+          this.props.dispatch(kintoLoad());
+        }).catch((exception) => {
+          this.props.dispatch(reconnectSync());
+        });
+      }
+    };
   }
 
   componentDidMount() {
@@ -177,6 +199,24 @@ class ListPanel extends React.Component {
           action: null,
           duration: 3000
         });
+      } else if (!newProps.state.sync.loginDetails) {
+        this._showSnackbar({
+          text: newProps.state.sync.error,
+          color: COLOR_DARK_WARNING,
+          onDismiss: this._requestReconnect,
+          duration: 0
+        });
+      }
+
+      // If user login and reconnectSync snackbar is open
+      if (this.state.snackbar &&
+          this.state.snackbar.duration === 0 &&
+          this.state.snackbar.color === COLOR_DARK_WARNING) {
+          if (!this.props.state.sync.loginDetails && newProps.state.sync.loginDetails) {
+            this._hideSnackbar();
+          } else if (newProps.state.sync.isConnected === false) {
+            this._hideSnackbar();
+          }
       }
 
       // Display deleted note snackbar
@@ -247,6 +287,9 @@ class ListPanel extends React.Component {
           theme={{ colors: { accent: 'white' }}}
           onDismiss={() => {
             this._hideSnackbar();
+            if (this.state.snackbar.onDismiss) {
+              setTimeout(this.state.snackbar.onDismiss, 10);
+            }
           }}
           duration={ this.state.snackbar ? this.state.snackbar.duration : 3000 }
         >

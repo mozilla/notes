@@ -30,16 +30,22 @@ browser.runtime.onMessage.addListener(eventData => {
       sync.createNote(kintoClient, store.getState().sync.loginDetails,
         { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case UPDATE_NOTE:
       sync.saveToKinto(kintoClient, store.getState().sync.loginDetails,
         { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case DELETE_NOTE:
       sync.deleteNotes(kintoClient, store.getState().sync.loginDetails, eventData.ids, eventData.origin).then(() => {
+        store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
         store.dispatch({ type: TEXT_SYNCED });
       });
       break;

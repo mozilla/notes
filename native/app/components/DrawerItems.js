@@ -93,7 +93,7 @@ class DrawerItems extends React.Component {
           props.navigation.dispatch(DrawerActions.closeDrawer());
           ToastAndroid.show('You are offline.', ToastAndroid.LONG);
         }
-      } else if (!this.props.state.profile.email) {
+      } else if (!this.props.state.sync.loginDetails) {
         this._requestReconnect();
       } else {
         trackEvent('webext-button-authenticate');
@@ -108,7 +108,6 @@ class DrawerItems extends React.Component {
       if (!this.props.state.sync.loginDetails) {
         this.setState({ isOpeningLogin: true });
         return Promise.resolve().then(() => {
-          this.props.dispatch(syncing());
           return fxaUtils.launchOAuthKeyFlow();
         }).then((loginDetails) => {
           trackEvent('login-success');
@@ -123,29 +122,6 @@ class DrawerItems extends React.Component {
         });
       }
     };
-  }
-
-  componentDidMount() {
-    const { navigation } = this.props;
-
-    function select(state) {
-      return state.sync.error
-    }
-
-    store.subscribe(() => {
-      const state = store.getState();
-      const err = select(state);
-      const routes = this.props.navigation.state.routes[0].routes;
-      const route = routes[routes.length - 1];
-      if (err && !state.sync.loginDetails) {
-        if (route.routeName === 'EditorPanel') {
-          this.props.navigation.navigate('ListPanel');
-          setTimeout(() => this.props.navigation.dispatch(DrawerActions.openDrawer()), 250);
-        } else {
-          this.props.navigation.dispatch(DrawerActions.openDrawer())
-        }
-      }
-    })
   }
 
   componentWillReceiveProps(newProps) {

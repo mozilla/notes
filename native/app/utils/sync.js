@@ -198,6 +198,8 @@ function syncKinto(client, loginDetails) {
   if (store.getState().sync.isConnected === false ||
       !store.getState().profile.email) return Promise.resolve();
 
+  if (!loginDetails) { return Promise.reject(); }
+
   browser.runtime.sendMessage({
     action: TEXT_SYNCING
   });
@@ -374,10 +376,7 @@ function retrieveNote(client) {
 function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-vars
   return syncKinto(client, loginDetails)
     // Ignore failure of syncKinto by retrieving note even when promise rejected
-    .then(() => retrieveNote(client), () => retrieveNote(client))
-    .catch((e) => {
-      return new Promise((resolve) => resolve());
-    });
+    .then(() => retrieveNote(client));
 }
 
 function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unused-vars
@@ -385,10 +384,11 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
   // We do not store empty notes on server side.
   if (note.content === '') { return Promise.resolve(); }
 
-  let resolve;
+  let resolve, reject;
 
-  const promise = new Promise(thisResolve => {
+  const promise = new Promise((thisResolve, thisReject) => {
     resolve = thisResolve;
+    reject = thisReject;
   });
 
   const notes = client.collection('notes', { idSchema: notesIdSchema });
@@ -408,12 +408,12 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
       client.conflict = false;
       syncDebounce = null;
       return syncKinto(client, loginDetails)
-        .then(() => retrieveNote(client), () => retrieveNote(client))
+        .then(() => retrieveNote(client))
         .then((result) => {
           resolve(result.data.find((n) => n.id === note.id), client.conflict);
         })
-        .catch(result => {
-          resolve();
+        .catch((error) => {
+          reject(error)
         });
     };
     clearTimeout(syncDebounce);

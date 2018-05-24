@@ -39,18 +39,24 @@ export function kintoLoad(origin) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-      dispatch({ type: TEXT_SYNCING, from: origin });
-      sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
-        if (result && result.data) {
-          dispatch({ type: KINTO_LOADED, notes: result.data });
-          browser.runtime.sendMessage({
-            action: KINTO_LOADED
-          });
-        }
+      if (!getState().sync.loginDetails) {
+        dispatch(reconnectSync());
         resolve();
-      }).catch(_ => {
-        reject();
-      });
+      } else {
+        dispatch({ type: TEXT_SYNCING, from: origin });
+        sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
+          if (result && result.data) {
+            dispatch({ type: KINTO_LOADED, notes: result.data });
+            browser.runtime.sendMessage({
+              action: KINTO_LOADED
+            });
+          }
+          resolve();
+        }).catch((error) => {
+          dispatch(reconnectSync());
+          resolve();
+        });
+      }
     });
   };
 }

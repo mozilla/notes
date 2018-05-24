@@ -87,7 +87,7 @@ function sync(sync = {}, action) {
         isOpeningLogin: false,
         isPleaseLogin: false,
         isReconnectSync: true,
-        error: null
+        error: action.message
       });
     case DELETE_NOTE:
       return Object.assign({}, sync, {
@@ -164,6 +164,10 @@ function sync(sync = {}, action) {
 function kinto(kinto = {}, action) {
   switch (action.type) {
     case KINTO_LOADED:
+      return Object.assign({}, kinto, {
+        isLoaded: true
+      });
+    case RECONNECT_SYNC:
       return Object.assign({}, kinto, {
         isLoaded: true
       });
