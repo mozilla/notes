@@ -283,11 +283,13 @@ class ListPanel extends React.Component {
         <Snackbar
           style={{
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
+            position: 'relative',
+            top: SNACKBAR_HEIGHT,
             transform: [
               {
                 translateY: this.state.fabPositionAnimation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [SNACKBAR_HEIGHT, 0]
+                    outputRange: [0, -1 * SNACKBAR_HEIGHT]
                   }),
               },
             ],
