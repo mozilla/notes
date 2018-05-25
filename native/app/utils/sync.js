@@ -294,13 +294,13 @@ function syncKinto(client, loginDetails) {
       if (error.response && error.response.status === 401) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
 
         // NOTE: we cannot use `instanceof ServerKeyNewerError` below in React Native
       } else if (error.message === 'key used to encrypt the record appears to be newer than our key') {
         // If the key date is greater than current one, log the user out.
         //console.error(error); // eslint-disable-line no-console
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
       } else if (error.message === 'key used to encrypt the record appears to be older than our key') {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
@@ -322,7 +322,7 @@ function syncKinto(client, loginDetails) {
         return Promise.resolve(null);
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
       } else if (error.response
                 && error.response.status === 507
                 && error.message.includes('Insufficient Storage')) {
@@ -334,18 +334,22 @@ function syncKinto(client, loginDetails) {
         });
         return Promise.reject(error);
       } else if (error.message.includes('Network request failed')) {
-        reconnectSync(loginDetails);
+        reconnectSync(loginDetails, client);
         return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
-      reconnectSync(loginDetails);
+      reconnectSync(loginDetails, client);
       return Promise.reject(error);
     });
 }
 
-function reconnectSync(loginDetails) {
+function reconnectSync(loginDetails, client) {
   // credentials.clear();
   lastSyncTimestamp = null; // eslint-disable-line no-undef
+
+  const notes = client.collection('notes', { idSchema: notesIdSchema });
+  notes.resetSyncStatus();
+
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: RECONNECT_SYNC
   });
