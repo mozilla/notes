@@ -10,7 +10,7 @@ import { FAB } from 'react-native-paper';
 
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
-import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync } from "../actions";
+import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin } from "../actions";
 import browser from '../browser';
 import { trackEvent } from '../utils/metrics';
 
@@ -38,7 +38,7 @@ class ListPanel extends React.Component {
       appState: AppState.currentState,
       deletedNote: null,
       hideFab: false,
-      fabPositionAnimation: new Animated.Value(SNACKBAR_HEIGHT),
+      fabPositionAnimation: new Animated.Value(0),
       fabOpacityAnimation: new Animated.Value(1),
       snackbarVisible: false,
       snackbar: null
@@ -65,7 +65,7 @@ class ListPanel extends React.Component {
         // On opening the app, we check network stratus
         NetInfo.isConnected.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
-          if (props.state.profile.email) {
+          if (this.props.state.sync.loginDetails) {
             props.dispatch(kintoLoad()).then(() => {
               this.setState({ refreshing: false });
             }).catch(() => {
@@ -84,28 +84,28 @@ class ListPanel extends React.Component {
       const wasConnected = this.props.state.sync.isConnected;
       props.dispatch(setNetInfo(connectionInfo.type !== 'none'));
       // if network is back, we trigger a sync
-      if (wasConnected === false && this.props.state.sync.isConnected !== false) {
+      if (wasConnected === false &&
+          this.props.state.sync.isConnected !== false &&
+          this.props.state.sync.loginDetails) {
         props.dispatch(kintoLoad());
       }
     };
 
     this._showSnackbar = (snackbar) => {
-      if (!this.state.snackbar) {
+      if (!this.state.snackbar && snackbar) {
         this.setState({
           snackbar,
           snackbarVisible: true,
         });
 
         Animated.timing(this.state.fabPositionAnimation, {
-          toValue: 0, // this.state.height,
+          toValue: 1,
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
         }).start();
-      } else {
-        if (snackbar.color !== COLOR_DARK_WARNING &&
-          this.state.snackbar.text !== snackbar.text) {
-          this.snackbarList.push(snackbar);
-        }
+      } else if (snackbar && snackbar.color !== COLOR_DARK_WARNING &&
+        this.state.snackbar.text !== snackbar.text) {
+        this.snackbarList.push(snackbar);
       }
     };
 
@@ -117,7 +117,7 @@ class ListPanel extends React.Component {
         });
 
         Animated.timing(this.state.fabPositionAnimation, {
-          toValue: SNACKBAR_HEIGHT,
+          toValue: 0,
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
         }).start(() => {
@@ -154,9 +154,11 @@ class ListPanel extends React.Component {
 
     this._requestReconnect = () => {
       if (!this.props.state.sync.loginDetails) {
-        return Promise.resolve().then(() => {
-          return fxaUtils.launchOAuthKeyFlow();
-        }).then((loginDetails) => {
+
+        this.props.dispatch(openingLogin());
+        this.snackbarList = [];
+        return fxaUtils.launchOAuthKeyFlow()
+        .then((loginDetails) => {
           trackEvent('login-success');
           this.props.dispatch(authenticate(loginDetails));
           this.props.dispatch(kintoLoad());
@@ -185,7 +187,7 @@ class ListPanel extends React.Component {
           !newProps.state.sync.error &&
           newProps.state.sync.isConnected !== false &&
           this.state.appState === 'active' &&
-          newProps.state.profile.email) {
+          newProps.state.sync.loginDetails) {
 
         if (this.props.state.sync.isSyncingFrom === 'drawer') {
           setTimeout(() => this._showSnackbar(SYNCED_SNACKBAR), 400);
@@ -199,11 +201,14 @@ class ListPanel extends React.Component {
           action: null,
           duration: 3000
         });
-      } else if (!newProps.state.sync.loginDetails) {
+      } else if (!newProps.state.sync.loginDetails &&
+                 !newProps.state.sync.isOpeningLogin &&
+                 !newProps.state.sync.isPleaseLogin) {
+        console.log(newProps.state.sync);
         this._showSnackbar({
           text: newProps.state.sync.error,
           color: COLOR_DARK_WARNING,
-          onDismiss: this._requestReconnect,
+          onPress: this._requestReconnect,
           duration: 0
         });
       }
@@ -215,6 +220,8 @@ class ListPanel extends React.Component {
           if (!this.props.state.sync.loginDetails && newProps.state.sync.loginDetails) {
             this._hideSnackbar();
           } else if (newProps.state.sync.isConnected === false) {
+            this._hideSnackbar();
+          } else if (newProps.state.sync.isOpeningLogin || newProps.state.sync.isPleaseLogin) {
             this._hideSnackbar();
           }
       }
@@ -278,17 +285,20 @@ class ListPanel extends React.Component {
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
             transform: [
               {
-                translateY: this.state.fabPositionAnimation,
+                translateY: this.state.fabPositionAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [SNACKBAR_HEIGHT, 0]
+                  }),
               },
             ],
           }}
           visible={ this.state.snackbarVisible }
           action={ this.state.snackbar ? this.state.snackbar.action : null }
           theme={{ colors: { accent: 'white' }}}
-          onDismiss={() => {
+          onDismiss={(onPress) => {
             this._hideSnackbar();
-            if (this.state.snackbar.onDismiss) {
-              setTimeout(this.state.snackbar.onDismiss, 10);
+            if (this.state.snackbar && this.state.snackbar.onPress && onPress) {
+              setTimeout(this.state.snackbar.onPress, 10);
             }
           }}
           duration={ this.state.snackbar ? this.state.snackbar.duration : 3000 }
@@ -310,8 +320,8 @@ class ListPanel extends React.Component {
               transform: [
                 {
                   translateY: this.state.fabPositionAnimation.interpolate({
-                    inputRange: [0, SNACKBAR_HEIGHT],
-                    outputRange: [-1 * SNACKBAR_HEIGHT, 0]
+                    inputRange: [0, 1],
+                    outputRange: [0, -1 * SNACKBAR_HEIGHT]
                   }),
                 },
                 {

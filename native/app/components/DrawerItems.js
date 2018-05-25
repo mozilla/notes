@@ -22,7 +22,7 @@ import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import { store } from '../store';
 import browser from '../browser';
-import { disconnect, kintoLoad, authenticate, syncing, reconnectSync } from '../actions';
+import { disconnect, kintoLoad, authenticate, syncing, reconnectSync, openingLogin } from '../actions';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -107,9 +107,9 @@ class DrawerItems extends React.Component {
     this._requestReconnect = () => {
       if (!this.props.state.sync.loginDetails) {
         this.setState({ isOpeningLogin: true });
-        return Promise.resolve().then(() => {
-          return fxaUtils.launchOAuthKeyFlow();
-        }).then((loginDetails) => {
+        this.props.dispatch(openingLogin());
+        return fxaUtils.launchOAuthKeyFlow()
+        .then((loginDetails) => {
           trackEvent('login-success');
           this.setState({ isOpeningLogin: false });
           this.props.dispatch(authenticate(loginDetails));

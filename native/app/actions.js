@@ -12,6 +12,8 @@ import { SYNC_AUTHENTICATED,
   DELETE_NOTE,
   FOCUS_NOTE,
   ERROR,
+  OPENING_LOGIN,
+  PLEASE_LOGIN,
   NET_INFO,
   RECONNECT_SYNC,
   TOGGLE_SELECT,
@@ -24,6 +26,10 @@ import sync from './utils/sync';
 
 export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
+}
+
+export function openingLogin() {
+  return { type: OPENING_LOGIN };
 }
 
 export function reconnectSync() {
@@ -53,7 +59,9 @@ export function kintoLoad(origin) {
           }
           resolve();
         }).catch((error) => {
-          dispatch(reconnectSync());
+          if (!getState().sync.loginDetails) {
+            dispatch(reconnectSync());
+          }
           resolve();
         });
       }
