@@ -157,7 +157,8 @@ class ListPanel extends React.Component {
 
         this.props.dispatch(openingLogin());
         this.snackbarList = [];
-        return fxaUtils.launchOAuthKeyFlow()
+        return Promise.resolve()
+        .then(() => fxaUtils.launchOAuthKeyFlow())
         .then((loginDetails) => {
           trackEvent('login-success');
           this.props.dispatch(authenticate(loginDetails));

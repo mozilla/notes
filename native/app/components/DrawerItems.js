@@ -108,7 +108,8 @@ class DrawerItems extends React.Component {
       if (!this.props.state.sync.loginDetails) {
         this.setState({ isOpeningLogin: true });
         this.props.dispatch(openingLogin());
-        return fxaUtils.launchOAuthKeyFlow()
+        return Promise.resolve()
+        .then(() => fxaUtils.launchOAuthKeyFlow())
         .then((loginDetails) => {
           trackEvent('login-success');
           this.setState({ isOpeningLogin: false });
@@ -142,7 +143,7 @@ class DrawerItems extends React.Component {
     if (this.props.state.sync.isConnected === false) {
       statusLabel = 'Offline';
     } else if (this.props.state.sync.isSyncing) {
-      statusLabel = 'Syncing...';
+      statusLabel = 'Syncing…';
     } else {
       statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;
     }
@@ -171,7 +172,7 @@ class DrawerItems extends React.Component {
         { this.props.state.sync.error ?
           <TouchableRipple style={styles.footer} onPress={this._requestReconnect}>
             <View style={styles.footerWrapper}>
-              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.error }</Text>
+              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.isOpeningLogin ? 'Opening login…' : this.props.state.sync.error }</Text>
               <MaterialIcons
                 name='warning'
                 style={{ color: COLOR_DARK_WARNING }}
