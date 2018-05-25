@@ -7,6 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_DARK_WARNING } from '../utils/constants';
 import MoreMenu from './MoreMenu';
+import browser from '../browser';
 
 class EditorPanelHeader extends Component {
 
@@ -77,9 +78,9 @@ class EditorPanelHeader extends Component {
     } else if (newProps.state.sync.error) {
       this._setToolbarContent(newProps.state.sync.error, COLOR_DARK_WARNING);
     } else if (newProps.state.sync.isSyncing) {
-      this._setToolbarContent('Syncing...');
+      this._setToolbarContent(browser.i18n.getMessage('syncProgress2'));
     } else if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-      this._setToolbarContent('Synced');
+      this._setToolbarContent(browser.i18n.getMessage('syncComplete4'));
       this.timer = setTimeout(() => {
         const note = newProps.state.notes.find((note) => newProps.state.sync.focusedNoteId === note.id);
         this.timer = this._setToolbarContent(note ? note.firstLine : '');

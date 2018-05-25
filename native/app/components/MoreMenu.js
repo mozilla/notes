@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deleteNotes } from '../actions';
+import browser from '../browser';
 import { View, StyleSheet, NativeModules, findNodeHandle } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -55,7 +56,7 @@ class MoreMenu extends Component {
   };
 
   render() {
-    const labels = ['Delete'];
+    const labels = [ browser.i18n.getMessage('delete') ];
 
     return (
       <View style={{ flexDirection: 'row' }}>

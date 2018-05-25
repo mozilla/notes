@@ -6,8 +6,9 @@ import { NavigationActions, StackActions } from 'react-navigation';
 import { View, Text, ProgressBarAndroid, ToastAndroid, Image, StyleSheet } from 'react-native';
 import { kintoLoad, disconnect} from '../actions';
 
- import { COLOR_NOTES_BLUE } from '../utils/constants';
- import i18nGetMessage from '../utils/i18n';
+import i18nGetMessage from '../utils/i18n';
+import { KINTO_LOADED, COLOR_NOTES_BLUE } from '../utils/constants';
+import browser from '../browser';
 
 class LoginPanel extends React.Component {
 
@@ -36,7 +37,7 @@ class LoginPanel extends React.Component {
           </Text>
           <Text style={{ fontSize: 16, padding: 10 }}>Access your Test Pilot Notes</Text>
           <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
-            style={styles.btnSignin}>SIGN IN</Button>
+            style={styles.btnSignin}>{ browser.i18n.getMessage('signIn') }</Button>
         </View>
       </View>
     );

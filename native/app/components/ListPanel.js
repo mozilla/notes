@@ -22,7 +22,7 @@ const SNACKBAR_ANIMATION_DURATION = 250;
 const SNACKBAR_HEIGHT = 48;
 
 const SYNCED_SNACKBAR = {
-  text: 'Notes synced!',
+  text: browser.i18n.getMessage('syncComplete6'),
   color: COLOR_DARK_SYNC,
   action: null,
   duration: 3000
