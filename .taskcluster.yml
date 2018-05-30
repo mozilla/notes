@@ -16,7 +16,7 @@ tasks:
       features:
         taskclusterProxy: true
       maxRunTime: 3600
-      image: circleci/android:api-25-node8-alpha
+      image: circleci/android:api-26-node8-alpha
       command:
         - /bin/bash
         - '--login'
