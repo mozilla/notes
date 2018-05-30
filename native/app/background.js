@@ -1,6 +1,5 @@
 import kintoClient from './vendor/kinto-client';
 import fxaUtils from './vendor/fxa-utils';
-import { trackEvent } from './utils/metrics';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -23,6 +22,7 @@ import { SYNC_AUTHENTICATED,
  import browser from './browser';
  import { store, persistor } from './store';
  import sync from './utils/sync';
+ import { reconnectSync } from './actions';
 
 browser.runtime.onMessage.addListener(eventData => {
   switch(eventData.action) {
@@ -30,16 +30,22 @@ browser.runtime.onMessage.addListener(eventData => {
       sync.createNote(kintoClient, store.getState().sync.loginDetails,
         { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case UPDATE_NOTE:
       sync.saveToKinto(kintoClient, store.getState().sync.loginDetails,
         { id: eventData.id, content: eventData.content, lastModified: eventData.lastModified }).then(() => {
         store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
+        store.dispatch({ type: TEXT_SYNCED });
       });
       break;
     case DELETE_NOTE:
       sync.deleteNotes(kintoClient, store.getState().sync.loginDetails, eventData.ids, eventData.origin).then(() => {
+        store.dispatch({ type: TEXT_SYNCED });
+      }).catch(() => {
         store.dispatch({ type: TEXT_SYNCED });
       });
       break;
@@ -54,8 +60,7 @@ browser.runtime.onMessage.addListener(eventData => {
       store.dispatch({ type: ERROR, message: eventData.message });
       break;
     case RECONNECT_SYNC:
-      trackEvent('reconnect-sync');
-      store.dispatch({ type: ERROR, message: 'Reconnect to Sync' });
+      store.dispatch(reconnectSync());
     default:
       break;
   }

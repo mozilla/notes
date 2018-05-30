@@ -19,9 +19,8 @@ class LoadingPanel extends React.Component {
 
   componentDidMount() {
 
-    return Promise.resolve().then(() => {
-      return fxaUtils.launchOAuthKeyFlow();
-    }).then((loginDetails) => {
+    return fxaUtils.launchOAuthKeyFlow()
+    .then((loginDetails) => {
       trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
       ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);

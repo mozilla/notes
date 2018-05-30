@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Button } from 'react-native-paper';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { View, Text, ProgressBarAndroid, ToastAndroid, Image, StyleSheet } from 'react-native';
-import { kintoLoad, disconnect} from '../actions';
 
  import { COLOR_NOTES_BLUE } from '../utils/constants';
  import i18nGetMessage from '../utils/i18n';

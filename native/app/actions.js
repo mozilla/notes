@@ -12,7 +12,10 @@ import { SYNC_AUTHENTICATED,
   DELETE_NOTE,
   FOCUS_NOTE,
   ERROR,
+  OPENING_LOGIN,
+  PLEASE_LOGIN,
   NET_INFO,
+  RECONNECT_SYNC,
   TOGGLE_SELECT,
   RESET_SELECT } from './utils/constants';
 
@@ -25,6 +28,15 @@ export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
+export function openingLogin() {
+  return { type: OPENING_LOGIN };
+}
+
+export function reconnectSync() {
+  trackEvent('reconnect-sync');
+  return { type: RECONNECT_SYNC, message: 'Reconnect to Sync' };
+}
+
 export function syncing() {
    return { type: TEXT_SYNCING };
 }
@@ -33,18 +45,26 @@ export function kintoLoad(origin) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-      dispatch({ type: TEXT_SYNCING, from: origin });
-      sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
-        if (result && result.data) {
-          dispatch({ type: KINTO_LOADED, notes: result.data });
-          browser.runtime.sendMessage({
-            action: KINTO_LOADED
-          });
-        }
+      if (!getState().sync.loginDetails) {
+        dispatch(reconnectSync());
         resolve();
-      }).catch(_ => {
-        reject();
-      });
+      } else {
+        dispatch({ type: TEXT_SYNCING, from: origin });
+        sync.loadFromKinto(kintoClient, getState().sync.loginDetails).then(result => {
+          if (result && result.data) {
+            dispatch({ type: KINTO_LOADED, notes: result.data });
+            browser.runtime.sendMessage({
+              action: KINTO_LOADED
+            });
+          }
+          resolve();
+        }).catch((error) => {
+          if (!getState().sync.loginDetails) {
+            dispatch(reconnectSync());
+          }
+          resolve();
+        });
+      }
     });
   };
 }

@@ -195,8 +195,9 @@ let lastSyncTimestamp = null;
 function syncKinto(client, loginDetails) {
 
   // If device is offline, we skip syncing.
-  if (store.getState().sync.isConnected === false ||
-      !store.getState().profile.email) return Promise.resolve();
+  if (store.getState().sync.isConnected === false) return Promise.resolve();
+
+  if (!loginDetails) { return Promise.reject(); }
 
   browser.runtime.sendMessage({
     action: TEXT_SYNCING
@@ -293,13 +294,13 @@ function syncKinto(client, loginDetails) {
       if (error.response && error.response.status === 401) {
         // In case of 401 log the user out.
         // FIXME: Fetch a new token and retry?
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
 
         // NOTE: we cannot use `instanceof ServerKeyNewerError` below in React Native
       } else if (error.message === 'key used to encrypt the record appears to be newer than our key') {
         // If the key date is greater than current one, log the user out.
         //console.error(error); // eslint-disable-line no-console
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
       } else if (error.message === 'key used to encrypt the record appears to be older than our key') {
         // If the key date is older than the current one, we can't help
         // because there is no way we get the previous key.
@@ -321,7 +322,7 @@ function syncKinto(client, loginDetails) {
         return Promise.resolve(null);
       } else if (error.message === 'Failed to renew token') {
         // cannot refresh the access token, log the user out.
-        return reconnectSync(loginDetails);
+        return reconnectSync(loginDetails, client);
       } else if (error.response
                 && error.response.status === 507
                 && error.message.includes('Insufficient Storage')) {
@@ -333,18 +334,22 @@ function syncKinto(client, loginDetails) {
         });
         return Promise.reject(error);
       } else if (error.message.includes('Network request failed')) {
-        reconnectSync(loginDetails);
+        reconnectSync(loginDetails, client);
         return Promise.reject(error);
       }
       console.error(error); // eslint-disable-line no-console
-      reconnectSync(loginDetails);
+      reconnectSync(loginDetails, client);
       return Promise.reject(error);
     });
 }
 
-function reconnectSync(loginDetails) {
+function reconnectSync(loginDetails, client) {
   // credentials.clear();
   lastSyncTimestamp = null; // eslint-disable-line no-undef
+
+  const notes = client.collection('notes', { idSchema: notesIdSchema });
+  notes.resetSyncStatus();
+
   browser.runtime.sendMessage('notes@mozilla.com', {
     action: RECONNECT_SYNC
   });
@@ -374,10 +379,7 @@ function retrieveNote(client) {
 function loadFromKinto(client, loginDetails) { // eslint-disable-line no-unused-vars
   return syncKinto(client, loginDetails)
     // Ignore failure of syncKinto by retrieving note even when promise rejected
-    .then(() => retrieveNote(client), () => retrieveNote(client))
-    .catch((e) => {
-      return new Promise((resolve) => resolve());
-    });
+    .then(() => retrieveNote(client));
 }
 
 function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unused-vars
@@ -385,10 +387,11 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
   // We do not store empty notes on server side.
   if (note.content === '') { return Promise.resolve(); }
 
-  let resolve;
+  let resolve, reject;
 
-  const promise = new Promise(thisResolve => {
+  const promise = new Promise((thisResolve, thisReject) => {
     resolve = thisResolve;
+    reject = thisReject;
   });
 
   const notes = client.collection('notes', { idSchema: notesIdSchema });
@@ -408,12 +411,12 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
       client.conflict = false;
       syncDebounce = null;
       return syncKinto(client, loginDetails)
-        .then(() => retrieveNote(client), () => retrieveNote(client))
+        .then(() => retrieveNote(client))
         .then((result) => {
           resolve(result.data.find((n) => n.id === note.id), client.conflict);
         })
-        .catch(result => {
-          resolve();
+        .catch((error) => {
+          reject(error)
         });
     };
     clearTimeout(syncDebounce);

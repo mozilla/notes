@@ -15,7 +15,6 @@ import { COLOR_DARK_BACKGROUND,
          COLOR_DARK_SYNC,
          COLOR_NOTES_BLUE,
          KINTO_LOADED,
-         RECONNECT_SYNC,
          DISCONNECTED } from '../utils/constants';
 
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
@@ -23,7 +22,7 @@ import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import { store } from '../store';
 import browser from '../browser';
-import { disconnect, kintoLoad, authenticate, syncing } from '../actions';
+import { disconnect, kintoLoad, authenticate, syncing, reconnectSync, openingLogin } from '../actions';
 
 // Url to open to give feedback
 const SURVEY_PATH = 'https://qsurvey.mozilla.com/s3/notes?ref=android';
@@ -94,7 +93,7 @@ class DrawerItems extends React.Component {
           props.navigation.dispatch(DrawerActions.closeDrawer());
           ToastAndroid.show('You are offline.', ToastAndroid.LONG);
         }
-      } else if (!this.props.state.profile.email) {
+      } else if (!this.props.state.sync.loginDetails) {
         this._requestReconnect();
       } else {
         trackEvent('webext-button-authenticate');
@@ -106,12 +105,12 @@ class DrawerItems extends React.Component {
     };
 
     this._requestReconnect = () => {
-      if (!this.props.state.profile.email) {
+      if (!this.props.state.sync.loginDetails) {
         this.setState({ isOpeningLogin: true });
-        return Promise.resolve().then(() => {
-          this.props.dispatch(syncing());
-          return fxaUtils.launchOAuthKeyFlow();
-        }).then((loginDetails) => {
+        this.props.dispatch(openingLogin());
+        return Promise.resolve()
+        .then(() => fxaUtils.launchOAuthKeyFlow())
+        .then((loginDetails) => {
           trackEvent('login-success');
           this.setState({ isOpeningLogin: false });
           this.props.dispatch(authenticate(loginDetails));
@@ -120,35 +119,10 @@ class DrawerItems extends React.Component {
           });
         }).catch((exception) => {
           this.setState({ isOpeningLogin: false });
-          browser.runtime.sendMessage({
-            action: RECONNECT_SYNC
-          });
+          this.props.dispatch(reconnectSync());
         });
       }
     };
-  }
-
-  componentDidMount() {
-    const { navigation } = this.props;
-
-    function select(state) {
-      return state.sync.error
-    }
-
-    store.subscribe(() => {
-      const state = store.getState();
-      const err = select(state);
-      const routes = this.props.navigation.state.routes[0].routes;
-      const route = routes[routes.length - 1];
-      if (err && !state.sync.loginDetails) {
-        if (route.routeName === 'EditorPanel') {
-          this.props.navigation.navigate('ListPanel');
-          setTimeout(() => this.props.navigation.dispatch(DrawerActions.openDrawer()), 250);
-        } else {
-          this.props.navigation.dispatch(DrawerActions.openDrawer())
-        }
-      }
-    })
   }
 
   componentWillReceiveProps(newProps) {
@@ -169,7 +143,7 @@ class DrawerItems extends React.Component {
     if (this.props.state.sync.isConnected === false) {
       statusLabel = 'Offline';
     } else if (this.props.state.sync.isSyncing) {
-      statusLabel = 'Syncing...';
+      statusLabel = 'Syncing…';
     } else {
       statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;
     }
@@ -198,7 +172,7 @@ class DrawerItems extends React.Component {
         { this.props.state.sync.error ?
           <TouchableRipple style={styles.footer} onPress={this._requestReconnect}>
             <View style={styles.footerWrapper}>
-              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.error }</Text>
+              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.isOpeningLogin ? 'Opening login…' : this.props.state.sync.error }</Text>
               <MaterialIcons
                 name='warning'
                 style={{ color: COLOR_DARK_WARNING }}
