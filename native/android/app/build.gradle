@@ -100,7 +100,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla.testpilot.notes"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0android"
         ndk {

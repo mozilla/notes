@@ -69,7 +69,4 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
 
-
-# There are rules above but they are ignore for some reason in API level 26
-
 -ignorewarnings
