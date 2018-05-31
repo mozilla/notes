@@ -34,7 +34,7 @@ jobs:
   android:
     working_directory: ~/notes/native
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-25-node8-alpha
     steps:
       - checkout
 
