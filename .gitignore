@@ -8,4 +8,5 @@ web-ext-artifacts/
 test/dist/*
 ckeditor-build/build/*
 build/
+native/app/vendor/fxa-crypto-relier.js
 *.log

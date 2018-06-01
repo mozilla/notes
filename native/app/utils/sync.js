@@ -14,7 +14,6 @@ import {
   TEXT_SYNCING,
   ERROR as ERROR_MSG } from './constants';
 
-// TODO WARNING: `jose` is not in the official release in the crypto-relier
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
 let syncDebounce = null;
