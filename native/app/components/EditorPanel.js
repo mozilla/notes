@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { RichTextEditor } from 'react-native-zss-rich-text-editor';
+import { RichTextEditor } from '../react-native-zss-rich-text-editor/index';
 import { createNote, updateNote, deleteNotes, setFocusedNote } from '../actions';
-import { COLOR_APP_BAR, KINTO_LOADED } from '../utils/constants';
+import { KINTO_LOADED } from '../utils/constants';
 
 import browser from '../browser';
 
@@ -94,6 +94,7 @@ class RichTextExample extends Component {
           // at first initialContentHTML must be `''` otherwise we would get undefined
           initialContentHTML={this.note ? escapeHtml(this.note.content) : ''}
           enableOnChange={true}
+          focusKeyboard={this.note ? false : true}
           customCSS="p:first-child { margin-top: 0; }"
           contentPlaceholder={ browser.i18n.getMessage('emptyPlaceHolder') }
           editorInitializedCallback={() => this.onEditorInitialized()}

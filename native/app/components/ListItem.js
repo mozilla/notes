@@ -69,9 +69,9 @@ class ListItem extends React.Component {
     if (this.state.isSelected) itemStyle.push(styles.selected);
 
     return (
-      <TouchableOpacity onPress={this._navigateToNote} >
+      <TouchableOpacity onLongPress={this._toggleSelect} onPress={this._navigateToNote} >
         <View style={ itemStyle } >
-          <Text style={ styles.selector } onPress={this._toggleSelect}  >
+          <Text style={ styles.selector } onPress={this._toggleSelect}  onLongPress={this._toggleSelect}>
             <MaterialIcons
               name={ this.state.isSelected ? "done" : "remove" }
               style={{ color: COLOR_NOTES_BLUE }}
