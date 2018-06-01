@@ -1653,6 +1653,10 @@
       setTimeout(function () {
         $("#zss_editor_content").focus();
       }, 500)
+
+      $(window).resize(function() {
+        $("#zss_editor_content").height($(window).height());
+      });
     </script>
 	</body>
 </html>
