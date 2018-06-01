@@ -3,7 +3,6 @@
 /* eslint-env node */
 
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -20,10 +19,6 @@ module.exports = {
   },
 
   plugins: [
-    // cleanup build folder
-    new CleanWebpackPlugin([
-      'build'
-    ]),
     // Moves files
     new CopyWebpackPlugin([
       { from: path.join('src') }
