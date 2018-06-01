@@ -6,6 +6,8 @@ import com.facebook.react.ReactApplication;
 import dog.craftz.sqlite_2.RNSqlite2Package;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import io.sentry.RNSentryPackage;
+
+import com.notes.advancedwebview.AdvancedWebviewPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -36,7 +38,8 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new KeychainPackage(),
             new RandomBytesPackage(),
-            new RNAppAuthPackage()
+            new RNAppAuthPackage(),
+            new AdvancedWebviewPackage()
       );
     }
 
