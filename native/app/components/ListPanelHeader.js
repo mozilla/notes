@@ -62,7 +62,7 @@ class ListPanelHeader extends Component {
           icon='menu'
           onPress={() => navigation.toggleDrawer()} />
         <ToolbarContent
-          style={{ paddingLeft: 0,  }}
+          style={{ paddingLeft: 0, paddingHorizontal: 0  }}
           titleStyle={{ fontSize: 18, color: COLOR_NOTES_BLUE }}
           title='Notes' />
       </Toolbar>

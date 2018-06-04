@@ -19,7 +19,9 @@ class LoginPanel extends React.Component {
 
   onAuth () {
     this.setState({ isLoading: true });
-    this.props.navigation.navigate('LoadingPanel');
+    setTimeout(() => {
+      this.props.navigation.navigate('LoadingPanel');
+    }, 150);
   }
 
   render() {
