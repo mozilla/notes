@@ -34,7 +34,7 @@
     flex-direction: column;
     flex: 36px;
     height: 36px;
-    width: 40em; // max-width of Firefox sidebar is 36em
+    width: 90em; // max-width of Firefox sidebar is 36em, but with Firefox Side-view it can be beyond that
   }
 
   .ck-editor__main {
