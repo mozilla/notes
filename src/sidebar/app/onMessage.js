@@ -47,6 +47,9 @@ chrome.runtime.onMessage.addListener(eventData => {
         break;
       case CREATE_NOTE:
         store.dispatch(createdNote(eventData.id, eventData.content, eventData.lastModified));
+        setTimeout(() => {
+          store.dispatch(synced()); // stop syncing animation
+        }, 750);
         break;
       case DELETE_NOTE:
         store.dispatch(deletedNote(eventData.id));
