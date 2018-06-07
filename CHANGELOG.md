@@ -1,8 +1,15 @@
 # Changelog
 
-## 4.1.0dev
+## 4.1.1
 
-* TBA
+* Fix the version number
+
+## 4.1.0
+
+* Latest Translations
+* Security fix for node-jose in fxa-crypto-relier 2.3.0
+* Fixes Missing characters on sync #1064
+* Add keystroke for Ctrl/Cmd+S to ignore native webpage "Save As" popup. Fixes #955
 
 ## 4.0.0
 
