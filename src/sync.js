@@ -371,7 +371,7 @@ function saveToKinto(client, credentials, note, fromWindowId) { // eslint-disabl
   });
 
   browser.runtime.sendMessage('notes@mozilla.com', {
-    action: 'text-editing'
+    action: 'text-syncing'
   });
 
   const later = function() {
@@ -421,7 +421,13 @@ function createNote(client, credentials, note) { // eslint-disable-line no-unuse
     .collection('notes', { idSchema: notesIdSchema })
     .create(note, { useRecordId: true })
     .then(() => {
-      return syncKinto(client, credentials);
+      clearTimeout(syncDebounce);
+      syncDebounce = setTimeout(() => {
+        syncKinto(client, credentials).catch(() => {
+          return Promise.resolve();
+        });
+      }, 2000);
+      return Promise.resolve();
     });
 }
 

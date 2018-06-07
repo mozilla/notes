@@ -1,8 +1,13 @@
 # Changelog
 
+## 4.1.0dev
+
+* TBA
+
 ## 4.0.0
 
 * Adds the multi-note feature
+* Remove 'downloads' permission
 
 ## 3.1.0 (2018-03-16)
 

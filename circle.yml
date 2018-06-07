@@ -1,11 +1,73 @@
-machine:
-  node:
-    version: 6
+version: 2
+jobs:
+  webextension:
+    working_directory: ~/notes
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
 
-test:
-  override:
-    - npm run build
-    - npm run lint
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
-    # Build the extension and copy to artifacts directory.
-    - cp web-ext-artifacts/*.zip $CIRCLE_ARTIFACTS
+      - run: npm install
+
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
+      - run: npm run build
+      - run: npm run lint
+
+      - persist_to_workspace:
+          root: ~/notes
+          paths:
+            - node_modules
+
+      - run: mkdir -p /tmp/artifacts;
+      - run: cp web-ext-artifacts/*.zip /tmp/artifacts
+
+      - store_artifacts:
+          path: /tmp/artifacts
+
+  android:
+    working_directory: ~/notes/native
+    docker:
+      - image: circleci/android:api-25-node8-alpha
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
+
+      - run: cd native && npm install
+
+      - save_cache:
+          key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
+          paths:
+            - native/node_modules
+
+      - persist_to_workspace:
+          root: ~/notes/native
+          paths:
+            - native/node_modules
+
+      - run: cd native && ./misc/download_keystore.sh
+      - run: cd native && node ./misc/config-generator.js
+      - run: cd native && perl -pi -w -e "s/1.0android/1.0android-c$CIRCLE_BUILD_NUM/g;" android/app/build.gradle
+
+      - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
+      - run: mkdir -p /tmp/artifacts-android;
+      - run: cp native/android/app/build/outputs/apk/release/app-release.apk /tmp/artifacts-android
+      - run: mv /tmp/artifacts-android/app-release.apk /tmp/artifacts-android/notes-1_0-qa-v$CIRCLE_BUILD_NUM.apk
+
+      - store_artifacts:
+          path: /tmp/artifacts-android
+
+workflows:
+  version: 2
+  node-android:
+    jobs:
+      - webextension
+      - android

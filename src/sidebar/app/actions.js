@@ -1,6 +1,7 @@
 import { SYNC_AUTHENTICATED,
          KINTO_LOADED,
          TEXT_SAVED,
+         TEXT_SYNCING,
          TEXT_SYNCED,
          RECONNECT_SYNC,
          DISCONNECTED,
@@ -53,6 +54,10 @@ export function saved(id, content, lastModified) {
   return { type: TEXT_SAVED, id, content, lastModified };
 }
 
+export function syncing() {
+   return { type: TEXT_SYNCING };
+}
+
 export function synced(notes) {
   return { type: TEXT_SYNCED, notes };
 }
@@ -101,8 +106,7 @@ export function createNote(content = '', origin) {
     id,
     content,
     origin,
-    lastModified: new Date(),
-    isSyncing: true
+    lastModified: new Date()
   });
 
   // Return id to callback using promises

@@ -3,6 +3,7 @@ import {
   SYNC_AUTHENTICATED,
   DISCONNECTED,
   TEXT_SAVED,
+  TEXT_SYNCING,
   TEXT_SYNCED,
   KINTO_LOADED,
   OPENING_LOGIN,
@@ -73,6 +74,10 @@ function sync(sync = {}, action) {
     case TEXT_SAVED:
       return Object.assign({}, sync, {
         isSyncing: sync.email ? sync.isSyncing : false
+      });
+    case TEXT_SYNCING:
+      return Object.assign({}, sync, {
+        isSyncing: true
       });
     case TEXT_SYNCED:
       return Object.assign({}, sync, {
