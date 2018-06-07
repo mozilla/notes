@@ -105,7 +105,7 @@ class DrawerItems extends React.Component {
     };
 
     this._requestReconnect = () => {
-      if (!this.props.state.sync.loginDetails) {
+      if (!this.props.state.sync.loginDetails && !this.props.state.sync.isOpeningLogin) {
         this.setState({ isOpeningLogin: true });
         this.props.dispatch(openingLogin());
         return Promise.resolve()
