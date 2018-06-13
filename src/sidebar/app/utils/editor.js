@@ -9,7 +9,7 @@ function customizeEditor(editor) {
 
   // Disable right clicks
   // Refs: https://stackoverflow.com/a/737043/186202
-  document.querySelectorAll('.ck-toolbar, #footer-buttons').forEach(sel => {
+  document.querySelectorAll('.ck-toolbar, #footer-buttons, header').forEach(sel => {
     sel.addEventListener('contextmenu', e => {
       e.preventDefault();
     });
@@ -42,18 +42,23 @@ function customizeEditor(editor) {
     });
   });
 
+  // prevent adding a '„' character and instead close the editor
+  // when using the Notes keyboard shortcut within the editor
+  // Refs: https://github.com/mozilla/notes/issues/780
+  editor.keystrokes.set('Alt+Shift+W', (data, cancel) => {
+    cancel();
+    browser.sidebarAction.close();
+  });
+
+  // "Ctrl/Cmd + s" keystroke is ignored when a note is focused - this prevents
+  // the native "Save as" popup from appearing for the adjacent webpage.
+  // Refs: https://github.com/mozilla/notes/issues/955
+  editor.keystrokes.set('Ctrl+S', (data, cancel) => {
+    cancel();
+  });
+
   localizeEditorButtons();
 }
-
-function insertSelectedText(editor, selectedText) {
-  const currentNotesContent = editor.getData();
-  const updatedNotesContent = currentNotesContent + `<p>${selectedText.replace(/\n\n/g, '</p><p>')}</p>`;
-  editor.setData(updatedNotesContent);
-  browser.runtime.sendMessage({
-    action: 'metrics-context-menu'
-  });
-}
-
 
 function localizeEditorButtons() {
   // Clear CKEditor tooltips. Fixes: https://github.com/mozilla/notes/issues/410
@@ -145,4 +150,4 @@ function getPadStats(editor) {
   };
 }
 
-export { customizeEditor, getPadStats, insertSelectedText };
+export { customizeEditor, getPadStats };

@@ -3,8 +3,10 @@ signed-addon.xpi
 src/vendor/*
 src/sidebar/vendor/*
 src/_locales
+native/app/_locales
 web-ext-artifacts/
 test/dist/*
 ckeditor-build/build/*
 build/
+native/app/vendor/fxa-crypto-relier.js
 *.log

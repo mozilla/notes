@@ -4,8 +4,6 @@ A notepad for Firefox
 
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
-[![Waffle.io - Bug Triage](https://badge.waffle.io/mozilla/notes.svg?columns=all)](https://waffle.io/mozilla/notes)
-
 > Discussion Forum: [https://discourse.mozilla.org/c/test-pilot/notes](https://discourse.mozilla.org/c/test-pilot/notes)
 
 
@@ -19,7 +17,7 @@ git clone https://github.com/mozilla/notes.git
 git clone https://github.com/[yourusername]/notes.git
 ```
 * Step 2: Navigate to the root of the directory you cloned and run:
-> Make sure to use Node.js 6+.
+> Make sure to use Node.js 8+.
 
 | Command         | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +31,6 @@ You can also open the `test/index.html` file in your browser to run the automate
 
 | Permission      | Description                                                                    |
 |-----------------|--------------------------------------------------------------------------------|
-| `downloads`     | Used for the "Export Note to HTML" feature. Exports note into Downloads.       |
 | `contextMenus`  | Used for "Send to Note" feature, sends text from pages to the Notes sidebar.   |
 | `storage`       | Storage for Notes.                                                             |
 | `identity`      | OAuth login to Firefox Accounts to sync your notes.                            |
@@ -54,7 +51,8 @@ Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/
 ## Design
 
 * Design for reference: https://mozilla.invisionapp.com/share/6VBUYHMRB#/281041484_Firefox_Notes
+* Mobile design for reference: https://mozilla.invisionapp.com/share/BTGS26C2FE4
 
 ## Screenshot
 
-![Notes v3](https://i.imgur.com/Sa9oaTK.png)
+![Notes v4](https://i.imgur.com/kOuI2uG.png)

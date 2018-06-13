@@ -1,0 +1,50 @@
+.listView {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+
+
+  ul {
+    font-size: 1rem;
+    flex: 50px;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    margin-bottom: -1px;
+    li {
+      box-sizing: border-box;
+      list-style: none;
+      button {
+        display: block !important;
+        color: rgb(132, 132, 132);
+        padding-right: 17px;
+        height: 48px;
+        font-size: 13px;
+        line-height: 17px;
+        letter-spacing: .1px;
+        p {
+          strong {
+            font-weight: 500;
+            color: black;
+          }
+          margin: 0 !important;
+          padding: 0 !important;
+          font-weight: 100;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          color: rgb(140, 140, 140);
+
+          span {
+            margin: 0 !important;
+            padding: 0 !important;
+            padding-right: 4px !important;
+            font-weight: 500;
+            color: rgb(140, 140, 140);
+          }
+        }
+      }
+    }
+  }
+}

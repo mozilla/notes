@@ -1,162 +1,103 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import SyncIcon from './SyncIcon';
-import MoreIcon from './MoreIcon';
+import SyncIcon from './icons/SyncIcon';
+import MoreIcon from './icons/MoreIcon';
+import WarningIcon from './icons/WarningIcon';
 
-import { formatFooterTime, getFirstNonEmptyElement, formatFilename } from '../utils/utils';
-import { SURVEY_PATH } from '../utils/constants';
-import INITIAL_CONTENT from '../data/initialContent';
+import { formatFooterTime } from '../utils/utils';
+
+import { disconnect, openLogin, pleaseLogin, authenticate } from '../actions';
 
 class Footer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isAuthenticated: false,
-      lastModified: Date.now(),
-      content: INITIAL_CONTENT,
-      isKintoLoaded: false,
-      state: {}
-    };
-    this.loginTimeout = null;
-
-    browser.runtime.getBrowserInfo().then((info) => {
-      this.surveyPath = `${SURVEY_PATH}&ver=${browser.runtime.getManifest().version}&release=${info.version}`;
-    });
+    this.props = props;
 
     this.STATES = {
-      SAVING: {
-        savingLayout: true,
+      SIGNIN: {
         isClickable: true,
-        animateSyncIcon: false,
-        leftText: () => browser.i18n.getMessage('savingChanges')
-      },
-      SAVED: {
-        savingLayout: true,
-        isClickable: true,
-        leftText: () => browser.i18n.getMessage('changesSaved'),
+        isSignInState: true,
+        text: () => browser.i18n.getMessage('signInToSync'),
         tooltip: () => browser.i18n.getMessage('syncNotes')
       },
       OPENINGLOGIN: {
-        ignoreChange: true,
+        cancelSetup: true,
         animateSyncIcon: true,
-        rightText: () => browser.i18n.getMessage('openingLogin')
+        text: () => browser.i18n.getMessage('openingLoginWindow')
       },
-      PLEASELOGIN: {
+      VERIFYACCOUNT: {
         ignoreChange: true,
         yellowBackground: true,
-        rightText: () => browser.i18n.getMessage('pleaseLogin')
+        text: () => browser.i18n.getMessage('pleaseLogin')
       },
       RECONNECTSYNC: {
         yellowBackground: true,
         isClickable: true,
-        rightText: () => browser.i18n.getMessage('reconnectSync')
+        isReconnectState: true,
+        text: () => browser.i18n.getMessage('reconnectSync')
+      },
+      ERROR: {
+        yellowBackground: true,
+        isClickable: false
       },
       SYNCING: {
         animateSyncIcon: true,
-        rightText: () => browser.i18n.getMessage('syncProgress'),
-        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
+        text: () => browser.i18n.getMessage('syncProgress')
       },
       SYNCED: {
         isClickable: true,
-        rightText: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.state.lastModified)),
-        tooltip: () => this.state.email ? browser.i18n.getMessage('syncToMail', this.state.email) : ''
-      },
-      DISCONNECTED: {
-        savingLayout: true,
-        rightText: () => browser.i18n.getMessage('disconnected')
+        text: () => browser.i18n.getMessage('syncComplete3', formatFooterTime(this.props.state.sync.lastSynced))
       }
     };
 
-    this.events = eventData => {
-      // let content;
-      switch (eventData.action) {
-        case 'sync-authenticated':
-          clearTimeout(this.loginTimeout);
-
-          this.setState({
-            state: this.STATES.SYNCING,
-            isAuthenticated: true,
-            email: eventData.profile ? eventData.profile.email : null
-          });
-          browser.runtime.sendMessage({
-            action: 'kinto-sync'
-          });
-          break;
-        case 'kinto-loaded':
-          clearTimeout(this.loginTimeout);
-          // Switch to Date.now() to show when we pulled notes instead of 'eventData.last_modified'
-          this.setState({
-            lastModified: Date.now(),
-            content: eventData.data || INITIAL_CONTENT,
-            isKintoLoaded: true
-          });
-          this.getLastSyncedTime();
-          break;
-        case 'text-change':
-          browser.runtime.sendMessage({
-            action: 'kinto-load'
-          });
-          break;
-        case 'text-syncing':
-          this.setState({
-            state: this.STATES.SYNCING
-          });
-          // Disable sync-action
-          break;
-        case 'text-editing':
-          this.setState({
-            state: this.state.isAuthenticated ? this.STATES.SYNCING : this.STATES.SAVING
-          });
-          break;
-        case 'text-synced':
-          // Enable sync-action
-          this.setState({
-            lastModified: eventData.last_modified,
-            content: eventData.content || INITIAL_CONTENT
-          });
-          this.getLastSyncedTime();
-          break;
-        case 'text-saved':
-          if (!this.state.state.ignoreChange && !this.state.isAuthenticated) {
-            // persist reconnect warning, do not override with the 'saved at'
-            this.setState({
-              state: this.STATES.SAVED
-            });
-          }
-          break;
-        case 'reconnect':
-          clearTimeout(this.loginTimeout);
-          this.setState({
-            state: this.STATES.RECONNECTSYNC
-          });
-
-          chrome.runtime.sendMessage({
-            action: 'metrics-reconnect-sync'
-          });
-          break;
-        case 'disconnected':
-          clearTimeout(this.loginTimeout);
-          this.setState({
-            isAuthenticated: false
-          });
-          this.getLastSyncedTime();
-          break;
+    this.getFooterState = (state) => {
+      let res;
+      if (state.sync.email) { // If user is authenticated
+        if (state.sync.error) {
+          res = this.STATES.ERROR;
+          res.text = () => state.sync.error;
+        } else if (state.sync.isSyncing) {
+          res = this.STATES.SYNCING;
+        } else {
+          res = this.STATES.SYNCED;
+        }
+      } else {
+        if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
+          res = this.STATES.OPENINGLOGIN;
+        } else if (state.sync.isPleaseLogin) {
+          res = this.STATES.VERIFYACCOUNT;
+        } else if (state.sync.isReconnectSync) {
+          res = this.STATES.RECONNECTSYNC;
+        } else {
+          res = this.STATES.SIGNIN;
+        }
       }
+      return res;
+    };
+
+    this.currentState = this.getFooterState(props.state); // contain current state from this.STATES
+
+    this.disconnectFromSync = () => {
+      props.dispatch(disconnect());
     };
 
     this.getLastSyncedTime = () => {
-      if (!this.state.state.ignoreChange) {
-        this.setState({
-          state: this.state.isAuthenticated ? this.STATES.SYNCED : this.STATES.SAVED
-        });
+      if (!this.currentState.ignoreChange) {
+        this.currentState = this.props.state.sync.email ? this.STATES.SYNCED : this.STATES.SIGNIN;
       }
     };
 
     // Event used on window.addEventListener
     this.onCloseListener = () => {
-      this.menu.classList.replace('open', 'close');
+      if (this.menu) {
+        this.menu.classList.replace('open', 'close');
+      }
       window.removeEventListener('keydown', this.handleKeyPress);
+      // Blur `this.contextMenuBtn` when context menu closes - fixes #770
+      this.contextMenuBtn.blur();
     };
 
     // Open and close menu
@@ -204,159 +145,72 @@ class Footer extends React.Component {
       }
     };
 
-    this.exportAsHTML = () => {
-      // get Notes content
-      const notesContent = this.state.content;
-      // assign contents to container element for later parsing
-      const parentElement = document.createElement('div');
-      parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
-
-      let exportFileName = 'blank.html';
-      // get the first child element with text
-      const nonEmptyChildElement = getFirstNonEmptyElement(parentElement);
-
-      // if non-empty child element exists, set the filename to the element's `textContent`
-      if (nonEmptyChildElement) {
-        exportFileName = formatFilename(nonEmptyChildElement.textContent);
-      }
-
-      const exportFileType = 'text/html';
-      const data = new Blob([`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Notes</title></head><body>${notesContent}</body></html>`], {'type': exportFileType});
-      const exportFilePath = window.URL.createObjectURL(data);
-      browser.downloads.download({
-        url: exportFilePath,
-        filename: exportFileName,
-        saveAs: true // always open file chooser, fixes #733
-      });
-
-      chrome.runtime.sendMessage({
-        action: 'metrics-export-html'
-      });
-    };
-
-    this.disconnectFromSync = () => {
-      this.setState({
-        state: this.STATES.DISCONNECTED
-      });
-
-      setTimeout(() => {
-        this.getLastSyncedTime();
-      }, 2000);
-
-      browser.runtime.sendMessage('notes@mozilla.com', {
-        action: 'disconnected'
-      });
-    };
-
     this.enableSyncAction = () => {
-      // persist reconnect warning, do not override with the 'saved at'
-      if (!this.state.state.isClickable) return;
 
-      if (this.state.isAuthenticated) {
-        // Trigger manual sync
-        this.setState({
-          state: this.STATES.SYNCING
-        });
-        browser.runtime.sendMessage({
-          action: 'kinto-sync'
-        });
-
-      } else if (!this.state.isAuthenticated) {
-        // Login
-        this.setState({
-          state: this.STATES.OPENINGLOGIN
-        });
-
-        const that = this;
-        this.loginTimeout = setTimeout(() => {
-          that.setState({
-            state: this.STATES.PLEASELOGIN
-          });
-        }, 5000);
-
-        // Problem not having editor in Footer Component
-        browser.runtime.sendMessage({
-          action: 'authenticate'
-        });
+      if (!this.currentState.isClickable) return;
+      if (this.props.state.sync.email) {
+        props.dispatch(authenticate(this.props.state.sync.email));
+      } else {
+        setTimeout(() => props.dispatch(pleaseLogin()), 5000);
+        props.dispatch(openLogin());
       }
-    };
-
-    this.giveFeedbackCallback = (e) => {
-      e.preventDefault();
-      browser.tabs.create({
-        url: this.surveyPath
-      });
     };
   }
 
-  componentDidMount() {
-    browser.storage.local.get('credentials').then(data => {
-      if (data.hasOwnProperty('credentials')) {
-        this.setState({
-          isAuthenticated: true
-        });
-      }
-    });
-
-    this.getLastSyncedTime();
-    chrome.runtime.onMessage.addListener(this.events);
-  }
-
-  componentWillUnmount() {
-    chrome.runtime.onMessage.removeListener(this.events);
+  // Not a big fan of all those if.
+  componentWillReceiveProps(nextProps) {
+    this.currentState = this.getFooterState(nextProps.state);
   }
 
   render() {
 
-    if (!this.state.isKintoLoaded) return '';
+    if (!this.props.state.kinto.isLoaded) return '';
 
     // Those classes define animation state on #footer-buttons
     const footerClass = classNames({
-       savingLayout: this.state.state.savingLayout,
-       syncingLayout: !this.state.state.savingLayout,
-       warning: this.state.state.yellowBackground,
-       animateSyncIcon: this.state.state.animateSyncIcon
+      warning: this.currentState.yellowBackground,
+      animateSyncIcon: this.currentState.animateSyncIcon
     });
-
-    // We need to cache both text to allow opacity transition between state switch
-    // On every rendering it will update text based on state
-    if (this.state.state.rightText) {
-      this.rightText = this.state.state.rightText();
-    } else if (this.state.state.leftText) {
-      this.leftText = this.state.state.leftText();
-    }
-    this.tooltip = this.state.state.tooltip ? this.state.state.tooltip() : '';
 
     // List of menu used for keyboard navigation
     this.buttons = [];
 
     return (
-      <footer>
-        <div id="footer-buttons"
-          ref={footerbuttons => this.footerbuttons = footerbuttons}
-          className={footerClass}>
-          <div className={this.state.state.isClickable ? 'isClickable' : ''}>
-            <p id="saving-indicator">{this.leftText}</p>
+      <footer
+        id="footer-buttons"
+        ref={footerbuttons => this.footerbuttons = footerbuttons}
+        className={footerClass}>
+
+        { this.currentState.isSignInState || this.currentState.yellowBackground ?
+          <button
+            className="fullWidth"
+            title={ this.currentState.tooltip ? this.currentState.tooltip() : '' }
+            onClick={(e) => this.enableSyncAction(e)}>
+            { this.currentState.yellowBackground ?
+              <WarningIcon /> : <SyncIcon />} <span>{ this.currentState.text() }</span>
+          </button>
+          : null }
+
+        { !this.currentState.isSignInState && !this.currentState.yellowBackground ?
+          <div className={this.currentState.isClickable ? 'isClickable btnWrapper' : 'btnWrapper'}>
             <button
               id="enable-sync"
-              title={ this.tooltip }
+              disabled={!this.currentState.isClickable}
               onClick={(e) => this.enableSyncAction(e)}
-              className="notsyncing">
+              title={ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }
+              className="iconBtn">
               <SyncIcon />
             </button>
-            <button
-              id="syncing-indicator"
-              title={ this.tooltip }
-              onClick={() => this.enableSyncAction()}>
-              {this.rightText}
-            </button>
+            <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
           </div>
+          : null }
 
+        { !this.currentState.isSignInState ?
           <div className="photon-menu close top left" ref={menu => this.menu = menu }>
             <button
-              id="context-menu-button"
-              onClick={(e) => this.toggleMenu(e)}
-              onKeyDown={this.handleKeyPress}>
+              ref={contextMenuBtn => this.contextMenuBtn = contextMenuBtn}
+              className="iconBtn"
+              onClick={(e) => this.toggleMenu(e)}>
               <MoreIcon />
             </button>
             <div className="wrapper">
@@ -364,38 +218,32 @@ class Footer extends React.Component {
                 <li>
                   <button
                     role="menuitem"
+                    onKeyDown={this.handleKeyPress}
                     ref={btn => btn ? this.buttons.push(btn) : null }
-                    title={browser.i18n.getMessage('exportAsHTML')}
-                    onClick={ this.exportAsHTML }>
-                    { browser.i18n.getMessage('exportAsHTML') }
-                  </button>
-                </li>
-                { !this.state.state.savingLayout && !this.state.state.ignoreChange ?
-                <li>
-                  <button
-                    role="menuitem"
-                    ref={btn => btn ? this.buttons.push(btn) : null }
-                    title={browser.i18n.getMessage('disableSync')}
+                    title={browser.i18n.getMessage(this.props.state.sync.email ? 'disableSync' : 'cancelSetup')}
                     onClick={ this.disconnectFromSync }>
-                    {browser.i18n.getMessage('disableSync')}
-                  </button>
-                </li> : null }
-                <li>
-                  <button
-                    role="menuitem"
-                    ref={btn => btn ? this.buttons.push(btn) : null }
-                    title={browser.i18n.getMessage('feedback')}
-                    onClick={ this.giveFeedbackCallback }>
-                    { browser.i18n.getMessage('feedback') }
+                    { !this.props.state.sync.email ? browser.i18n.getMessage('cancelSetup') : '' }
+                    { this.props.state.sync.email && this.currentState.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
+                    { this.props.state.sync.email && !this.currentState.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
                   </button>
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
+          </div> : null }
       </footer>
     );
   }
 }
 
-export default Footer;
+function mapStateToProps(state) {
+  return {
+    state
+  };
+}
+
+Footer.propTypes = {
+  state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+};
+
+export default connect(mapStateToProps)(Footer);

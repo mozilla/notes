@@ -1,13 +1,25 @@
 @import 'ckeditor';
+@import 'list';
 @import 'menu';
+@import 'header';
 @import 'footer';
+
+* {
+  box-sizing: border-box;
+}
+
+*:active, *:focus, *:hover {
+  outline: none;
+}
 
 html {
   height: 100%;
-  font-family: sans-serif;
-  line-height: 1.2em;
   overflow: hidden;
   margin: 0;
+  font: message-box, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  letter-spacing: .1px;
   --sync-animation-duration: 0.4s;
 }
 
@@ -42,14 +54,73 @@ ol ol ol ol {
 /**
 List indents end
  */
-
-div#loading {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: white;
-  z-index: 10;
+a {
+  user-select: none !important;
 }
 
+button, a.btn {
+  cursor: default;
+  display: block;
+  text-decoration: none;
+  background: none;
+  border: none;
+  color: black;
+
+  &.iconBtn {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 4px;
+    svg {
+      max-width: 16px;
+      max-height: 16px;
+    }
+  }
+
+  &:disabled {
+    color: rgb(200, 200, 200);
+    font-weight: 300;
+  }
+
+  &:disabled:hover {
+    background: none !important;
+    cursor: default;
+  }
+
+  &.fullWidth {
+    width: 100%;
+    min-height: 40px;
+    padding-left: 12px;
+    font-size: inherit;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: background 50ms;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      background-color: #ebebee;
+    }
+
+    &:active {
+      background-color: #d7d7db;
+    }
+
+    &.borderTop {
+      border-top: 1px solid #d7d7db;
+    }
+
+    &.borderBottom {
+      border-bottom: 1px solid #d7d7db;
+    }
+
+    span {
+      margin-left: 8px;
+    }
+    svg {
+      vertical-align: middle;
+      width: 16px;
+    }
+  }
+}
