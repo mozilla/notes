@@ -50,7 +50,7 @@ class Editor extends React.Component {
         // Focus the text editor
         this.editor.editing.view.focus();
 
-        editor.document.on('change', (eventInfo, name) => {
+        editor.model.document.on('change', (eventInfo, name) => {
           // Cache update event in case of multi-change event (copy pasting trigger many).
           clearTimeout(this.delayUpdateNote);
           this.delayUpdateNote = setTimeout(() => {
