@@ -102,8 +102,7 @@ function getPadStats(editor) {
     list_numbered: false
   };
 
-  const range = ClassicEditor.imports.range.createIn(editor.document.getRoot());
-
+  const range = ClassicEditor.imports.range.createIn(editor.model.document.getRoot());
   for (const value of range) {
     if (value.type === 'text') {
       // Bold
