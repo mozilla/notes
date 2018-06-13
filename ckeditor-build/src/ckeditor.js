@@ -8,7 +8,7 @@ import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
 import AutoformatPlugin from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
-import StrikePlugin from './strike';
+import StrikePlugin from '@ckeditor/ckeditor5-basic-styles/src/strikethrough';
 import CodePlugin from '@ckeditor/ckeditor5-basic-styles/src/code';
 import UnderlinePlugin from '@ckeditor/ckeditor5-basic-styles/src/underline';
 import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
@@ -32,17 +32,15 @@ ClassicEditor.build = {
     ParagraphPlugin
   ],
   config: {
-    toolbar: {
-      items: [
-        'headings',
-        'bulletedList',
-        'numberedList',
-        'bold',
-        'italic',
-        'strike',
-        'code'
-      ]
-    }
+    toolbar: [
+      'headings',
+      'bulletedList',
+      'numberedList',
+      'bold',
+      'italic',
+      'strike',
+      'code'
+    ]
   }
 };
 
