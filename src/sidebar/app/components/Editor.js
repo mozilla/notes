@@ -63,14 +63,18 @@ class Editor extends React.Component {
                 const content = editor.getData();
 
                 if (!this.ignoreChange) {
-                  if (!this.props.note.id) {
-                    this.props.dispatch(createNote(content, this.props.origin)).then(id => {
-                      this.props.dispatch(setFocusedNote(id));
-                    });
-                  } else if (this.props.note.id && (content === '' || content === '<p>&nbsp;</p>')) {
-                    this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
+                  if (content !== '' && content !== '<p>&nbsp;</p>') {
+                    if (!this.props.note.id) {
+                      this.props.dispatch(createNote(content, this.props.origin)).then(id => {
+                        this.props.dispatch(setFocusedNote(id));
+                      });
+                    } else {
+                      this.props.dispatch(updateNote(this.props.note.id, content));
+                    }
                   } else {
-                    this.props.dispatch(updateNote(this.props.note.id, content));
+                    if (this.props.note.id) {
+                      this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
+                    }
                   }
                 }
                 this.ignoreChange = false;
