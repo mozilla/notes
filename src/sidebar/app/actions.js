@@ -96,9 +96,11 @@ export function reconnectSync() {
 export function createdNote(id, content, lastModified) {
   return { type: CREATE_NOTE, isSyncing: false };
 }
-export function createNote(content = '', origin) {
+export function createNote(content = '', origin, id) {
 
-  const id = uuid4();
+  if (!id) {
+    id = uuid4();
+  }
 
   // Send create request to kinto with uuid4 id
   chrome.runtime.sendMessage({
