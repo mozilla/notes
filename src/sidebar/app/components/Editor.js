@@ -71,10 +71,8 @@ class Editor extends React.Component {
                     } else {
                       this.props.dispatch(updateNote(this.props.note.id, content));
                     }
-                  } else {
-                    if (this.props.note.id) {
-                      this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
-                    }
+                  } else if (this.props.note.id) {
+                    this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
                   }
                 }
                 this.ignoreChange = false;
@@ -94,7 +92,7 @@ class Editor extends React.Component {
   }
 
   // This is triggered when redux update state.
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.editor && this.props.note &&
         this.editor.getData() !== nextProps.note.content) {
       if (nextProps.note.id !== this.props.note.id) {
