@@ -43,6 +43,7 @@ function getFirstNonEmptyElement(parentElement) {
     if (el.textContent.trim() !== '') {
       return el.textContent.trim();
     }
+    return null;
   });
   return nonEmptyChild;
 }
