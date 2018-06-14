@@ -92,7 +92,10 @@ class ListPanel extends React.Component {
     };
 
     this._showSnackbar = (snackbar) => {
-      if (!this.state.snackbar && snackbar) {
+      if (this.state.snackbar && snackbar && snackbar.color !== COLOR_DARK_WARNING &&
+        this.state.snackbar.text !== snackbar.text) {
+        this.snackbarList.push(snackbar);
+      } else {
         this.setState({
           snackbar,
           snackbarVisible: true,
@@ -103,9 +106,6 @@ class ListPanel extends React.Component {
           duration: SNACKBAR_ANIMATION_DURATION,
           useNativeDriver: true,
         }).start();
-      } else if (snackbar && snackbar.color !== COLOR_DARK_WARNING &&
-        this.state.snackbar.text !== snackbar.text) {
-        this.snackbarList.push(snackbar);
       }
     };
 
