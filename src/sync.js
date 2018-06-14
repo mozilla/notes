@@ -173,7 +173,7 @@ function syncKinto(client, credentials) {
       credential = received;
 
       if (!received) {
-        return Promise.resolve();
+        return Promise.resolve({});
       }
 
       return fxaRenewCredential(credential)
@@ -256,7 +256,7 @@ function syncKinto(client, credentials) {
       } else if (syncResult === undefined) {
         throw new Error('syncResult is undefined.');
       }
-      return Promise.resolve();
+      return Promise.resolve({});
     })
     .catch(error => {
       if (error.response && error.response.status === 401) {
