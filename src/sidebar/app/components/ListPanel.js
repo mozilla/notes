@@ -33,7 +33,7 @@ class ListPanel extends React.Component {
 
     this.checkInitialContent = (state) => {
       if (state.sync.welcomePage && state.kinto.isLoaded && state.notes.length === 0) {
-        this.props.dispatch(createNote(INITIAL_CONTENT, FROM_LIST_VIEW)).then(id => {
+        this.props.dispatch(createNote(INITIAL_CONTENT, FROM_LIST_VIEW, 'initialNote')).then(id => {
           this.props.history.push(`/note/${id}`);
         });
       }
