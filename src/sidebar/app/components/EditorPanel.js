@@ -33,7 +33,7 @@ class EditorPanel extends React.Component {
   }
 
   // This is triggered when redux update state.
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.state.sync.focusedNoteId !== nextProps.state.sync.focusedNoteId) {
       this.note = nextProps.state.notes.find((note) => {
         return note.id === nextProps.state.sync.focusedNoteId;
