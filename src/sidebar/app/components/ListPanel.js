@@ -40,7 +40,7 @@ class ListPanel extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentWillMount() {
 
     chrome.runtime.onMessage.addListener(this.sendToNoteListener);
 
@@ -71,7 +71,7 @@ class ListPanel extends React.Component {
     clearTimeout(this.timer);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // If user is not logged, and has no notes, we create initial content for him
     // and redirect to it.
     this.checkInitialContent(nextProps.state);
