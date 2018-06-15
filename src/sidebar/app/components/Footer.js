@@ -158,7 +158,7 @@ class Footer extends React.Component {
   }
 
   // Not a big fan of all those if.
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.currentState = this.getFooterState(nextProps.state);
   }
 
