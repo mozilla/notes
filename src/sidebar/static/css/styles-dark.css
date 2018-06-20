@@ -97,7 +97,7 @@ footer.warning button svg path { fill: black !important; }
   color: #fff;
 }
 
-.ck-editor__editable {
+.ck.ck-editor__main > .ck-editor__editable {
   background-color: #272b35;
   color: var(--primary-font-color);
 }
