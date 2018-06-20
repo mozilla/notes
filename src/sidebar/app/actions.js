@@ -136,7 +136,7 @@ export function deleteNote(id, origin) {
 export function exportHTML(content) {
 
   // get Notes content
-  const notesContent = content;
+  const notesContent = content || '';
   // assign contents to container element for later parsing
   const parentElement = document.createElement('div');
   parentElement.innerHTML = notesContent; // eslint-disable-line no-unsanitized/property
