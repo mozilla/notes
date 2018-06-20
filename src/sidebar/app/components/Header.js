@@ -91,6 +91,7 @@ class Header extends React.Component {
 
     // List of menu used for keyboard navigation
     this.buttons = [];
+    const hasContent = !!this.props.note.content && this.props.note.content.length > 0;
 
     return (
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
@@ -124,6 +125,7 @@ class Header extends React.Component {
               <li>
                 <button
                   role="menuitem"
+                  disabled={!hasContent}
                   ref={ btn => btn ? this.buttons.push(btn) : null }
                   title={ browser.i18n.getMessage('exportAsHTML') }
                   onClick={ this.exportAsHTML }>

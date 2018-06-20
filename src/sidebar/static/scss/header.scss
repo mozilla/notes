@@ -43,6 +43,10 @@ header {
     text-align: center;
   }
 
+  button:disabled {
+    opacity: 0.5;
+  }
+
   button, a {
     transition: background 50ms;
     &:hover { background-color: rgba(12, 12, 13, 0.1); }
