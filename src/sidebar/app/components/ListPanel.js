@@ -84,7 +84,7 @@ class ListPanel extends React.Component {
     return (
       <div className="listView">
         <button
-          className="btn fullWidth borderBottom"
+          className="btn fullWidth borderBottom newNoteBtn"
           onClick={this.requestNewNote}>
           <NewIcon /> <span>{ browser.i18n.getMessage('newNote') }</span>
         </button>

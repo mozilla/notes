@@ -115,6 +115,10 @@ button, a.btn {
       border-bottom: 1px solid #ededf0;
     }
 
+    &.newNoteBtn {
+      border-bottom-color: #d7d7db;
+    }
+
     span {
       margin-left: 8px;
     }
@@ -123,4 +127,5 @@ button, a.btn {
       width: 16px;
     }
   }
+
 }
