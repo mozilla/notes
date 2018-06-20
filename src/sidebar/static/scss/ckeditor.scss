@@ -101,6 +101,10 @@
     background-color: #dcd6da;
   }
 
+  .ck.ck-list .ck-list__item:focus {
+    box-shadow: none;
+  }
+
   .ck-heading-dropdown button {
     width: 50px;
     height: 25px;
