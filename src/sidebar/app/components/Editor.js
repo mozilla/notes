@@ -59,7 +59,7 @@ class Editor extends React.Component {
               .querySelector('.ck-editor__editable')
               .classList.contains('ck-focused');
             // Only use the focused editor or handle 'rename' events to set the data into storage.
-            if (isFocused || name === 'rename' || name === 'insert') {
+            if (isFocused || name === 'rename' || name === 'insert' || name.type && name.type === 'transparent') {
                 const content = editor.getData();
 
                 if (!this.ignoreChange) {
