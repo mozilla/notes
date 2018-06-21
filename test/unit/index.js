@@ -24,4 +24,6 @@ browser.i18n = {
   }
 };
 
+fxaCryptoRelier = require('../../src/vendor/fxa-crypto-relier/fxa-crypto-relier');
+
 require('./main.test');
