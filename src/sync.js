@@ -1,28 +1,36 @@
 let syncDebounce = null;
 
-const cryptographer = new Jose.WebCryptographer();
-cryptographer.setKeyEncryptionAlgorithm('A256KW');
-cryptographer.setContentEncryptionAlgorithm('A256GCM');
-
-function shared_key(key) {
-  return crypto.subtle.importKey(
-    'jwk',
-    { kty: key.kty, k: key.k.replace(/=/, '') },
-    'AES-KW',
-    true,
-    ['wrapKey', 'unwrapKey']
-  );
-}
+const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
 function encrypt(key, content) {
-  const encrypter = new JoseJWE.Encrypter(cryptographer, shared_key(key));
-  return encrypter.encrypt(JSON.stringify(content));
+  const jwkKey = {
+    kty: key.kty,
+    k: key.k,
+    kid: key.kid
+  };
+  return jose.JWK.asKey(jwkKey).then((k) => {
+    return jose.JWE.createEncrypt({ format: 'compact' }, jwkKey)
+      .update(JSON.stringify(content), 'utf-8')
+      .final()
+      .then(function(result) {
+        return result;
+      });
+  });
 }
 
 function decrypt(key, encrypted) {
-  const decrypter = new JoseJWE.Decrypter(cryptographer, shared_key(key));
-  return decrypter.decrypt(encrypted).then(result => {
-    return JSON.parse(result);
+  const jwkKey = {
+    kty: key.kty,
+    k: key.k,
+    kid: key.kid
+  };
+
+  return jose.JWK.asKey(jwkKey).then((k) => {
+    return jose.JWE.createDecrypt(k.keystore)
+      .decrypt(encrypted)
+      .then(function(result) {
+        return JSON.parse(result.payload.toString());
+      });
   });
 }
 
