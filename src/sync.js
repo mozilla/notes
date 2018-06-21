@@ -2,16 +2,6 @@ let syncDebounce = null;
 
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
-function shared_key(key) {
-  return crypto.subtle.importKey(
-    'jwk',
-    { kty: key.kty, k: key.k.replace(/=/, '') },
-    'AES-KW',
-    true,
-    ['wrapKey', 'unwrapKey']
-  );
-}
-
 function encrypt(key, content) {
   const jwkKey = {
     kty: key.kty,
