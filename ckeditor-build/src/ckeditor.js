@@ -27,13 +27,13 @@ ClassicEditor.build = {
     StrikePlugin,
     CodePlugin,
     UnderlinePlugin,
-    HeadingPlugin,
+    //HeadingPlugin,
     ListPlugin,
     ParagraphPlugin
   ],
   config: {
     toolbar: [
-      'headings',
+      //'headings',
       'bulletedList',
       'numberedList',
       'bold',
