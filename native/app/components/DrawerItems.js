@@ -48,7 +48,7 @@ class DrawerItems extends React.Component {
     // DrawerItemsData store our drawer button list
     this.drawerItemsData = [
       {
-        label : 'Log out',
+        label: browser.i18n.getMessage('drawerBtnLogOut'),
         action: () => {
           navigateToLogin(props);
           // We delay disconnect event to avoid empty UI while drawer is closing
@@ -58,8 +58,8 @@ class DrawerItems extends React.Component {
         }
       },
       {
-        label  : 'Feedback',
-        action : () => {
+        label: browser.i18n.getMessage('drawerBtnFeedback'),
+        action: () => {
           trackEvent('give-feedback');
           return Linking.openURL(SURVEY_PATH);
         }
@@ -91,7 +91,7 @@ class DrawerItems extends React.Component {
       if (this.props.state.sync.isConnected === false) {
         if (this.props.navigation.state.isDrawerOpen) {
           props.navigation.dispatch(DrawerActions.closeDrawer());
-          ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+          ToastAndroid.show(browser.i18n.getMessage('toastOffline'), ToastAndroid.LONG);
         }
       } else if (!this.props.state.sync.loginDetails) {
         this._requestReconnect();
@@ -141,11 +141,12 @@ class DrawerItems extends React.Component {
     let statusLabel;
 
     if (this.props.state.sync.isConnected === false) {
-      statusLabel = 'Offline';
+      statusLabel = browser.i18n.getMessage('statusLabelOfflineDrawer');
     } else if (this.props.state.sync.isSyncing) {
-      statusLabel = 'Syncing…';
+      statusLabel = browser.i18n.getMessage('statusLabelSyncingDrawer');
     } else {
-      statusLabel = `Last synced ${ moment(this.props.state.sync.lastSynced).format('LT') }`;
+      let time = moment(this.props.state.sync.lastSynced).format('LT');
+      statusLabel = browser.i18n.getMessage('statusLabelTimeDrawer', time);
     }
 
     return (

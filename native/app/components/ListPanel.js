@@ -22,7 +22,7 @@ const SNACKBAR_ANIMATION_DURATION = 250;
 const SNACKBAR_HEIGHT = 48;
 
 const SYNCED_SNACKBAR = {
-  text: 'Notes synced!',
+  text: browser.i18n.getMessage('snackbarSynced'),
   color: COLOR_DARK_SYNC,
   action: null,
   onDismiss: null,
@@ -47,7 +47,7 @@ class ListPanel extends React.Component {
 
     this._onRefresh = () => {
       if (this.props.state.sync.isConnected === false) {
-        ToastAndroid.show('You are offline.', ToastAndroid.LONG);
+        ToastAndroid.show(browser.i18n.getMessage('toastOffline'), ToastAndroid.LONG);
       } else {
         trackEvent('webext-button-authenticate');
         this.setState({ refreshing: true });
@@ -236,10 +236,10 @@ class ListPanel extends React.Component {
 
         // Show snackbar
         this._showSnackbar({
-          text: 'Notes deleted.',
+          text: browser.i18n.getMessage('snackbarDeleted'),
           color: COLOR_NOTES_BLUE,
           action: {
-            text: 'UNDO',
+            text: browser.i18n.getMessage('snackbarUndo').toUpperCase(),
             onPress: () => {
               this._undoDelete(deletedNote);
             }
