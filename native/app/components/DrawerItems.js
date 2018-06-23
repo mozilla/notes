@@ -173,7 +173,7 @@ class DrawerItems extends React.Component {
         { this.props.state.sync.error ?
           <TouchableRipple style={styles.footer} onPress={this._requestReconnect}>
             <View style={styles.footerWrapper}>
-              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.isOpeningLogin ? 'Opening login…' : this.props.state.sync.error }</Text>
+              <Text style={{ color: COLOR_DARK_WARNING, fontSize: 13 }}>{ this.props.state.sync.isOpeningLogin ? browser.i18n.getMessage('statusLabelOpeningLoginDrawer') : this.props.state.sync.error }</Text>
               <MaterialIcons
                 name='warning'
                 style={{ color: COLOR_DARK_WARNING }}

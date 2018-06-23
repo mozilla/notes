@@ -4,9 +4,8 @@ import { connect } from 'react-redux';
 import { Button } from 'react-native-paper';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { View, Text, ProgressBarAndroid, ToastAndroid, Image, StyleSheet, Linking } from 'react-native';
-
- import { COLOR_NOTES_BLUE } from '../utils/constants';
- import i18nGetMessage from '../utils/i18n';
+import { COLOR_NOTES_BLUE } from '../utils/constants';
+import i18nGetMessage from '../utils/i18n';
 
 class LoginPanel extends React.Component {
 

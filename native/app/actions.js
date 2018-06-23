@@ -1,5 +1,6 @@
 import * as Keychain from 'react-native-keychain';
 import kintoClient from './vendor/kinto-client';
+import browser from '../browser';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
@@ -34,7 +35,7 @@ export function openingLogin() {
 
 export function reconnectSync() {
   trackEvent('reconnect-sync');
-  return { type: RECONNECT_SYNC, message: 'Reconnect to Sync' };
+  return { type: RECONNECT_SYNC, message: browser.i18n.getMessage('reconnectSync') };
 }
 
 export function syncing() {
