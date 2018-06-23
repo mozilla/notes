@@ -15,7 +15,7 @@ import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Range from '@ckeditor/ckeditor5-engine/src/model/range';
 import StrikePlugin from '@ckeditor/ckeditor5-basic-styles/src/strikethrough';
-
+import UnderlinePlugin from '@ckeditor/ckeditor5-basic-styles/src/underline';
 
 export default class ClassicEditor extends ClassicEditorBase {}
 
@@ -31,6 +31,7 @@ ClassicEditor.build = {
     ListPlugin,
     ParagraphPlugin,
     StrikePlugin,
+    UnderlinePlugin,
   ],
   config: {
     toolbar: {
