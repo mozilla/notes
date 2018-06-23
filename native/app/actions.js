@@ -1,6 +1,5 @@
 import * as Keychain from 'react-native-keychain';
 import kintoClient from './vendor/kinto-client';
-import browser from '../browser';
 
 import { SYNC_AUTHENTICATED,
   KINTO_LOADED,
