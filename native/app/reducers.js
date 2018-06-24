@@ -45,6 +45,18 @@ function profile(profile = {}, action) {
   }
 }
 
+
+function appUpdates(appUpdates = {}, action) {
+  switch (action.type) {
+    case UPDATE_NOTE:
+      return Object.assign({}, appUpdates, {
+        updateNote: Date.now(),
+      });
+    default:
+      return appUpdates;
+  }
+}
+
 function sync(sync = {}, action) {
   switch (action.type) {
     case SYNC_AUTHENTICATED:
@@ -255,6 +267,7 @@ function notes(notes = [], action) {
 }
 
 const noteApp = combineReducers({
+  appUpdates,
   profile,
   sync,
   kinto,
