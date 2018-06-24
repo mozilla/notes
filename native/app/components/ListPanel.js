@@ -18,6 +18,8 @@ import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
 import Snackbar from './Snackbar';
 
+var _ = require('lodash')
+
 const SNACKBAR_ANIMATION_DURATION = 250;
 const SNACKBAR_HEIGHT = 48;
 
@@ -56,6 +58,10 @@ class ListPanel extends React.Component {
         }).catch(() => {
           this.setState({ refreshing: false });
         });
+
+        setTimeout(() => {
+          this.setState({ refreshing: false });
+        }, 12000)
       }
     }
 
@@ -99,6 +105,7 @@ class ListPanel extends React.Component {
         this.setState({
           snackbar,
           snackbarVisible: true,
+          refreshing: false
         });
 
         Animated.timing(this.state.fabPositionAnimation, {
@@ -178,6 +185,23 @@ class ListPanel extends React.Component {
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
     NetInfo.removeEventListener('connectionChange', this._handleNetworkStateChange);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    let shouldUpdate = false;
+
+    const changedProps = _.reduce(this.props.state, function (result, value, key) {
+      return _.isEqual(value, nextProps.state[key])
+        ? result
+        : result.concat(key)
+    }, []);
+
+    // only render when notes collection changes
+    if (changedProps.length > 0 && _.includes(changedProps, 'notes', 'appUpdates')) {
+      shouldUpdate = true;
+    }
+
+    return shouldUpdate;
   }
 
   componentWillReceiveProps(newProps) {
@@ -369,7 +393,11 @@ class ListPanel extends React.Component {
       return (
         <FlatList
           contentContainerStyle={styleList}
-          data={this.props.state.notes.sort((a, b) => { return a.lastModified <= b.lastModified ? 1 : -1 })}
+          data={this.props.state.notes.sort((a, b) => {
+            const aStamp = new Date(a.lastModified).getTime();
+            const bStamp = new Date(b.lastModified).getTime();
+            return aStamp <= bStamp ? 1 : -1
+          })}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
