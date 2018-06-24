@@ -92,7 +92,6 @@ export default class RichTextEditor extends Component {
   onMessage(event){
     try {
       const message = JSON.parse(event.nativeEvent.data);
-
       switch (message.type) {
         case messages.TITLE_HTML_RESPONSE:
           if (this.titleResolve) {
@@ -159,7 +158,7 @@ export default class RichTextEditor extends Component {
           this.showLinkDialog(title, url);
           break;
         case messages.LOG:
-          console.log('FROM ZSS', message.data);
+          //console.log('FROM ZSS', message.data);
           break;
         case messages.SCROLL:
           this.webView.setNativeProps({contentOffset: {y: message.data}});
