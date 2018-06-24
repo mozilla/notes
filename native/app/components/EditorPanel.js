@@ -72,6 +72,12 @@ class RichTextExample extends Component {
   onEditorInitialized() {
   }
 
+  shouldComponentUpdate(nextProps) {
+    let shouldUpdate = false;
+
+    return shouldUpdate;
+  }
+
   render() {
     return (
       <View style={styles.container}>

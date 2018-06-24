@@ -27,6 +27,7 @@
     "fxa-crypto-relier": "2.3.0",
     "https-browserify": "0.0.1",
     "indexeddbshim": "^3.5.1",
+    "lodash": "^4.17.10",
     "moment": "^2.22.1",
     "path-browserify": "0.0.0",
     "pontoon-to-webext": "^1.0.2",
