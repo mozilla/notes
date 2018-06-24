@@ -58,6 +58,10 @@ class ListPanel extends React.Component {
         }).catch(() => {
           this.setState({ refreshing: false });
         });
+
+        setTimeout(() => {
+          this.setState({ refreshing: false });
+        }, 12000)
       }
     }
 
@@ -101,6 +105,7 @@ class ListPanel extends React.Component {
         this.setState({
           snackbar,
           snackbarVisible: true,
+          refreshing: false
         });
 
         Animated.timing(this.state.fabPositionAnimation, {
