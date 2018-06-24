@@ -304,7 +304,7 @@ class ListPanel extends React.Component {
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         { this.renderList() }
-        <Snackbar
+        { this.state.snackbar && this.state.snackbar.text ? <Snackbar
           style={{
             backgroundColor: this.state.snackbar ? this.state.snackbar.color : COLOR_DARK_SYNC,
             position: 'absolute',
@@ -318,7 +318,7 @@ class ListPanel extends React.Component {
               },
             ],
           }}
-          visible={ this.state.snackbarVisible }
+          visible={ this.state.snackbarVisible && this.state.snackbar && this.state.snackbar.text }
           action={ this.state.snackbar ? this.state.snackbar.action : null }
           theme={{ colors: { accent: 'white' }}}
           onDismiss={(onPress) => {
@@ -329,8 +329,8 @@ class ListPanel extends React.Component {
           }}
           duration={ this.state.snackbar ? this.state.snackbar.duration : 3000 }
         >
-          { this.state.snackbar ? this.state.snackbar.text : '' }
-        </Snackbar>
+          {this.state.snackbar.text}
+        </Snackbar> : null }
 
         { this.props.state.kinto.isLoaded && !this.state.hideFab ?
           <Animated.View style={[
