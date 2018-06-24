@@ -22,7 +22,6 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
-    this.paragraphHasBeenInjected = false; // catch setParagraph Callback on creation
     this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
     if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
@@ -31,13 +30,7 @@ class RichTextExample extends Component {
 
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
-      if (!this.note && !this.paragraphHasBeenInjected) { // new note never paragraphed, not in redux
-        // Because .setParagraph() trigger and update, we use paragraphHasBeenInjected to handle its
-        // callback and avoid a non expected dispatch(updateNote())
-        this.paragraphHasBeenInjected = true;
-        this.richtext.setParagraph();
-      } else if (!this.note) { // new note has been paragraphed, we push on redux
-        this.paragraphHasBeenInjected = false;
+      if (!this.note) { // new note has been paragraphed, we push on redux
         this.note = { content: e };
         this.props.dispatch(createNote(this.note)).then((note) => {
           this.note.id = note.id;
@@ -77,11 +70,6 @@ class RichTextExample extends Component {
   }
 
   onEditorInitialized() {
-    if (!this.note) {
-      // set height if totally empty, helps with keyboard pull up
-      const { height } = Dimensions.get('window');
-      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
-    }
   }
 
   render() {

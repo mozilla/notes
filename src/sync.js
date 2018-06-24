@@ -87,9 +87,13 @@ class JWETransformer {
     if (!record.content) {
       // This can happen for tombstones if a record is deleted.
       if (record.deleted) {
+        record.last_modified = Date.now();
+        record.lastModified = new Date(record.last_modified);
         return record;
       }
-      throw new Error('No ciphertext: nothing to decrypt?');
+
+      record.content = '';
+      // throw new Error('No ciphertext: nothing to decrypt?');
     }
 
     if (record.kid !== this.key.kid) {
@@ -111,6 +115,10 @@ class JWETransformer {
       decoded.lastModified = new Date(decoded.last_modified);
     }
 
+    if (!decoded.last_modified) {
+      decoded.last_modified = Date.now();
+      decoded.lastModified = new Date(decoded.last_modified);
+    }
 
     // _status: deleted records were deleted on a client, but
     // uploaded as an encrypted blob so we don't leak deletions.
@@ -236,8 +244,11 @@ function syncKinto(client, credentials) {
             // Could be difference on lastModified Date.
             if (conflict.remote.content !== conflict.local.content) {
               const mergeWarning = browser.i18n.getMessage('mergeWarning');
-              resolution.content =
-                `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
+              if (resolution.content === undefined) {
+                resolution.content = conflict.local.content;
+              } else {
+                resolution.content = `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
+              }
             }
 
             // We get earlier date for resolved conflict.
