@@ -93,7 +93,7 @@ class JWETransformer {
       }
 
       record.content = '';
-      //throw new Error('No ciphertext: nothing to decrypt?');
+      // throw new Error('No ciphertext: nothing to decrypt?');
     }
 
     if (record.kid !== this.key.kid) {
