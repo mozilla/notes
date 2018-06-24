@@ -77,11 +77,6 @@ class RichTextExample extends Component {
   }
 
   onEditorInitialized() {
-    if (!this.note) {
-      // set height if totally empty, helps with keyboard pull up
-      const { height } = Dimensions.get('window');
-      this.richtext._sendAction('SET_EDITOR_HEIGHT', height - 300);
-    }
   }
 
   render() {
