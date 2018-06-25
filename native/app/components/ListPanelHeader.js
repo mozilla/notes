@@ -7,7 +7,7 @@ import { resetSelect, deleteNotes } from "../actions";
 
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_DARK_TEXT } from '../utils/constants';
-
+import browser from '../browser';
 class ListPanelHeader extends Component {
 
   constructor(props) {
@@ -42,7 +42,7 @@ class ListPanelHeader extends Component {
           <ToolbarContent
             style={{ paddingLeft: 0,  }}
             titleStyle={{ fontSize: 18, color: COLOR_DARK_TEXT }}
-            title='Selection' />
+            title={ browser.i18n.getMessage('noteListSelection') } />
           <ToolbarAction
             size={20}
             style={{ paddingTop: 4 }}
@@ -64,7 +64,7 @@ class ListPanelHeader extends Component {
         <ToolbarContent
           style={{ paddingLeft: 0, paddingHorizontal: 0  }}
           titleStyle={{ fontSize: 18, color: COLOR_NOTES_BLUE }}
-          title='Notes' />
+          title={ browser.i18n.getMessage('welcomeTitle4') } />
       </Toolbar>
     );
   }

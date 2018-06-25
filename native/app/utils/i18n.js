@@ -65,7 +65,9 @@ if (! localeStrings) {
 }
 
 function getMessage(messageName, content) {
-  const message = localeStrings[messageName];
+  const message = localeStrings[messageName] || LOCALE_FILES['en_US'][messageName] || {
+    message: messageName
+  };
 
   if (message.placeholders) {
     message.message = message.message.replace(/\$.*\$/g, content);
