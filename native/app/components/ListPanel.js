@@ -197,7 +197,7 @@ class ListPanel extends React.Component {
     }, []);
 
     // only render when notes collection changes
-    if (changedProps.length > 0 && _.includes(changedProps, 'notes', 'appUpdates')) {
+    if (changedProps.length > 0 && _.intersection(changedProps, ['notes', 'appUpdates', 'kinto']).length > 0) {
       shouldUpdate = true;
     }
 
