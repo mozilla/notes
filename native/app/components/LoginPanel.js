@@ -25,7 +25,7 @@ class LoginPanel extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F9F9FA' }}>
         <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 15 }}>
           <Image
             style={{width: 150, height: 150 }}

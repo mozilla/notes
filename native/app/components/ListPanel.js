@@ -19,17 +19,6 @@ import ListPanelLoading from './ListPanelLoading';
 
 var _ = require('lodash')
 
-const SNACKBAR_ANIMATION_DURATION = 250;
-const SNACKBAR_HEIGHT = 48;
-
-const SYNCED_SNACKBAR = {
-  text: browser.i18n.getMessage('snackbarSynced'),
-  color: COLOR_DARK_SYNC,
-  action: null,
-  onDismiss: null,
-  duration: 3000
-};
-
 class ListPanel extends React.Component {
   constructor(props) {
     super(props);
