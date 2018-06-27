@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: 'white',
     padding: 0,
-    opacity: 0.9,
     shadowOpacity: 0,
     elevation: 0,
     paddingTop: StatusBar.currentHeight
