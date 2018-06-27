@@ -31,7 +31,7 @@ import { trackEvent } from './app/utils/metrics';
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
 import EditorPanelHeader from './app/components/EditorPanelHeader';
-import ListPanel from './app/components/ListPanel';
+import ListPanelWrapper from './app/components/ListPanelWrapper';
 import ListPanelHeader from './app/components/ListPanelHeader';
 import LoadingPanel from './app/components/LoadingPanel';
 import LoginPanel from './app/components/LoginPanel';
@@ -99,7 +99,7 @@ const routeConfigMap = {
   },
   ListPanel: {
     screen: (props) => {
-      return <ListPanel {...props} />
+      return <ListPanelWrapper {...props} />
     }
   },
   EditorPanel: {
