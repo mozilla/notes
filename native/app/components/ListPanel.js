@@ -359,11 +359,14 @@ class ListPanel extends React.Component {
               ],
             }]}>
             <FAB
-              small
               color={COLOR_NOTES_WHITE}
               style={styles.fab}
               icon="add"
-              onPress={() => this.props.navigation.navigate('EditorPanel', { note: null }) }
+              onPress={() => {
+                setTimeout(() => {
+                  this.props.navigation.navigate('EditorPanel', { note: null });
+                }, 100)
+              }}
             />
           </Animated.View> : null }
       </View>
