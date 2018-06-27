@@ -10,6 +10,7 @@ import { authenticate, kintoLoad } from '../actions';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import i18nGetMessage from '../utils/i18n';
 import { trackEvent } from '../utils/metrics';
+import browser from '../browser';
 
 class LoadingPanel extends React.Component {
 
@@ -23,7 +24,8 @@ class LoadingPanel extends React.Component {
     .then((loginDetails) => {
       trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
-      ToastAndroid.show('Logged in as ' + loginDetails.profile.email, ToastAndroid.LONG);
+      let email = loginDetails.profile.email;
+      ToastAndroid.show(browser.i18n.getMessage('toastLoggedInAs', email), ToastAndroid.LONG);
 
       this.props.dispatch(kintoLoad());
 
@@ -35,7 +37,7 @@ class LoadingPanel extends React.Component {
       return Promise.resolve();
     }).catch((err) => {
       console.log('onAuth', err);
-      ToastAndroid.show('Something went wrong. ' + err, ToastAndroid.LONG);
+      ToastAndroid.show(browser.i18n.getMessage('toastLoggedInError', err), ToastAndroid.LONG);
       trackEvent('login-failed');
       const resetAction = StackActions.reset({
         index: 0,
@@ -49,7 +51,7 @@ class LoadingPanel extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F9F9FA' }}>
         <Image
           style={{width: 150, height: 150 }}
           source={require('../assets/notes-1024.png')}

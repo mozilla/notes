@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import browser from '../browser';
+
+const noNotesMessage = browser.i18n.getMessage('noNotesMessage');
 
 class ListPanelEmpty extends React.Component {
-
   render() {
     return (
       <View style={styles.noNotes}>
@@ -10,7 +12,7 @@ class ListPanelEmpty extends React.Component {
           style={{width: 150, height: 150, marginBottom: 30 }}
           source={require('../assets/notes-1024.png')}
         />
-        <Text style={styles.centered}>Your notes will show up here and are synced across your connected devices.</Text>
+        <Text style={styles.centered}>{noNotesMessage}</Text>
       </View>
     );
   }

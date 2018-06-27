@@ -34,7 +34,7 @@ export function openingLogin() {
 
 export function reconnectSync() {
   trackEvent('reconnect-sync');
-  return { type: RECONNECT_SYNC, message: 'Reconnect to Sync' };
+  return { type: RECONNECT_SYNC, message: browser.i18n.getMessage('reconnectSync') };
 }
 
 export function syncing() {

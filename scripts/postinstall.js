@@ -11,7 +11,7 @@ const files = [
   copySync('node_modules/jose-jwe-jws/dist/jose.min.js', 'src/vendor/jose.js'),
   copySync('node_modules/jose-jwe-jws/LICENSE', 'src/vendor/jose.LICENCE'),
   copySync('node_modules/fxa-crypto-relier/dist/fxa-crypto-relier/fxa-crypto-relier.js', 'src/vendor/fxa-crypto-relier/fxa-crypto-relier.js'),
-  copySync('node_modules/@ckeditor/ckeditor5-build-classic/LICENSE.md', 'src/sidebar/vendor/ckeditor.LICENSE')
+  copySync('node_modules/@ckeditor/ckeditor5-editor-classic/LICENSE.md', 'src/sidebar/vendor/ckeditor.LICENSE')
 ];
 
 Promise.all(files).catch(err => {

@@ -31,7 +31,7 @@ import { trackEvent } from './app/utils/metrics';
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
 import EditorPanelHeader from './app/components/EditorPanelHeader';
-import ListPanel from './app/components/ListPanel';
+import ListPanelWrapper from './app/components/ListPanelWrapper';
 import ListPanelHeader from './app/components/ListPanelHeader';
 import LoadingPanel from './app/components/LoadingPanel';
 import LoginPanel from './app/components/LoginPanel';
@@ -99,7 +99,7 @@ const routeConfigMap = {
   },
   ListPanel: {
     screen: (props) => {
-      return <ListPanel {...props} />
+      return <ListPanelWrapper {...props} />
     }
   },
   EditorPanel: {
@@ -147,7 +147,7 @@ const App = createDrawerNavigator(
 
 class Notes extends React.Component {
   componentDidMount() {
-    StatusBar.setBackgroundColor('rgba(249, 249, 250, 0.3)');
+    StatusBar.setBackgroundColor('rgba(255, 255, 255, 0.3)');
     StatusBar.setTranslucent(true);
     StatusBar.setBarStyle('dark-content');
     trackEvent('open');
@@ -165,11 +165,5 @@ class Notes extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  toolbar: {
-    backgroundColor: COLOR_APP_BAR,
-  }
-});
 
 AppRegistry.registerComponent('Notes', () => Notes);

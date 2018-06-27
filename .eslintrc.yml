@@ -50,6 +50,7 @@ plugins:
 root: true
 
 rules:
+  no-lonely-if: warn
   consistent-return: warn
   eqeqeq: error
   linebreak-style: [error, unix]

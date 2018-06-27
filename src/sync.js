@@ -1,28 +1,36 @@
 let syncDebounce = null;
 
-const cryptographer = new Jose.WebCryptographer();
-cryptographer.setKeyEncryptionAlgorithm('A256KW');
-cryptographer.setContentEncryptionAlgorithm('A256GCM');
-
-function shared_key(key) {
-  return crypto.subtle.importKey(
-    'jwk',
-    { kty: key.kty, k: key.k.replace(/=/, '') },
-    'AES-KW',
-    true,
-    ['wrapKey', 'unwrapKey']
-  );
-}
+const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
 
 function encrypt(key, content) {
-  const encrypter = new JoseJWE.Encrypter(cryptographer, shared_key(key));
-  return encrypter.encrypt(JSON.stringify(content));
+  const jwkKey = {
+    kty: key.kty,
+    k: key.k,
+    kid: key.kid
+  };
+  return jose.JWK.asKey(jwkKey).then((k) => {
+    return jose.JWE.createEncrypt({ format: 'compact' }, jwkKey)
+      .update(JSON.stringify(content), 'utf-8')
+      .final()
+      .then(function(result) {
+        return result;
+      });
+  });
 }
 
 function decrypt(key, encrypted) {
-  const decrypter = new JoseJWE.Decrypter(cryptographer, shared_key(key));
-  return decrypter.decrypt(encrypted).then(result => {
-    return JSON.parse(result);
+  const jwkKey = {
+    kty: key.kty,
+    k: key.k,
+    kid: key.kid
+  };
+
+  return jose.JWK.asKey(jwkKey).then((k) => {
+    return jose.JWE.createDecrypt(k.keystore)
+      .decrypt(encrypted)
+      .then(function(result) {
+        return JSON.parse(result.payload.toString());
+      });
   });
 }
 
@@ -79,9 +87,13 @@ class JWETransformer {
     if (!record.content) {
       // This can happen for tombstones if a record is deleted.
       if (record.deleted) {
+        record.last_modified = Date.now();
+        record.lastModified = new Date(record.last_modified);
         return record;
       }
-      throw new Error('No ciphertext: nothing to decrypt?');
+
+      record.content = '';
+      // throw new Error('No ciphertext: nothing to decrypt?');
     }
 
     if (record.kid !== this.key.kid) {
@@ -103,6 +115,10 @@ class JWETransformer {
       decoded.lastModified = new Date(decoded.last_modified);
     }
 
+    if (!decoded.last_modified) {
+      decoded.last_modified = Date.now();
+      decoded.lastModified = new Date(decoded.last_modified);
+    }
 
     // _status: deleted records were deleted on a client, but
     // uploaded as an encrypted blob so we don't leak deletions.
@@ -228,8 +244,11 @@ function syncKinto(client, credentials) {
             // Could be difference on lastModified Date.
             if (conflict.remote.content !== conflict.local.content) {
               const mergeWarning = browser.i18n.getMessage('mergeWarning');
-              resolution.content =
-                `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
+              if (resolution.content === undefined) {
+                resolution.content = conflict.local.content;
+              } else {
+                resolution.content = `${resolution.content}<p>${mergeWarning}</p>${conflict.local.content}`;
+              }
             }
 
             // We get earlier date for resolved conflict.

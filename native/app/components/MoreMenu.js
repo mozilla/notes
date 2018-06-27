@@ -8,7 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   COLOR_NOTES_BLUE
 } from '../utils/constants';
-
+import browser from '../browser';
 const UIManager = NativeModules.UIManager;
 
 /**
@@ -55,7 +55,7 @@ class MoreMenu extends Component {
   };
 
   render() {
-    const labels = ['Delete'];
+    const labels = [browser.i18n.getMessage('editorMenuDelete')];
 
     return (
       <View style={{ flexDirection: 'row' }}>

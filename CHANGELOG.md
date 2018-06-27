@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.2.0
+
+* Latest CKEditor Build. Read more at https://ckeditor.com/blog/CKEditor-5-v10.1.0-released
+* Improve crypto engine for encryption and decryption
+* Improved HTML export
+* Ctrl-Backspace deletes the whole word now. #566
+* Style fixes #1179
+
 ## 4.1.1
 
 * Fix the version number

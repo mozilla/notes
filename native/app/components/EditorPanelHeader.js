@@ -7,6 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Toolbar, ToolbarContent, ToolbarAction } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_NOTES_BLUE, COLOR_DARK_WARNING } from '../utils/constants';
 import MoreMenu from './MoreMenu';
+import browser from '../browser';
 
 class EditorPanelHeader extends Component {
 
@@ -18,7 +19,7 @@ class EditorPanelHeader extends Component {
     let color = COLOR_NOTES_BLUE;
 
     if (props.state.sync.isConnected === false) {
-      content = 'Offline';
+      content = browser.i18n.getMessage('editorLabelOffline');
     } else if (props.state.sync.error) {
       content = props.state.sync.error;
       color = COLOR_DARK_WARNING;
@@ -73,13 +74,13 @@ class EditorPanelHeader extends Component {
     clearTimeout(this.timer);
 
     if (newProps.state.sync.isConnected === false) {
-      this._setToolbarContent('Offline');
+      this._setToolbarContent(browser.i18n.getMessage('editorLabelOffline'));
     } else if (newProps.state.sync.error) {
       this._setToolbarContent(newProps.state.sync.error, COLOR_DARK_WARNING);
     } else if (newProps.state.sync.isSyncing) {
-      this._setToolbarContent('Syncing...');
+      this._setToolbarContent(browser.i18n.getMessage('editorLabelSyncing'));
     } else if (this.props.state.sync.isSyncing && !newProps.state.sync.isSyncing) {
-      this._setToolbarContent('Synced');
+      this._setToolbarContent(browser.i18n.getMessage('editorLabelSynced'));
       this.timer = setTimeout(() => {
         const note = newProps.state.notes.find((note) => newProps.state.sync.focusedNoteId === note.id);
         this.timer = this._setToolbarContent(note ? note.firstLine : '');
@@ -142,7 +143,6 @@ const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: 'white',
     padding: 0,
-    opacity: 0.9,
     shadowOpacity: 0,
     elevation: 0,
     paddingTop: StatusBar.currentHeight

@@ -108,11 +108,15 @@ button, a.btn {
     }
 
     &.borderTop {
-      border-top: 1px solid #d7d7db;
+      border-top: 1px solid #ededf0;
     }
 
     &.borderBottom {
-      border-bottom: 1px solid #d7d7db;
+      border-bottom: 1px solid #ededf0;
+    }
+
+    &.newNoteBtn {
+      border-bottom-color: #d7d7db;
     }
 
     span {
@@ -123,4 +127,5 @@ button, a.btn {
       width: 16px;
     }
   }
+
 }

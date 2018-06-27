@@ -50,7 +50,7 @@ class Editor extends React.Component {
         // Focus the text editor
         this.editor.editing.view.focus();
 
-        editor.document.on('change', (eventInfo, name) => {
+        editor.model.document.on('change', (eventInfo, name) => {
           // Cache update event in case of multi-change event (copy pasting trigger many).
           clearTimeout(this.delayUpdateNote);
           this.delayUpdateNote = setTimeout(() => {
@@ -59,18 +59,22 @@ class Editor extends React.Component {
               .querySelector('.ck-editor__editable')
               .classList.contains('ck-focused');
             // Only use the focused editor or handle 'rename' events to set the data into storage.
-            if (isFocused || name === 'rename' || name === 'insert') {
+            if (isFocused || name === 'rename' || name === 'insert' || name.type && name.type === 'transparent') {
                 const content = editor.getData();
 
                 if (!this.ignoreChange) {
-                  if (!this.props.note.id) {
-                    this.props.dispatch(createNote(content, this.props.origin)).then(id => {
-                      this.props.dispatch(setFocusedNote(id));
-                    });
-                  } else if (this.props.note.id && (content === '' || content === '<p>&nbsp;</p>')) {
-                    this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
+                  if (content !== '' && content !== '<p>&nbsp;</p>') {
+                    if (!this.props.note.id) {
+                      this.props.dispatch(createNote(content, this.props.origin)).then(id => {
+                        this.props.dispatch(setFocusedNote(id));
+                      });
+                    } else {
+                      this.props.dispatch(updateNote(this.props.note.id, content));
+                    }
                   } else {
-                    this.props.dispatch(updateNote(this.props.note.id, content));
+                    if (this.props.note.id) {
+                      this.props.dispatch(deleteNote(this.props.note.id, FROM_BLANK_NOTE));
+                    }
                   }
                 }
                 this.ignoreChange = false;
