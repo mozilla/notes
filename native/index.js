@@ -166,10 +166,4 @@ class Notes extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  toolbar: {
-    backgroundColor: COLOR_APP_BAR,
-  }
-});
-
 AppRegistry.registerComponent('Notes', () => Notes);

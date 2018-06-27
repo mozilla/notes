@@ -226,7 +226,7 @@ class ListPanelWrapper extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, position: 'relative' }}>
+      <View style={{ flex: 1, position: 'relative', backgroundColor: '#F9F9FA' }}>
         <ListPanel {...this.props}></ListPanel>
         { this.state.snackbar && this.state.snackbar.text ? <Snackbar
           style={{

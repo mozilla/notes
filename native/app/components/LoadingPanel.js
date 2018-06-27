@@ -51,7 +51,7 @@ class LoadingPanel extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F9F9FA' }}>
         <Image
           style={{width: 150, height: 150 }}
           source={require('../assets/notes-1024.png')}
