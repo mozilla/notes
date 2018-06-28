@@ -30,7 +30,7 @@ class RichTextExample extends Component {
 
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
-      if (!this.note) { // new note has been paragraphed, we push on redux
+      if (!this.note && e !== '<p>&nbsp;</p>') { // new note has been paragraphed, we push on redux
         this.note = { content: e };
         this.props.dispatch(createNote(this.note)).then((note) => {
           this.note.id = note.id;
