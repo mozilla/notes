@@ -40,16 +40,15 @@ class ListPanel extends React.Component {
         ToastAndroid.show(browser.i18n.getMessage('toastOffline'), ToastAndroid.LONG);
       } else {
         trackEvent('webext-button-authenticate');
-        this.setState({ refreshing: true });
+        if (!this.props.state.refreshing) {
+          this.setState({refreshing: true});
+          this.setState({refreshing: false});
+        }
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
         }).catch(() => {
           this.setState({ refreshing: false });
         });
-
-        setTimeout(() => {
-          this.setState({ refreshing: false });
-        }, 12000)
       }
     }
 
@@ -152,6 +151,7 @@ class ListPanel extends React.Component {
           })}
           refreshControl={
             <RefreshControl
+              enabled={! this.state.refreshing || ! this.state.sync.selected || ! this.state.sync.isSyncing}
               refreshing={this.state.refreshing}
               colors={[ COLOR_NOTES_BLUE ]}
               onRefresh={this._onRefresh.bind(this)}

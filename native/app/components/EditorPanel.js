@@ -30,17 +30,17 @@ class RichTextExample extends Component {
 
   componentDidMount() {
     this.richtext.registerContentChangeListener((e) => {
-      if (!this.note) { // new note has been paragraphed, we push on redux
+      if (!this.note && e !== '<p>&nbsp;</p>') { // new note has been paragraphed, we push on redux
         this.note = { content: e };
         this.props.dispatch(createNote(this.note)).then((note) => {
           this.note.id = note.id;
           this.props.dispatch(setFocusedNote(note.id));
         });
-      } else if (this.note && e === '') { // if we delete all caracters from a note
+      } else if (this.note && (e === '' || e === '<p>&nbsp;</p>')) { // if we delete all caracters from a note
         this.props.dispatch(deleteNotes([ this.note.id ], 'blank-note'));
         this.note = null;
         this.props.dispatch(setFocusedNote());
-      } else if (this.note && e !== '') { // default case, on modification we save
+      } else if (this.note && (e !== '' || e !== '<p>&nbsp;</p>')) { // default case, on modification we save
         this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }
     });
@@ -50,10 +50,14 @@ class RichTextExample extends Component {
       switch(eventData.action) {
         case KINTO_LOADED:
           if (this.note && this.props.navigation.isFocused()) {
-            newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            let newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            // only force update content if content is different
             if (newNote) {
-              this.note = newNote;
-              this.richtext.setContentHTML(this.note.content);
+              if(newNote.content !== this.note.content) {
+                this.note = newNote;
+                // Disable this for now, only conflict notes once out of the view...
+                //this.richtext.setContentHTML(this.note.content);
+              }
             } else {
               this.props.navigation.goBack();
             }

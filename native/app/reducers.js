@@ -52,6 +52,10 @@ function appUpdates(appUpdates = {}, action) {
       return Object.assign({}, appUpdates, {
         updateNote: Date.now(),
       });
+    case DELETE_NOTE:
+      return Object.assign({}, appUpdates, {
+        deleteNote: Date.now(),
+      });
     default:
       return appUpdates;
   }
