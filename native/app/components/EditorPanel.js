@@ -53,10 +53,10 @@ class RichTextExample extends Component {
             let newNote = this.props.state.notes.find((note) => note.id === this.note.id);
             // only force update content if content is different
             if (newNote) {
-              this.note = newNote;
-
               if(newNote.content !== this.note.content) {
-                this.richtext.setContentHTML(this.note.content);
+                this.note = newNote;
+                // Disable this for now, only conflict notes once out of the view...
+                //this.richtext.setContentHTML(this.note.content);
               }
             } else {
               this.props.navigation.goBack();
