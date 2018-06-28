@@ -40,16 +40,14 @@ class ListPanel extends React.Component {
         ToastAndroid.show(browser.i18n.getMessage('toastOffline'), ToastAndroid.LONG);
       } else {
         trackEvent('webext-button-authenticate');
-        this.setState({ refreshing: true });
+        if (!this.props.state.refreshing) {
+          this.setState({refreshing: true});
+        }
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
         }).catch(() => {
           this.setState({ refreshing: false });
         });
-
-        setTimeout(() => {
-          this.setState({ refreshing: false });
-        }, 12000)
       }
     }
 
