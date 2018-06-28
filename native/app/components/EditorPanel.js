@@ -50,10 +50,14 @@ class RichTextExample extends Component {
       switch(eventData.action) {
         case KINTO_LOADED:
           if (this.note && this.props.navigation.isFocused()) {
-            newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            let newNote = this.props.state.notes.find((note) => note.id === this.note.id);
+            // only force update content if content is different
             if (newNote) {
               this.note = newNote;
-              this.richtext.setContentHTML(this.note.content);
+
+              if(newNote.content !== this.note.content) {
+                this.richtext.setContentHTML(this.note.content);
+              }
             } else {
               this.props.navigation.goBack();
             }

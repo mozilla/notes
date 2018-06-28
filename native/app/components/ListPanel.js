@@ -151,6 +151,7 @@ class ListPanel extends React.Component {
           })}
           refreshControl={
             <RefreshControl
+              enabled={! this.state.refreshing || ! this.state.sync.selected || ! this.state.sync.isSyncing}
               refreshing={this.state.refreshing}
               colors={[ COLOR_NOTES_BLUE ]}
               onRefresh={this._onRefresh.bind(this)}

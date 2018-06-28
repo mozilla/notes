@@ -117,33 +117,33 @@
 
             zss_editor.setContentHTML = function(html) {
               editor.setData(html || '<p></p>');
+
+              setTimeout(function () {
+                // Android won't popup the keyboard on focused <div>s, first focus a fake input then focus the div
+                var fakeInput = document.querySelectorAll("#fake")[0];
+                fakeInput.focus();
+
+                setTimeout(function () {
+                  // the following was taken from http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
+                  // and ensures we move the cursor to the end of the editor
+                  var editorSelector = document.querySelectorAll('.' + "ck-editor__editable");
+                  var range = document.createRange();
+                  range.selectNodeContents(editorSelector[0]);
+                  range.collapse(false);
+                  var selection = window.getSelection();
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+                  editorSelector[0].focus();
+                  fakeInput.disabled = true;
+                  fakeInput.parentNode.removeChild(fakeInput);
+                }, 300);
+
+              }, 300);
             };
 
             this.editor = editor;
 
             postMessage(JSON.stringify({type: 'ZSS_INITIALIZED'}));
-
-            setTimeout(function () {
-              // Android won't popup the keyboard on focused <div>s, first focus a fake input then focus the div
-              var fakeInput = document.querySelectorAll("#fake")[0];
-              fakeInput.focus();
-
-              setTimeout(function () {
-                // the following was taken from http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
-                // and ensures we move the cursor to the end of the editor
-                var editorSelector = document.querySelectorAll('.' + "ck-editor__editable");
-                var range = document.createRange();
-                range.selectNodeContents(editorSelector[0]);
-                range.collapse(false);
-                var selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-                editorSelector[0].focus();
-                fakeInput.disabled = true;
-                fakeInput.parentNode.removeChild(fakeInput);
-              }, 300);
-
-            }, 300);
 
             editor.model.document.on('change', (eventInfo, name) => {
               // skip change notification on load
