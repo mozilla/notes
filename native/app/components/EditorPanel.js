@@ -36,11 +36,11 @@ class RichTextExample extends Component {
           this.note.id = note.id;
           this.props.dispatch(setFocusedNote(note.id));
         });
-      } else if (this.note && e === '') { // if we delete all caracters from a note
+      } else if (this.note && (e === '' || e === '<p>&nbsp;</p>')) { // if we delete all caracters from a note
         this.props.dispatch(deleteNotes([ this.note.id ], 'blank-note'));
         this.note = null;
         this.props.dispatch(setFocusedNote());
-      } else if (this.note && e !== '') { // default case, on modification we save
+      } else if (this.note && (e !== '' || e !== '<p>&nbsp;</p>')) { // default case, on modification we save
         this.props.dispatch(updateNote(this.note.id, e, new Date()));
       }
     });
