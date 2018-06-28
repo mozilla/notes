@@ -25,16 +25,19 @@ class LoadingPanel extends React.Component {
       trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
       let email = loginDetails.profile.email;
-      ToastAndroid.show(browser.i18n.getMessage('toastLoggedInAs', email), ToastAndroid.LONG);
+      ToastAndroid.show(browser.i18n.getMessage('toastLoggedInAs', email), ToastAndroid.SHORT);
 
       this.props.dispatch(kintoLoad());
 
-      const resetAction = StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
-      });
-      this.props.navigation.dispatch(resetAction);
-      return Promise.resolve();
+      setTimeout(() => {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'ListPanel' })],
+        });
+        this.props.navigation.dispatch(resetAction);
+        return Promise.resolve();
+      }, 1500)
+
     }).catch((err) => {
       console.log('onAuth', err);
       ToastAndroid.show(browser.i18n.getMessage('toastLoggedInError', err), ToastAndroid.LONG);

@@ -42,6 +42,7 @@ class ListPanel extends React.Component {
         trackEvent('webext-button-authenticate');
         if (!this.props.state.refreshing) {
           this.setState({refreshing: true});
+          this.setState({refreshing: false});
         }
         props.dispatch(kintoLoad()).then(() => {
           this.setState({ refreshing: false });
