@@ -1,6 +1,7 @@
 // Servers
 export const KINTO_SERVER_URL = 'https://testpilot.settings.services.mozilla.com/v1';
 export const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
+export const FXA_CONTENT_SERVER = 'https://accounts.firefox.com';
 export const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
 export const FXA_OAUTH_CLIENT_ID = '7f368c6886429f19';
 export const FXA_OAUTH_REDIRECT = 'https://mozilla.github.io/notes/fxa/android-redirect.html';

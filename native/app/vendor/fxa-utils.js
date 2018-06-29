@@ -7,6 +7,7 @@ import { authorize, refresh } from 'react-native-app-auth';
 import {
   FXA_PROFILE_SERVER,
   FXA_OAUTH_SERVER,
+  FXA_CONTENT_SERVER,
   FXA_OAUTH_CLIENT_ID,
   FXA_OAUTH_REDIRECT,
   FXA_OAUTH_SCOPES,
@@ -32,7 +33,7 @@ function launchOAuthKeyFlow() {
     const base64JwkPublicKey = base64url.encode(JSON.stringify(keyTypes.jwkPublicKey), 'utf8');
     const config = {
       serviceConfiguration: {
-        authorizationEndpoint: `${FXA_OAUTH_SERVER}/authorization`,
+        authorizationEndpoint: `${FXA_CONTENT_SERVER}/authorization`,
         tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
       },
       additionalParameters: {
