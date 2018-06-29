@@ -105,6 +105,9 @@ class RichTextExample extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
     flexDirection: 'column',
     backgroundColor: 'white'
   },

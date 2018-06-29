@@ -70,7 +70,7 @@ class MoreMenu extends Component {
           <MaterialIcons
             name="more-vert"
             onPress={() => this.onMenuPressed(labels)}
-            style={[{ paddingRight: 10, paddingLeft: 10, color: COLOR_NOTES_BLUE }]}
+            style={[{ paddingRight: 10, paddingLeft: 10, color: '#737373' }]}
             size={30}
           />
         </View>
