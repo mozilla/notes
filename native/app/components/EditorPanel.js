@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, ProgressBarAndroid } from 'react-native';
 import { RichTextEditor } from '../react-native-zss-rich-text-editor/index';
 import { createNote, updateNote, deleteNotes, setFocusedNote } from '../actions';
-import { KINTO_LOADED } from '../utils/constants';
+import {COLOR_NOTES_BLUE, KINTO_LOADED} from '../utils/constants';
 
 import browser from '../browser';
 
@@ -22,6 +22,9 @@ class RichTextExample extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      isEditorLoading: true
+    };
     this.note = props.state.notes.find((note) => note.id === props.navigation.state.params.id);
     if (this.note && this.note.id) {
       this.props.dispatch(setFocusedNote(this.note.id));
@@ -69,11 +72,18 @@ class RichTextExample extends Component {
   }
 
   componentWillUnmount() {
+    this.setState({
+      isEditorLoading: true
+    });
     this.props.dispatch(setFocusedNote());
     browser.runtime.onMessage.removeListener(this._onLoadEvent);
   }
 
   onEditorInitialized() {
+    this.setState({
+      isEditorLoading: false
+    });
+    this.forceUpdate();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -85,6 +95,10 @@ class RichTextExample extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.state.isEditorLoading && <View style={{position: 'absolute', top: 30, left: 0, right: 0, bottom: 0, paddingBottom: 40, justifyContent: 'center', alignItems: 'center'}}>
+          <ProgressBarAndroid color={COLOR_NOTES_BLUE}
+                              styleAttr="Inverse"/>
+        </View>}
         <RichTextEditor
           ref={(r) => this.richtext = r}
           style={styles.richText}
