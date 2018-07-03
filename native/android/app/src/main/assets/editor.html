@@ -66,11 +66,13 @@
       height: 100%;
   }
 
-  #notes .ck-editor__editable p {
+  #notes .ck-editor__editable p, #notes .ck-editor__editable li {
       margin: 5px 0;
-      font-size: 14px;
+      font-size: 16px;
   }
   #notes .ck-editor__editable ul, #notes .ck-editor__editable ol {
+      padding: 0;
+      margin: 0;
       padding-left: 20px;
   }
   #notes .ck-editor__editable ul > li, #notes .ck-editor__editable ol > li {
@@ -78,16 +80,18 @@
   }
   #notes .ck-editor__editable h1 {
       margin: 2px 0;
-      font-size: 24px;
+      font-size: 22px;
       padding: 0;
   }
   #notes .ck-editor__editable h2 {
       margin: 7px 0;
       font-size: 20px;
+      padding: 0;
   }
   #notes .ck-editor__editable h3 {
       margin: 5px 0;
-      font-size: 16px;
+      font-size: 18px;
+      padding: 0;
   }
   #notes .drag-n-drop-focus,
   #notes .drag-n-drop-focus .ck-editor__editable {
@@ -106,12 +110,22 @@
     <input id="fake" type="text" style="height: 1px; border: 0; padding: 0; margin: 0; color: white; position: absolute; background: none!important;" />
     <div id="editor"> </div>
     <script>
+      var config = {
+        'heading': {
+          'options': [
+            { model: 'heading1', secTitle: 'H1', view: 'h1', title: '', class: 'ck-heading_heading1' },
+            { model: 'heading2', secTitle: 'H2', view: 'h2', title: '', class: 'ck-heading_heading2' },
+            { model: 'heading3', secTitle: 'H3', view: 'h3', title: '', class: 'ck-heading_heading3' },
+            { model: 'paragraph', secTitle: 'Aa', title: '', class: 'ck-heading_paragraph' }
+          ]
+        },
+        toolbar: []
+      };
+
       function init() {
           let initd = false;
           // ready to talk via postMessage
-          ClassicEditor.create(document.querySelector('#editor'), {
-            toolbar: []
-          }).then(editor => {
+          ClassicEditor.create(document.querySelector('#editor'), config).then(editor => {
 
             window.zss_editor = {};
 
@@ -164,7 +178,6 @@
             });
           })
             .catch(error => {
-              alert(error)
               console.error(error); // eslint-disable-line no-console
             });
       }
