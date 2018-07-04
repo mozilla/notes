@@ -191,7 +191,7 @@ function updateAccessToken(newAccessToken) {
 function storeCredentials(loginDetails) {
   return Keychain.setGenericPassword(loginDetails.profile.uid, JSON.stringify(loginDetails))
     .catch((e) => {
-      // TODO: Hope this never happens... if it does that user has to login to the app all the time
+      // Hope this never happens... if it does that user has to login to the app all the time
       console.log('Keychain failed', e);
       throw new Error('Login Failed. Error: FXA-KEYCHAIN_FAILED');
     });
