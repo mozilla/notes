@@ -8,7 +8,9 @@ function firstLine(content) {
 
 function secondLine(content) {
   // Remove first line
-  content = striptags(content.replace(/></gi, '>\n<')).replace(/&nbsp;/gi, ' ').trim().split('\n')[1];
+  let res = striptags(content.replace(/></gi, '>\n<')).replace(/&nbsp;/gi, ' ').trim().split('\n');
+  content = res.slice(1, 10).join(' ').trim();
+
   if (!content) return '';
   return content.substr(0, 250).replace(/&amp;/g, '&');
 }
