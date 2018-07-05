@@ -32,7 +32,7 @@ class LoginPanel extends React.Component {
             style={{width: 150, height: 150 }}
             source={require('../assets/notes-1024.png')}
           />
-          <Text style={{ fontWeight: 'bold', fontSize: 24, padding: 10, paddingTop: 30, paddingBottom: 30 }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 24, paddingTop: 30, paddingBottom: 30, width: '100%', textAlign: 'center' }}>
             { i18nGetMessage('welcomeTitle4') }
           </Text>
           <Text style={{ fontWeight: 'bold', fontSize: 16, paddingBottom: 30, textAlign: 'center', lineHeight: 22 }}>{ i18nGetMessage('welcomeHeadline') }</Text>
