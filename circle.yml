@@ -96,7 +96,7 @@ jobs:
 
 workflows:
   version: 2
-  node-android:
+  node-android-signapk:
     jobs:
       - webextension
       - android
