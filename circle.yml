@@ -65,9 +65,46 @@ jobs:
       - store_artifacts:
           path: /tmp/artifacts-android
 
+      - save_cache:
+          key: apk-v1-{{ .Branch }}-{{epoch}}
+          paths:
+            - /tmp/artifacts-android/app-release.apk
+
+  signapk:
+    working_directory: ~/notes/native
+    docker:
+      - image: circleci/android:api-25-node8-alpha
+    steps:
+      - restore_cache:
+          key: apk-v1-{{ .Branch }}
+      - run:
+          name: Sign APK
+          command: |
+              curl -F "input=@/tmp/artifacts-android/app-release.apk" \
+                    -o /tmp/artifacts-android/app-release-signed.apk \
+                    -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
+                    https://autograph-edge.prod.mozaws.net/sign
+      - run:
+          name: Verify APK
+          command: |
+              sudo apt update
+              sudo apt install -y android-sdk-build-tools
+              /opt/android/sdk/build-tools/27.0.3/apksigner verify --verbose /tmp/artifacts-android/app-release-signed.apk
+
+      - store_artifacts:
+          path: /tmp/artifacts-android
+
 workflows:
   version: 2
-  node-android:
+  node-android-signapk:
     jobs:
       - webextension
       - android
+      - signapk:
+          requires:
+            - android
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: master
