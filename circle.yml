@@ -60,7 +60,7 @@ jobs:
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
       - run: mkdir -p /tmp/artifacts-android;
       - run: cp native/android/app/build/outputs/apk/release/app-release.apk /tmp/artifacts-android
-      - run: mv /tmp/artifacts-android/app-release.apk /tmp/artifacts-android/notes-1_0-qa-v$CIRCLE_BUILD_NUM.apk
+      - run: cp /tmp/artifacts-android/app-release.apk /tmp/artifacts-android/notes-1_0-qa-v$CIRCLE_BUILD_NUM.apk
 
       - store_artifacts:
           path: /tmp/artifacts-android
@@ -105,6 +105,8 @@ workflows:
             - android
           filters:
             tags:
-              only: /.*/
+              only: /android-[0-9]\.[0-9]\.[0-9]/
             branches:
-              only: master
+              - master
+              - /prepare-.*/ # or regexes
+              
