@@ -62,13 +62,10 @@ class ListPanel extends React.Component {
         // On opening the app, we check network stratus
         NetInfo.isConnected.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
-          if (this.props.state.sync.loginDetails) {
-            props.dispatch(kintoLoad()).then(() => {
-              this.setState({ refreshing: false });
-            }).catch(() => {
-              this.setState({ refreshing: false });
-            });
+          if (this.props.state.sync.loginDetails && isConnected) {
+            props.dispatch(kintoLoad());
           }
+          this.setState({ refreshing: false });
         });
       } else {
         trackEvent('close', { state: nextAppState });
