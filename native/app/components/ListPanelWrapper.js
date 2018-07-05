@@ -11,7 +11,7 @@ import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHIT
 import {persistor} from "../store";
 import {trackEvent} from "../utils/metrics";
 import fxaUtils from "../vendor/fxa-utils";
-import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin } from "../actions";
+import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin, textSynced, deleteNotes } from "../actions";
 
 const SNACKBAR_HEIGHT = 48;
 
@@ -97,6 +97,7 @@ class ListPanelWrapper extends React.Component {
         }
 
         Promise.all(promises).then(this._hideSnackbar, this._hideSnackbar).then(() => {
+          this.props.dispatch(textSynced());
           this.ignoreUndo = false;
         });
       }
@@ -177,6 +178,11 @@ class ListPanelWrapper extends React.Component {
       if (newProps.navigation.getParam('deletedNote')) {
         // We store deletedNote to be able to recreate it if user click undo
         const deletedNote = newProps.navigation.getParam('deletedNote');
+
+        if (deletedNote) {
+          this.props.dispatch(deleteNotes([ deletedNote[0].id ], 'in-note'));
+          this.forceUpdate();
+        }
 
         // Erase params for future componentWillReceiveProps events
         newProps.navigation.setParams({ deletedNote: null });

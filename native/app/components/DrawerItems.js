@@ -96,11 +96,16 @@ class DrawerItems extends React.Component {
       } else if (!this.props.state.sync.loginDetails) {
         this._requestReconnect();
       } else {
-        trackEvent('webext-button-authenticate');
-        props.dispatch(kintoLoad('drawer')).then(_ => {
-          // If load succeed, we close drawer
+        if (this.props.state.sync.isSyncing) {
           props.navigation.dispatch(DrawerActions.closeDrawer());
-        });
+        } else {
+          trackEvent('webext-button-authenticate');
+          props.dispatch(kintoLoad('drawer')).then(_ => {
+            // If load succeed, we close drawer
+            props.navigation.dispatch(DrawerActions.closeDrawer());
+          });
+        }
+
       }
     };
 

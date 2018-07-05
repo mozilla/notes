@@ -39,9 +39,6 @@ class MoreMenu extends Component {
               const deletedNote = this.props.state.notes.find((note) => {
                 return note.id === this.props.state.sync.focusedNoteId
               });
-              if (deletedNote) {
-                this.props.dispatch(deleteNotes([ deletedNote.id ], 'in-note'));
-              }
               navigation.navigate('ListPanel', { deletedNote: [ deletedNote ] });
             } else {
               navigation.navigate('ListPanel');

@@ -28,6 +28,10 @@ export function pleaseLogin() {
   return { type: PLEASE_LOGIN };
 }
 
+export function textSynced() {
+  return { type: TEXT_SYNCED };
+}
+
 export function openingLogin() {
   return { type: OPENING_LOGIN };
 }

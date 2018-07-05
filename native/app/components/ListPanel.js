@@ -44,13 +44,17 @@ class ListPanel extends React.Component {
           this.setState({refreshing: true});
           this.setState({refreshing: false});
         }
-        props.dispatch(kintoLoad()).then(() => {
+        if (!this.props.state.sync.isSyncing) {
+          props.dispatch(kintoLoad()).then(() => {
+            this.setState({ refreshing: false });
+          }).catch(() => {
+            this.setState({ refreshing: false });
+          });
+        } else {
           this.setState({ refreshing: false });
-        }).catch(() => {
-          this.setState({ refreshing: false });
-        });
+        }
       }
-    }
+    };
 
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
