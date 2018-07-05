@@ -40,7 +40,6 @@ class Header extends React.Component {
     // Handle closing of menu when window (Notes sidebar) is blurred
     // Refs: https://github.com/mozilla/notes/issues/1219
     window.addEventListener('blur', (e) => {
-      console.log(this.menu);
       if (this.menu && this.menu.classList.contains('open')) {
         this.toggleMenu(e);
       }
