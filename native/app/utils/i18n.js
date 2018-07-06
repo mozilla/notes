@@ -65,15 +65,16 @@ if (! localeStrings) {
 }
 
 function getMessage(messageName, content) {
-  const message = localeStrings[messageName] || LOCALE_FILES['en_US'][messageName] || {
+  const msg = localeStrings[messageName] || LOCALE_FILES['en_US'][messageName] || {
     message: messageName
   };
+  const translated = Object.assign({}, msg);
 
-  if (message.placeholders) {
-    message.message = message.message.replace(/\$.*\$/g, content);
+  if (translated.placeholders) {
+    translated.message = translated.message.replace(/\$.*\$/g, content);
   }
 
-  return message.message;
+  return translated.message;
 }
 
 export default getMessage;
