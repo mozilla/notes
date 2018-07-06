@@ -97,8 +97,15 @@
 
   .drag-n-drop-focus,
   .drag-n-drop-focus .ck-editor__editable {
-    border: 1px solid #008000;
-    background-color: #dcd6da;
+    // `outline` used rather than `border` because:
+    //    outlines never take up space, as they are drawn
+    //    outside of an element's content.
+    // Refs: https://developer.mozilla.org/en-US/docs/Web/CSS/outline#Borders_vs._outlines
+    // This means content will not shift when an outline is applied.
+    // Negative `outline-offset` used to draw outline inside the
+    // element, allowing us to emulate a `border`.
+    outline: rgba(131, 192, 253, 0.5) solid 3px;
+    outline-offset: -3px;
   }
 
   .ck.ck-list .ck-list__item:focus {
