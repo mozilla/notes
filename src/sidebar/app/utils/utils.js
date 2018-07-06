@@ -58,7 +58,7 @@ function getFirstLineFromContent(content) {
     return null;
   }
 
-  return element.textContent.trim().substring(0, 250) || null;
+  return element.textContent.trim() || null;
 }
 
 function stripHtmlWithoutFirstLine(content) {
