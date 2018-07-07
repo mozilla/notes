@@ -115,6 +115,14 @@ class Footer extends React.Component {
       }
     };
 
+    // Handle closing of menu when window (Notes sidebar) is blurred
+    // Refs: https://github.com/mozilla/notes/issues/1219
+    window.addEventListener('blur', (e) => {
+      if (this.menu && this.menu.classList.contains('open')) {
+        this.toggleMenu(e);
+      }
+    });
+
     // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
       switch (event.key) {
