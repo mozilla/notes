@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import INITIAL_CONFIG from '../data/editorConfig';
 import { SEND_TO_NOTES, FROM_BLANK_NOTE } from '../utils/constants';
-import { getPadStats, customizeEditor } from '../utils/editor';
+import { getPadStats, customizeEditor, notepadEmpty } from '../utils/editor';
 
 import { updateNote, createNote, deleteNote, setFocusedNote } from '../actions';
 
@@ -61,9 +61,10 @@ class Editor extends React.Component {
             // Only use the focused editor or handle 'rename' events to set the data into storage.
             if (isFocused || name === 'rename' || name === 'insert' || name.type && name.type === 'transparent') {
                 const content = editor.getData();
-
+                const notesContentHTML = document.createElement('div');
+                notesContentHTML.innerHTML = content; // eslint-disable-line no-unsanitized/property
                 if (!this.ignoreChange) {
-                  if (content !== '' && content !== '<p>&nbsp;</p>') {
+                  if (content !== '' && !notepadEmpty(notesContentHTML)) {
                     if (!this.props.note.id) {
                       this.props.dispatch(createNote(content, this.props.origin)).then(id => {
                         this.props.dispatch(setFocusedNote(id));

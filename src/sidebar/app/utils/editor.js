@@ -149,4 +149,35 @@ function getPadStats(editor) {
   };
 }
 
-export { customizeEditor, getPadStats };
+/**
+ * Checks if the note's content is empty. Used to determine whether or not
+ * to create a new note.
+ * Source: https://appelgran.org/blog/post/46/javascript-check-if-element-and-childnodes-are-empty
+ * Refs: https://github.com/mozilla/notes/issues/1110
+ * @param {HTMLElement} element
+ * @returns {Boolean}
+ */
+function notepadEmpty(element) {
+  if (element.childNodes.length > 0) {
+    for (let i = 0; i < element.childNodes.length; i++ ) {
+      if (!notepadEmpty(element.childNodes[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  let isElementEmpty = false;
+  switch (element.nodeType) {
+    case 1:
+      isElementEmpty = element.innerHTML.trim().length === 0;
+      break;
+    case 3:
+      isElementEmpty = element.textContent.trim().length === 0;
+      break;
+    default:
+      break;
+  }
+  return isElementEmpty;
+}
+
+export { customizeEditor, getPadStats, notepadEmpty };
