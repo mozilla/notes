@@ -13,7 +13,6 @@ const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 import {
   RECONNECT_SYNC,
   TEXT_SYNCING,
-  TEXT_SYNCED,
   ERROR as ERROR_MSG } from './constants';
 
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
