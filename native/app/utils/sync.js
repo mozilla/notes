@@ -1,5 +1,6 @@
 import {
-  kintoLoad
+  kintoLoad,
+  textSynced
 } from '../actions';
 import { store } from '../store';
 import browser from '../browser';
@@ -12,6 +13,7 @@ const fxaCryptoRelier = require('../vendor/fxa-crypto-relier');
 import {
   RECONNECT_SYNC,
   TEXT_SYNCING,
+  TEXT_SYNCED,
   ERROR as ERROR_MSG } from './constants';
 
 const jose = fxaCryptoRelier.OAuthUtils.__util.jose;
@@ -200,7 +202,6 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
 let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
-
   // If device is offline, we skip syncing.
   if (store.getState().sync.isConnected === false) return Promise.resolve();
 
@@ -246,6 +247,8 @@ function syncKinto(client, loginDetails) {
       });
     })
     .then(syncResult => {
+      store.dispatch(textSynced());
+
       lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
 
       // FIXME: Do we need to do anything with errors, published,

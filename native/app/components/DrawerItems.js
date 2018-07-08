@@ -151,7 +151,7 @@ class DrawerItems extends React.Component {
       statusLabel = browser.i18n.getMessage('statusLabelSyncingDrawer');
     } else {
       let time = moment(this.props.state.sync.lastSynced).format('LT');
-      statusLabel = browser.i18n.getMessage('editorLabelSynced') + ' ' + time;
+      statusLabel = browser.i18n.getMessage('statusLabelTimeDrawer', time);
     }
 
     return (
