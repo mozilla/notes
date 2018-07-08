@@ -147,7 +147,9 @@ function sync(sync = {}, action) {
       });
     case CREATE_NOTE:
       return Object.assign({}, sync, {
-        isSyncing: false
+        isSyncing: false,
+        isSyncingFrom: null,
+        lastSynced: new Date()
       });
     case ERROR:
       return Object.assign({}, sync, {

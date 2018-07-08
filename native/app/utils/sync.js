@@ -1,5 +1,6 @@
 import {
-  kintoLoad
+  kintoLoad,
+  textSynced
 } from '../actions';
 import { store } from '../store';
 import browser from '../browser';
@@ -200,7 +201,6 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
 let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
-
   // If device is offline, we skip syncing.
   if (store.getState().sync.isConnected === false) return Promise.resolve();
 
@@ -246,6 +246,8 @@ function syncKinto(client, loginDetails) {
       });
     })
     .then(syncResult => {
+      store.dispatch(textSynced());
+
       lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
 
       // FIXME: Do we need to do anything with errors, published,
