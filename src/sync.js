@@ -196,6 +196,10 @@ function syncKinto(client, credentials) {
           return credentials.set(renewedCred);
         })
         .then(() => {
+          return lastSyncTimestampGet()
+        })
+        .then((lastSyncTimestamp) => {
+          console.log('lastSyncTimestamp', lastSyncTimestamp)
           // Query Kinto with the Bearer Token
           collection = client
             .collection('notes', {
@@ -220,7 +224,7 @@ function syncKinto(client, credentials) {
       });
     })
     .then(syncResult => {
-      lastSyncTimestamp = new Date().getTime(); // eslint-disable-line no-undef
+      lastSyncTimestampSet();
 
       // FIXME: Do we need to do anything with errors, published,
       // updated, etc.?

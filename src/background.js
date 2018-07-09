@@ -17,7 +17,20 @@ let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {reso
 // Kinto sync and encryption
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 // Used by sync to load only changes from lastModified timestamp.
-let lastSyncTimestamp = null; // eslint-disable-line no-unused-vars
+console.log('setting to null the thing??')
+
+function lastSyncTimestampSet () {
+  const lastSyncTimestamp = new Date().getTime();
+  return browser.storage.local.set({ lastSyncTimestamp });
+}
+
+function lastSyncTimestampGet () {
+  return browser.storage.local.get('lastSyncTimestamp');
+}
+
+function lastSyncTimestampClear () {
+  return browser.storage.local.remove('lastSyncTimestamp');
+}
 
 // Analytics
 const analytics = new TestPilotGA({
@@ -121,7 +134,11 @@ function authenticate() {
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
     sendMetrics('login-success');
-    lastSyncTimestamp = null;
+
+    return lastSyncTimestampClear().finally(() => {
+      return loginDetails
+    })
+  }).then((loginDetails) => {
     const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
     const credentials = {
       access_token: loginDetails.access_token,
