@@ -38,6 +38,32 @@ class ListPanel extends React.Component {
         });
       }
     };
+    this.handleKeyPress = (event) => {
+      if(this.noteButtons.length > 0){
+        switch (event.key) {          
+          case 'ArrowUp':
+            if (this.indexFocusedNote === null) {
+              this.indexFocusedNote = 0;
+            }
+            else{
+              this.indexFocusedNote = (this.indexFocusedNote - 1) % this.noteButtons.length;
+              if (this.indexFocusedNote < 0) {
+                this.indexFocusedNote = 0;
+              }
+            }
+            this.noteButtons[this.indexFocusedNote].focus();
+            break;
+          case 'ArrowDown':
+            if (this.indexFocusedNote === null) {
+              this.indexFocusedNote = 0;
+            } else {
+              this.indexFocusedNote = (this.indexFocusedNote + 1) % this.noteButtons.length;
+            }
+            this.noteButtons[this.indexFocusedNote].focus();
+            break;
+        }
+      }
+    };
   }
 
   componentWillMount() {
@@ -55,6 +81,8 @@ class ListPanel extends React.Component {
   componentDidMount() {
     // Disable right clicks
     // Refs: https://stackoverflow.com/a/737043/186202
+    window.addEventListener('keydown', this.handleKeyPress);
+    this.indexFocusedNote = null; // index of focused note in this.props.state.notes
     document.querySelectorAll('.listView').forEach(sel => {
       sel.addEventListener('contextmenu', e => {
         e.preventDefault();
@@ -67,6 +95,7 @@ class ListPanel extends React.Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyPress);
     chrome.runtime.onMessage.removeListener(this.sendToNoteListener);
     clearTimeout(this.timer);
   }
@@ -78,7 +107,7 @@ class ListPanel extends React.Component {
   }
 
   render() {
-
+    this.noteButtons = [];
     if (!this.props.state.kinto.isLoaded) return '';
 
     return (
@@ -98,6 +127,7 @@ class ListPanel extends React.Component {
             return (
               <li key={note.id}>
                 <button
+                  ref={btn => btn ? this.noteButtons.push(btn) : null }
                   onClick={ () => this.props.history.push(`/note/${note.id}`) }
                   className="btn fullWidth borderBottom">
                   { note.firstLine ?
