@@ -39,7 +39,7 @@ class ListPanel extends React.Component {
       }
     };
     this.handleKeyPress = (event) => {
-      if(this.noteButtons.length > 0) {
+      if (this.noteButtons.length > 0) {
         switch (event.key) {
           case 'ArrowUp':
             if (this.indexFocusedNote === null) {
