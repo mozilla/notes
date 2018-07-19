@@ -162,6 +162,11 @@ dependencies {
     // compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.android.support:appcompat-v7:25.3.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
+    compile "org.mozilla.components:fxa:0.15-note"
+}
+
+repositories {
+    mavenLocal()
 }
 
 // Run this once to be able to run the application with BUCK
