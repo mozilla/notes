@@ -4,6 +4,7 @@
 
 import * as Keychain from 'react-native-keychain';
 import { authorize, refresh } from 'react-native-app-auth';
+import { RichTextEditor } from '../react-native-zss-rich-text-editor/index';
 import {
   FXA_PROFILE_SERVER,
   FXA_OAUTH_SERVER,
@@ -13,6 +14,7 @@ import {
   FXA_OAUTH_SCOPES,
   FXA_OAUTH_ACCESS_TYPE,
 } from '../utils/constants';
+import ToastExample from '../components/FxaClient'
 
 const base64url = require('./base64url');
 const fxaCryptoRelier = require('./fxa-crypto-relier');
@@ -26,6 +28,7 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
  * @returns {*}
  */
 function launchOAuthKeyFlow() {
+  return ToastExample.show('Awesome', ToastExample.SHORT)
   const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
   const loginDetails = {};
 
