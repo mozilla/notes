@@ -23,13 +23,11 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
 function newlaunch() {
   const loginDetails = {}
   const successCallback = (response) => {
-    console.warn(response)
-    FxaClient.show(response)
+    console.log(response)
     return response
   }
   const errorCallback = (response) => {
     console.log(response)
-    FxaClient.show(response)
   }
 
   return FxaClient.begin(successCallback, errorCallback)
@@ -42,49 +40,51 @@ function newlaunch() {
  * - Saves information into the Android keychain
  * @returns {*}
  */
-function bleh() {
+function fxaClientLogin() {
   return new Promise((resolve, reject) => { 
-    return newlaunch(resolve, reject)
+    return FxaClient.begin((response) => {
+      console.log(response)
+      resolve(response)
+    }, (err) => {
+      console.log(response)
+      reject(err)
+    })
   })
 }
+
 function launchOAuthKeyFlow() {
-  FxaClient.show('Awesome')
-  const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
+  // const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
   const loginDetails = {};
 
-  return fxaKeyUtils.createApplicationKeyPair().then((keyTypes) => {
-    const base64JwkPublicKey = base64url.encode(JSON.stringify(keyTypes.jwkPublicKey), 'utf8');
-    const config = {
-      serviceConfiguration: {
-        authorizationEndpoint: `${FXA_CONTENT_SERVER}/authorization`,
-        tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
-      },
-      additionalParameters: {
-        keys_jwk: base64JwkPublicKey,
-        access_type: FXA_OAUTH_ACCESS_TYPE,
-      },
-      clientId: FXA_OAUTH_CLIENT_ID,
-      redirectUrl: FXA_OAUTH_REDIRECT,
-      scopes: FXA_OAUTH_SCOPES
-    };
+  // return fxaKeyUtils.createApplicationKeyPair().then((keyTypes) => {
+  //   const base64JwkPublicKey = base64url.encode(JSON.stringify(keyTypes.jwkPublicKey), 'utf8');
+  //   const config = {
+  //     serviceConfiguration: {
+  //       authorizationEndpoint: `${FXA_CONTENT_SERVER}/authorization`,
+  //       tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
+  //     },
+  //     additionalParameters: {
+  //       keys_jwk: base64JwkPublicKey,
+  //       access_type: FXA_OAUTH_ACCESS_TYPE,
+  //     },
+  //     clientId: FXA_OAUTH_CLIENT_ID,
+  //     redirectUrl: FXA_OAUTH_REDIRECT,
+  //     scopes: FXA_OAUTH_SCOPES
+  //   };
 
-    return authorize(config);
-  }).then((response) => {
-    if (response && response.additionalParameters && response.additionalParameters.keys_jwe) {
-      loginDetails.oauthResponse = response;
-
-      return fxaKeyUtils.decryptBundle(response.additionalParameters.keys_jwe);
-    } else {
-      throw new Error('Login Failed. Error: FXA-BAD_RESPONSE');
+  return fxaClientLogin().then((response) => {
+    console.log("please help")
+    const loginDetails = JSON.parse(response)
+    console.log(loginDetails.accessToken)
+    console.log(loginDetails.keys)
+    if (! loginDetails.accessToken) {
+      throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
     }
-  }).then((keys) => {
-    if (! keys) {
+    if (! loginDetails.keys) {
       throw new Error('Login Failed. Error: FXA-BAD_KEY');
     }
 
-    loginDetails.keys = keys;
-
-    return fxaFetchProfile(loginDetails.oauthResponse.accessToken);
+    return fxaFetchProfile(loginDetails.accessToken);
   }).then((profile) => {
     if (! profile) {
       throw new Error('Login Failed. Error: FXA-BAD_PROFILE');
@@ -127,8 +127,8 @@ function fxaRenewCredential(loginDetails) {
     throw new Error('No login details');
   }
 
-  const accessToken = loginDetails.oauthResponse.accessToken;
-  const refreshToken = loginDetails.oauthResponse.refreshToken;
+  const accessToken = loginDetails.accessToken;
+  // const refreshToken = loginDetails.oauthResponse.refreshToken;
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
 
@@ -156,7 +156,7 @@ function fxaRenewCredential(loginDetails) {
       if (resp.status !== 200) {
         // if error attempt to renew access token
         return refresh(refreshConfig, {
-          refreshToken: refreshToken
+          refreshToken: ""
         });
       }
     }, () => {
@@ -177,7 +177,7 @@ function fxaRenewCredential(loginDetails) {
         // do not block on update, proceed with known info
         updateAccessToken(newAccessToken);
         // if a renew response then update credential
-        loginDetails.oauthResponse.accessToken = newAccessToken;
+        loginDetails.accessToken = newAccessToken;
       }
       return loginDetails;
     });
@@ -207,7 +207,7 @@ function fxaGetCredential() {
 function updateAccessToken(newAccessToken) {
   return fxaGetCredential().then((oldLoginDetails) => {
     const newLoginDetails = oldLoginDetails;
-    newLoginDetails.oauthResponse.accessToken = newAccessToken;
+    newloginDetails.accessToken = newAccessToken;
     return storeCredentials(newLoginDetails)
   });
 }

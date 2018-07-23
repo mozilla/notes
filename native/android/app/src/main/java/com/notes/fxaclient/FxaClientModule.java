@@ -14,7 +14,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.notes.FxaLoginActivity;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,8 +22,6 @@ import mozilla.components.service.fxa.FirefoxAccount;
 import mozilla.components.service.fxa.FxaResult;
 import mozilla.components.service.fxa.OAuthInfo;
 import mozilla.components.service.fxa.Profile;
-
-import static android.support.v4.content.ContextCompat.startActivity;
 
 
 public class FxaClientModule extends ReactContextBaseJavaModule implements ActivityEventListener {
@@ -108,7 +105,6 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         final JSONObject loginDetails = new JSONObject();
-        final JSONObject oauthResponse = new JSONObject();
 
         String code = data.getStringExtra("code");
         String state = data.getStringExtra("state");
@@ -116,7 +112,7 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
         account.completeOAuthFlow(code, state).then(new FxaResult.OnValueListener<OAuthInfo, Profile>() {
             public FxaResult<Profile> onValue(OAuthInfo oAuthInfo) {
                 try {
-                    oauthResponse.put("accessToken", oAuthInfo.accessToken);
+                    loginDetails.put("accessToken", oAuthInfo.accessToken);
                     loginDetails.put("keys", oAuthInfo.keys);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -126,7 +122,6 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
         }, null).then(new FxaResult.OnValueListener<Profile, Void>() {
             public FxaResult<Void> onValue(Profile profile) {
                 try {
-                    loginDetails.put("oauthResponse", oauthResponse.toString());
                     loginDetails.put("profile", profile);
                 } catch (JSONException e) {
                     e.printStackTrace();
