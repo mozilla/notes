@@ -14,11 +14,26 @@ import {
   FXA_OAUTH_SCOPES,
   FXA_OAUTH_ACCESS_TYPE,
 } from '../utils/constants';
-import ToastExample from '../components/FxaClient'
+import FxaClient from '../components/FxaClient'
 
 const base64url = require('./base64url');
 const fxaCryptoRelier = require('./fxa-crypto-relier');
 
+
+function newlaunch() {
+  const loginDetails = {}
+  const successCallback = (response) => {
+    console.warn(response)
+    FxaClient.show(response)
+    return response
+  }
+  const errorCallback = (response) => {
+    console.log(response)
+    FxaClient.show(response)
+  }
+
+  return FxaClient.begin(successCallback, errorCallback)
+}
 /**
  * FxA OAuth Scoped Key flow
  *
@@ -27,8 +42,13 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
  * - Saves information into the Android keychain
  * @returns {*}
  */
+function bleh() {
+  return new Promise((resolve, reject) => { 
+    return newlaunch(resolve, reject)
+  })
+}
 function launchOAuthKeyFlow() {
-  return ToastExample.show('Awesome', ToastExample.SHORT)
+  FxaClient.show('Awesome')
   const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
   const loginDetails = {};
 
@@ -75,6 +95,7 @@ function launchOAuthKeyFlow() {
     // store loginDetails in the Android keychain
     return storeCredentials(loginDetails);
   }).then(() => {
+    console.log(loginDetails)
     return loginDetails;
   });
 }
