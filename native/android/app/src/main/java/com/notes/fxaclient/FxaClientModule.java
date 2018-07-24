@@ -82,7 +82,11 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
             public FxaResult<Void> onValue(String s) {
                 intent.putExtra("authUrl", s);
                 intent.putExtra("redirectUrl", REDIRECT_URL);
-                getCurrentActivity().startActivityForResult(intent, 2);
+                try {
+                    getCurrentActivity().startActivityForResult(intent, 2);
+                } catch (Exception e) {
+                    errorCallback.invoke();
+                }
                 return null;
             }
         }, new FxaResult.OnExceptionListener<Void>() {
@@ -95,6 +99,11 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            errorCallback.invoke();
+            return;
+        }
+
         final JSONObject loginDetails = new JSONObject();
         final JSONObject oauthResponse = new JSONObject();
 

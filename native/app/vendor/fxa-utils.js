@@ -33,16 +33,17 @@ function launchOAuthKeyFlow() {
 
   return new Promise((resolve, reject) => { 
     return FxaClient.begin((response) => {
-      console.log(response)
       resolve(response)
     }, (err) => {
+      if (! err) {
+        err = new Error('Failed to authenticate')
+      }
       reject(err)
     })
   }).then((responseString) => {
-    console.log(JSON.parse(responseString))
     loginDetails = JSON.parse(responseString)
     if (! loginDetails.oauthResponse.accessToken) {
-      console.log(responseString)
+      throw new Error('Login Failed. Error: FXA-BAD_KEY');
     }
     if (! loginDetails.keys) {
       throw new Error('Login Failed. Error: FXA-BAD_KEY');

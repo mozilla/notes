@@ -163,7 +163,7 @@ dependencies {
     // compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.android.support:appcompat-v7:25.3.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
-    compile "org.mozilla.components:fxa:0.15"
+    compile "org.mozilla.components:fxa:0.16-arm"
 }
 
 repositories {
