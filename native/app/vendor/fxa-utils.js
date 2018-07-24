@@ -19,19 +19,6 @@ import FxaClient from '../components/FxaClient'
 const base64url = require('./base64url');
 const fxaCryptoRelier = require('./fxa-crypto-relier');
 
-
-function newlaunch() {
-  const loginDetails = {}
-  const successCallback = (response) => {
-    console.log(response)
-    return response
-  }
-  const errorCallback = (response) => {
-    console.log(response)
-  }
-
-  return FxaClient.begin(successCallback, errorCallback)
-}
 /**
  * FxA OAuth Scoped Key flow
  *
@@ -40,51 +27,28 @@ function newlaunch() {
  * - Saves information into the Android keychain
  * @returns {*}
  */
-function fxaClientLogin() {
+
+function launchOAuthKeyFlow() {
+  var loginDetails = {};
+
   return new Promise((resolve, reject) => { 
     return FxaClient.begin((response) => {
       console.log(response)
       resolve(response)
     }, (err) => {
-      console.log(response)
       reject(err)
     })
-  })
-}
-
-function launchOAuthKeyFlow() {
-  // const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
-  const loginDetails = {};
-
-  // return fxaKeyUtils.createApplicationKeyPair().then((keyTypes) => {
-  //   const base64JwkPublicKey = base64url.encode(JSON.stringify(keyTypes.jwkPublicKey), 'utf8');
-  //   const config = {
-  //     serviceConfiguration: {
-  //       authorizationEndpoint: `${FXA_CONTENT_SERVER}/authorization`,
-  //       tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
-  //     },
-  //     additionalParameters: {
-  //       keys_jwk: base64JwkPublicKey,
-  //       access_type: FXA_OAUTH_ACCESS_TYPE,
-  //     },
-  //     clientId: FXA_OAUTH_CLIENT_ID,
-  //     redirectUrl: FXA_OAUTH_REDIRECT,
-  //     scopes: FXA_OAUTH_SCOPES
-  //   };
-
-  return fxaClientLogin().then((response) => {
-    console.log("please help")
-    const loginDetails = JSON.parse(response)
-    console.log(loginDetails.accessToken)
-    console.log(loginDetails.keys)
-    if (! loginDetails.accessToken) {
-      throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
+  }).then((responseString) => {
+    console.log(JSON.parse(responseString))
+    loginDetails = JSON.parse(responseString)
+    if (! loginDetails.oauthResponse.accessToken) {
+      console.log(responseString)
     }
     if (! loginDetails.keys) {
       throw new Error('Login Failed. Error: FXA-BAD_KEY');
     }
 
-    return fxaFetchProfile(loginDetails.accessToken);
+    return fxaFetchProfile(loginDetails.oauthResponse.accessToken);
   }).then((profile) => {
     if (! profile) {
       throw new Error('Login Failed. Error: FXA-BAD_PROFILE');
@@ -95,7 +59,6 @@ function launchOAuthKeyFlow() {
     // store loginDetails in the Android keychain
     return storeCredentials(loginDetails);
   }).then(() => {
-    console.log(loginDetails)
     return loginDetails;
   });
 }
@@ -127,8 +90,8 @@ function fxaRenewCredential(loginDetails) {
     throw new Error('No login details');
   }
 
-  const accessToken = loginDetails.accessToken;
-  // const refreshToken = loginDetails.oauthResponse.refreshToken;
+  const accessToken = loginDetails.oauthResponse.accessToken;
+  const refreshToken = loginDetails.oauthResponse.refreshToken;
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
 

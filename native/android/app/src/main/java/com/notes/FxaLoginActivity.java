@@ -20,17 +20,13 @@ public class FxaLoginActivity extends AppCompatActivity {
 
     private WebView mWebView;
 
-    public final int RESULT_CODE = 1;
-    public final int RESULT_STATE = 2;
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e("notes", "activity created");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fxa_login);
         Intent intent = getIntent();
-        String authUrl = intent.getStringExtra("authUrl");
+        final String authUrl = intent.getStringExtra("authUrl");
         final String redirectUrl = intent.getStringExtra("redirectUrl");
 
         RelativeLayout view = (RelativeLayout) findViewById(R.id.webviewLayout);
