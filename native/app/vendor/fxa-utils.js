@@ -4,7 +4,6 @@
 
 import * as Keychain from 'react-native-keychain';
 import { authorize, refresh } from 'react-native-app-auth';
-import { RichTextEditor } from '../react-native-zss-rich-text-editor/index';
 import {
   FXA_PROFILE_SERVER,
   FXA_OAUTH_SERVER,
@@ -120,7 +119,7 @@ function fxaRenewCredential(loginDetails) {
       if (resp.status !== 200) {
         // if error attempt to renew access token
         return refresh(refreshConfig, {
-          refreshToken: ""
+          refreshToken: refreshToken
         });
       }
     }, () => {
@@ -141,7 +140,7 @@ function fxaRenewCredential(loginDetails) {
         // do not block on update, proceed with known info
         updateAccessToken(newAccessToken);
         // if a renew response then update credential
-        loginDetails.accessToken = newAccessToken;
+        loginDetails.oauthResponse.accessToken = newAccessToken;
       }
       return loginDetails;
     });
@@ -171,7 +170,7 @@ function fxaGetCredential() {
 function updateAccessToken(newAccessToken) {
   return fxaGetCredential().then((oldLoginDetails) => {
     const newLoginDetails = oldLoginDetails;
-    newloginDetails.accessToken = newAccessToken;
+    newloginDetails.oauthResponse.accessToken = newAccessToken;
     return storeCredentials(newLoginDetails)
   });
 }
