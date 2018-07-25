@@ -37,6 +37,7 @@ public class FxaLoginActivity extends AppCompatActivity {
         webView.getSettings().setDomStorageEnabled(true);
         CookieManager.getInstance().setAcceptCookie(true);
 
+        webView.clearCache(true);
         final FxaLoginActivity act = this;
 
         final WebViewClient client = new WebViewClient() {
