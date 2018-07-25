@@ -69,4 +69,10 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
 
+# Firefox accounts component
+
+-dontwarn java.awt.*
+-keep class com.sun.jna.* { *; }
+-keepclassmembers class * extends com.sun.jna.* { public *; }
+
 -ignorewarnings
