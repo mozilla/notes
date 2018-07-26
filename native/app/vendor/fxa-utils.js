@@ -15,9 +15,6 @@ import {
 } from '../utils/constants';
 import FxaClient from '../components/FxaClient'
 
-const base64url = require('./base64url');
-const fxaCryptoRelier = require('./fxa-crypto-relier');
-
 /**
  * FxA OAuth Scoped Key flow
  *
@@ -29,17 +26,17 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
 function launchOAuthKeyFlow() {
   var loginDetails = {};
 
-  return new Promise((resolve, reject) => { 
+  return new Promise((resolve, reject) => {
     return FxaClient.begin((response) => {
       resolve(response)
     }, (err) => {
       if (! err) {
-        err = new Error('Failed to authenticate')
+        err = new Error('Failed to authenticate');
       }
-      reject(err)
+      reject(err);
     })
   }).then((responseString) => {
-    loginDetails = JSON.parse(responseString)
+    loginDetails = JSON.parse(responseString);
     if (! loginDetails.oauthResponse.accessToken) {
       throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
     }
