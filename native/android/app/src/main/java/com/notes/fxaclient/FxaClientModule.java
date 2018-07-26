@@ -27,7 +27,7 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
 
     private static final String CLIENT_ID = "7f368c6886429f19";
     private static final String REDIRECT_URL = "https://mozilla.github.io/notes/fxa/android-redirect.html";
-    private static final String CONFIG_URL = "https://accounts.firefox.com";
+    private static final String CONFIG_URL = "https://latest.dev.lcip.org";
 
     private static final String[] scopes = new String[]{ "profile", "https://identity.mozilla.com/apps/notes" };
     private static final Boolean wantsKeys = true;

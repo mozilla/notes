@@ -57,13 +57,14 @@ class ListPanel extends React.Component {
     };
 
     this._handleAppStateChange = (nextAppState) => {
+      console.log('_handleAppStateChange')
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
         trackEvent('open');
         // On opening the app, we check network stratus
         NetInfo.isConnected.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
           if (this.props.state.sync.loginDetails && isConnected) {
-            props.dispatch(kintoLoad());
+            //props.dispatch(kintoLoad());
           }
           this.setState({ refreshing: false });
         });
@@ -75,6 +76,7 @@ class ListPanel extends React.Component {
     }
 
     this._handleNetworkStateChange = (connectionInfo) => {
+      console.log('_handleNetworkStateChange')
       const wasConnected = this.props.state.sync.isConnected;
       props.dispatch(setNetInfo(connectionInfo.type !== 'none'));
       // if network is back, we trigger a sync

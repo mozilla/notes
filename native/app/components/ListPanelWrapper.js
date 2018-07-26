@@ -153,6 +153,7 @@ class ListPanelWrapper extends React.Component {
       } else if (!newProps.state.sync.loginDetails &&
         !newProps.state.sync.isOpeningLogin &&
         !newProps.state.sync.isPleaseLogin) {
+        console.log('wat')
         this._showSnackbar({
           text: newProps.state.sync.error,
           color: COLOR_DARK_WARNING,

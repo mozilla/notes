@@ -29,7 +29,7 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
 function launchOAuthKeyFlow() {
   var loginDetails = {};
 
-  return new Promise((resolve, reject) => { 
+  return new Promise((resolve, reject) => {
     return FxaClient.begin((response) => {
       resolve(response)
     }, (err) => {
@@ -39,7 +39,7 @@ function launchOAuthKeyFlow() {
       reject(err)
     })
   }).then((responseString) => {
-    loginDetails = JSON.parse(responseString)
+    loginDetails = JSON.parse(responseString);
     if (! loginDetails.oauthResponse.accessToken) {
       throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
     }
@@ -116,6 +116,7 @@ function fxaRenewCredential(loginDetails) {
     .then((resp) => {
       // if 200 then token is valid, no need to review
       if (resp.status !== 200) {
+        console.log('refreshing...')
         // if error attempt to renew access token
         return refresh(refreshConfig, {
           refreshToken: refreshToken

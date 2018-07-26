@@ -201,6 +201,7 @@ class BrowserStorageCredentials extends Credentials { // eslint-disable-line no-
 let lastSyncTimestamp = null;
 
 function syncKinto(client, loginDetails) {
+
   // If device is offline, we skip syncing.
   if (store.getState().sync.isConnected === false) return Promise.resolve();
 
@@ -216,6 +217,8 @@ function syncKinto(client, loginDetails) {
     .then(() => {
       return fxaUtils.fxaRenewCredential(loginDetails)
         .then((loginDetails) => {
+          console.log('loginDetails')
+          return Promise.resolve()
           const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
           credential = {
             accessToken: loginDetails.oauthResponse.accessToken,
