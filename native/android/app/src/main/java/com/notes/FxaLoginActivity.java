@@ -75,4 +75,13 @@ public class FxaLoginActivity extends AppCompatActivity {
         mWebView.onResume();
         super.onResume();
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
