@@ -41,7 +41,7 @@ function launchOAuthKeyFlow() {
   }).then((responseString) => {
     loginDetails = JSON.parse(responseString)
     if (! loginDetails.oauthResponse.accessToken) {
-      throw new Error('Login Failed. Error: FXA-BAD_KEY');
+      throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
     }
     if (! loginDetails.keys) {
       throw new Error('Login Failed. Error: FXA-BAD_KEY');
