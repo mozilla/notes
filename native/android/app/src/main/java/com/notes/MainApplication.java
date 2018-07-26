@@ -8,6 +8,7 @@ import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import io.sentry.RNSentryPackage;
 
 import com.notes.advancedwebview.AdvancedWebviewPackage;
+import com.notes.fxaclient.FxaClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -39,7 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
             new KeychainPackage(),
             new RandomBytesPackage(),
             new RNAppAuthPackage(),
-            new AdvancedWebviewPackage()
+            new AdvancedWebviewPackage(),
+            new FxaClientPackage()
       );
     }
 
