@@ -13,6 +13,7 @@ import {
   FXA_OAUTH_SCOPES,
   FXA_OAUTH_ACCESS_TYPE,
 } from '../utils/constants';
+import FxaClient from '../components/FxaClient'
 
 const base64url = require('./base64url');
 const fxaCryptoRelier = require('./fxa-crypto-relier');
@@ -26,40 +27,25 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
  * @returns {*}
  */
 function launchOAuthKeyFlow() {
-  const fxaKeyUtils = new fxaCryptoRelier.KeyUtils();
-  const loginDetails = {};
+  var loginDetails = {};
 
-  return fxaKeyUtils.createApplicationKeyPair().then((keyTypes) => {
-    const base64JwkPublicKey = base64url.encode(JSON.stringify(keyTypes.jwkPublicKey), 'utf8');
-    const config = {
-      serviceConfiguration: {
-        authorizationEndpoint: `${FXA_CONTENT_SERVER}/authorization`,
-        tokenEndpoint: `${FXA_OAUTH_SERVER}/token`
-      },
-      additionalParameters: {
-        keys_jwk: base64JwkPublicKey,
-        access_type: FXA_OAUTH_ACCESS_TYPE,
-      },
-      clientId: FXA_OAUTH_CLIENT_ID,
-      redirectUrl: FXA_OAUTH_REDIRECT,
-      scopes: FXA_OAUTH_SCOPES
-    };
-
-    return authorize(config);
-  }).then((response) => {
-    if (response && response.additionalParameters && response.additionalParameters.keys_jwe) {
-      loginDetails.oauthResponse = response;
-
-      return fxaKeyUtils.decryptBundle(response.additionalParameters.keys_jwe);
-    } else {
-      throw new Error('Login Failed. Error: FXA-BAD_RESPONSE');
+  return new Promise((resolve, reject) => { 
+    return FxaClient.begin((response) => {
+      resolve(response)
+    }, (err) => {
+      if (! err) {
+        err = new Error('Failed to authenticate')
+      }
+      reject(err)
+    })
+  }).then((responseString) => {
+    loginDetails = JSON.parse(responseString)
+    if (! loginDetails.oauthResponse.accessToken) {
+      throw new Error('Login Failed. Error: FXA-BAD_TOKEN');
     }
-  }).then((keys) => {
-    if (! keys) {
+    if (! loginDetails.keys) {
       throw new Error('Login Failed. Error: FXA-BAD_KEY');
     }
-
-    loginDetails.keys = keys;
 
     return fxaFetchProfile(loginDetails.oauthResponse.accessToken);
   }).then((profile) => {
