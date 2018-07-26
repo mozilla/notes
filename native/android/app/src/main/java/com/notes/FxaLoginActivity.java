@@ -4,15 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.webkit.CookieManager;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import org.mozilla.testpilot.notes.R;
 
@@ -36,8 +34,8 @@ public class FxaLoginActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         CookieManager.getInstance().setAcceptCookie(true);
+        WebStorage.getInstance().deleteAllData();
 
-        webView.clearCache(true);
         final FxaLoginActivity act = this;
 
         final WebViewClient client = new WebViewClient() {
