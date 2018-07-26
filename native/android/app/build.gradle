@@ -151,7 +151,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     compile project(':react-native-sqlite-2')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-sentry')

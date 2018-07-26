@@ -78,8 +78,8 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
                 return null;
             }
         }).then(new FxaResult.OnValueListener<String, Void>() {
-            public FxaResult<Void> onValue(String s) {
-                intent.putExtra("authUrl", s);
+            public FxaResult<Void> onValue(String authUrl) {
+                intent.putExtra("authUrl", authUrl);
                 intent.putExtra("redirectUrl", REDIRECT_URL);
                 try {
                     getCurrentActivity().startActivityForResult(intent, 2);
