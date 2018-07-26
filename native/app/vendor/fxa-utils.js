@@ -26,7 +26,6 @@ const fxaCryptoRelier = require('./fxa-crypto-relier');
  * - Saves information into the Android keychain
  * @returns {*}
  */
-
 function launchOAuthKeyFlow() {
   var loginDetails = {};
 
@@ -170,7 +169,7 @@ function fxaGetCredential() {
 function updateAccessToken(newAccessToken) {
   return fxaGetCredential().then((oldLoginDetails) => {
     const newLoginDetails = oldLoginDetails;
-    newloginDetails.oauthResponse.accessToken = newAccessToken;
+    newLoginDetails.oauthResponse.accessToken = newAccessToken;
     return storeCredentials(newLoginDetails)
   });
 }
