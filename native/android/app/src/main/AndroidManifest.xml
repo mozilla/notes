@@ -44,7 +44,9 @@
                       android:path="/notes/fxa/android-redirect.html"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.notes.FxaLoginActivity"></activity>
+        <activity
+            android:name="com.notes.FxaLoginActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
     </application>
 
 </manifest>
