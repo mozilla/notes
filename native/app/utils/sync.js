@@ -219,7 +219,6 @@ function syncKinto(client, loginDetails) {
           const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
           credential = {
             accessToken: loginDetails.oauthResponse.accessToken,
-            refreshToken: loginDetails.oauthResponse.refreshToken,
             key
           };
           // Query Kinto with the Bearer Token

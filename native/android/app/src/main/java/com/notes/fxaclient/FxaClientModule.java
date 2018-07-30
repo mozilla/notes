@@ -3,7 +3,6 @@ package com.notes.fxaclient;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -36,8 +35,8 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
     public static final String REACT_CLASS = "FxaClient";
     public ReactContext REACT_CONTEXT;
 
-    private Callback successCallback;
-    private Callback errorCallback;
+    private Callback mSuccessCallback;
+    private Callback mErrorCallback;
 
     @Override
     public String getName(){
@@ -59,17 +58,36 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
         reactContext.addActivityEventListener(this);
     }
 
+    /**
+     * Lazy getter for the account object.
+     */
+    private FxaResult<FirefoxAccount> getAccount() {
+        if (account != null) {
+            return FxaResult.Companion.fromValue(account);
+        } else {
+            return Config.Companion.custom(CONFIG_URL).then(new FxaResult.OnValueListener<Config, FirefoxAccount>() {
+                public FxaResult<FirefoxAccount> onValue(Config config) {
+                    account = new FirefoxAccount(config, CLIENT_ID, REDIRECT_URL);
+                    return FxaResult.Companion.fromValue(account);
+                }
+            }, new FxaResult.OnExceptionListener<FirefoxAccount>() {
+                public FxaResult<FirefoxAccount> onException(Exception e) {
+                    mErrorCallback.invoke();
+                    return null;
+                }
+            });
+        }
+    }
     @ReactMethod
     public void begin(final Callback successCallback,
                       final Callback errorCallback) {
-        this.successCallback = successCallback;
-        this.errorCallback = errorCallback;
+        this.mSuccessCallback = successCallback;
+        this.mErrorCallback = errorCallback;
         final Context context = getReactApplicationContext();
         final Intent intent = new Intent(context, FxaLoginActivity.class);
 
-        Config.Companion.custom(CONFIG_URL).then(new FxaResult.OnValueListener<Config, String>() {
-            public FxaResult<String> onValue(Config config) {
-                account = new FirefoxAccount(config, CLIENT_ID, REDIRECT_URL);
+        getAccount().then(new FxaResult.OnValueListener<FirefoxAccount, String>() {
+            public FxaResult<String> onValue(FirefoxAccount account) {
                 return account.beginOAuthFlow(scopes, wantsKeys);
             }
         }, new FxaResult.OnExceptionListener<String>() {
@@ -96,10 +114,45 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
         });
     }
 
+    @ReactMethod
+    public void renewToken(String state, final Callback successCallback,
+                           final Callback errorCallback) {
+        FxaResult<FirefoxAccount> account;
+        if (this.account != null) {
+            account = FxaResult.Companion.fromValue(this.account);
+        } else if (state != null) {
+            account = FirefoxAccount.Companion.fromJSONString(state);
+        } else {
+            errorCallback.invoke();
+            return;
+        }
+
+        account.then(new FxaResult.OnValueListener<FirefoxAccount, OAuthInfo>() {
+            public FxaResult<OAuthInfo> onValue(FirefoxAccount account) {
+                return account.getOAuthToken(scopes);
+            }
+        }, new FxaResult.OnExceptionListener<OAuthInfo>() {
+            public FxaResult<OAuthInfo> onException(Exception e) {
+                errorCallback.invoke();
+                return null;
+            }
+        }).then(new FxaResult.OnValueListener<OAuthInfo, Void>() {
+            public FxaResult<Void> onValue(OAuthInfo response) {
+                successCallback.invoke(response.accessToken);
+                return null;
+            }
+        }, new FxaResult.OnExceptionListener<Void>() {
+            public FxaResult<Void> onException(Exception e) {
+                errorCallback.invoke();
+                return null;
+            }
+        });
+    }
+
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         if (data == null) {
-            errorCallback.invoke();
+            mErrorCallback.invoke();
             return;
         }
 
@@ -107,8 +160,8 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
             @Override
             public void uncaughtException(Thread thread, Throwable e) {
                 e.printStackTrace();
-                if (errorCallback != null) {
-                    errorCallback.invoke();
+                if (mErrorCallback != null) {
+                    mErrorCallback.invoke();
                 }
             }
         });
@@ -121,33 +174,35 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
 
         account.completeOAuthFlow(code, state).then(new FxaResult.OnValueListener<OAuthInfo, Profile>() {
             public FxaResult<Profile> onValue(OAuthInfo oAuthInfo) {
+                try {
+                    oauthResponse.put("accessToken", oAuthInfo.accessToken);
+                    loginDetails.put("keys", new JSONObject(oAuthInfo.keys));
+                    loginDetails.put("oauthResponse", oauthResponse);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 return account.getProfile();
             }
         }, new FxaResult.OnExceptionListener<Profile>() {
             public FxaResult<Profile> onException(Exception e) {
-                errorCallback.invoke();
+                mErrorCallback.invoke();
                 return null;
             }
         }).then(new FxaResult.OnValueListener<Profile, Void>() {
             public FxaResult<Void> onValue(Profile profile) {
                 try {
-                    JSONObject accountObject = new JSONObject(account.toJSONString())
-                            .getJSONObject("oauth_cache")
-                            .getJSONObject(TextUtils.join(" ", scopes));
-                    oauthResponse.put("accessToken", accountObject.getString("access_token"));
-                    oauthResponse.put("refreshToken", accountObject.getString("refresh_token"));
-                    loginDetails.put("oauthResponse", oauthResponse);
-                    loginDetails.put("keys", new JSONObject(accountObject.getString("keys")));
+                    // Save the state as a raw string
+                    loginDetails.put("state", account.toJSONString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                successCallback.invoke(loginDetails.toString());
+                mSuccessCallback.invoke(loginDetails.toString());
                 return null;
             }
         }, new FxaResult.OnExceptionListener<Void>() {
             public FxaResult<Void> onException(Exception e) {
-                errorCallback.invoke();
+                mErrorCallback.invoke();
                 return null;
             }
         });
