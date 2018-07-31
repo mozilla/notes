@@ -103,48 +103,54 @@ public class FxaClientModule extends ReactContextBaseJavaModule implements Activ
             return;
         }
 
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable e) {
+                e.printStackTrace();
+                if (errorCallback != null) {
+                    errorCallback.invoke();
+                }
+            }
+        });
+
         final JSONObject loginDetails = new JSONObject();
         final JSONObject oauthResponse = new JSONObject();
 
         String code = data.getStringExtra("code");
         String state = data.getStringExtra("state");
 
-        try {
-            account.completeOAuthFlow(code, state).then(new FxaResult.OnValueListener<OAuthInfo, Profile>() {
-                public FxaResult<Profile> onValue(OAuthInfo oAuthInfo) {
-                    return account.getProfile();
+        account.completeOAuthFlow(code, state).then(new FxaResult.OnValueListener<OAuthInfo, Profile>() {
+            public FxaResult<Profile> onValue(OAuthInfo oAuthInfo) {
+                return account.getProfile();
+            }
+        }, new FxaResult.OnExceptionListener<Profile>() {
+            public FxaResult<Profile> onException(Exception e) {
+                errorCallback.invoke();
+                return null;
+            }
+        }).then(new FxaResult.OnValueListener<Profile, Void>() {
+            public FxaResult<Void> onValue(Profile profile) {
+                try {
+                    JSONObject accountObject = new JSONObject(account.toJSONString())
+                            .getJSONObject("oauth_cache")
+                            .getJSONObject(TextUtils.join(" ", scopes));
+                    oauthResponse.put("accessToken", accountObject.getString("access_token"));
+                    oauthResponse.put("refreshToken", accountObject.getString("refresh_token"));
+                    loginDetails.put("oauthResponse", oauthResponse);
+                    loginDetails.put("keys", new JSONObject(accountObject.getString("keys")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new FxaResult.OnExceptionListener<Profile>() {
-                public FxaResult<Profile> onException(Exception e) {
-                    errorCallback.invoke();
-                    return null;
-                }
-            }).then(new FxaResult.OnValueListener<Profile, Void>() {
-                public FxaResult<Void> onValue(Profile profile) {
-                    try {
-                        JSONObject accountObject = new JSONObject(account.toJSONString())
-                                .getJSONObject("oauth_cache")
-                                .getJSONObject(TextUtils.join(" ", scopes));
-                        oauthResponse.put("accessToken", accountObject.getString("access_token"));
-                        oauthResponse.put("refreshToken", accountObject.getString("refresh_token"));
-                        loginDetails.put("oauthResponse", oauthResponse);
-                        loginDetails.put("keys", new JSONObject(accountObject.getString("keys")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
 
-                    successCallback.invoke(loginDetails.toString());
-                    return null;
-                }
-            }, new FxaResult.OnExceptionListener<Void>() {
-                public FxaResult<Void> onException(Exception e) {
-                    errorCallback.invoke();
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            errorCallback.invoke();
-        }
+                successCallback.invoke(loginDetails.toString());
+                return null;
+            }
+        }, new FxaResult.OnExceptionListener<Void>() {
+            public FxaResult<Void> onException(Exception e) {
+                errorCallback.invoke();
+                return null;
+            }
+        });
     }
 
     @Override
