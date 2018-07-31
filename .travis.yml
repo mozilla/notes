@@ -11,7 +11,7 @@ _aliases:
       firefox: latest
     <<: *test
   - &integration-test
-    env: MOZ_HEADLESS=1
+    env: MOZ_HEADLESS=1 UI_TEST_LOGGING=info
     addons:
       firefox: latest-nightly
     <<: *test
