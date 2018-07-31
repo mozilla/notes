@@ -1,15 +1,16 @@
 language: node_js
 _aliases:
   - &test
-    env: DISPLAY=:99.0
     before_install:
       - sh -e /etc/init.d/xvfb start
       - sleep 10
   - &unit-test
+    env: DISPLAY=:99.0
     addons:
       firefox: latest
     <<: *test
   - &integration-test
+    env: DISPLAY=:99.0
     addons:
       firefox: latest-nightly
     before_install:
