@@ -1,32 +1,38 @@
 language: node_js
-addons:
-  firefox: latest
-node_js:
-  - "8"
-before_install:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sleep 3
-  - npm i -g npm@6
-script:
-  - npm run test
-env:
-  global:
-    - FIREFOX_BINARY: firefox
+_aliases:
+  - &test
+    env: DISPLAY=:99.0
+    before_install:
+      - sh -e /etc/init.d/xvfb start
+      - sleep 5
+  - &unit-test
+    env: FIREFOX_BINARY=firefox
+    addons:
+      firefox: latest
+    <<: *test
+  - &integration-test
+    env: MOZ_HEADLESS=1
+    addons:
+      firefox: latest-nightly
+    <<: *test
 
-matrix:
+jobs:
   include:
-    - script: npm run test
-      env:
-        global:
-          - FIREFOX_BINARY: firefox
-      before_install:
-         - export DISPLAY=:99.0
-         - sh -e /etc/init.d/xvfb start
-         - sleep 3
-    - script: npm run build
+    - stage:
+      node_js: 8
+      <<: *unit-test
+      script: npm run test:karma
+    - stage:
+      node_js: 8
+      <<: *integration-test
+      script: npm run test:ui
+    - stage:
+      node_js: 8
+      script: npm run build
       env: BUILD_NOTES
-    - script: npm run lint
+    - stage:
+      node_js: 8
+      script: npm run lint
       env: LINT
       before_script: npm run build
       before_install:

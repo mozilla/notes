@@ -1,0 +1,13 @@
+describe("The home page", function(){
+  it("should open", function(){
+    browser.url("http://www.google.com")
+    browser.waitUntil(function () {
+      browser.execute(function() {
+        var Cu = Components.utils;
+        const WebExtensionPolicy = Cu.getGlobalForObject(Cu.import("resource://gre/modules/Extension.jsm", {}));
+        return WebExtensionPolicy.getByID("{}").mozExtensionHostname;
+      },);
+        return browser.getTitle() === 'Welcome to Lockbox';
+      }, 5000, 'expected text to be different after 5s');
+  });
+});
