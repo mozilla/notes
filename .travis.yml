@@ -19,6 +19,7 @@ _aliases:
       - export PATH=$HOME/geckodriver:$PATH
       - firefox --version
       - geckodriver --version
+      - npm run build
     <<: *test
 
 jobs:
