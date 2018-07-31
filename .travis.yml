@@ -6,12 +6,10 @@ _aliases:
       - sh -e /etc/init.d/xvfb start
       - sleep 10
   - &unit-test
-    env: FIREFOX_BINARY=firefox
     addons:
       firefox: latest
     <<: *test
   - &integration-test
-    env: MOZ_HEADLESS=1 UI_TEST_LOGGING=info GECKODRIVER_VERSION=0.21.0
     addons:
       firefox: latest-nightly
     before_install:
@@ -26,10 +24,12 @@ jobs:
   include:
     - stage:
       node_js: 8
+      env: FIREFOX_BINARY=firefox
       <<: *unit-test
       script: npm run test:karma
     - stage:
       node_js: 8
+      env: MOZ_HEADLESS=1 UI_TEST_LOGGING=info GECKODRIVER_VERSION=0.21.0
       <<: *integration-test
       script: npm run test:ui
     - stage:
