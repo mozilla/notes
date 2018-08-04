@@ -9,10 +9,12 @@ const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
 const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 const timeouts = {};
+const ALLOWED_EXPORT_REGISTERS = new Set(["email-tabs@mozilla.org"]);
 let closeUI = null;
 let isEditorReady = false;
 let editorConnectedDeferred;
 let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
+let otherExports = [];
 
 // Kinto sync and encryption
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
@@ -252,6 +254,22 @@ browser.runtime.onMessage.addListener(function(eventData) {
       });
       break;
   }
+});
+
+browser.runtime.onMessageExternal.addListener((message, sender) => {
+  if (!ALLOWED_EXPORT_REGISTERS.has(sender.id)) {
+    console.error("Received message from unexpected extension:", sender.id);
+    return;
+  }
+  if (message.type === "registerExport") {
+    otherExports.push({
+      name: message.name,
+      title: message.title,
+      extensionId: sender.id,
+    });
+    return;
+  }
+  console.error("Received unexpected external message:", message);
 });
 
 // Handle opening and closing the add-on.

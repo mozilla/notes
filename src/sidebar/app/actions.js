@@ -6,6 +6,7 @@ import { SYNC_AUTHENTICATED,
          RECONNECT_SYNC,
          DISCONNECTED,
          EXPORT_HTML,
+         OTHER_EXPORT,
          CREATE_NOTE,
          UPDATE_NOTE,
          DELETE_NOTE,
@@ -167,6 +168,20 @@ export function exportHTML(content) {
     action: 'metrics-export'
   });
   return { type: EXPORT_HTML, content };
+}
+
+export function otherExport(exportOption, content) {
+  // get Notes content
+  const notesContent = content || '';
+  browser.runtime.sendMessage(exportOption.extensionId, {
+    type: "exportFromNotes",
+    content: notesContent,
+  }, {});
+  // FIXME: add exportOption.name to this, and document:
+  chrome.runtime.sendMessage({
+    action: 'metrics-other-export'
+  });
+  return { type: OTHER_EXPORT, exportOption, content };
 }
 
 export function setFocusedNote(id) {
