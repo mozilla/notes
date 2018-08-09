@@ -46,7 +46,8 @@
         </activity>
         <activity
             android:name="com.notes.FxaLoginActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>
