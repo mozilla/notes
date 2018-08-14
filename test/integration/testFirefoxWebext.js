@@ -28,7 +28,7 @@ describe('The Firefox Notes web extension', function() {
       .forBrowser('firefox')
       .setFirefoxOptions(options)
       .build();
-    addon = await driver.installAddon('firefox_notes.xpi');
+    let addon = await driver.installAddon('firefox_notes.xpi');
     // Get addon numerical id
     await driver.setContext('chrome');
     let addon_id = await driver.executeScript(
@@ -57,17 +57,16 @@ describe('The Firefox Notes web extension', function() {
       () => noteTitle === "Welcome to Firefox Notes!",
       timeout,
       "The note title was not correct!"
-    )
-    expect(noteTitle).to.equal("Welcome to Firefox Notes!")
+    );
   });
 
   it('should have a list of notes', async function() {
     // Check list of notes
     let notePage = new NotePage(driver);
     let listPage = await notePage.clickBackButton();
-    let notesList = await listPage.notesList;
-    let listNoteTitle = await notesList[0].title;
-    expect(listNoteTitle).to.equal("Welcome to Firefox Notes!")
+    let notesList = await listPage.notesList();
+    let listNoteTitle = await notesList[0].getTitle();
+    expect(listNoteTitle).to.equal("Welcome to Firefox Notes!");
   });
 
   it('should add a note', async function() {
@@ -79,8 +78,8 @@ describe('The Firefox Notes web extension', function() {
     let newNote = await listPage.newNoteButton();
     await newNote.addNote(title, paragraph);
     listPage = await newNote.clickBackButton();
-    let notesList = await listPage.notesList;
-    let listNoteTitle = await notesList[0].title;
-    expect(listNoteTitle).to.equal(paragraph)
+    let notesList = await listPage.notesList();
+    let listNoteTitle = await notesList[0].getTitle();
+    expect(listNoteTitle).to.equal(paragraph);
   });
 });

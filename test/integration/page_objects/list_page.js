@@ -23,17 +23,16 @@ export default class ListPage extends BasePage {
   * @property notesList
   * @returns {Object} A list of notes found on the home page
   */
-  get notesList() { return (async () =>
-    {
+  async notesList(){
       let elements = [];
+
       await this.findElement(this.listLocator);
       await this.findElement('ul');
-      for(var item in await this.findElements('li')) {
+      for(let item in await this.findElements('li')) {
         elements.push(new ListNote(this.driver, item));
-        this.logger.info('Created ListNote class.')
+        this.logger.info('Created ListNote class.');
       }
-      return elements
-    })();
+      return elements;
   }
 
   /**
@@ -50,7 +49,7 @@ export default class ListPage extends BasePage {
 
 class ListNote extends ListPage {
 
-  constructor(driver, root) {
+  constructor(driver) {
     super(driver);
     this.titleLocator = 'div > p';
   }
@@ -59,10 +58,8 @@ class ListNote extends ListPage {
   * @property clickBackButton
   * @returns {Object} The title of an individual note
   */
-  get title() { return (async () =>
-    {
+  async getTitle() {
       let element = await this.findElement(this.titleLocator);
       return element.getText();
-    })();
   }
 }

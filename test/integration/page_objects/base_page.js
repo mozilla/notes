@@ -2,7 +2,7 @@ const {By, until, Key} = require('selenium-webdriver');
 const { createLogger, transports } = require('winston');
 const { format } = require('logform');
 const logger = createLogger({
-  level: process.env.UI_TEST_LOGGING ? process.env.UI_TEST_LOGGING : 'silent',
+  level: process.env.UI_TEST_LOGGING || 'silent',
   format: format.combine(
     format.colorize(),
     format.align(),
@@ -33,11 +33,11 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async waitForPageToLoad(locator) {
-    element = await this.findElement(locator);
+    let element = await this.findElement(locator);
     await this.driver.wait(this
       .until
       .elementIsVisable(element), this.timeout);
-    return this
+    return this;
   }
 
   /**
@@ -47,16 +47,18 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async findElement(locator) {
-    this.logger.info(`Looking for element ${locator}`)
+    let element;
+
+    this.logger.info(`Looking for element ${locator}`);
     this.waitForElement(locator);
-    this.logger.info(`Found element ${locator}, returning it.`)
+    this.logger.info(`Found element ${locator}, returning it.`);
     if (this.root) {
-      let root = this.driver.findElement(this.by.css(this.root))
-      root.findElement(this.by.css(locator))
-      return element
+      let root = this.driver.findElement(this.by.css(this.root));
+      element = root.findElement(this.by.css(locator));
+      return element;
     } else {
       let element = await this.driver.findElement(this.by.css(locator));
-      return element
+      return element;
     }
   }
 
@@ -67,17 +69,17 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async findElements(locator) {
+    let elements = [];
+
     this.logger.info(`Looking for element ${locator}`);
     this.waitForElement(locator);
     this.logger.info(`Found element ${locator}, returning it.`);
     if (this.root) {
-      let root = this.driver.findElement(this.by.css(this.root))
-      root.findElements(this.by.css(locator))
-      return elements
-    } else {
-      let elements = await this.driver.findElements(this.by.css(locator));
-      return elements
+      let root = this.driver.findElement(this.by.css(this.root));
+      elements = root.findElements(this.by.css(locator));
+      return elements;
     }
+    return await this.driver.findElements(this.by.css(locator));
   }
 
   /**
@@ -86,14 +88,13 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async waitForElement(locator) {
-    this.logger.info(`Waiting for locator ${locator} to appear`)
+    this.logger.info(`Waiting for locator ${locator} to appear`);
     await this.driver.wait(this
       .until
       .elementLocated(this
         .by
         .css(locator)), this.timeout
     );
-    this.logger.info(`Locator ${locator} appeared, returning it.`)
-    return
+    this.logger.info(`Locator ${locator} appeared, returning it.`);
   }
 }
