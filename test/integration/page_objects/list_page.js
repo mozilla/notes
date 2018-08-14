@@ -62,4 +62,11 @@ class ListNote extends ListPage {
       let element = await this.findElement(this.titleLocator);
       return element.getText();
   }
+
+  async click() {
+    let note = await this.driver.findElement(this.by.css(this.titleLocator));
+    await note.click();
+    return await new NotePage(this.driver).waitForPageToLoad()
+  }
+
 }

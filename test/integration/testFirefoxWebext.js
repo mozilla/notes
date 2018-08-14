@@ -1,17 +1,20 @@
-const {Builder, By, until} = require('selenium-webdriver');
+import { Builder, By, until } from 'selenium-webdriver';
 
-var chai = require('chai');
-var firefox = require('selenium-webdriver/firefox');
-var assert = chai.assert;
-var expect = chai.expect;
+import * as chai from 'chai';
+import * as firefox from 'selenium-webdriver/firefox';
 
-import NotePage from './page_objects/note_page';
+import ListPage from './page_objects/list_page';
+
+const assert = chai.assert;
+const expect = chai.expect;
 
 describe('The Firefox Notes web extension', function() {
-  var driver;
+  const timeout = 10000;
+  const defaultNoteTitle = "Welcome to Firefox Notes!";
+  let addon_id;
   let addon;
   let options;
-  let timeout = 10000;
+  var driver;
 
   this.timeout(20000);
 
@@ -28,10 +31,10 @@ describe('The Firefox Notes web extension', function() {
       .forBrowser('firefox')
       .setFirefoxOptions(options)
       .build();
-    let addon = await driver.installAddon('firefox_notes.xpi');
+    addon = await driver.installAddon('firefox_notes.xpi');
     // Get addon numerical id
     await driver.setContext('chrome');
-    let addon_id = await driver.executeScript(
+    addon_id = await driver.executeScript(
       'var Cu = Components.utils;' +
       'const {WebExtensionPolicy} = Cu.getGlobalForObject(Cu.import(' +
       '"resource://gre/modules/Extension.jsm", this));' +
@@ -39,10 +42,13 @@ describe('The Firefox Notes web extension', function() {
       addon
     );
     await driver.setContext('content');
-    await driver.get(`moz-extension://${addon_id}/sidebar/index.html`, timeout);
+    //load index html twice, as once seems to not load the app correctly
+    for (var i = 0; i < 2; i++){
+      await driver.get(`moz-extension://${addon_id}/sidebar/index.html`, timeout);
+    }
     // Wait for page to load
-    await driver.wait(until.elementLocated(By.tagName('header')), timeout);
-    let header = await driver.findElement(By.tagName('header'));
+    await driver.wait(until.elementLocated(By.css('.listView')), timeout);
+    let header = await driver.findElement(By.css('.listView'));
     await driver.wait(until.elementIsVisible(header), timeout);
   });
 
@@ -51,10 +57,12 @@ describe('The Firefox Notes web extension', function() {
   });
 
   it('should have a default note named correctly', async function() {
-    let notePage = new NotePage(driver);
+    let listPage = await new ListPage(driver).waitForPageToLoad();
+    let notesList = await listPage.notesList();
+    let notePage = await notesList[0].click();
     let noteTitle = await notePage.noteTitle;
     await driver.wait(
-      () => noteTitle === "Welcome to Firefox Notes!",
+      () => noteTitle === defaultNoteTitle,
       timeout,
       "The note title was not correct!"
     );
@@ -62,19 +70,19 @@ describe('The Firefox Notes web extension', function() {
 
   it('should have a list of notes', async function() {
     // Check list of notes
-    let notePage = new NotePage(driver);
-    let listPage = await notePage.clickBackButton();
+    let listPage = await new ListPage(driver).waitForPageToLoad();
     let notesList = await listPage.notesList();
     let listNoteTitle = await notesList[0].getTitle();
-    expect(listNoteTitle).to.equal("Welcome to Firefox Notes!");
+    expect(listNoteTitle).to.equal(defaultNoteTitle);
   });
 
   it('should add a note', async function() {
     // Add a new note
-    let notePage = new NotePage(driver);
+    let listPage = await new ListPage(driver).waitForPageToLoad();
+    let notePage = await listPage.newNoteButton();
     let title = "THIS IS A TEST";
     let paragraph = "this isnt a test";
-    let listPage = await notePage.clickBackButton();
+    listPage = await notePage.clickBackButton();
     let newNote = await listPage.newNoteButton();
     await newNote.addNote(title, paragraph);
     listPage = await newNote.clickBackButton();
@@ -82,4 +90,5 @@ describe('The Firefox Notes web extension', function() {
     let listNoteTitle = await notesList[0].getTitle();
     expect(listNoteTitle).to.equal(paragraph);
   });
+
 });

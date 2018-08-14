@@ -47,14 +47,12 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async findElement(locator) {
-    let element;
-
     this.logger.info(`Looking for element ${locator}`);
     this.waitForElement(locator);
     this.logger.info(`Found element ${locator}, returning it.`);
     if (this.root) {
       let root = this.driver.findElement(this.by.css(this.root));
-      element = root.findElement(this.by.css(locator));
+      let element = root.findElement(this.by.css(locator));
       return element;
     } else {
       let element = await this.driver.findElement(this.by.css(locator));
@@ -69,14 +67,12 @@ export default class BasePage {
   * @throws ElementNotFound
   */
   async findElements(locator) {
-    let elements = [];
-
     this.logger.info(`Looking for element ${locator}`);
     this.waitForElement(locator);
     this.logger.info(`Found element ${locator}, returning it.`);
     if (this.root) {
       let root = this.driver.findElement(this.by.css(this.root));
-      elements = root.findElements(this.by.css(locator));
+      let elements = root.findElements(this.by.css(locator));
       return elements;
     }
     return await this.driver.findElements(this.by.css(locator));
