@@ -48,8 +48,8 @@ describe('The Firefox Notes web extension', function() {
     }
     // Wait for page to load
     await driver.wait(until.elementLocated(By.css('.listView')), timeout);
-    let header = await driver.findElement(By.css('.listView'));
-    await driver.wait(until.elementIsVisible(header), timeout);
+    let listView = await driver.findElement(By.css('.listView'));
+    await driver.wait(until.elementIsVisible(listView), timeout);
   });
 
   afterEach(async function() {
