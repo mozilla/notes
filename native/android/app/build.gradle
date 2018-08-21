@@ -101,7 +101,7 @@ android {
         applicationId "org.mozilla.testpilot.notes"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 6
+        versionCode 7
         versionName "1.1android"
         ndk {
             abiFilters "armeabi-v7a", "x86"
