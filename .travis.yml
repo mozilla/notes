@@ -1,32 +1,44 @@
 language: node_js
-addons:
-  firefox: latest
-node_js:
-  - "8"
-before_install:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sleep 3
-  - npm i -g npm@6
-script:
-  - npm run test
-env:
-  global:
-    - FIREFOX_BINARY: firefox
+_aliases:
+  - &test
+    before_install:
+      - sh -e /etc/init.d/xvfb start
+      - sleep 10
+  - &unit-test
+    env: DISPLAY=:99.0 FIREFOX_BINARY=firefox
+    addons:
+      firefox: latest
+    <<: *test
+  - &integration-test
+    env: DISPLAY=:99.0 MOZ_HEADLESS=1 UI_TEST_LOGGING=info GECKODRIVER_VERSION=0.21.0
+    addons:
+      firefox: latest-nightly
+    before_script:
+      - wget -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
+      - mkdir $HOME/geckodriver && tar xvf /tmp/geckodriver.tar.gz -C $HOME/geckodriver
+      - export PATH=$HOME/geckodriver:$PATH
+      - firefox --version
+      - geckodriver --version
+      - npm run build
+    <<: *test
 
-matrix:
+jobs:
   include:
-    - script: npm run test
-      env:
-        global:
-          - FIREFOX_BINARY: firefox
-      before_install:
-         - export DISPLAY=:99.0
-         - sh -e /etc/init.d/xvfb start
-         - sleep 3
-    - script: npm run build
+    - stage:
+      node_js: 8
+      <<: *unit-test
+      script: npm run test:karma
+    - stage:
+      node_js: 8
+      <<: *integration-test
+      script: npm run test:ui
+    - stage:
+      node_js: 8
+      script: npm run build
       env: BUILD_NOTES
-    - script: npm run lint
+    - stage:
+      node_js: 8
+      script: npm run lint
       env: LINT
       before_script: npm run build
       before_install:

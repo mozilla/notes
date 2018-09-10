@@ -46,9 +46,11 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.0",
@@ -69,20 +71,23 @@
     "karma-firefox-launcher": "1.0.1",
     "karma-mocha": "1.3.0",
     "karma-mocha-reporter": "2.2.4",
-    "mocha": "^3.2.0",
+    "logform": "^1.9.1",
+    "mocha": "^3.5.3",
     "node-sass": "^4.7.2",
     "npm-run-all": "^4.0.2",
     "pontoon-to-webext": "^1.0.2",
     "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
     "sass-loader": "^6.0.6",
+    "selenium-webdriver": "^4.0.0-alpha.1",
     "sinon": "4.0.1",
     "sinon-chrome": "2.2.1",
     "stylelint": "^8.4.0",
     "stylelint-config-recommended": "^2.0.1",
     "web-ext": "^1.9.1",
     "webpack": "^3.10.0",
-    "webpack-sources": "1.0.1"
+    "webpack-sources": "1.0.1",
+    "winston": "^3.0.0"
   },
   "homepage": "https://github.com/mozilla/notes#readme",
   "license": "MPL-2.0",
@@ -106,6 +111,8 @@
     "start-deved": "npm run webpack && web-ext run -s build --firefox=firefoxdeveloperedition & npm run webpack:watch",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start",
+    "test:ui": "test/integration/setup-webext.sh && npm run ui-tests-build && mocha ./test/dist/integration --retries 1 --no-deprecation --reporter=list --compilers js:babel-core/register --require babel-polyfill",
+    "ui-tests-build": "babel ./test/integration --quiet --no-babelrc --presets=env -d ./test/dist/integration",
     "webpack": "webpack --config webpack.config.js",
     "webpack:watch": "webpack --config webpack.config.js --watch"
   }
