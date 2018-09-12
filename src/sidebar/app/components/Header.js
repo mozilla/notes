@@ -7,7 +7,14 @@ import MoreIcon from './icons/MoreIcon';
 
 import { SURVEY_PATH } from '../utils/constants';
 
-import { exportHTML, deleteNote } from '../actions';
+import { exportHTML, otherExport, deleteNote } from '../actions';
+
+// FIXME: need to get from props, and from background somehow
+const EXPORTS = [{
+  name: "email-tabs",
+  title: "Export via Gmail",
+  extensionId: "email-tabs@mozilla.org",
+}];
 
 class Header extends React.Component {
   constructor(props) {
@@ -69,6 +76,8 @@ class Header extends React.Component {
 
     this.exportAsHTML = () => props.dispatch(exportHTML(this.props.note.content));
 
+    this.otherExport = (exportOption) => props.dispatch(otherExport(exportOption, this.props.note.content))
+
     this.giveFeedbackCallback = (e) => {
       e.preventDefault();
       chrome.runtime.sendMessage({
@@ -92,6 +101,22 @@ class Header extends React.Component {
     // List of menu used for keyboard navigation
     this.buttons = [];
     const hasContent = !!this.props.note.content && this.props.note.content.length > 0;
+
+    let otherExports = [];
+    for (let exportOption of EXPORTS) {
+      otherExports.push(
+        <li key={exportOption.name}>
+          <button
+            role="menuitem"
+            disabled={!hasContent}
+            ref={ btn => btn ? this.buttons.push(btn) : null }
+            title={ exportOption.title }
+            onClick={ this.otherExport.bind(this, exportOption) }>
+            { exportOption.title }
+          </button>
+        </li>
+      );
+    }
 
     return (
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
@@ -132,6 +157,7 @@ class Header extends React.Component {
                   { browser.i18n.getMessage('exportAsHTML') }
                 </button>
               </li>
+              { otherExports }
               <li>
                 <button
                   role="menuitem"
