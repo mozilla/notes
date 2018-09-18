@@ -91,4 +91,39 @@ describe('The Firefox Notes web extension', function() {
     expect(listNoteTitle).to.equal(paragraph);
   });
 
+  it('should be able to delete a note', async function() {
+    // Deletes a note
+    let listPage = await new ListPage(driver).waitForPageToLoad();
+    let notePage = await listPage.newNoteButton();
+    let title = "THIS IS A TEST";
+    await notePage.addNote(title)
+    listPage = await notePage.deleteNote();
+    let notesList = await listPage.notesList();
+    expect(notesList.length).to.equal(1)
+  });
+
+  it('should be able to add a note from the note page', async function() {
+    // Add a note from the Note Page
+    let listPage = await new ListPage(driver).waitForPageToLoad();
+    let notePage = await listPage.newNoteButton();
+    let title = "THIS IS A TEST";
+    let paragraph = "this isnt a test";
+    await notePage.addNote(title, paragraph)
+    expect(await notePage.noteTitle).to.equal(paragraph)
+    let newNote = await notePage.addNewNote();
+    expect(await newNote.noteTitle).to.equal('New Note')
+  });
+
+  it('should be navigate to feedback page', async function() {
+    // Checks feedback page loads in new window
+    let listPage = await new ListPage(driver).waitForPageToLoad();
+    let notePage = await listPage.newNoteButton();
+    expect(await notePage.noteTitle).to.equal('New Note');
+    await notePage.clickGiveFeedback();
+    await driver.wait(
+      until.titleIs('TxP: Firefox Notes'),
+    5000);
+    expect(await driver.getCurrentUrl()).to.match(/(?:qsurvey)/);
+  });
+
 });
