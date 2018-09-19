@@ -10,7 +10,7 @@ const expect = chai.expect;
 
 describe('The Firefox Notes web extension', function() {
   const timeout = 10000;
-  const defaultNoteTitle = "Welcome to Firefox Notes!";
+  const defaultNoteTitle = 'Welcome to Firefox Notes!';
   let addon_id;
   let addon;
   let options;
@@ -64,7 +64,7 @@ describe('The Firefox Notes web extension', function() {
     await driver.wait(
       () => noteTitle === defaultNoteTitle,
       timeout,
-      "The note title was not correct!"
+      'The note title was not correct!'
     );
   });
 
@@ -80,36 +80,36 @@ describe('The Firefox Notes web extension', function() {
     // Add a new note
     let listPage = await new ListPage(driver).waitForPageToLoad();
     let notePage = await listPage.newNoteButton();
-    let title = "THIS IS A TEST";
-    let paragraph = "this isnt a test";
+    let title = 'THIS IS A TEST';
+    let paragraph = 'this isnt a test';
     listPage = await notePage.clickBackButton();
     let newNote = await listPage.newNoteButton();
     await newNote.addNote(title, paragraph);
     listPage = await newNote.clickBackButton();
     let notesList = await listPage.notesList();
     let listNoteTitle = await notesList[0].getTitle();
-    expect(listNoteTitle).to.equal(paragraph);
+    expect(listNoteTitle).to.equal(title);
   });
 
   it('should be able to delete a note', async function() {
     // Deletes a note
     let listPage = await new ListPage(driver).waitForPageToLoad();
     let notePage = await listPage.newNoteButton();
-    let title = "THIS IS A TEST";
-    await notePage.addNote(title)
+    let title = 'THIS IS A TEST';
+    await notePage.addNote(title);
     listPage = await notePage.deleteNote();
     let notesList = await listPage.notesList();
-    expect(notesList.length).to.equal(1)
+    expect(notesList.length).to.equal(1);
   });
 
   it('should be able to add a note from the note page', async function() {
     // Add a note from the Note Page
     let listPage = await new ListPage(driver).waitForPageToLoad();
     let notePage = await listPage.newNoteButton();
-    let title = "THIS IS A TEST";
-    let paragraph = "this isnt a test";
-    await notePage.addNote(title, paragraph)
-    expect(await notePage.noteTitle).to.equal(paragraph)
+    let title = 'THIS IS A TEST';
+    let paragraph = 'this isnt a test';
+    await notePage.addNote(title, paragraph);
+    expect(await notePage.noteTitle).to.equal(title)
     let newNote = await notePage.addNewNote();
     expect(await newNote.noteTitle).to.equal('New Note')
   });

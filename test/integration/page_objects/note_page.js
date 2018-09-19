@@ -94,16 +94,18 @@ export default class NotePage extends BasePage {
   * @returns {Object} An object representing the page.
   * @throws ElementNotFound
   */
-  async addNote(title = "This is a title", paragraph = 'This is a test!') {
+  async addNote(title = 'This is a title', paragraph = 'This is a test!') {
     this.logger.info('Adding a new note');
     let editor = await this.driver.findElement(this.by.css(this.editorLocator));
-    await editor.sendKeys(title, this.key.ENTER, paragraph);
+    await editor.sendKeys(title);
+    await editor.sendKeys(this.key.ENTER);
+    await editor.sendKeys(paragraph);
     // Find note title before we wait for it to change
     let thisNoteTitle = await this
       .driver
       .findElement(this.by.css(this.noteTitleLocator));
     await this.driver.wait(
-        this.until.elementTextIs(thisNoteTitle, paragraph),
+        this.until.elementTextIs(thisNoteTitle, title),
       this.timeout
     );
     this.logger.info('Note added');
