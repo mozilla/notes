@@ -22,6 +22,7 @@
         font-size: 13px;
         line-height: 17px;
         letter-spacing: .1px;
+        &:focus { background-color: rgba(128, 128, 128, 0.2); }
         p {
           strong {
             font-weight: 500;
