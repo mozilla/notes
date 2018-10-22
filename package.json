@@ -111,8 +111,7 @@
     "start-deved": "npm run webpack && web-ext run -s build --firefox=firefoxdeveloperedition & npm run webpack:watch",
     "test": "npm-run-all test:*",
     "test:karma": "webpack --config webpack.test-unit.js && NODE_ENV=test karma start",
-    "test:ui": "test/integration/setup-webext.sh && npm run ui-tests-build && mocha ./test/dist/integration --retries 1 --no-deprecation --reporter=list --compilers js:babel-core/register --require babel-polyfill",
-    "ui-tests-build": "babel ./test/integration --quiet --no-babelrc --presets=env -d ./test/dist/integration",
+    "test:ui": "test/integration/setup-webext.sh && mocha ./test/dist/integration --retries 1 --reporter=list --compilers js:babel-core/register --require babel-polyfill",
     "webpack": "webpack --config webpack.config.js",
     "webpack:watch": "webpack --config webpack.config.js --watch"
   }
