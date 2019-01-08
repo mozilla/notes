@@ -4,6 +4,9 @@
 
 * TBA
 
+## 4.1.2
+
+* Fix the text selection issues
 
 ## 4.1.1
 
