@@ -33,6 +33,11 @@ body > div {
   padding: 0;
 }
 
+html, body {
+  // Override https://searchfox.org/mozilla-central/rev/76fe4bb385348d3f45bbebcf69ba8c7283dfcec7/browser/components/extensions/extension.css#16
+  -moz-user-select: auto;
+}
+
 /**
 Custom list types for indents
 https://github.com/mozilla/notes/issues/413
