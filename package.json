@@ -2,7 +2,7 @@
   "name": "notes",
   "id": "notes@mozilla.com",
   "description": "Displays a sidebar that lets you take notes on web pages.",
-  "version": "4.3.0dev",
+  "version": "4.1.2",
   "author": "Test Pilot Mozilla Team",
   "bugs": {
     "url": "https://github.com/mozilla/notes/issues"
