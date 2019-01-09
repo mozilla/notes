@@ -1,8 +1,8 @@
 # Changelog
 
-## 4.2.0dev
+## 4.2.1
 
-* TBA
+* Version bump for auto update
 
 ## 4.1.2
 
