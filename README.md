@@ -25,7 +25,7 @@ git clone https://github.com/[yourusername]/notes.git
 | `npm run build` | Builds the application as a Web Extension.|
 | `npm start`     | Launches Firefox with the Web Extension.  |
 
-You can also open the `test/index.html` file in your browser to run the automated tests.
+You can also open the `src/sidebar/index.html` file in your browser to run the automated tests.
 
 ## WebExtension Permissions
 
