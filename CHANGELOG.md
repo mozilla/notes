@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.0
+
+* Moving to AMO, part 1.
+
 ## 4.2.1
 
 * Version bump for auto update
