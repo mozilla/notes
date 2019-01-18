@@ -7,7 +7,6 @@
 ## 4.3.1
 
 * Moving to AMO, part 2.
-
 ## 4.3.0
 
 * Moving to AMO, part 1.
