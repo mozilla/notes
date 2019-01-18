@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.2
+
+* Update name
+
 ## 4.3.1
 
 * Moving to AMO, part 2.
