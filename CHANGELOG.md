@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.3
+
+* Version bump for auto update
+
 ## 4.3.2
 
 * Update name
