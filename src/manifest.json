@@ -32,8 +32,7 @@
   "permissions": [
     "contextMenus",
     "storage",
-    "identity",
-    "https://ssl.google-analytics.com/collect"
+    "identity"
   ],
   "background": {
     "scripts": [
@@ -41,7 +40,6 @@
       "vendor/kinto-http.js",
       "vendor/kinto.js",
       "vendor/fxa-crypto-relier/fxa-crypto-relier.js",
-      "vendor/testpilot-ga.js",
       "utils.js",
       "fxa-utils.js",
       "sync.js",

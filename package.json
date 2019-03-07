@@ -42,7 +42,6 @@
     "react-router-dom": "4.2.2",
     "redux": "3.7.2",
     "redux-thunk": "2.2.0",
-    "testpilot-ga": "^0.2.1",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

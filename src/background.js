@@ -1,7 +1,3 @@
-/**
- * Google Analytics / TestPilot Metrics
- */
-const TRACKING_ID = 'UA-35433268-79';
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params
 const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
@@ -19,85 +15,9 @@ const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 // Used by sync to load only changes from lastModified timestamp.
 let lastSyncTimestamp = null; // eslint-disable-line no-unused-vars
 
-// Analytics
-const analytics = new TestPilotGA({
-  tid: TRACKING_ID,
-  ds: 'addon',
-  an: 'Notes Experiment',
-  aid: 'notes@mozilla.com',
-  av: browser.runtime.getManifest().version
-});
-
 // This object is updated onMessage 'redux', sended by sidebar store.js on every change.
 // We need to keep it to generate `cd10`
 let reduxState = {};
-
-function sendMetrics(event, context = {}, state = reduxState) {
-
-  // This function debounce sending metrics.
-  const later = function() {
-    timeouts[event] = null;
-
-    let metrics = {};
-
-    if (event === 'open') {
-      metrics.cd9 = context.loaded !== false;
-    } else if (event === 'close') {
-      metrics.cd7 = context.closeUI;
-      metrics.cd8 = null; // reason editing session ended
-    } else if (event === 'changed' || event === 'drag-n-drop') { // Editing
-      metrics = {
-        cm1: context.characters,
-        cm2: context.lineBreaks,
-        cm3: null,  // Size of the change
-        cd1: context.syncEnabled,
-        cd2: context.usesSize,
-        cd3: context.usesBold,
-        cd4: context.usesItalics,
-        cd5: context.usesStrikethrough,
-        cd6: context.usesList,
-      };
-    } else if (event === 'export') {
-      metrics.el = 'html';
-    } else if (event === 'new-note') {
-      metrics.el = context.origin;
-    } else if (event === 'delete-note') {
-      metrics.el = context.origin;
-    }
-
-    // Generate cd10 based on footer.js rules
-    if (state.sync && ['open', 'close', 'changed', 'drag-n-drop', 'new-note', 'export',
-        'delete-note', 'give-feedback', 'limit-reached'].includes(event)) {
-      if (state.sync.email) { // If user is authenticated
-        if (state.sync.error) {
-          metrics.cd10 = 'error';
-        } else if (state.sync.isSyncing) {
-          metrics.cd10 = 'isSyncing';
-        } else {
-          metrics.cd10 = 'synced';
-        }
-      } else {
-        if (state.sync.isOpeningLogin) { // eslint-disable-line no-lonely-if
-          metrics.cd10 = 'openLogin';
-        } else if (state.sync.isPleaseLogin) {
-          metrics.cd10 = 'verifyAccount';
-        } else if (state.sync.isReconnectSync) {
-          metrics.cd10 = 'reconnectSync';
-        } else {
-          metrics.cd10 = 'signIn';
-        }
-      }
-    }
-
-    if (state.notes) {
-      metrics.cd11 = state.notes.length;
-    }
-
-    return analytics.sendEvent('notes', event, metrics);
-  };
-  clearTimeout(timeouts[event]);
-  timeouts[event] = setTimeout(later, 20000);
-}
 
 function fetchProfile(credentials) {
   return fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
@@ -120,7 +40,6 @@ function authenticate() {
     redirectUri: browser.identity.getRedirectURL(),
     scopes: FXA_SCOPES,
   }).then((loginDetails) => {
-    sendMetrics('login-success');
     lastSyncTimestamp = null;
     const key = loginDetails.keys['https://identity.mozilla.com/apps/notes'];
     const credentials = {
@@ -141,7 +60,6 @@ function authenticate() {
     chrome.runtime.sendMessage({
       action: 'reconnect'
     });
-    sendMetrics('login-failed');
   });
 }
 browser.runtime.onMessage.addListener(function(eventData) {
@@ -152,7 +70,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       credentials.get()
         .then(result => {
           if (!result) {
-            sendMetrics('webext-button-authenticate');
             authenticate();
           } else {
             chrome.runtime.sendMessage({
@@ -164,7 +81,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       break;
     case 'disconnected':
       disconnectFromKinto(client).then(() => {
-        sendMetrics('webext-button-disconnect', eventData.context);
         credentials.clear();
         chrome.runtime.sendMessage({
           action: 'disconnected'
@@ -178,35 +94,16 @@ browser.runtime.onMessage.addListener(function(eventData) {
           notes: result.notes
         });
       }).catch((e) => {
-        sendMetrics('open', {loaded: false});
+        // nothing to do here
       });
       break;
     case 'kinto-sync':
       loadFromKinto(client, credentials);
       break;
-    case 'metrics-changed':
-      sendMetrics('changed', eventData.context);
-      break;
-    case 'metrics-drag-n-drop':
-      sendMetrics('drag-n-drop', eventData.context);
-      break;
-    case 'metrics-reconnect-sync':
-      sendMetrics('reconnect-sync', eventData.context);
-      break;
-    case 'metrics-limit-reached':
-      sendMetrics('limit-reached', eventData.context);
-      break;
-    case 'metrics-export':
-      sendMetrics('export');
-      break;
-    case 'metrics-give-feedback':
-      sendMetrics('give-feedback');
-      break;
     case 'editor-ready':
       isEditorReady = true;
       break;
     case 'create-note':
-      sendMetrics('new-note', { origin: eventData.origin });
       // We create a note, and send id with note-created nessage
       createNote(client, credentials, {
         id: eventData.id,
@@ -223,7 +120,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       saveToKinto(client, credentials, eventData.note, eventData.from);
       break;
     case 'delete-note':
-      sendMetrics('delete-note', { origin: eventData.origin });
       // We create a note, and send id with note-created nessage
       deleteNote(client, credentials, eventData.id).then(() => {
         // loadFromKinto(client, credentials);
@@ -234,7 +130,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
       });
       break;
     case 'theme-changed':
-      sendMetrics('theme-changed', eventData.content);
       browser.runtime.sendMessage({
         action: 'theme-changed'
       });
@@ -259,11 +154,9 @@ function connected(p) {
   checkIndexedDbHealth().then(() => {},
     (idbError) => {
       console.warn('idbError', idbError); // eslint-disable-line no-console
-      sendMetrics('idb-fail');
     }
   );
 
-  sendMetrics('open', {loaded: true});
   closeUI = 'closeButton';
   editorConnectedDeferred.resolve();
 
@@ -271,7 +164,6 @@ function connected(p) {
     // sidebar closed, therefore editor is not ready to receive any content
     isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
     isEditorReady = false;
-    sendMetrics('close', {'closeUI': closeUI});
   });
 }
 
@@ -307,8 +199,6 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
-
-  sendMetrics('metrics-context-menu');
 
   // open sidebar which will trigger `isEditorReady`...
   if (!isEditorReady) {

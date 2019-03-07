@@ -3,7 +3,6 @@
 const { copySync } = require('fs-extra');
 
 const files = [
-  copySync('node_modules/testpilot-ga/dist/index.js', 'src/vendor/testpilot-ga.js'),
   copySync('node_modules/kinto-http/dist/kinto-http.min.js', 'src/vendor/kinto-http.js'),
   copySync('node_modules/kinto-http/LICENSE', 'src/vendor/kinto-http.LICENSE'),
   copySync('node_modules/kinto/dist/kinto.noshim.js', 'src/vendor/kinto.js'),

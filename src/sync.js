@@ -263,7 +263,6 @@ function syncKinto(client, credentials) {
               resolution.deleted = true;
             }
             client.conflict = true;
-            sendMetrics('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
@@ -337,7 +336,6 @@ function retrieveNote(client) {
     .then((list) => {
       // We delete all notes retrieved from server and not properly deleted
       Object.keys(deletedNotesStillOnServer).forEach((id) => {
-        sendMetrics('delete-deleted-notes'); // eslint-disable-line no-undef
         client.collection('notes', { idSchema: notesIdSchema }).deleteAny(id);
       });
       return list;
