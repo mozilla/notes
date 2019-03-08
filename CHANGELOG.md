@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.4
+
+* Remove Google Analytics from WebExtension
+
 ## 4.3.3
 
 * Version bump for auto update
