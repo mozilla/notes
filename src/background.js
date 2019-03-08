@@ -4,8 +4,6 @@ const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
 const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
 const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
-const timeouts = {};
-let closeUI = null;
 let isEditorReady = false;
 let editorConnectedDeferred;
 let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {resolve}; });
@@ -14,10 +12,6 @@ let isEditorConnected = new Promise(resolve => { editorConnectedDeferred = {reso
 const client = new Kinto({remote: KINTO_SERVER, bucket: 'default'});
 // Used by sync to load only changes from lastModified timestamp.
 let lastSyncTimestamp = null; // eslint-disable-line no-unused-vars
-
-// This object is updated onMessage 'redux', sended by sidebar store.js on every change.
-// We need to keep it to generate `cd10`
-let reduxState = {};
 
 function fetchProfile(credentials) {
   return fxaFetchProfile(FXA_PROFILE_SERVER, credentials.access_token).then((profile) => {
@@ -134,9 +128,6 @@ browser.runtime.onMessage.addListener(function(eventData) {
         action: 'theme-changed'
       });
       break;
-    case 'redux':
-      reduxState = eventData.state;
-      break;
     case 'fetch-email':
       credentials.get().then(received => {
         fetchProfile(received).catch(e => {
@@ -157,7 +148,6 @@ function connected(p) {
     }
   );
 
-  closeUI = 'closeButton';
   editorConnectedDeferred.resolve();
 
   p.onDisconnect.addListener(() => {
