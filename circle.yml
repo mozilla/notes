@@ -45,10 +45,8 @@ jobs:
           name: Node 8
           command: |
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-            source $HOME/.nvm/nvm.sh
-            nvm install 8
 
-      - run: nvm use 8 && cd native && npm ci
+      - run: source $HOME/.nvm/nvm.sh && nvm use 8 && cd native && npm ci
 
       - save_cache:
           key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
