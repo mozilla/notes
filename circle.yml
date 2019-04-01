@@ -64,7 +64,7 @@ jobs:
 
 
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD || exit 0
-      - run: yes | sdkmanager --licenses
+      - run: yes | sdkmanager --licenses || exit 0
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
       - run: mkdir -p /tmp/artifacts-android;
       - run: cp native/android/app/build/outputs/apk/release/app-release.apk /tmp/artifacts-android
