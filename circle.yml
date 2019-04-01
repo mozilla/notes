@@ -48,7 +48,7 @@ jobs:
             source $HOME/.nvm/nvm.sh
             nvm install 8
 
-      - run: cd native && npm ci
+      - run: nvm use 8 && cd native && npm ci
 
       - save_cache:
           key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
