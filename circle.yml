@@ -10,7 +10,7 @@ jobs:
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
-      - run: npm install
+      - run: npm ci
 
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
@@ -41,7 +41,7 @@ jobs:
       - restore_cache:
           key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
 
-      - run: cd native && npm install
+      - run: cd native && npm ci
 
       - save_cache:
           key: node-native-v1-{{ checksum "native/package.json" }}-{{ arch }}
