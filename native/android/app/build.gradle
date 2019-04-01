@@ -159,8 +159,8 @@ dependencies {
     compile project(':react-native-randombytes')
     compile project(':react-native-app-auth')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    // compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.android.support:appcompat-v7:26.1.0"
+    //compile "com.android.support:appcompat-v7:23.0.1"
+    //compile "com.android.support:appcompat-v7:26.1.0"
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile "org.mozilla.components:service-firefox-accounts:0.29.0"
 }
