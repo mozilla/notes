@@ -44,7 +44,7 @@
     "react-native-os": "~1.1.0",
     "react-native-paper": "1.11.0",
     "react-native-randombytes": "~3.5.2",
-    "react-native-sentry": "^0.35.3",
+    "react-native-sentry": "^0.42.0",
     "react-native-sqlite-2": "^1.7.0",
     "react-native-tcp": "~3.3.0",
     "react-native-udp": "~2.3.1",
