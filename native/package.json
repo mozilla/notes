@@ -36,7 +36,7 @@
     "punycode": "^1.4.1",
     "querystring-es3": "~0.2.1",
     "react": "~16.3.1",
-    "react-native": "~0.55.4",
+    "react-native": "^0.57.8",
     "react-native-app-auth": "~2.4.0",
     "react-native-crypto": "~2.1.2",
     "react-native-google-analytics-bridge": "^5.6.3",
