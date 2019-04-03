@@ -8,6 +8,7 @@ import io.sentry.RNSentryPackage;
 
 import com.notes.advancedwebview.AdvancedWebviewPackage;
 import com.notes.fxaclient.FxaClientPackage;
+
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
