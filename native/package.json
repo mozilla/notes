@@ -24,7 +24,7 @@
     "domain-browser": "~1.2.0",
     "events": "~1.1.1",
     "fs-extra": "6.0.1",
-    "fxa-crypto-relier": "2.3.0",
+    "fxa-crypto-relier": "2.4.0",
     "https-browserify": "0.0.1",
     "indexeddbshim": "^3.5.1",
     "lodash": "^4.17.10",
