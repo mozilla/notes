@@ -4,7 +4,6 @@ import {
 } from '../actions';
 import { store } from '../store';
 import browser from '../browser';
-import { trackEvent } from './metrics';
 import striptags from 'striptags';
 
 const fxaUtils = require('../vendor/fxa-utils');
@@ -291,7 +290,6 @@ function syncKinto(client, loginDetails) {
               resolution.deleted = true;
             }
             client.conflict = true;
-            trackEvent('handle-conflict'); // eslint-disable-line no-undef
           }
           return collection.resolve(conflict, resolution);
         }))
@@ -414,12 +412,6 @@ function saveToKinto(client, loginDetails, note) { // eslint-disable-line no-unu
         action: TEXT_SYNCING
       });
 
-      trackEvent('changed', {
-        cm1: striptags(note.content).length,
-        cm2: (striptags(note.content.replace(/<\/p>|<\/li>/gi, '\n')).match(/\n/g) || []).length,
-        cm3: null, // Size of change
-      });
-
       client.conflict = false;
       syncDebounce = null;
       return syncKinto(client, loginDetails)
@@ -462,11 +454,7 @@ function deleteNotes(client, loginDetails, ids, origin) { // eslint-disable-line
   const promises = [];
 
   ids.forEach((id) => {
-    promises.push(client.collection('notes', { idSchema: notesIdSchema }).delete(id).then(() => {
-      trackEvent('delete-note', {
-        el: origin
-      });
-    }));
+    promises.push(client.collection('notes', { idSchema: notesIdSchema }).delete(id).then(() => {}));
   });
 
   return Promise.all(promises).then(() => {

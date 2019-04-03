@@ -9,7 +9,6 @@ import { FAB } from 'react-native-paper';
 import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import {persistor} from "../store";
-import {trackEvent} from "../utils/metrics";
 import fxaUtils from "../vendor/fxa-utils";
 import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin, textSynced, deleteNotes } from "../actions";
 
@@ -111,7 +110,6 @@ class ListPanelWrapper extends React.Component {
         return Promise.resolve()
           .then(() => fxaUtils.launchOAuthKeyFlow())
           .then((loginDetails) => {
-            trackEvent('login-success');
             this.props.dispatch(authenticate(loginDetails));
             this.props.dispatch(kintoLoad());
           }).catch((exception) => {
