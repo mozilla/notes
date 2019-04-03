@@ -35,7 +35,7 @@
     "prop-types": "~15.6.1",
     "punycode": "^1.4.1",
     "querystring-es3": "~0.2.1",
-    "react": "^16.8.6",
+    "react": "~16.6.0",
     "react-native": "^0.57.8",
     "react-native-app-auth": "~2.4.0",
     "react-native-crypto": "~2.1.2",
@@ -68,7 +68,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/preset-flow": "^7.0.0",
-    "rn-nodeify": "github:tradle/rn-nodeify",
+    "rn-nodeify": "github:tradle/rn-nodeify#10.0.1",
     "schedule": "^0.4.0"
   },
   "react-native": {
