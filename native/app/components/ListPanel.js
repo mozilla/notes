@@ -12,7 +12,6 @@ import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin } from "../actions";
 import browser from '../browser';
-import { trackEvent } from '../utils/metrics';
 
 import ListPanelEmpty from './ListPanelEmpty';
 import ListPanelLoading from './ListPanelLoading';
@@ -39,7 +38,6 @@ class ListPanel extends React.Component {
       if (this.props.state.sync.isConnected === false) {
         ToastAndroid.show(browser.i18n.getMessage('toastOffline'), ToastAndroid.LONG);
       } else {
-        trackEvent('webext-button-authenticate');
         if (!this.props.state.refreshing) {
           this.setState({refreshing: true});
           this.setState({refreshing: false});
@@ -58,7 +56,6 @@ class ListPanel extends React.Component {
 
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-        trackEvent('open');
         // On opening the app, we check network stratus
         NetInfo.isConnected.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
@@ -68,7 +65,6 @@ class ListPanel extends React.Component {
           this.setState({ refreshing: false });
         });
       } else {
-        trackEvent('close', { state: nextAppState });
         persistor.flush();
       }
       this.setState({ appState: nextAppState });

@@ -21,7 +21,6 @@ import { SYNC_AUTHENTICATED,
 
 import browser from './browser';
 import { v4 as uuid4 } from 'uuid';
-import { trackEvent } from './utils/metrics';
 import sync from './utils/sync';
 
 export function pleaseLogin() {
@@ -37,7 +36,6 @@ export function openingLogin() {
 }
 
 export function reconnectSync() {
-  trackEvent('reconnect-sync');
   return { type: RECONNECT_SYNC, message: browser.i18n.getMessage('reconnectSync') };
 }
 
@@ -81,11 +79,6 @@ export function createNote(note = {}) {
   // Return id to callback using promises
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-
-      trackEvent('new-note', {
-        el: 'list-view'
-      });
-
       note.id = uuid4();
       if (!note.lastModified) note.lastModified = new Date();
 

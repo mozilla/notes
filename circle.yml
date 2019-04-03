@@ -35,6 +35,7 @@ jobs:
     working_directory: ~/notes/native
     docker:
       - image: circleci/android:api-26-node8-alpha
+    resource_class: medium+
     steps:
       - checkout
 

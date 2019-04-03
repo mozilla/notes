@@ -4,15 +4,15 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import dog.craftz.sqlite_2.RNSqlite2Package;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import io.sentry.RNSentryPackage;
 
 import com.notes.advancedwebview.AdvancedWebviewPackage;
 import com.notes.fxaclient.FxaClientPackage;
+
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
-import com.reactlibrary.RNAppAuthPackage;
+import com.rnappauth.RNAppAuthPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -34,8 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new RNSqlite2Package(),
-            new GoogleAnalyticsBridgePackage(),
-            new RNSentryPackage(MainApplication.this),
+            new RNSentryPackage(),
             new VectorIconsPackage(),
             new KeychainPackage(),
             new RandomBytesPackage(),

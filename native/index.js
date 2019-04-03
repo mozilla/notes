@@ -26,8 +26,6 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { COLOR_APP_BAR, COLOR_STATUS_BAR } from './app/utils/constants';
 import { store, persistor } from './app/store';
 
-import { trackEvent } from './app/utils/metrics';
-
 import DrawerItems from './app/components/DrawerItems';
 import EditorPanel from './app/components/EditorPanel';
 import EditorPanelHeader from './app/components/EditorPanelHeader';
@@ -150,7 +148,6 @@ class Notes extends React.Component {
     StatusBar.setBackgroundColor('rgba(255, 255, 255, 0.3)');
     StatusBar.setTranslucent(true);
     StatusBar.setBarStyle('dark-content');
-    trackEvent('open');
   }
 
   render () {

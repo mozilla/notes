@@ -9,7 +9,6 @@ import fxaUtils from '../vendor/fxa-utils';
 import { authenticate, kintoLoad } from '../actions';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import i18nGetMessage from '../utils/i18n';
-import { trackEvent } from '../utils/metrics';
 import browser from '../browser';
 
 class LoadingPanel extends React.Component {
@@ -22,7 +21,6 @@ class LoadingPanel extends React.Component {
 
     return fxaUtils.launchOAuthKeyFlow()
     .then((loginDetails) => {
-      trackEvent('login-success');
       this.props.dispatch(authenticate(loginDetails));
       let email = loginDetails.profile.email;
       ToastAndroid.show(browser.i18n.getMessage('toastLoggedInAs', email), ToastAndroid.SHORT);
@@ -41,7 +39,6 @@ class LoadingPanel extends React.Component {
     }).catch((err) => {
       console.log('onAuth', err);
       ToastAndroid.show(browser.i18n.getMessage('toastLoggedInError', err), ToastAndroid.LONG);
-      trackEvent('login-failed');
       const resetAction = StackActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],

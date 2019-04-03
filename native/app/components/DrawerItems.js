@@ -18,7 +18,6 @@ import { COLOR_DARK_BACKGROUND,
          DISCONNECTED } from '../utils/constants';
 
 import { DrawerItem, DrawerSection, Colors } from 'react-native-paper';
-import { trackEvent } from '../utils/metrics';
 import fxaUtils from '../vendor/fxa-utils';
 import { store } from '../store';
 import browser from '../browser';
@@ -34,7 +33,6 @@ function navigateToLogin (props) {
     actions: [NavigationActions.navigate({ routeName: 'LoginPanel' })],
   });
   props.navigation.dispatch(resetAction);
-  trackEvent('webext-button-disconnect');
 }
 
 class DrawerItems extends React.Component {
@@ -60,7 +58,6 @@ class DrawerItems extends React.Component {
       {
         label: browser.i18n.getMessage('drawerBtnFeedback'),
         action: () => {
-          trackEvent('give-feedback');
           return Linking.openURL(SURVEY_PATH);
         }
       }
@@ -99,7 +96,6 @@ class DrawerItems extends React.Component {
         if (this.props.state.sync.isSyncing) {
           props.navigation.dispatch(DrawerActions.closeDrawer());
         } else {
-          trackEvent('webext-button-authenticate');
           props.dispatch(kintoLoad('drawer')).then(_ => {
             // If load succeed, we close drawer
             props.navigation.dispatch(DrawerActions.closeDrawer());
@@ -116,7 +112,6 @@ class DrawerItems extends React.Component {
         return Promise.resolve()
         .then(() => fxaUtils.launchOAuthKeyFlow())
         .then((loginDetails) => {
-          trackEvent('login-success');
           this.setState({ isOpeningLogin: false });
           this.props.dispatch(authenticate(loginDetails));
           this.props.dispatch(kintoLoad()).then(() => {
