@@ -1,6 +1,9 @@
 {
-  "presets": ["react-native"],
+  "presets": [
+    "module:metro-react-native-babel-preset",
+    "@babel/preset-flow"
+  ],
   "plugins": [
-    "transform-decorators-legacy"
+    ["@babel/plugin-proposal-decorators", { "legacy" : true }]
   ]
 }
