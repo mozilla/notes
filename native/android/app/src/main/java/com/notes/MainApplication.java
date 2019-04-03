@@ -34,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new RNSqlite2Package(),
-            new RNSentryPackage(MainApplication.this),
+            new RNSentryPackage(),
             new VectorIconsPackage(),
             new KeychainPackage(),
             new RandomBytesPackage(),
