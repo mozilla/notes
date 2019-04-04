@@ -68,8 +68,10 @@ jobs:
       - run: yes | sdkmanager --licenses || exit 0
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
       - run: mkdir -p /tmp/artifacts-android;
-      - run: cp native/android/app/build/outputs/apk/release/app-release.apk /tmp/artifacts-android
-      - run: cp /tmp/artifacts-android/app-release.apk /tmp/artifacts-android/notes-1_1-qa-v$CIRCLE_BUILD_NUM.apk
+      - run: cp -r native/android/app/build/outputs/apk/release/app- /tmp/artifacts-android
+      - run: cp /tmp/artifacts-android/app-arm64-v8a-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-arm64.apk
+      - run: cp /tmp/artifacts-android/app-armeabi-v7a-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-arm.apk
+      - run: cp /tmp/artifacts-android/app-x86-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-x86.apk
 
       - store_artifacts:
           path: /tmp/artifacts-android
@@ -77,7 +79,7 @@ jobs:
       - save_cache:
           key: apk-v1-{{ .Branch }}-{{epoch}}
           paths:
-            - /tmp/artifacts-android/app-release.apk
+            - /tmp/artifacts-android/
 
   signapk:
     working_directory: ~/notes/native
@@ -86,19 +88,51 @@ jobs:
     steps:
       - restore_cache:
           key: apk-v1-{{ .Branch }}
+
+      # arm64
       - run:
-          name: Sign APK
+          name: Sign APK arm64
           command: |
-              curl -F "input=@/tmp/artifacts-android/app-release.apk" \
-                    -o /tmp/artifacts-android/app-release-signed.apk \
+              curl -F "input=@/tmp/artifacts-android/app-arm64-v8a-release.apk" \
+                    -o /tmp/artifacts-android/app-arm64-v8a-release-signed.apk \
                     -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
                     https://autograph-edge.prod.mozaws.net/sign
       - run:
-          name: Verify APK
+          name: Verify APK arm64
           command: |
               sudo apt update
               sudo apt install -y android-sdk-build-tools
-              /opt/android/sdk/build-tools/27.0.3/apksigner verify --verbose /tmp/artifacts-android/app-release-signed.apk
+              /opt/android/sdk/build-tools/27.0.3/apksigner verify --verbose /tmp/artifacts-android/app-arm64-v8a-release-signed.apk
+
+      # arm
+      - run:
+          name: Sign APK arm
+          command: |
+            curl -F "input=@/tmp/artifacts-android/app-armeabi-v7a-release.apk" \
+                  -o /tmp/artifacts-android/app-armeabi-v7a-release-signed.apk \
+                  -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
+                  https://autograph-edge.prod.mozaws.net/sign
+      - run:
+          name: Verify APK arm
+          command: |
+            sudo apt update
+            sudo apt install -y android-sdk-build-tools
+            /opt/android/sdk/build-tools/27.0.3/apksigner verify --verbose /tmp/artifacts-android/app-armeabi-v7a-release-signed.apk
+
+      # x86
+      - run:
+            name: Sign APK x86
+            command: |
+              curl -F "input=@/tmp/artifacts-android/app-x86-release.apk" \
+                    -o /tmp/artifacts-android/app-x86-release-signed.apk \
+                    -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
+                    https://autograph-edge.prod.mozaws.net/sign
+      - run:
+          name: Verify APK x86
+          command: |
+            sudo apt update
+            sudo apt install -y android-sdk-build-tools
+            /opt/android/sdk/build-tools/27.0.3/apksigner verify --verbose /tmp/artifacts-android/app-x86-release-signed.apk
 
       - store_artifacts:
           path: /tmp/artifacts-android
