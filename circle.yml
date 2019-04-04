@@ -68,7 +68,7 @@ jobs:
       - run: yes | sdkmanager --licenses || exit 0
       - run: cd native/android && ./gradlew assembleRelease -PMYAPP_RELEASE_STORE_FILE=$MYAPP_RELEASE_STORE_FILE -PMYAPP_RELEASE_KEY_ALIAS=$MYAPP_RELEASE_KEY_ALIAS -PMYAPP_RELEASE_STORE_PASSWORD=$MYAPP_RELEASE_STORE_PASSWORD -PMYAPP_RELEASE_KEY_PASSWORD=$MYAPP_RELEASE_KEY_PASSWORD
       - run: mkdir -p /tmp/artifacts-android;
-      - run: cp -r native/android/app/build/outputs/apk/release/app- /tmp/artifacts-android
+      - run: cp -r native/android/app/build/outputs/apk/release/app-* /tmp/artifacts-android
       - run: cp /tmp/artifacts-android/app-arm64-v8a-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-arm64.apk
       - run: cp /tmp/artifacts-android/app-armeabi-v7a-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-arm.apk
       - run: cp /tmp/artifacts-android/app-x86-release.apk /tmp/artifacts-android/notes-qa-v$CIRCLE_BUILD_NUM-x86.apk
