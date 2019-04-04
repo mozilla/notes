@@ -160,7 +160,7 @@ function sync(sync = {}, action) {
         isConnected: action.isConnected
       });
     case TOGGLE_SELECT:
-      const selected = Array.from(sync.selected || []);
+      let selected = Array.from(sync.selected || []);
       if (selected.includes(action.note.id)) {
         selected = selected.filter((note) => note !== action.note.id);
         if (selected.length === 0) selected = null;
