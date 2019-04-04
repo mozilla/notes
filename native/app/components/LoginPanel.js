@@ -43,7 +43,7 @@ class LoginPanel extends React.Component {
             { i18nGetMessage('usageHint') }
           </Text>
           <Text style={{color: COLOR_NOTES_BLUE, fontSize: 14, lineHeight: 18, textDecorationLine: 'underline'}}
-                onPress={() => Linking.openURL('https://testpilot.firefox.com/experiments/notes')}>
+                onPress={() => Linking.openURL('https://addons.mozilla.org/firefox/addon/notes-by-firefox/')}>
             { i18nGetMessage('usageLearnMore') }
           </Text>
         </View>
