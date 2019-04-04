@@ -65,7 +65,7 @@ class ListItem extends React.Component {
       note, state
     } = this.props;
 
-    itemStyle = [styles.wrapper];
+    let itemStyle = [styles.wrapper];
     if (this.state.isSelected) itemStyle.push(styles.selected);
 
     return (
