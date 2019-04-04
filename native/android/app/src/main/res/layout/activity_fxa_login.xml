@@ -4,6 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/webviewLayout"
-    tools:context="com.notes.FxaLoginActivity">
+    tools:context="org.mozilla.testpilot.notes.FxaLoginActivity">
 
 </RelativeLayout>

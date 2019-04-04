@@ -6,8 +6,8 @@ import com.facebook.react.ReactApplication;
 import dog.craftz.sqlite_2.RNSqlite2Package;
 import io.sentry.RNSentryPackage;
 
-import com.notes.advancedwebview.AdvancedWebviewPackage;
-import com.notes.fxaclient.FxaClientPackage;
+import org.mozilla.testpilot.notes.advancedwebview.AdvancedWebviewPackage;
+import org.mozilla.testpilot.notes.fxaclient.FxaClientPackage;
 
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;

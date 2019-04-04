@@ -1,4 +1,4 @@
-package com.notes.advancedwebview;
+package org.mozilla.testpilot.notes.advancedwebview;
 
 import android.webkit.WebView;
 

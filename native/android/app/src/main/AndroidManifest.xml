@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.notes.FxaLoginActivity"
+            android:name="org.mozilla.testpilot.notes.FxaLoginActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"/>
     </application>

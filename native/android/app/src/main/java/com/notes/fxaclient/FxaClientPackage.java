@@ -1,4 +1,4 @@
-package com.notes.fxaclient;
+package org.mozilla.testpilot.notes.fxaclient;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;

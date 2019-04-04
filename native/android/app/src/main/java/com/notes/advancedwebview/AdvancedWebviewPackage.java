@@ -1,4 +1,4 @@
-package com.notes.advancedwebview;
+package org.mozilla.testpilot.notes.advancedwebview;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
