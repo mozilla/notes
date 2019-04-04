@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+* Removed Google Analytics
+* Updated to latest React Native
+* Fixed TestPilot links
+
 ## 1.2.0
 
 * Update to latest Android components
