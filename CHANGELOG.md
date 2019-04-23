@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.5
+
+* Fix for login
+* Updated dependencies
+
 ## 4.3.4
 
 * Remove Google Analytics from WebExtension
