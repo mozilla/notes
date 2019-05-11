@@ -96,7 +96,7 @@ jobs:
               curl -F "input=@/tmp/artifacts-android/app-arm64-v8a-release.apk" \
                     -o /tmp/artifacts-android/app-arm64-v8a-release-signed.apk \
                     -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
-                    https://autograph-edge.prod.mozaws.net/sign
+                    https://edge.prod.autograph.services.mozaws.net/sign
       - run:
           name: Verify APK arm64
           command: |
@@ -111,7 +111,7 @@ jobs:
             curl -F "input=@/tmp/artifacts-android/app-armeabi-v7a-release.apk" \
                   -o /tmp/artifacts-android/app-armeabi-v7a-release-signed.apk \
                   -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
-                  https://autograph-edge.prod.mozaws.net/sign
+                  https://edge.prod.autograph.services.mozaws.net/sign
       - run:
           name: Verify APK arm
           command: |
@@ -126,7 +126,7 @@ jobs:
               curl -F "input=@/tmp/artifacts-android/app-x86-release.apk" \
                     -o /tmp/artifacts-android/app-x86-release-signed.apk \
                     -H "Authorization: $AUTOGRAPH_EDGE_TOKEN" \
-                    https://autograph-edge.prod.mozaws.net/sign
+                    https://edge.prod.autograph.services.mozaws.net/sign
       - run:
           name: Verify APK x86
           command: |
