@@ -1,8 +1,9 @@
 const KINTO_SERVER = 'https://testpilot.settings.services.mozilla.com/v1';
 // XXX: Read this from Kinto fxa-params
-const FXA_CLIENT_ID = 'a3dbd8c5a6fd93e2';
-const FXA_OAUTH_SERVER = 'https://oauth.accounts.firefox.com/v1';
-const FXA_PROFILE_SERVER = 'https://profile.accounts.firefox.com/v1';
+const FXA_CLIENT_ID = 'c6d74070a481bc10';
+const FXA_CONTENT_SERVER = 'http://127.0.0.1:3030';
+const FXA_OAUTH_SERVER = 'http://127.0.0.1:9010/v1';
+const FXA_PROFILE_SERVER = 'http://127.0.0.1:1111/v1';
 const FXA_SCOPES = ['profile', 'https://identity.mozilla.com/apps/notes'];
 let isEditorReady = false;
 let editorConnectedDeferred;
@@ -26,7 +27,10 @@ function fetchProfile(credentials) {
 }
 
 function authenticate() {
-  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils();
+  const fxaKeysUtil = new fxaCryptoRelier.OAuthUtils({
+    contentServer: FXA_CONTENT_SERVER,
+    oauthServer: FXA_OAUTH_SERVER
+  });
     chrome.runtime.sendMessage({
       action: 'sync-opening'
     });
