@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.6
+
+* Bump for AMO
+
 ## 4.3.5
 
 * Fix for login
