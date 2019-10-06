@@ -9,6 +9,9 @@ import { SURVEY_PATH } from '../utils/constants';
 
 import { exportHTML, deleteNote } from '../actions';
 
+const DARK = 'dark',
+  DEFAULT = 'default';
+
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -85,13 +88,45 @@ class Header extends React.Component {
       props.dispatch(deleteNote(this.props.note.id, 'in-note'));
       this.props.history.push('/');
     };
+
+    this.switchTheme = () => {
+      const theme = this.getAlternateTheme();
+
+      browser.storage.local.set({ theme });
+
+      // notify background.js that theme settings have changed
+      browser.runtime.sendMessage({
+        action: 'theme-changed'
+      });
+
+      this.setState({ theme });
+    };
+
+    this.getAlternateTheme = () => {
+      switch (this.state && this.state.theme) {
+        case DARK:
+          return DEFAULT;
+        case DEFAULT:
+          return DARK;
+        default:
+          return DARK;
+      }
+    };
+  }
+
+  componentWillMount() {
+    browser.storage.local.get(['theme'])
+      .then((data) => {
+        this.setState({ theme: data.theme });
+      });
   }
 
   render() {
 
     // List of menu used for keyboard navigation
     this.buttons = [];
-    const hasContent = !!this.props.note.content && this.props.note.content.length > 0;
+    const hasContent = !!this.props.note.content && this.props.note.content.length > 0,
+    message = `${this.getAlternateTheme()}Theme`;
 
     return (
       <header ref={headerbuttons => this.headerbuttons = headerbuttons}>
@@ -148,6 +183,15 @@ class Header extends React.Component {
                   title={ browser.i18n.getMessage('feedback') }
                   onClick={ this.giveFeedbackCallback }>
                   { browser.i18n.getMessage('feedback') }
+                </button>
+              </li>
+              <li>
+                <button
+                  role="menuitem"
+                  ref={btn => btn ? this.buttons.push(btn) : null }
+                  title={ browser.i18n.getMessage(message) }
+                  onClick={ this.switchTheme }>
+                  {browser.i18n.getMessage(message)}
                 </button>
               </li>
             </ul>
