@@ -4,7 +4,7 @@ A notepad for Firefox
 
 [![CircleCI](https://circleci.com/gh/mozilla/notes/tree/master.svg?style=svg)](https://circleci.com/gh/mozilla/notes/tree/master)
 [![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/notes)
-> Discussion Forum: [https://discourse.mozilla.org/c/test-pilot/notes](https://discourse.mozilla.org/c/test-pilot/notes)
+> Discussion Forum: [https://discourse.mozilla.org/c/archives/test-pilot](https://discourse.mozilla.org/c/archives/test-pilot)
 
 
 ## Contribute
@@ -41,7 +41,7 @@ See [RELEASE.md](https://github.com/mozilla/notes/blob/master/RELEASE.md) for re
 
 ### Localization
 
-Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/projects/test-pilot-notes/), not direct pull requests to the repository. If you want to fix a typo, add a new language, or simply know more about localization, please get in touch with the [existing localization team](https://pontoon.mozilla.org/teams/) for your language, or Mozilla’s [l10n-drivers](https://wiki.mozilla.org/L10n:Mozilla_Team#Mozilla_Corporation) for guidance.
+Firefox Notes localization is managed via [Pontoon](https://pontoon.mozilla.org/), not direct pull requests to the repository. If you want to fix a typo, add a new language, or simply know more about localization, please get in touch with the [existing localization team](https://pontoon.mozilla.org/teams/) for your language, or Mozilla’s [l10n-drivers](https://wiki.mozilla.org/L10n:Mozilla_Team#Mozilla_Corporation) for guidance.
 
 ## Licenses
 
