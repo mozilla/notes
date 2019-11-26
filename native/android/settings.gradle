@@ -1,4 +1,6 @@
 rootProject.name = 'Notes'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
 include ':react-native-sqlite-2'
 project(':react-native-sqlite-2').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sqlite-2/android')
 include ':react-native-sentry'
