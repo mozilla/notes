@@ -162,10 +162,6 @@ dependencies {
     compile project(':react-native-randombytes')
     compile project(':react-native-app-auth')
     compile "org.mozilla.components:service-firefox-accounts:0.29.0"
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-
 }
 
 // Run this once to be able to run the application with BUCK
@@ -193,3 +189,4 @@ project.ext.vectoricons = [
 ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

@@ -9,6 +9,9 @@ import io.sentry.RNSentryPackage;
 import org.mozilla.testpilot.notes.advancedwebview.AdvancedWebviewPackage;
 import org.mozilla.testpilot.notes.fxaclient.FxaClientPackage;
 
+import com.facebook.react.PackageList;
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
+import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -18,7 +21,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -31,17 +33,17 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNSqlite2Package(),
-            new RNSentryPackage(),
-            new VectorIconsPackage(),
-            new KeychainPackage(),
-            new RandomBytesPackage(),
-            new RNAppAuthPackage(),
-            new AdvancedWebviewPackage(),
-            new FxaClientPackage()
-      );
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      packages.add(new RNSqlite2Package());
+      packages.add(new RNSentryPackage());
+      packages.add(new VectorIconsPackage());
+      packages.add(new KeychainPackage());
+      packages.add(new RandomBytesPackage());
+      packages.add(new RNAppAuthPackage());
+      packages.add(new AdvancedWebviewPackage());
+      packages.add(new FxaClientPackage());
+
+      return packages;
     }
 
     @Override

@@ -17,7 +17,7 @@ if (SENTRY_DSN) {
 }
 
 import React from 'react';
-import { AppRegistry, StyleSheet, StatusBar } from 'react-native';
+import { AppRegistry, StatusBar } from 'react-native';
 import { Provider as StoreProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
