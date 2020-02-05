@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, ToastAndroid } from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import {persistor} from "../store";
 import fxaUtils from "../vendor/fxa-utils";

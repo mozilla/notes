@@ -4,7 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 
-import { View, Text, ToastAndroid, Image, NetInfo } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import { View, Text, ToastAndroid, Image } from 'react-native';
 
 import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';

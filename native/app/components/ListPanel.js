@@ -8,7 +8,8 @@ import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, ToastAndroid } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin } from "../actions";
 import browser from '../browser';
