@@ -57,6 +57,7 @@
     "redux-persist": "^5.9.1",
     "redux-thunk": "~2.2.0",
     "stream-browserify": "~1.0.0",
+    "string_decoder": "^0.10.31",
     "striptags": "^3.1.1",
     "timers-browserify": "~1.4.2",
     "tty-browserify": "0.0.0",
@@ -66,10 +67,11 @@
     "vm-browserify": "0.0.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/core": "^7.3.4",
-    "@babel/runtime": "^7.3.4",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/runtime": "^7.3.4",
+    "jetifier": "^1.6.5",
     "rn-nodeify": "github:tradle/rn-nodeify"
   },
   "react-native": {

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { persistor } from '../store';
 import { connect } from 'react-redux';
-import { lodash as _ } from 'lodash';
+import lodash from 'lodash';
 
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, ToastAndroid } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { COLOR_NOTES_BLUE } from '../utils/constants';
 import { kintoLoad, setNetInfo } from '../actions';
@@ -22,9 +22,6 @@ class ListPanel extends React.Component {
       refreshing: false,
       appState: AppState.currentState,
       deletedNote: null,
-      hideFab: false,
-      fabPositionAnimation: new Animated.Value(0),
-      fabOpacityAnimation: new Animated.Value(1),
       snackbarVisible: false,
       snackbar: null
     };
@@ -81,25 +78,25 @@ class ListPanel extends React.Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
-    NetInfo.addEventListener('connectionChange', this._handleNetworkStateChange);
+    NetInfo.addEventListener(this._handleNetworkStateChange);
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
-    NetInfo.removeEventListener('connectionChange', this._handleNetworkStateChange);
+    NetInfo.removeEventListener(this._handleNetworkStateChange);
   }
 
   shouldComponentUpdate(nextProps) {
     let shouldUpdate = false;
 
-    const changedProps = _.reduce(this.props.state, function(result, value, key) {
-      return _.isEqual(value, nextProps.state[key])
+    const changedProps = lodash.reduce(this.props.state, function(result, value, key) {
+      return lodash.isEqual(value, nextProps.state[key])
         ? result
         : result.concat(key);
     }, []);
 
     // only render when notes collection changes
-    if (changedProps.length > 0 && _.intersection(changedProps, ['notes', 'appUpdates', 'kinto']).length > 0) {
+    if (changedProps.length > 0 && lodash.intersection(changedProps, ['notes', 'appUpdates', 'kinto']).length > 0) {
       shouldUpdate = true;
     }
 
@@ -123,7 +120,7 @@ class ListPanel extends React.Component {
       styleList = styles.list;
     }
 
-    return this.props.state.kinto.isLoaded ? <ListPanelLoading /> : (
+    return !this.props.state.kinto.isLoaded ? <ListPanelLoading /> : (
 
       <FlatList
         contentContainerStyle={styleList}
@@ -141,14 +138,12 @@ class ListPanel extends React.Component {
           />
         }
         ListEmptyComponent={() => {
-          return (
-            <ListPanelEmpty></ListPanelEmpty>
-          );
+          return <ListPanelEmpty />;
         }}
         ListHeaderComponent={() => {
           return this.props.state.notes && this.props.state.notes.length > 0 ?
             (
-              <View style={{ backgroundColor: 'white', height: 10}}></View>
+              <View style={styles.header} />
             )
             : null;
         }}
@@ -194,6 +189,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.24,
     shadowOffset: { width: 0, height: 0.75 },
     shadowRadius: 1.5
+  },
+  header: {
+    backgroundColor: 'white',
+    height: 10,
   }
 });
 
