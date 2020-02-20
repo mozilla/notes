@@ -1,9 +1,14 @@
+dist: xenial
+
 language: node_js
+
+services:
+  - xvfb
+
 _aliases:
   - &test
     before_install:
-      - sh -e /etc/init.d/xvfb start
-      - sleep 10
+      - sleep 1
   - &unit-test
     env: DISPLAY=:99.0 FIREFOX_BINARY=firefox
     addons:
@@ -28,10 +33,6 @@ jobs:
       node_js: 8
       <<: *unit-test
       script: npm run test:karma
-    - stage:
-      node_js: 8
-      <<: *integration-test
-      script: npm run test:ui
     - stage:
       node_js: 8
       script: npm run build
