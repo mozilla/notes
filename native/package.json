@@ -6,7 +6,7 @@
     "start": "react-native run-android",
     "cli": "node node_modules/react-native/local-cli/cli.js start",
     "dm": "adb shell input keyevent 82",
-    "postinstall": "rn-nodeify --hack --install && node scripts/postinstall.js && node misc/build-locales.js",
+    "postinstall": "rn-nodeify --hack --install && node scripts/postinstall.js && node misc/build-locales.js && jetify",
     "build": "cd android && ./gradlew assembleRelease"
   },
   "repository": "mozilla/notes",
@@ -65,10 +65,11 @@
     "vm-browserify": "0.0.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/core": "^7.3.4",
-    "@babel/runtime": "^7.3.4",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/runtime": "^7.3.4",
+    "jetifier": "^1.6.5",
     "rn-nodeify": "github:tradle/rn-nodeify"
   },
   "react-native": {
