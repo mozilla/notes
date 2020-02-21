@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {actions, messages} from './const';
 import {Modal, View, Text, StyleSheet, TextInput, TouchableOpacity, Platform, PixelRatio, Keyboard, Dimensions} from 'react-native';
-import WebView from '../../components/AdvancedWebview';
+//import WebView from '../../components/AdvancedWebview';
+import {WebView} from 'react-native-webview';
 import {handleAction} from './WebviewMessageHandler';
 
 
@@ -158,7 +159,6 @@ export default class RichTextEditor extends Component {
           this.showLinkDialog(title, url);
           break;
         case messages.LOG:
-          //console.log('FROM ZSS', message.data);
           break;
         case messages.SCROLL:
           this.webView.setNativeProps({contentOffset: {y: message.data}});
@@ -286,7 +286,7 @@ export default class RichTextEditor extends Component {
   render() {
     //in release build, external html files in Android can't be required, so they must be placed in the assets folder and accessed via uri
     const focusKeyboard = this.props.focusKeyboard ? 'focus' : 'blur';
-    const pageSource = PlatformIOS ? require('./editor.html') : { uri: 'file:///android_asset/editor.html', focusKeyboard: focusKeyboard };
+    const pageSource = { uri: 'file:///android_asset/editor.html' };
     return (
       <View style={{flex: 1}}>
         <WebView
@@ -295,7 +295,7 @@ export default class RichTextEditor extends Component {
           keyboardDisplayRequiresUserAction={false}
           ref={(r) => {this.webView = r}}
           onMessage={(message) => this.onMessage(message)}
-          sourceFocus={pageSource}
+          source={pageSource}
           onLoad={() => this.init()}
         />
         {this._renderLinkModal()}
@@ -522,6 +522,7 @@ export default class RichTextEditor extends Component {
     if (this.props.footerHeight) {
       this.setFooterHeight();
     }
+    this.webView.requestFocus();
   }
 
   setEditorHeight(height) {

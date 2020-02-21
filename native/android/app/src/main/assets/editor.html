@@ -157,7 +157,7 @@
 
             this.editor = editor;
 
-            postMessage(JSON.stringify({type: 'ZSS_INITIALIZED'}));
+            window.ReactNativeWebView.postMessage(JSON.stringify({type: 'ZSS_INITIALIZED'}));
 
             editor.model.document.on('change', (eventInfo, name) => {
               // skip change notification on load
@@ -166,7 +166,7 @@
                 clearTimeout(this.delayUpdateNote);
                 this.delayUpdateNote = setTimeout(() => {
                   const content = editor.getData();
-                  postMessage(JSON.stringify({
+                  window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CONTENT_CHANGE',
                     data: {content: content}
                   }));
@@ -183,7 +183,7 @@
       }
 
       function whenRNPostMessageReady(cb) {
-        if (postMessage.toString().includes('__REACT_WEB_VIEW_BRIDGE')) {
+        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
           cb();
         } else setTimeout(function() { whenRNPostMessageReady(cb) }, 300);
       }

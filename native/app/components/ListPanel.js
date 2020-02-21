@@ -8,7 +8,8 @@ import sync from "../utils/sync";
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, ToastAndroid } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin } from "../actions";
 import browser from '../browser';
@@ -57,7 +58,7 @@ class ListPanel extends React.Component {
     this._handleAppStateChange = (nextAppState) => {
       if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
         // On opening the app, we check network stratus
-        NetInfo.isConnected.fetch().then(isConnected => {
+        NetInfo.fetch().then(isConnected => {
           props.dispatch(setNetInfo(isConnected));
           if (this.props.state.sync.loginDetails && isConnected) {
             props.dispatch(kintoLoad());
@@ -85,12 +86,12 @@ class ListPanel extends React.Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
-    NetInfo.addEventListener('connectionChange', this._handleNetworkStateChange);
+    NetInfo.addEventListener(this._handleNetworkStateChange);
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
-    NetInfo.removeEventListener('connectionChange', this._handleNetworkStateChange);
+    NetInfo.removeEventListener(this._handleNetworkStateChange);
   }
 
   shouldComponentUpdate(nextProps) {

@@ -77,17 +77,17 @@ export function handleAction (action) {
     case actions.getTitleHtml:
       return `
         var html = zss_editor.getTitleHTML();
-        postMessage(JSON.stringify({type: '${messages.TITLE_HTML_RESPONSE}', data: html}));
+        window.ReactNativeWebView.postMessage(JSON.stringify({type: '${messages.TITLE_HTML_RESPONSE}', data: html}));
       `;
     case actions.getTitleText:
       return `
         var html = zss_editor.getTitleText();
-        postMessage(JSON.stringify({type: '${messages.TITLE_TEXT_RESPONSE}', data: html}));
+        window.ReactNativeWebView.postMessage(JSON.stringify({type: '${messages.TITLE_TEXT_RESPONSE}', data: html}));
       `;
     case actions.getContentHtml:
       return `
         var html = zss_editor.getContentHTML();
-        postMessage(JSON.stringify({type: '${messages.CONTENT_HTML_RESPONSE}', data: html}));
+        window.ReactNativeWebView.postMessage(JSON.stringify({type: '${messages.CONTENT_HTML_RESPONSE}', data: html}));
       `;
     case actions.setTitleFocusHandler:
       return 'zss_editor.setTitleFocusHandler();';
@@ -96,7 +96,7 @@ export function handleAction (action) {
     case actions.getSelectedText:
       return `
         var selectedText = getSelection().toString();
-        postMessage(JSON.stringify({type: '${messages.SELECTED_TEXT_RESPONSE}', data: selectedText}));
+        window.ReactNativeWebView.postMessage(JSON.stringify({type: '${messages.SELECTED_TEXT_RESPONSE}', data: selectedText}));
       `;
     case actions.focusContent:
       return 'zss_editor.focusContent();';

@@ -4,7 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 
-import { View, Text, ToastAndroid, Image, NetInfo } from 'react-native';
+import { View, Text, ToastAndroid, Image } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 
 import { KINTO_LOADED } from '../utils/constants';
 import browser from '../browser';
@@ -28,7 +29,7 @@ class SplashPanel extends React.Component {
         this.props.dispatch(authenticate(loginDetails));
 
         // On opening the app, we check network stratus
-        NetInfo.isConnected.fetch().then(isConnected => {
+        NetInfo.fetch().then(isConnected => {
           this.props.dispatch(setNetInfo(isConnected));
           if (isConnected) this.props.dispatch(kintoLoad());
           this.resetAndRedirect('ListPanel');

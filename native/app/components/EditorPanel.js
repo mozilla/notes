@@ -84,6 +84,7 @@ class RichTextExample extends Component {
       isEditorLoading: false
     });
     this.forceUpdate();
+
   }
 
   shouldComponentUpdate(nextProps) {

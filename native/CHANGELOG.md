@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0-dev
+
+* Updated to latest React Native
+* Enable RN Hermes VM
+
 ## 1.3.0
 
 * Removed Google Analytics
