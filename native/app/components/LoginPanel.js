@@ -39,11 +39,11 @@ class LoginPanel extends React.Component {
           <Button loading={this.state.isLoading} raised onPress={this.onAuth.bind(this)} color={COLOR_NOTES_BLUE}
             style={styles.btnSignin}><Text style={{ fontSize: 14 }}>{ i18nGetMessage('signIn') }</Text></Button>
 
-          <Text style={{ fontSize: 14, paddingTop: 25, textAlign: 'center', lineHeight: 18, paddingBottom: 10  }}>
-            { i18nGetMessage('usageHint') }
+          <Text style={{ fontSize: 18, color: 'red', paddingTop: 25, textAlign: 'center', lineHeight: 18, paddingBottom: 10  }}>
+            Notes syncing will be disabled on November 1, 2020.
           </Text>
           <Text style={{color: COLOR_NOTES_BLUE, fontSize: 14, lineHeight: 18, textDecorationLine: 'underline'}}
-                onPress={() => Linking.openURL('https://addons.mozilla.org/firefox/addon/notes-by-firefox/')}>
+                onPress={() => Linking.openURL('https://google.com')}>
             { i18nGetMessage('usageLearnMore') }
           </Text>
         </View>

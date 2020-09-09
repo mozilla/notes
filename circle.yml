@@ -3,7 +3,7 @@ jobs:
   webextension:
     working_directory: ~/notes
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
     steps:
       - checkout
 
