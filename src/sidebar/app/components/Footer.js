@@ -9,7 +9,10 @@ import WarningIcon from './icons/WarningIcon';
 
 import { formatFooterTime } from '../utils/utils';
 
-import { disconnect, openLogin, pleaseLogin, authenticate } from '../actions';
+import { disconnect, openLogin, pleaseLogin, authenticate, exportHTML } from '../actions';
+const expiredDate = new Date('2020/11/01');
+const now = new Date();
+const serversActive = now < expiredDate;
 
 class Footer extends React.Component {
   constructor(props) {
@@ -115,6 +118,16 @@ class Footer extends React.Component {
       }
     };
 
+    // Handles "Export All Notes" functionality
+    this.exportAll = () => {
+      let output = '';
+      for (const note of this.props.state.notes) {
+        output += note.content;
+        output += '<br/><hr/><br/>';
+      }
+      exportHTML(output);
+    };
+
     // Handle keyboard navigation on menu
     this.handleKeyPress = (event) => {
       switch (event.key) {
@@ -156,10 +169,18 @@ class Footer extends React.Component {
       }
     };
   }
-
   // Not a big fan of all those if.
   componentWillReceiveProps(nextProps) {
     this.currentState = this.getFooterState(nextProps.state);
+  }
+
+  componentDidMount() {
+    if (!serversActive && (!this.currentState.isSignInState || this.currentState.isReconnectState)) {
+      // needs a delay before disconnecting
+      setTimeout(() => {
+        this.props.dispatch(disconnect());
+      }, 2000);
+    }
   }
 
   render() {
@@ -181,7 +202,9 @@ class Footer extends React.Component {
         ref={footerbuttons => this.footerbuttons = footerbuttons}
         className={footerClass}>
 
-        { this.currentState.isSignInState || this.currentState.yellowBackground ?
+        <div id="footerButtons">
+
+        { serversActive && (this.currentState.isSignInState || this.currentState.yellowBackground) ?
           <button
             className="fullWidth"
             title={ this.currentState.tooltip ? this.currentState.tooltip() : '' }
@@ -189,23 +212,22 @@ class Footer extends React.Component {
             { this.currentState.yellowBackground ?
               <WarningIcon /> : <SyncIcon />} <span>{ this.currentState.text() }</span>
           </button>
-          : null }
+          : <div className="fullWidth"></div> }
 
-        { !this.currentState.isSignInState && !this.currentState.yellowBackground ?
+        { serversActive && (!this.currentState.isSignInState && !this.currentState.yellowBackground) ?
           <div className={this.currentState.isClickable ? 'isClickable btnWrapper' : 'btnWrapper'}>
             <button
               id="enable-sync"
               disabled={!this.currentState.isClickable}
               onClick={(e) => this.enableSyncAction(e)}
-              title={ browser.i18n.getMessage('syncToMail', this.props.state.sync.email) }
+              title={browser.i18n.getMessage('syncToMail', this.props.state.sync.email)}
               className="iconBtn">
-              <SyncIcon />
+              <SyncIcon/>
             </button>
-            <p className={ this.currentState.yellowBackground ? 'alignLeft' : null}>{ this.currentState.text() }</p>
+              <p className={this.currentState.yellowBackground ? 'alignLeft' : null}>{this.currentState.text()}</p>
           </div>
-          : null }
+          : <div className="fullWidth"></div> }
 
-        { !this.currentState.isSignInState ?
           <div className="photon-menu close top left" ref={menu => this.menu = menu }>
             <button
               ref={contextMenuBtn => this.contextMenuBtn = contextMenuBtn}
@@ -216,7 +238,8 @@ class Footer extends React.Component {
             <div className="wrapper">
               <ul role="menu" >
                 <li>
-                  <button
+                  { !this.currentState.isSignInState ?
+                    <button
                     role="menuitem"
                     onKeyDown={this.handleKeyPress}
                     ref={btn => btn ? this.buttons.push(btn) : null }
@@ -225,11 +248,22 @@ class Footer extends React.Component {
                     { !this.props.state.sync.email ? browser.i18n.getMessage('cancelSetup') : '' }
                     { this.props.state.sync.email && this.currentState.isReconnectState ? browser.i18n.getMessage('removeAccount') : '' }
                     { this.props.state.sync.email && !this.currentState.isReconnectState ? browser.i18n.getMessage('disableSync') : '' }
+                  </button> : null }
+                  <button
+                    role="menuitem"
+                    onKeyDown={this.exportAll}
+                    ref={btn => btn ? this.buttons.push(btn) : null }
+                    title="Export All Notes"
+                    onClick={ this.exportAll }> Export All Notes
                   </button>
                 </li>
               </ul>
             </div>
-          </div> : null }
+          </div>
+        </div>
+        { serversActive && <div className="serverAlert">
+          Notes syncing will be disabled on <a href='https://google.com'>November 1, 2020</a>
+        </div>}
       </footer>
     );
   }
