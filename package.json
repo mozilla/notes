@@ -100,7 +100,6 @@
     "lint": "npm-run-all lint:*",
     "lint:css": "stylelint 'src/**/*.{scss,css}'",
     "lint:js": "eslint src",
-    "lint:webext": "web-ext lint -s build --ignore-files='sidebar/vendor/*.js' --self-hosted",
     "package": "npm run build && mv web-ext-artifacts/*.zip addon.xpi",
     "postformat": "npm run lint:js -- --fix",
     "postinstall": "npm run build-ck && node scripts/postinstall.js && node scripts/build-locales.js",
