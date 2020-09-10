@@ -11,6 +11,7 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
       - run: npm ci
+      - run: cd native && npm ci
 
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
