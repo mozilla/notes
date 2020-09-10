@@ -8,6 +8,8 @@ import MoreIcon from './icons/MoreIcon';
 import { SURVEY_PATH } from '../utils/constants';
 
 import { exportHTML, deleteNote } from '../actions';
+import {COLOR_NOTES_BLUE} from "../../../../native/app/utils/constants";
+import i18nGetMessage from "../../../../native/app/utils/i18n";
 
 class Header extends React.Component {
   constructor(props) {

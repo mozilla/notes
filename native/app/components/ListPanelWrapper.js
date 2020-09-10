@@ -6,11 +6,22 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FAB } from 'react-native-paper';
 
-import { View, FlatList, StyleSheet, RefreshControl, AppState, Animated, NetInfo, ToastAndroid } from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  AppState,
+  Animated,
+  NetInfo,
+  ToastAndroid,
+  Text
+} from 'react-native';
 import { COLOR_DARK_SYNC, COLOR_DARK_WARNING, COLOR_NOTES_BLUE, COLOR_NOTES_WHITE, KINTO_LOADED } from '../utils/constants';
 import {persistor} from "../store";
 import fxaUtils from "../vendor/fxa-utils";
 import { kintoLoad, createNote, setNetInfo, authenticate, reconnectSync, openingLogin, textSynced, deleteNotes } from "../actions";
+import i18nGetMessage from "../utils/i18n";
 
 const SNACKBAR_HEIGHT = 48;
 
@@ -231,6 +242,13 @@ class ListPanelWrapper extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, position: 'relative', backgroundColor: '#F9F9FA' }}>
+        <Text style={{ fontSize: 10, color: 'red', paddingTop: 25, textAlign: 'left', lineHeight: 18, paddingBottom: 10  }}>
+          Notes syncing will be disabled on November 1, 2020.
+        </Text>
+        <Text style={{color: COLOR_NOTES_BLUE, fontSize: 14, lineHeight: 18, textDecorationLine: 'underline'}}
+              onPress={() => Linking.openURL('https://google.com')}>
+          { i18nGetMessage('usageLearnMore') }
+        </Text>
         <ListPanel {...this.props}></ListPanel>
         { this.state.snackbar && this.state.snackbar.text ? <Snackbar
           style={{
