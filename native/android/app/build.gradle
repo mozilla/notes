@@ -106,8 +106,8 @@ android {
         applicationId "org.mozilla.testpilot.notes"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "1.3android"
+        versionCode 10
+        versionName "1.4android"
 
         manifestPlaceholders = [
           appAuthRedirectScheme: 'testpilot-notes'
