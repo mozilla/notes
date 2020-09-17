@@ -7,6 +7,10 @@ A notepad for Firefox
 > Discussion Forum: [https://discourse.mozilla.org/c/archives/test-pilot](https://discourse.mozilla.org/c/archives/test-pilot)
 
 
+## Releases
+
+The releases are packaged by CircleCI for [Android](https://app.circleci.com/pipelines/github/mozilla/notes/20/workflows/239f8590-cfae-491b-9db7-30971c73fd9a/jobs/3294/artifacts) and the [WebExtension](https://app.circleci.com/pipelines/github/mozilla/notes/20/workflows/239f8590-cfae-491b-9db7-30971c73fd9a/jobs/3292/artifacts).
+
 ## Contribute
 
 * Step 0: If you plan on sending a pull-request, you should fork the repository.
