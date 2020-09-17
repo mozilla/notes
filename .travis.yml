@@ -34,11 +34,11 @@ jobs:
       <<: *unit-test
       script: npm run test:karma
     - stage:
-      node_js: 8
+      node_js: 12
       script: npm run build
       env: BUILD_NOTES
     - stage:
-      node_js: 8
+      node_js: 12
       script: npm run lint
       env: LINT
       before_script: npm run build
