@@ -3,7 +3,7 @@ jobs:
   webextension:
     working_directory: ~/notes
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
     steps:
       - checkout
 
@@ -11,6 +11,7 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
 
       - run: npm ci
+      - run: rm -rf native
 
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
