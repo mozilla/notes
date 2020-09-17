@@ -40,10 +40,10 @@ class LoginPanel extends React.Component {
             style={styles.btnSignin}><Text style={{ fontSize: 14 }}>{ i18nGetMessage('signIn') }</Text></Button>
 
           <Text style={{ fontSize: 18, color: 'red', paddingTop: 25, textAlign: 'center', lineHeight: 18, paddingBottom: 10  }}>
-            Notes syncing will be disabled on November 1, 2020.
+            Notes syncing and Notes for Android will shut down on November 1. You will still be able to use the browser extension.
           </Text>
           <Text style={{color: COLOR_NOTES_BLUE, fontSize: 14, lineHeight: 18, textDecorationLine: 'underline'}}
-                onPress={() => Linking.openURL('https://google.com')}>
+                onPress={() => Linking.openURL('https://support.mozilla.org/en-US/kb/notes-status')}>
             { i18nGetMessage('usageLearnMore') }
           </Text>
         </View>

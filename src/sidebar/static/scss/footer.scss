@@ -88,6 +88,12 @@ Footer Styles
     &:active { background-color: rgba(12, 12, 13, 0.2); }
   }
 
+  .photon-menu {
+    padding-right: 4px;
+  }
+  .photon-menu.left .wrapper {
+    right: 0;
+  }
   .btnWrapper + .photon-menu {
     position: relative;
     right: 8px;

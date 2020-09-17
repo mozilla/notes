@@ -10,7 +10,7 @@ import WarningIcon from './icons/WarningIcon';
 import { formatFooterTime } from '../utils/utils';
 
 import { disconnect, openLogin, pleaseLogin, authenticate, exportHTML } from '../actions';
-const expiredDate = new Date('2020/11/01');
+const expiredDate = new Date('2020/10/21');
 const now = new Date();
 const serversActive = now < expiredDate;
 
@@ -262,7 +262,7 @@ class Footer extends React.Component {
           </div>
         </div>
         { serversActive && <div className="serverAlert">
-          Notes syncing will be disabled on <a href='https://google.com'>November 1, 2020</a>
+          Notes syncing will be disabled on <a href='https://support.mozilla.org/en-US/kb/notes-status'>November 1, 2020</a>
         </div>}
       </footer>
     );

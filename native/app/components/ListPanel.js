@@ -109,11 +109,6 @@ class ListPanel extends React.Component {
 
     return shouldUpdate;
   }
-
-  componentWillReceiveProps(newProps) {
-
-  }
-
   render() {
     return this.renderList();
   }
