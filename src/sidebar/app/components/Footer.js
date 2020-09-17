@@ -10,7 +10,7 @@ import WarningIcon from './icons/WarningIcon';
 import { formatFooterTime } from '../utils/utils';
 
 import { disconnect, openLogin, pleaseLogin, authenticate, exportHTML } from '../actions';
-const expiredDate = new Date('2020/10/21');
+const expiredDate = new Date('2020/11/01');
 const now = new Date();
 const serversActive = now < expiredDate;
 
