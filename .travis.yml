@@ -30,7 +30,7 @@ _aliases:
 jobs:
   include:
     - stage:
-      node_js: 8
+      node_js: 12
       <<: *unit-test
       script: npm run test:karma
     - stage:
